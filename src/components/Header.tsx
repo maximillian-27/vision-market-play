@@ -2,9 +2,10 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Globe, LogOut, Settings, User, Wallet, TrendingUp, Search } from "lucide-react";
+import { Globe, LogOut, Settings, User, Wallet, TrendingUp, Search, Home, Newspaper, Users, MessageSquare } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import pollgyLogo from "@/assets/pollgy-logo.png";
+import { useNavigate } from "react-router-dom";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,7 +21,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useNavigate } from "react-router-dom";
 
 export function Header() {
   const isMobile = useIsMobile();
@@ -29,6 +29,13 @@ export function Header() {
   const [showDepositDialog, setShowDepositDialog] = useState(false);
   const [portfolioValue] = useState(12450);
   const [cashBalance] = useState(5230);
+
+  const navItems = [
+    { title: "Markets", url: "/", icon: Home },
+    { title: "Community", url: "/community-feed", icon: MessageSquare },
+    { title: "News", url: "/news", icon: Newspaper },
+    { title: "Leaderboards", url: "/community", icon: Users },
+  ];
 
   const handleLogin = () => {
     // In a real app, this would trigger actual authentication
@@ -51,7 +58,37 @@ export function Header() {
               className="h-6 cursor-pointer"
               onClick={() => navigate("/")}
             />
-            
+          </div>
+
+          {/* Desktop Navigation Items */}
+          {!isMobile && (
+            <nav className="flex items-center gap-1">
+              {navItems.map((item) => (
+                <Button
+                  key={item.title}
+                  variant="ghost"
+                  size="sm"
+                  className="gap-2 font-semibold"
+                  onClick={() => navigate(item.url)}
+                >
+                  <item.icon className="h-4 w-4" />
+                  {item.title}
+                </Button>
+              ))}
+            </nav>
+          )}
+
+          {/* Search Bar and Right Side Items */}
+          <div className="flex items-center gap-2 ml-auto">
+            {/* Search Bar - Hidden on mobile */}
+            <div className="hidden md:flex relative w-64">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input 
+                placeholder="Search markets..." 
+                className="pl-9 h-9 bg-muted/40 border-border/40 w-full"
+              />
+            </div>
+
             {/* Language Toggle */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -66,18 +103,7 @@ export function Header() {
                 <DropdownMenuItem>Deutsch</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-          </div>
-
-          {/* Search Bar - Hidden on mobile */}
-          <div className="hidden md:flex relative flex-1 max-w-md">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input 
-              placeholder="Search markets..." 
-              className="pl-9 h-9 bg-muted/40 border-border/40"
-            />
-          </div>
           
-          <div className="flex items-center gap-2">
             {isLoggedIn && (
               <>
                 {/* Portfolio & Cash - Hidden on small mobile */}
