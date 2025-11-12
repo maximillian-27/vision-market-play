@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, TrendingUp, Clock, Users, DollarSign, Heart, MessageCircle, Share2 } from "lucide-react";
+import { ArrowLeft, TrendingUp, Clock, Users, DollarSign, Heart, MessageCircle, Share2, Check, X } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
@@ -189,9 +189,25 @@ export default function MarketDetail() {
 
   const getOutcomeColor = (color?: string) => {
     switch (color) {
-      case "success": return "border-success text-success hover:bg-success hover:text-success-foreground";
-      case "destructive": return "border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground";
-      default: return "border-primary text-primary hover:bg-primary hover:text-primary-foreground";
+      case "success": return "bg-success/10 border-success/20 hover:bg-success/15";
+      case "destructive": return "bg-muted/30 border-border/30 hover:bg-muted/40";
+      default: return "bg-primary/10 border-primary/20 hover:bg-primary/15";
+    }
+  };
+
+  const getOutcomeIcon = (color?: string) => {
+    switch (color) {
+      case "success": return <Check className="h-4 w-4" />;
+      case "destructive": return <X className="h-4 w-4" />;
+      default: return <Check className="h-4 w-4" />;
+    }
+  };
+
+  const getIconBgColor = (color?: string) => {
+    switch (color) {
+      case "success": return "bg-success text-success-foreground";
+      case "destructive": return "bg-destructive text-destructive-foreground";
+      default: return "bg-primary text-primary-foreground";
     }
   };
 
@@ -264,18 +280,31 @@ export default function MarketDetail() {
             </div>
 
             {/* Outcome Buttons */}
-            <div className={`grid gap-3 ${market.outcomes.length === 2 ? 'grid-cols-2' : 'grid-cols-3'}`}>
-              {market.outcomes.map((outcome: any, index: number) => (
-                <Button
-                  key={index}
-                  variant="outline"
-                  size="lg"
-                  className={`flex-col h-auto py-4 ${getOutcomeColor(outcome.color)}`}
-                >
-                  <span className="font-bold text-lg">{outcome.price}¢</span>
-                  <span className="text-sm">{outcome.label}</span>
-                </Button>
-              ))}
+            <div className="space-y-2">
+              {market.outcomes.map((outcome: any, index: number) => {
+                const payout = outcome.price > 0 ? (10000 / outcome.price).toFixed(0) : 0;
+                return (
+                  <button
+                    key={index}
+                    className={`w-full text-left rounded-lg px-3 py-3 border transition-all ${getOutcomeColor(outcome.color)} flex items-center gap-3`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      // Handle bet action
+                    }}
+                  >
+                    <div className={`rounded-full p-1.5 flex-shrink-0 ${getIconBgColor(outcome.color)}`}>
+                      {getOutcomeIcon(outcome.color)}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-sm font-bold text-foreground">{outcome.label}</div>
+                      <div className="text-xs text-muted-foreground font-medium">
+                        $100 → ${payout}
+                      </div>
+                    </div>
+                    <span className="text-xl font-bold text-foreground ml-auto">{outcome.price}¢</span>
+                  </button>
+                );
+              })}
             </div>
 
             {/* Engagement Actions */}
