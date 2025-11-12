@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Globe, LogOut, Settings, User, Wallet, TrendingUp, Search, Home, Newspaper, Users, MessageSquare } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -51,7 +50,6 @@ export function Header() {
       <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 fixed top-0 z-50 w-full">
         <div className="flex h-14 items-center justify-between px-4 lg:px-6 gap-4">
           <div className="flex items-center gap-3">
-            {!isMobile && <SidebarTrigger />}
             <img 
               src={pollgyLogo} 
               alt="Pollgy" 
@@ -68,7 +66,7 @@ export function Header() {
                   key={item.title}
                   variant="ghost"
                   size="sm"
-                  className="gap-2 font-semibold"
+                  className="gap-2 font-medium"
                   onClick={() => navigate(item.url)}
                 >
                   <item.icon className="h-4 w-4" />
