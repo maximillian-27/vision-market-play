@@ -136,12 +136,12 @@ export function MarketCard({ id, creator, title, subtitle, image, outcomes, yesP
           </div>
 
           {/* Outcome Buttons */}
-          <div className={`grid gap-2.5 ${displayOutcomes.length === 2 ? 'grid-cols-2' : displayOutcomes.length === 3 ? 'grid-cols-3' : 'grid-cols-2'}`}>
+          <div className={`grid gap-2 ${displayOutcomes.length === 2 ? 'grid-cols-2' : displayOutcomes.length === 3 ? 'grid-cols-3' : 'grid-cols-2'}`}>
             {displayOutcomes.map((outcome, index) => (
               <Button 
                 key={index}
                 variant="outline" 
-                className={`flex-1 h-auto py-3 transition-all border-border/60 hover:border-current ${getOutcomeColor(outcome.color)}`}
+                className={`flex-1 h-auto py-2 transition-all border-border/60 hover:border-current ${getOutcomeColor(outcome.color)}`}
                 onClick={(e) => {
                   e.stopPropagation();
                   // Handle bet action here
@@ -149,7 +149,7 @@ export function MarketCard({ id, creator, title, subtitle, image, outcomes, yesP
               >
                 <div className="flex flex-col items-center w-full gap-0.5">
                   <span className="text-xs uppercase tracking-wide opacity-70">{outcome.label}</span>
-                  <span className="text-lg font-bold">{outcome.price}¢</span>
+                  <span className="text-base font-bold">{outcome.price}¢</span>
                 </div>
               </Button>
             ))}
