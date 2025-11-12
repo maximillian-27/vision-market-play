@@ -33,7 +33,7 @@ export function HottestMarkets() {
   const navigate = useNavigate();
 
   return (
-    <div className="hidden lg:block sticky top-4 w-80">
+    <div className="hidden lg:block sticky top-20 w-80 self-start">
       <Card className="border-border/40">
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">

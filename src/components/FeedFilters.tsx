@@ -12,7 +12,7 @@ export function FeedFilters() {
   const [showFilters, setShowFilters] = useState(false);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 sticky top-16 z-10 bg-background/95 backdrop-blur-sm py-2 -mt-2">
       {/* Mobile Search and Filter Button */}
       <div className="flex gap-2 md:hidden">
         <div className="relative flex-1">
