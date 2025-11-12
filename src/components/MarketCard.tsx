@@ -55,9 +55,9 @@ export function MarketCard({ id, creator, title, subtitle, image, outcomes, yesP
 
   const getOutcomeColor = (color?: string) => {
     switch (color) {
-      case "success": return "border-success/40 bg-success/5 text-success hover:bg-success/10 hover:border-success/60 hover:shadow-sm";
-      case "destructive": return "border-destructive/40 bg-destructive/5 text-destructive hover:bg-destructive/10 hover:border-destructive/60 hover:shadow-sm";
-      default: return "border-primary/40 bg-primary/5 text-primary hover:bg-primary/10 hover:border-primary/60 hover:shadow-sm";
+      case "success": return "border-success text-success hover:bg-success hover:text-success-foreground";
+      case "destructive": return "border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground";
+      default: return "border-primary text-primary hover:bg-primary hover:text-primary-foreground";
     }
   };
 
@@ -134,21 +134,20 @@ export function MarketCard({ id, creator, title, subtitle, image, outcomes, yesP
           </div>
 
           {/* Outcome Buttons */}
-          <div className={`grid gap-2.5 ${displayOutcomes.length === 2 ? 'grid-cols-2' : displayOutcomes.length === 3 ? 'grid-cols-3' : 'grid-cols-2'}`}>
+          <div className={`grid gap-2 ${displayOutcomes.length === 2 ? 'grid-cols-2' : displayOutcomes.length === 3 ? 'grid-cols-3' : 'grid-cols-2'}`}>
             {displayOutcomes.map((outcome, index) => (
               <Button 
                 key={index}
                 variant="outline" 
-                className={`flex-1 transition-all duration-200 h-auto py-4 border-2 ${getOutcomeColor(outcome.color)} hover:scale-[1.02] active:scale-[0.98]`}
+                className={`flex-1 transition-all ${getOutcomeColor(outcome.color)}`}
                 onClick={(e) => {
                   e.stopPropagation();
                   // Handle bet action here
                 }}
               >
-                <div className="flex flex-col items-center w-full gap-0.5">
-                  <span className="text-xs font-medium tracking-wide uppercase opacity-60">{outcome.label}</span>
-                  <span className="text-2xl font-bold tracking-tight">{outcome.price}¢</span>
-                  <span className="text-[11px] font-medium opacity-50">{outcome.price}%</span>
+                <div className="flex flex-col items-center w-full">
+                  <span className="font-semibold text-xs md:text-sm">{outcome.label}</span>
+                  <span className="text-xs">{outcome.price}¢</span>
                 </div>
               </Button>
             ))}
