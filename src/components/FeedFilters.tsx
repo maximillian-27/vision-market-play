@@ -1,4 +1,4 @@
-import { Search, SlidersHorizontal, X } from "lucide-react";
+import { SlidersHorizontal, X, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -13,9 +13,9 @@ export function FeedFilters() {
 
   return (
     <div className="space-y-4">
-      {/* Search and Filter Button */}
+      {/* Mobile Search and Filter Button */}
       <div className="flex gap-2">
-        <div className="relative flex-1">
+        <div className="relative flex-1 md:hidden">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
           <Input 
             placeholder="Search markets..." 

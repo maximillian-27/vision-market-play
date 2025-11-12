@@ -2,7 +2,8 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Globe, LogOut, Settings, User, Wallet, TrendingUp } from "lucide-react";
+import { Globe, LogOut, Settings, User, Wallet, TrendingUp, Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import pollgyLogo from "@/assets/pollgy-logo.png";
 import {
   DropdownMenu,
@@ -41,8 +42,8 @@ export function Header() {
   return (
     <>
       <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-20 w-full">
-        <div className="flex h-14 items-center justify-between px-4 lg:px-6">
-          <div className="flex items-center gap-3 flex-1">
+        <div className="flex h-14 items-center justify-between px-4 lg:px-6 gap-4">
+          <div className="flex items-center gap-3">
             {!isMobile && <SidebarTrigger />}
             <img 
               src={pollgyLogo} 
@@ -65,6 +66,15 @@ export function Header() {
                 <DropdownMenuItem>Deutsch</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
+          </div>
+
+          {/* Search Bar - Hidden on mobile */}
+          <div className="hidden md:flex relative flex-1 max-w-md">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input 
+              placeholder="Search markets..." 
+              className="pl-9 h-9 bg-muted/40 border-border/40"
+            />
           </div>
           
           <div className="flex items-center gap-2">
