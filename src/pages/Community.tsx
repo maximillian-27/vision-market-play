@@ -72,7 +72,7 @@ export default function Community() {
 
   return (
     <div className="w-full md:container md:max-w-2xl py-4 md:py-6 space-y-4 md:space-y-6 px-4 md:px-4">
-      <h1 className="text-2xl font-bold">Community</h1>
+      <h1 className="text-2xl font-bold">Leaderboards</h1>
       
       <Tabs defaultValue="community" className="w-full">
         <TabsList className="grid w-full grid-cols-2">
