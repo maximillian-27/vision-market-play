@@ -1,0 +1,61 @@
+import { Home, Newspaper, Users, User } from "lucide-react";
+import { NavLink } from "@/components/NavLink";
+import { useLocation } from "react-router-dom";
+
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  useSidebar,
+} from "@/components/ui/sidebar";
+
+const items = [
+  { title: "Feed", url: "/", icon: Home },
+  { title: "News", url: "/news", icon: Newspaper },
+  { title: "Community", url: "/community", icon: Users },
+  { title: "Profile", url: "/profile", icon: User },
+];
+
+export function AppSidebar() {
+  const { open } = useSidebar();
+  const location = useLocation();
+
+  return (
+    <Sidebar collapsible="icon">
+      <SidebarContent>
+        <SidebarGroup>
+          <div className="px-4 py-6">
+            <h1 className={`font-bold text-primary transition-all ${open ? "text-2xl" : "text-xl"}`}>
+              {open ? "PredictX" : "PX"}
+            </h1>
+          </div>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {items.map((item) => {
+                const isActive = location.pathname === item.url;
+                return (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild isActive={isActive}>
+                      <NavLink 
+                        to={item.url} 
+                        end
+                        className="flex items-center gap-3 transition-colors"
+                      >
+                        <item.icon className="h-5 w-5" />
+                        <span>{item.title}</span>
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
+    </Sidebar>
+  );
+}
