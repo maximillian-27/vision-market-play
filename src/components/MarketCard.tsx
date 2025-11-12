@@ -139,15 +139,16 @@ export function MarketCard({ id, creator, title, subtitle, image, outcomes, yesP
               <Button 
                 key={index}
                 variant="outline" 
-                className={`flex-1 transition-all ${getOutcomeColor(outcome.color)}`}
+                className={`flex-1 transition-all h-auto py-3 ${getOutcomeColor(outcome.color)}`}
                 onClick={(e) => {
                   e.stopPropagation();
                   // Handle bet action here
                 }}
               >
-                <div className="flex flex-col items-center w-full">
-                  <span className="font-semibold text-xs md:text-sm">{outcome.label}</span>
-                  <span className="text-xs">{outcome.price}¢</span>
+                <div className="flex items-baseline gap-2 w-full justify-center">
+                  <span className="text-xs font-medium opacity-70">{outcome.label}</span>
+                  <span className="text-lg font-bold">{outcome.price}¢</span>
+                  <span className="text-xs opacity-60">{outcome.price}%</span>
                 </div>
               </Button>
             ))}
