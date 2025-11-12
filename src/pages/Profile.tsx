@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Settings, Wallet, Activity, ArrowLeft, UserPlus, UserCheck, BadgeCheck, TrendingUp, Target, Award, Clock, Repeat2 } from "lucide-react";
+import { Settings, Wallet, Activity, ArrowLeft, UserPlus, UserCheck, BadgeCheck, TrendingUp, Target, Award, Clock, Repeat2, ArrowUpRight, ArrowDownLeft } from "lucide-react";
 import { MarketCard } from "@/components/MarketCard";
 import bitcoinImage from "@/assets/bitcoin-market.jpg";
 import nbaImage from "@/assets/nba-championship.jpg";
@@ -241,6 +241,36 @@ export default function Profile() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Financial Overview - Only for own profile */}
+      {isOwnProfile && (
+        <Card>
+          <CardContent className="pt-6 pb-6">
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <p className="text-xs text-muted-foreground">Portfolio Balance</p>
+                  <p className="text-2xl font-bold">$18,450</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-xs text-muted-foreground">Cash Balance</p>
+                  <p className="text-2xl font-bold text-muted-foreground">$5,230</p>
+                </div>
+              </div>
+              <div className="flex gap-3 pt-2">
+                <Button className="flex-1" variant="outline" size="sm">
+                  <ArrowDownLeft className="h-4 w-4 mr-2" />
+                  Withdraw
+                </Button>
+                <Button className="flex-1" size="sm">
+                  <ArrowUpRight className="h-4 w-4 mr-2" />
+                  Deposit
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Stats */}
       <div className="grid grid-cols-3 gap-4">
