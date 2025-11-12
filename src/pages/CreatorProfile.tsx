@@ -196,7 +196,7 @@ export default function CreatorProfile() {
       </Card>
 
       {/* Creator Stats - Enhanced Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 gap-4">
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
@@ -220,34 +220,6 @@ export default function CreatorProfile() {
               <div>
                 <div className="text-2xl font-bold text-success">{creator.volume}</div>
                 <p className="text-sm text-muted-foreground">Total Volume</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-3">
-              <div className="p-3 rounded-full bg-primary/10">
-                <TrendingUp className="h-5 w-5 text-primary" />
-              </div>
-              <div>
-                <div className="text-2xl font-bold">{creator.successRate}%</div>
-                <p className="text-sm text-muted-foreground">Success Rate</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-3">
-              <div className="p-3 rounded-full bg-primary/10">
-                <Users className="h-5 w-5 text-primary" />
-              </div>
-              <div>
-                <div className="text-2xl font-bold">{creator.followers}</div>
-                <p className="text-sm text-muted-foreground">Followers</p>
               </div>
             </div>
           </CardContent>
