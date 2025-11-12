@@ -1,29 +1,62 @@
+import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Settings, Wallet, Activity, ArrowLeft } from "lucide-react";
+import { Settings, Wallet, Activity, ArrowLeft, UserPlus, UserCheck } from "lucide-react";
+
+// Mock data to determine if user is a creator
+const creatorNames = ['marketmaven', 'predictpro', 'trendsetter', 'insighthub', 'datadriven'];
+const creatorData = {
+  'marketmaven': { markets: 47, volume: '$2.8M', followers: '12.3K' },
+  'predictpro': { markets: 38, volume: '$2.1M', followers: '9.8K' },
+  'trendsetter': { markets: 31, volume: '$1.7M', followers: '8.2K' },
+  'insighthub': { markets: 29, volume: '$1.5M', followers: '7.1K' },
+  'datadriven': { markets: 24, volume: '$1.2M', followers: '6.4K' },
+};
 
 export default function Profile() {
   const { userId } = useParams();
   const navigate = useNavigate();
+  const [isFollowing, setIsFollowing] = useState(false);
   const isOwnProfile = !userId;
   const displayName = userId 
     ? userId.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
     : "Your Name";
+  
+  const isCreator = userId && creatorNames.includes(userId.toLowerCase());
+  const creatorStats = isCreator && userId ? creatorData[userId.toLowerCase() as keyof typeof creatorData] : null;
   return (
     <div className="w-full md:container md:max-w-2xl py-4 md:py-6 space-y-4 md:space-y-6 px-4 md:px-4">
       {!isOwnProfile && (
-        <Button 
-          variant="ghost" 
-          size="sm" 
-          onClick={() => navigate(-1)}
-          className="mb-2"
-        >
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Back
-        </Button>
+        <div className="flex items-center justify-between mb-2">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={() => navigate(-1)}
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back
+          </Button>
+          <Button 
+            variant={isFollowing ? "outline" : "default"}
+            size="sm" 
+            onClick={() => setIsFollowing(!isFollowing)}
+          >
+            {isFollowing ? (
+              <>
+                <UserCheck className="h-4 w-4 mr-2" />
+                Following
+              </>
+            ) : (
+              <>
+                <UserPlus className="h-4 w-4 mr-2" />
+                Follow
+              </>
+            )}
+          </Button>
+        </div>
       )}
       
       {/* Profile Header */}
@@ -56,32 +89,57 @@ export default function Profile() {
 
       {/* Stats */}
       <div className="grid grid-cols-3 gap-4">
-        <Card>
-          <CardContent className="pt-6 text-center">
-            <div className="text-2xl font-bold text-success">+$12,450</div>
-            <p className="text-sm text-muted-foreground mt-1">Total Profit</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="pt-6 text-center">
-            <div className="text-2xl font-bold">78%</div>
-            <p className="text-sm text-muted-foreground mt-1">Accuracy</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="pt-6 text-center">
-            <div className="text-2xl font-bold">142</div>
-            <p className="text-sm text-muted-foreground mt-1">Markets</p>
-          </CardContent>
-        </Card>
+        {isCreator && creatorStats ? (
+          <>
+            <Card>
+              <CardContent className="pt-6 text-center">
+                <div className="text-2xl font-bold text-primary">{creatorStats.markets}</div>
+                <p className="text-sm text-muted-foreground mt-1">Markets Created</p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="pt-6 text-center">
+                <div className="text-2xl font-bold text-success">{creatorStats.volume}</div>
+                <p className="text-sm text-muted-foreground mt-1">Volume Generated</p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="pt-6 text-center">
+                <div className="text-2xl font-bold">{creatorStats.followers}</div>
+                <p className="text-sm text-muted-foreground mt-1">Followers</p>
+              </CardContent>
+            </Card>
+          </>
+        ) : (
+          <>
+            <Card>
+              <CardContent className="pt-6 text-center">
+                <div className="text-2xl font-bold text-success">+$12,450</div>
+                <p className="text-sm text-muted-foreground mt-1">Total Profit</p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="pt-6 text-center">
+                <div className="text-2xl font-bold">78%</div>
+                <p className="text-sm text-muted-foreground mt-1">Accuracy</p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="pt-6 text-center">
+                <div className="text-2xl font-bold">142</div>
+                <p className="text-sm text-muted-foreground mt-1">Markets</p>
+              </CardContent>
+            </Card>
+          </>
+        )}
       </div>
 
-      {/* Active Positions */}
+      {/* Active Positions or Created Markets */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Activity className="h-5 w-5" />
-            Active Positions
+            {isCreator ? "Recently Created Markets" : "Active Positions"}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
