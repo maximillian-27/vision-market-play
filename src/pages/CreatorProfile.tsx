@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, UserPlus, UserCheck, BadgeCheck, TrendingUp, Target, Award, LineChart, Users, DollarSign } from "lucide-react";
+import { ArrowLeft, UserPlus, UserCheck, BadgeCheck } from "lucide-react";
 import { MarketCard } from "@/components/MarketCard";
 
 // Mock creator data
@@ -114,215 +113,118 @@ export default function CreatorProfile() {
   
   if (!creator) {
     return (
-      <div className="w-full md:container md:max-w-2xl py-4 md:py-6 px-4">
-        <Card>
-          <CardContent className="pt-6 text-center">
-            <p className="text-muted-foreground">Creator not found</p>
-            <Button onClick={() => navigate('/')} className="mt-4">
-              Back to Feed
-            </Button>
-          </CardContent>
-        </Card>
+      <div className="w-full md:container md:max-w-2xl py-4 md:py-6 px-4 text-center">
+        <p className="text-muted-foreground mb-4">Creator not found</p>
+        <Button onClick={() => navigate('/')}>
+          Back to Feed
+        </Button>
       </div>
     );
   }
 
   return (
-    <div className="w-full md:container md:max-w-4xl py-4 md:py-6 space-y-4 md:space-y-6 px-4 md:px-4">
+    <div className="w-full md:container md:max-w-3xl py-4 md:py-6 space-y-6 px-4 md:px-4">
       <Button 
         variant="ghost" 
         size="sm" 
         onClick={() => navigate(-1)}
+        className="mb-2"
       >
         <ArrowLeft className="h-4 w-4 mr-2" />
         Back
       </Button>
       
-      {/* Creator Header - Enhanced */}
-      <Card className="overflow-hidden">
-        <div className="h-32 bg-gradient-to-r from-primary/20 via-primary/10 to-background" />
-        <CardContent className="pt-0 -mt-16 relative">
-          <div className="flex flex-col md:flex-row md:items-end gap-6">
-            <Avatar className="h-32 w-32 border-4 border-background shadow-lg">
-              <AvatarImage src={creator.avatar} alt={creator.name} />
-              <AvatarFallback>{creator.name.slice(0, 2).toUpperCase()}</AvatarFallback>
-            </Avatar>
+      {/* Creator Header - Simplified */}
+      <div className="space-y-6">
+        <div className="flex flex-col md:flex-row gap-6 items-start">
+          <Avatar className="h-24 w-24 border-2 border-border">
+            <AvatarImage src={creator.avatar} alt={creator.name} />
+            <AvatarFallback>{creator.name.slice(0, 2).toUpperCase()}</AvatarFallback>
+          </Avatar>
+          
+          <div className="flex-1 space-y-4">
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <h1 className="text-2xl font-bold">{creator.name}</h1>
+                <BadgeCheck className="h-5 w-5 text-primary fill-primary/20" />
+              </div>
+              <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                <span>{creator.followers} followers</span>
+                <span>•</span>
+                <span>Joined {creator.joinedDate}</span>
+              </div>
+            </div>
             
-            <div className="flex-1 space-y-3">
-              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <h1 className="text-3xl font-bold">{creator.name}</h1>
-                    <BadgeCheck className="h-7 w-7 text-primary fill-primary/20" />
-                  </div>
-                  <Badge variant="default" className="mb-2">Verified Creator</Badge>
-                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                    <span>Joined {creator.joinedDate}</span>
-                    <span>•</span>
-                    <span>{creator.followers} followers</span>
-                  </div>
-                </div>
-                
-                <Button 
-                  variant={isFollowing ? "outline" : "default"}
-                  size="lg"
-                  onClick={() => setIsFollowing(!isFollowing)}
-                  className="w-full md:w-auto"
-                >
-                  {isFollowing ? (
-                    <>
-                      <UserCheck className="h-4 w-4 mr-2" />
-                      Following
-                    </>
-                  ) : (
-                    <>
-                      <UserPlus className="h-4 w-4 mr-2" />
-                      Follow
-                    </>
-                  )}
-                </Button>
-              </div>
-              
-              <p className="text-muted-foreground">{creator.description}</p>
-              
-              <div className="flex flex-wrap gap-2">
-                {creator.categories.map((category) => (
-                  <Badge key={category} variant="outline">{category}</Badge>
-                ))}
-              </div>
+            <p className="text-muted-foreground leading-relaxed">{creator.description}</p>
+            
+            <div className="flex flex-wrap gap-2">
+              {creator.categories.map((category) => (
+                <Badge key={category} variant="secondary">{category}</Badge>
+              ))}
             </div>
+            
+            <Button 
+              variant={isFollowing ? "outline" : "default"}
+              onClick={() => setIsFollowing(!isFollowing)}
+              className="w-full md:w-auto"
+            >
+              {isFollowing ? (
+                <>
+                  <UserCheck className="h-4 w-4 mr-2" />
+                  Following
+                </>
+              ) : (
+                <>
+                  <UserPlus className="h-4 w-4 mr-2" />
+                  Follow
+                </>
+              )}
+            </Button>
           </div>
-        </CardContent>
-      </Card>
+        </div>
 
-      {/* Creator Stats - Enhanced Grid */}
-      <div className="grid grid-cols-2 gap-4">
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-3">
-              <div className="p-3 rounded-full bg-primary/10">
-                <Target className="h-5 w-5 text-primary" />
-              </div>
-              <div>
-                <div className="text-2xl font-bold">{creator.markets}</div>
-                <p className="text-sm text-muted-foreground">Markets Created</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-3">
-              <div className="p-3 rounded-full bg-success/10">
-                <DollarSign className="h-5 w-5 text-success" />
-              </div>
-              <div>
-                <div className="text-2xl font-bold text-success">{creator.volume}</div>
-                <p className="text-sm text-muted-foreground">Total Volume</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        {/* Creator Stats - Simplified */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 py-4 border-y">
+          <div className="text-center space-y-1">
+            <div className="text-2xl font-bold">{creator.markets}</div>
+            <p className="text-xs text-muted-foreground">Markets</p>
+          </div>
+          <div className="text-center space-y-1">
+            <div className="text-2xl font-bold text-success">{creator.volume}</div>
+            <p className="text-xs text-muted-foreground">Volume</p>
+          </div>
+          <div className="text-center space-y-1">
+            <div className="text-2xl font-bold">{creator.totalResolved}</div>
+            <p className="text-xs text-muted-foreground">Resolved</p>
+          </div>
+          <div className="text-center space-y-1">
+            <div className="text-2xl font-bold">{creator.avgVolume}</div>
+            <p className="text-xs text-muted-foreground">Avg Volume</p>
+          </div>
+        </div>
       </div>
 
-      {/* Performance Insights */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <LineChart className="h-5 w-5" />
-            Performance Insights
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid md:grid-cols-3 gap-6">
-            <div className="space-y-2">
-              <p className="text-sm text-muted-foreground">Average Market Volume</p>
-              <p className="text-2xl font-bold text-success">{creator.avgVolume}</p>
-            </div>
-            <div className="space-y-2">
-              <p className="text-sm text-muted-foreground">Markets Resolved</p>
-              <p className="text-2xl font-bold">{creator.totalResolved}</p>
-            </div>
-            <div className="space-y-2">
-              <p className="text-sm text-muted-foreground">Active Markets</p>
-              <p className="text-2xl font-bold">{creator.markets - creator.totalResolved}</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Creator Achievements */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Award className="h-5 w-5" />
-            Creator Achievements
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid md:grid-cols-3 gap-3">
-            <div className="flex items-center gap-3 p-3 bg-primary/10 rounded-lg">
-              <div className="p-2 bg-primary/20 rounded-full">
-                <Target className="h-5 w-5 text-primary" />
-              </div>
-              <div>
-                <div className="font-semibold text-sm">Top Creator</div>
-                <div className="text-xs text-muted-foreground">Elite Status</div>
-              </div>
-            </div>
-            <div className="flex items-center gap-3 p-3 bg-success/10 rounded-lg">
-              <div className="p-2 bg-success/20 rounded-full">
-                <TrendingUp className="h-5 w-5 text-success" />
-              </div>
-              <div>
-                <div className="font-semibold text-sm">Million Dollar Markets</div>
-                <div className="text-xs text-muted-foreground">$2.8M Total</div>
-              </div>
-            </div>
-            <div className="flex items-center gap-3 p-3 bg-primary/10 rounded-lg">
-              <div className="p-2 bg-primary/20 rounded-full">
-                <Users className="h-5 w-5 text-primary" />
-              </div>
-              <div>
-                <div className="font-semibold text-sm">Community Leader</div>
-                <div className="text-xs text-muted-foreground">10K+ Followers</div>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
       {/* Created Markets */}
-      <Tabs defaultValue="active" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="active">Active Markets</TabsTrigger>
-          <TabsTrigger value="resolved">Resolved</TabsTrigger>
-          <TabsTrigger value="featured">Featured</TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value="active" className="space-y-4 mt-4">
-          {mockCreatorMarkets.map((market) => (
-            <MarketCard key={market.id} {...market} />
-          ))}
-        </TabsContent>
-        
-        <TabsContent value="resolved" className="mt-4">
-          <Card>
-            <CardContent className="pt-6 text-center text-muted-foreground">
-              <p>No resolved markets to display</p>
-            </CardContent>
-          </Card>
-        </TabsContent>
-        
-        <TabsContent value="featured" className="mt-4">
-          <Card>
-            <CardContent className="pt-6 text-center text-muted-foreground">
-              <p>No featured markets yet</p>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+      <div className="space-y-4">
+        <Tabs defaultValue="active" className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="active">Active</TabsTrigger>
+            <TabsTrigger value="resolved">Resolved</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="active" className="space-y-4 mt-4">
+            {mockCreatorMarkets.map((market) => (
+              <MarketCard key={market.id} {...market} />
+            ))}
+          </TabsContent>
+          
+          <TabsContent value="resolved" className="mt-4">
+            <div className="text-center py-12 text-muted-foreground">
+              <p>No resolved markets yet</p>
+            </div>
+          </TabsContent>
+        </Tabs>
+      </div>
     </div>
   );
 }
