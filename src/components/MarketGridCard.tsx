@@ -47,9 +47,9 @@ export function MarketGridCard({
 
   const getOutcomeColor = (color?: string) => {
     switch (color) {
-      case "success": return "bg-success/10 text-success border-success/40 hover:bg-success/20";
-      case "destructive": return "bg-destructive/10 text-destructive border-destructive/40 hover:bg-destructive/20";
-      default: return "bg-primary/10 text-primary border-primary/40 hover:bg-primary/20";
+      case "success": return "bg-background border-border/60 hover:border-success/60 hover:bg-success/5 text-foreground";
+      case "destructive": return "bg-background border-border/60 hover:border-destructive/60 hover:bg-destructive/5 text-foreground";
+      default: return "bg-background border-border/60 hover:border-primary/60 hover:bg-primary/5 text-foreground";
     }
   };
 
@@ -58,7 +58,7 @@ export function MarketGridCard({
 
   return (
     <Card 
-      className="group overflow-hidden transition-all hover:shadow-lg md:hover:scale-[1.02] cursor-pointer border-border/40 animate-fade-in"
+      className="group overflow-hidden transition-all hover:shadow-md cursor-pointer border-border/50 animate-fade-in bg-card"
     >
       <CardContent className="p-0">
         {/* Mobile: Horizontal layout, Desktop: Vertical */}
@@ -97,7 +97,7 @@ export function MarketGridCard({
           </div>
 
           {/* Content - beside image on mobile, below on desktop */}
-          <div className="p-2.5 md:p-3 space-y-2 flex-1 flex flex-col">
+          <div className="p-3 md:p-4 space-y-2.5 flex-1 flex flex-col">
             {/* Creator info - mobile only */}
             <div 
               className="flex md:hidden items-center gap-1.5 pb-1.5 border-b border-border/40"
@@ -128,19 +128,19 @@ export function MarketGridCard({
             </h3>
 
             {/* Outcomes - Clickable buttons */}
-            <div className="space-y-1">
-              <div className="grid grid-cols-2 gap-1.5">
+            <div className="space-y-1.5">
+              <div className="grid grid-cols-2 gap-2">
                 {visibleOutcomes.map((outcome, index) => (
                   <button 
                     key={index}
-                    className={`text-center rounded-md px-1.5 md:px-2 py-1.5 border transition-all font-medium ${getOutcomeColor(outcome.color)}`}
+                    className={`text-center rounded-lg px-2 md:px-3 py-2 md:py-2.5 border transition-all ${getOutcomeColor(outcome.color)}`}
                     onClick={(e) => {
                       e.stopPropagation();
                       // Handle bet action
                     }}
                   >
-                    <div className="text-base md:text-lg font-bold">{outcome.price}¢</div>
-                    <div className="text-xs md:text-sm opacity-90 truncate">{outcome.label}</div>
+                    <div className="text-lg md:text-xl font-bold text-foreground">{outcome.price}¢</div>
+                    <div className="text-xs md:text-sm text-muted-foreground font-medium truncate">{outcome.label}</div>
                   </button>
                 ))}
               </div>
