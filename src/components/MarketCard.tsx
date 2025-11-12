@@ -1,7 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Clock, TrendingUp, Heart, MessageCircle, Share2, Repeat2 } from "lucide-react";
+import { Clock, TrendingUp, Heart, MessageCircle, Share2, Repeat2, BadgeCheck } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import {
@@ -25,6 +25,8 @@ interface MarketCardProps {
   creator: {
     name: string;
     avatar: string;
+    id?: string;
+    isCreator?: boolean;
   };
   title: string;
   subtitle?: string;
@@ -78,13 +80,24 @@ export function MarketCard({ id, creator, title, subtitle, image, outcomes, yesP
       >
       <CardContent className="p-0">
         {/* Creator Info */}
-        <div className="flex items-center gap-3 p-3 md:p-4 pb-2 md:pb-3">
+        <div 
+          className="flex items-center gap-3 p-3 md:p-4 pb-2 md:pb-3 cursor-pointer hover:bg-accent/50 transition-colors"
+          onClick={(e) => {
+            e.stopPropagation();
+            navigate(`/profile/${creator.id || creator.name.toLowerCase().replace(/\s+/g, '-')}`);
+          }}
+        >
           <Avatar className="h-10 w-10">
             <AvatarImage src={creator.avatar} alt={creator.name} />
             <AvatarFallback>{creator.name.slice(0, 2).toUpperCase()}</AvatarFallback>
           </Avatar>
           <div className="flex-1">
-            <p className="font-semibold text-sm">{creator.name}</p>
+            <div className="flex items-center gap-1.5">
+              <p className="font-semibold text-sm hover:underline">{creator.name}</p>
+              {creator.isCreator !== false && (
+                <BadgeCheck className="h-4 w-4 text-primary fill-primary/20" />
+              )}
+            </div>
           </div>
         </div>
 
