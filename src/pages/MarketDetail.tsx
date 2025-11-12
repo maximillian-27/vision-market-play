@@ -214,7 +214,7 @@ export default function MarketDetail() {
   return (
     <div className="w-full md:container md:max-w-4xl md:py-6 pb-4">
       {/* Back Button */}
-      <div className="sticky top-14 z-10 bg-background/95 backdrop-blur-sm border-b md:border-0 px-4 py-2 md:py-4 md:px-0">
+      <div className="sticky top-0 md:top-0 z-20 bg-background/95 backdrop-blur-sm border-b md:border-0 px-4 py-2 md:py-4 md:px-0">
         <Button
           variant="ghost"
           size="sm"
