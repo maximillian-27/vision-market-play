@@ -28,7 +28,7 @@ export function AppSidebar() {
     <Sidebar collapsible="icon">
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupContent className="pt-6">
+          <SidebarGroupContent className="pt-14">
             <SidebarMenu>
               {items.map((item) => {
                 const isActive = location.pathname === item.url;
