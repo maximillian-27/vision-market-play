@@ -412,43 +412,7 @@ export default function Profile() {
             </CardContent>
           </Card>
 
-          {/* Performance Overview */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <TrendingUp className="h-5 w-5" />
-                Performance Overview
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground">Win Rate</span>
-                  <span className="font-semibold">78%</span>
-                </div>
-                <Progress value={78} className="h-2" />
-              </div>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground">Portfolio Growth</span>
-                  <span className="font-semibold text-success">+24.5%</span>
-                </div>
-                <Progress value={65} className="h-2" />
-              </div>
-              <div className="grid grid-cols-2 gap-4 pt-2">
-                <div className="text-center p-3 bg-muted/50 rounded-lg">
-                  <div className="text-lg font-bold">47</div>
-                  <div className="text-xs text-muted-foreground">Wins</div>
-                </div>
-                <div className="text-center p-3 bg-muted/50 rounded-lg">
-                  <div className="text-lg font-bold">13</div>
-                  <div className="text-xs text-muted-foreground">Losses</div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Performance Overview */}
+          {/* Performance Analytics */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
