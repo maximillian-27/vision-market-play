@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { MarketCard } from "@/components/MarketCard";
+import { NewsSidebar } from "@/components/NewsSidebar";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -194,145 +195,150 @@ export default function CommunityFeed() {
   const [selectedFilter, setSelectedFilter] = useState("Hot");
 
   return (
-    <div className="w-full md:container md:max-w-2xl py-4 md:py-6 space-y-4 md:space-y-6 px-4 md:px-4">
-      <h1 className="text-2xl font-bold">Community Feed</h1>
-      
-      {/* Category Filters */}
-      <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
-        {categories.map((category) => (
-          <Badge
-            key={category}
-            variant={category === selectedFilter ? "default" : "outline"}
-            className="cursor-pointer whitespace-nowrap transition-all hover:bg-primary hover:text-primary-foreground"
-            onClick={() => setSelectedFilter(category)}
-          >
-            {category}
-          </Badge>
-        ))}
-      </div>
-      
-      <div className="space-y-4">
-        {mockCommunityPosts.map((post) => (
-          <Card key={post.id} className="overflow-hidden">
-            <CardContent className="p-0">
-              {/* User Post Header */}
-              <div className="p-4 space-y-3">
-                <div className="flex items-start gap-3">
-                  <Avatar 
-                    className="h-10 w-10 cursor-pointer hover:opacity-80 transition-opacity"
-                    onClick={() => navigate(`/profile/${post.user.username.slice(1)}`)}
-                  >
-                    <AvatarImage src={post.user.avatar} alt={post.user.name} />
-                    <AvatarFallback>{post.user.name.slice(0, 2)}</AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <span 
-                        className="font-semibold text-sm cursor-pointer hover:underline"
+    <div className="w-full lg:container lg:max-w-7xl py-4 lg:py-6">
+      <div className="flex gap-6">
+        <div className="flex-1 space-y-4 md:space-y-6 px-4 lg:px-0 min-w-0">
+          <h1 className="text-2xl font-bold">Community Feed</h1>
+          
+          {/* Category Filters */}
+          <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+            {categories.map((category) => (
+              <Badge
+                key={category}
+                variant={category === selectedFilter ? "default" : "outline"}
+                className="cursor-pointer whitespace-nowrap transition-all hover:bg-primary hover:text-primary-foreground"
+                onClick={() => setSelectedFilter(category)}
+              >
+                {category}
+              </Badge>
+            ))}
+          </div>
+          
+          <div className="space-y-4">
+            {mockCommunityPosts.map((post) => (
+              <Card key={post.id} className="overflow-hidden">
+                <CardContent className="p-0">
+                  {/* User Post Header */}
+                  <div className="p-4 space-y-3">
+                    <div className="flex items-start gap-3">
+                      <Avatar 
+                        className="h-10 w-10 cursor-pointer hover:opacity-80 transition-opacity"
                         onClick={() => navigate(`/profile/${post.user.username.slice(1)}`)}
                       >
-                        {post.user.name}
-                      </span>
-                      <span className="text-xs text-muted-foreground">{post.user.username}</span>
-                      <span className="text-xs text-muted-foreground">·</span>
-                      <span className="text-xs text-muted-foreground">{post.timestamp}</span>
-                    </div>
-                    <p className="text-sm mt-2 leading-relaxed">{post.thoughts}</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Embedded Market */}
-              <div className="px-4 pb-4">
-                <div className="border rounded-lg overflow-hidden">
-                  <MarketCard {...post.market} hideEngagement={true} />
-                </div>
-              </div>
-
-              {/* Engagement Actions */}
-              <div className="flex items-center gap-1 px-4 pb-3 border-t pt-3">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="flex-1 group"
-                >
-                  <div className="flex items-center gap-2 text-muted-foreground group-hover:text-destructive transition-colors">
-                    <Heart className="h-5 w-5" />
-                    <span className="text-sm">{post.likes}</span>
-                  </div>
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="flex-1 group"
-                  onClick={() => setExpandedComments({ ...expandedComments, [post.id]: !expandedComments[post.id] })}
-                >
-                  <div className="flex items-center gap-2 text-muted-foreground group-hover:text-primary transition-colors">
-                    <MessageCircle className="h-5 w-5" />
-                    <span className="text-sm">{post.comments}</span>
-                  </div>
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="flex-1 group"
-                >
-                  <div className="flex items-center gap-2 text-muted-foreground group-hover:text-primary transition-colors">
-                    <Share2 className="h-5 w-5" />
-                  </div>
-                </Button>
-              </div>
-
-              {/* Comments Section */}
-              {expandedComments[post.id] && (
-                <div className="border-t">
-                  <div className="p-4 space-y-4">
-                    {/* Comment Input */}
-                    <div className="flex gap-3">
-                      <Avatar className="h-8 w-8">
-                        <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=User" />
-                        <AvatarFallback>U</AvatarFallback>
+                        <AvatarImage src={post.user.avatar} alt={post.user.name} />
+                        <AvatarFallback>{post.user.name.slice(0, 2)}</AvatarFallback>
                       </Avatar>
-                      <div className="flex-1 space-y-2">
-                        <Textarea
-                          placeholder="Add a comment..."
-                          value={commentInputs[post.id] || ""}
-                          onChange={(e) => setCommentInputs({ ...commentInputs, [post.id]: e.target.value })}
-                          className="min-h-[60px] text-sm"
-                          maxLength={500}
-                        />
-                        <div className="flex justify-end">
-                          <Button size="sm" disabled={!commentInputs[post.id]?.trim()}>
-                            Comment
-                          </Button>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2">
+                          <span 
+                            className="font-semibold text-sm cursor-pointer hover:underline"
+                            onClick={() => navigate(`/profile/${post.user.username.slice(1)}`)}
+                          >
+                            {post.user.name}
+                          </span>
+                          <span className="text-xs text-muted-foreground">{post.user.username}</span>
+                          <span className="text-xs text-muted-foreground">·</span>
+                          <span className="text-xs text-muted-foreground">{post.timestamp}</span>
                         </div>
-                      </div>
-                    </div>
-                    
-                    {/* Sample Comments */}
-                    <div className="space-y-3 pt-2">
-                      <div className="flex gap-3">
-                        <Avatar className="h-8 w-8">
-                          <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=Comment1" />
-                          <AvatarFallback>JD</AvatarFallback>
-                        </Avatar>
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2">
-                            <span className="font-semibold text-xs">John Doe</span>
-                            <span className="text-xs text-muted-foreground">@johndoe</span>
-                            <span className="text-xs text-muted-foreground">·</span>
-                            <span className="text-xs text-muted-foreground">1h ago</span>
-                          </div>
-                          <p className="text-xs mt-1 text-muted-foreground">Great analysis! I agree with your take on this.</p>
-                        </div>
+                        <p className="text-sm mt-2 leading-relaxed">{post.thoughts}</p>
                       </div>
                     </div>
                   </div>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        ))}
+
+                  {/* Embedded Market */}
+                  <div className="px-4 pb-4">
+                    <div className="border rounded-lg overflow-hidden">
+                      <MarketCard {...post.market} hideEngagement={true} />
+                    </div>
+                  </div>
+
+                  {/* Engagement Actions */}
+                  <div className="flex items-center gap-1 px-4 pb-3 border-t pt-3">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="flex-1 group"
+                    >
+                      <div className="flex items-center gap-2 text-muted-foreground group-hover:text-destructive transition-colors">
+                        <Heart className="h-5 w-5" />
+                        <span className="text-sm">{post.likes}</span>
+                      </div>
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="flex-1 group"
+                      onClick={() => setExpandedComments({ ...expandedComments, [post.id]: !expandedComments[post.id] })}
+                    >
+                      <div className="flex items-center gap-2 text-muted-foreground group-hover:text-primary transition-colors">
+                        <MessageCircle className="h-5 w-5" />
+                        <span className="text-sm">{post.comments}</span>
+                      </div>
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="flex-1 group"
+                    >
+                      <div className="flex items-center gap-2 text-muted-foreground group-hover:text-primary transition-colors">
+                        <Share2 className="h-5 w-5" />
+                      </div>
+                    </Button>
+                  </div>
+
+                  {/* Comments Section */}
+                  {expandedComments[post.id] && (
+                    <div className="border-t">
+                      <div className="p-4 space-y-4">
+                        {/* Comment Input */}
+                        <div className="flex gap-3">
+                          <Avatar className="h-8 w-8">
+                            <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=User" />
+                            <AvatarFallback>U</AvatarFallback>
+                          </Avatar>
+                          <div className="flex-1 space-y-2">
+                            <Textarea
+                              placeholder="Add a comment..."
+                              value={commentInputs[post.id] || ""}
+                              onChange={(e) => setCommentInputs({ ...commentInputs, [post.id]: e.target.value })}
+                              className="min-h-[60px] text-sm"
+                              maxLength={500}
+                            />
+                            <div className="flex justify-end">
+                              <Button size="sm" disabled={!commentInputs[post.id]?.trim()}>
+                                Comment
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        {/* Sample Comments */}
+                        <div className="space-y-3 pt-2">
+                          <div className="flex gap-3">
+                            <Avatar className="h-8 w-8">
+                              <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=Comment1" />
+                              <AvatarFallback>JD</AvatarFallback>
+                            </Avatar>
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2">
+                                <span className="font-semibold text-xs">John Doe</span>
+                                <span className="text-xs text-muted-foreground">@johndoe</span>
+                                <span className="text-xs text-muted-foreground">·</span>
+                                <span className="text-xs text-muted-foreground">1h ago</span>
+                              </div>
+                              <p className="text-xs mt-1 text-muted-foreground">Great analysis! I agree with your take on this.</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+        <NewsSidebar />
       </div>
     </div>
   );
