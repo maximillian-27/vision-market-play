@@ -1,31 +1,10 @@
-import { useState } from "react";
 import { FeedFilters } from "@/components/FeedFilters";
 import { MarketCard } from "@/components/MarketCard";
-import { Card, CardContent } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Heart, MessageCircle, Share2 } from "lucide-react";
 import bitcoinImage from "@/assets/bitcoin-market.jpg";
 import nbaImage from "@/assets/nba-championship.jpg";
 import iphoneImage from "@/assets/foldable-iphone.jpg";
 import fedImage from "@/assets/federal-reserve.jpg";
 import aiImage from "@/assets/ai-customer-service.jpg";
-
-interface CommunityPost {
-  id: string;
-  user: {
-    name: string;
-    avatar: string;
-    username: string;
-  };
-  thoughts: string;
-  timestamp: string;
-  likes: number;
-  comments: number;
-  market: any;
-}
 
 const mockMarkets = [
   {
@@ -117,214 +96,17 @@ const mockMarkets = [
   },
 ];
 
-const mockCommunityPosts: CommunityPost[] = [
-  {
-    id: "c1",
-    user: {
-      name: "Alex Thompson",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=AlexT",
-      username: "@alexthompson"
-    },
-    thoughts: "This is actually more likely than people think. Institutional adoption is accelerating and the ETF approvals have brought in serious capital. I'm betting YES on this one.",
-    timestamp: "2h ago",
-    likes: 45,
-    comments: 12,
-    market: mockMarkets[0]
-  },
-  {
-    id: "c2",
-    user: {
-      name: "Maria Garcia",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Maria",
-      username: "@mariagarcia"
-    },
-    thoughts: "Apple typically waits until technology matures before adopting it. Looking at their track record with features like NFC, wireless charging, etc., I think they'll skip 2025 and wait for gen 2 foldable tech.",
-    timestamp: "4h ago",
-    likes: 67,
-    comments: 23,
-    market: mockMarkets[2]
-  },
-  {
-    id: "c3",
-    user: {
-      name: "David Kim",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=David",
-      username: "@davidkim"
-    },
-    thoughts: "The Fed has been pretty clear about their stance. With inflation cooling down but still above target, I think they hold steady. Too risky to cut now.",
-    timestamp: "6h ago",
-    likes: 89,
-    comments: 31,
-    market: mockMarkets[3]
-  },
-  {
-    id: "c4",
-    user: {
-      name: "Sophie Chen",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sophie",
-      username: "@sophiechen"
-    },
-    thoughts: "We're already seeing this happen. Major companies are replacing tier-1 support with AI chatbots. The question isn't IF but WHEN we hit 25%. My company just laid off 30% of our support team last month.",
-    timestamp: "8h ago",
-    likes: 134,
-    comments: 48,
-    market: mockMarkets[4]
-  },
-  {
-    id: "c5",
-    user: {
-      name: "James Wilson",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=James",
-      username: "@jameswilson"
-    },
-    thoughts: "Lakers have the star power but their depth is questionable. Celtics are the most well-rounded team this season. I'm putting my money on Boston.",
-    timestamp: "10h ago",
-    likes: 56,
-    comments: 19,
-    market: mockMarkets[1]
-  }
-];
-
 export default function Feed() {
-  const [commentInputs, setCommentInputs] = useState<{ [key: string]: string }>({});
-  const [expandedComments, setExpandedComments] = useState<{ [key: string]: boolean }>({});
-
   return (
     <div className="w-full md:container md:max-w-2xl md:py-6 space-y-4 md:space-y-6">
       <div className="px-4 py-4 md:py-0">
         <FeedFilters />
       </div>
-      
-      <Tabs defaultValue="creators" className="w-full">
-        <div className="px-4 md:px-4">
-          <TabsList className="w-full grid grid-cols-2">
-            <TabsTrigger value="creators">Creators Feed</TabsTrigger>
-            <TabsTrigger value="community">Community Feed</TabsTrigger>
-          </TabsList>
-        </div>
-
-        <TabsContent value="creators" className="space-y-0 md:space-y-4 md:px-4 mt-4">
-          {mockMarkets.map((market, index) => (
-            <MarketCard key={index} {...market} />
-          ))}
-        </TabsContent>
-
-        <TabsContent value="community" className="space-y-4 md:px-4 mt-4">
-          {mockCommunityPosts.map((post) => (
-            <Card key={post.id} className="overflow-hidden md:rounded-lg rounded-none border-x-0 md:border-x">
-              <CardContent className="p-0">
-                {/* User Post Header */}
-                <div className="p-4 space-y-3">
-                  <div className="flex items-start gap-3">
-                    <Avatar className="h-10 w-10">
-                      <AvatarImage src={post.user.avatar} alt={post.user.name} />
-                      <AvatarFallback>{post.user.name.slice(0, 2)}</AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <span className="font-semibold text-sm">{post.user.name}</span>
-                        <span className="text-xs text-muted-foreground">{post.user.username}</span>
-                        <span className="text-xs text-muted-foreground">·</span>
-                        <span className="text-xs text-muted-foreground">{post.timestamp}</span>
-                      </div>
-                      <p className="text-sm mt-2 leading-relaxed">{post.thoughts}</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Embedded Market */}
-                <div className="px-4 pb-4">
-                  <div className="border rounded-lg overflow-hidden">
-                    <MarketCard {...post.market} />
-                  </div>
-                </div>
-
-                {/* Engagement Actions */}
-                <div className="flex items-center gap-1 px-4 pb-3 border-t pt-3">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="flex-1 group"
-                  >
-                    <div className="flex items-center gap-2 text-muted-foreground group-hover:text-destructive transition-colors">
-                      <Heart className="h-5 w-5" />
-                      <span className="text-sm">{post.likes}</span>
-                    </div>
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="flex-1 group"
-                    onClick={() => setExpandedComments({ ...expandedComments, [post.id]: !expandedComments[post.id] })}
-                  >
-                    <div className="flex items-center gap-2 text-muted-foreground group-hover:text-primary transition-colors">
-                      <MessageCircle className="h-5 w-5" />
-                      <span className="text-sm">{post.comments}</span>
-                    </div>
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="flex-1 group"
-                  >
-                    <div className="flex items-center gap-2 text-muted-foreground group-hover:text-primary transition-colors">
-                      <Share2 className="h-5 w-5" />
-                    </div>
-                  </Button>
-                </div>
-
-                {/* Comments Section */}
-                {expandedComments[post.id] && (
-                  <div className="border-t">
-                    <div className="p-4 space-y-4">
-                      {/* Comment Input */}
-                      <div className="flex gap-3">
-                        <Avatar className="h-8 w-8">
-                          <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=User" />
-                          <AvatarFallback>U</AvatarFallback>
-                        </Avatar>
-                        <div className="flex-1 space-y-2">
-                          <Textarea
-                            placeholder="Add a comment..."
-                            value={commentInputs[post.id] || ""}
-                            onChange={(e) => setCommentInputs({ ...commentInputs, [post.id]: e.target.value })}
-                            className="min-h-[60px] text-sm"
-                            maxLength={500}
-                          />
-                          <div className="flex justify-end">
-                            <Button size="sm" disabled={!commentInputs[post.id]?.trim()}>
-                              Comment
-                            </Button>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      {/* Sample Comments */}
-                      <div className="space-y-3 pt-2">
-                        <div className="flex gap-3">
-                          <Avatar className="h-8 w-8">
-                            <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=Comment1" />
-                            <AvatarFallback>JD</AvatarFallback>
-                          </Avatar>
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2">
-                              <span className="font-semibold text-xs">John Doe</span>
-                              <span className="text-xs text-muted-foreground">@johndoe</span>
-                              <span className="text-xs text-muted-foreground">·</span>
-                              <span className="text-xs text-muted-foreground">1h ago</span>
-                            </div>
-                            <p className="text-xs mt-1 text-muted-foreground">Great analysis! I agree with your take on this.</p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          ))}
-        </TabsContent>
-      </Tabs>
+      <div className="space-y-0 md:space-y-4 md:px-4">
+        {mockMarkets.map((market, index) => (
+          <MarketCard key={index} {...market} />
+        ))}
+      </div>
     </div>
   );
 }

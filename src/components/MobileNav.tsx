@@ -1,11 +1,12 @@
-import { Home, Newspaper, Users, User } from "lucide-react";
+import { Home, Newspaper, Users, User, MessageSquare } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
 
 const items = [
   { title: "Feed", url: "/", icon: Home },
+  { title: "Community", url: "/community-feed", icon: MessageSquare },
   { title: "News", url: "/news", icon: Newspaper },
-  { title: "Community", url: "/community", icon: Users },
+  { title: "Leaderboard", url: "/community", icon: Users },
   { title: "Profile", url: "/profile", icon: User },
 ];
 

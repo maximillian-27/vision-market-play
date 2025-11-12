@@ -9,6 +9,7 @@ import { Header } from "@/components/Header";
 import { MobileNav } from "@/components/MobileNav";
 import { useIsMobile } from "@/hooks/use-mobile";
 import Feed from "./pages/Feed";
+import CommunityFeed from "./pages/CommunityFeed";
 import News from "./pages/News";
 import Community from "./pages/Community";
 import Profile from "./pages/Profile";
@@ -29,6 +30,7 @@ function AppContent() {
           <Routes>
             <Route path="/" element={<Feed />} />
             <Route path="/market/:id" element={<MarketDetail />} />
+            <Route path="/community-feed" element={<CommunityFeed />} />
             <Route path="/news" element={<News />} />
             <Route path="/community" element={<Community />} />
             <Route path="/profile" element={<Profile />} />
