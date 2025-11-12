@@ -1,4 +1,4 @@
-import { SlidersHorizontal, X } from "lucide-react";
+import { SlidersHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
@@ -12,18 +12,6 @@ export function FeedFilters() {
 
   return (
     <div className="space-y-4 sticky top-16 z-10 bg-background/95 backdrop-blur-sm py-2 -mt-2">
-      {/* Mobile Filter Button */}
-      <div className="flex justify-end md:hidden">
-        <Button 
-          variant={showFilters ? "default" : "outline"} 
-          className="h-10 px-4 gap-2"
-          onClick={() => setShowFilters(!showFilters)}
-        >
-          {showFilters ? <X className="h-4 w-4" /> : <SlidersHorizontal className="h-4 w-4" />}
-          <span className="text-sm">Filters</span>
-        </Button>
-      </div>
-
       {/* Filter Panel */}
       {showFilters && (
         <div className="rounded-xl border border-border/40 bg-muted/30 p-4 animate-in fade-in-0 slide-in-from-top-2">
@@ -93,14 +81,14 @@ export function FeedFilters() {
 
       {/* Category Tags with Filter Button */}
       <div className="flex gap-2 items-center">
-        {/* Filter Button - Desktop only */}
+        {/* Filter Button - Icon only */}
         <Button 
           variant={showFilters ? "default" : "outline"} 
-          className="hidden md:flex h-10 px-3 gap-2"
+          size="icon"
+          className="h-10 w-10 flex-shrink-0"
           onClick={() => setShowFilters(!showFilters)}
         >
           <SlidersHorizontal className="h-4 w-4" />
-          <span className="text-sm font-medium">Filters</span>
         </Button>
         
         <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
