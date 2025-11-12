@@ -1,5 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { ExternalLink } from "lucide-react";
+import { FeedFilters } from "@/components/FeedFilters";
 
 const newsItems = [
   {
@@ -23,6 +24,9 @@ export default function News() {
   return (
     <div className="w-full md:container md:max-w-2xl py-4 md:py-6 space-y-4">
       <h1 className="text-2xl font-bold mb-4 md:mb-6 px-4">Latest News</h1>
+      <div className="px-4">
+        <FeedFilters />
+      </div>
       <div className="space-y-0 md:space-y-4 md:px-4">
         {newsItems.map((item, index) => (
           <Card key={index} className="cursor-pointer transition-all hover:shadow-md md:rounded-lg rounded-none border-x-0 md:border-x border-t-0 md:border-t first:border-t">
