@@ -1,5 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { Clock, TrendingUp, BadgeCheck } from "lucide-react";
+import { Clock, TrendingUp, BadgeCheck, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
@@ -120,8 +120,8 @@ export function MarketGridCard({
                     }}
                   >
                     <span className="text-[9px] sm:text-[10px] font-medium text-muted-foreground truncate flex-1">{outcome.label}</span>
-                    <span className="absolute left-1/2 -translate-x-1/2 text-[8px] sm:text-[9px] text-muted-foreground/30 font-medium pointer-events-none">
-                      100$...{payout}$
+                    <span className="absolute left-1/2 -translate-x-1/2 text-[8px] sm:text-[9px] text-muted-foreground/30 font-medium pointer-events-none flex items-center gap-0.5">
+                      100$ <ArrowRight className="h-2 w-2" /> {payout}$
                     </span>
                     <span className="text-xs sm:text-sm font-bold text-foreground ml-2">{outcome.price}%</span>
                   </button>
