@@ -16,18 +16,18 @@ export function FeedFilters() {
       {/* Search and Filter Button */}
       <div className="flex gap-2">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
           <Input 
             placeholder="Search markets..." 
-            className="pl-9"
+            className="pl-10 h-12 text-base"
           />
         </div>
         <Button 
           variant={showFilters ? "default" : "outline"} 
-          size="icon"
+          className="h-12 w-12"
           onClick={() => setShowFilters(!showFilters)}
         >
-          {showFilters ? <X className="h-4 w-4" /> : <SlidersHorizontal className="h-4 w-4" />}
+          {showFilters ? <X className="h-5 w-5" /> : <SlidersHorizontal className="h-5 w-5" />}
         </Button>
       </div>
 
@@ -36,9 +36,9 @@ export function FeedFilters() {
         <div className="rounded-xl border border-border/40 bg-muted/30 p-4 animate-in fade-in-0 slide-in-from-top-2">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             <div className="space-y-2">
-              <Label className="text-xs font-medium text-muted-foreground">Sort By</Label>
+              <Label className="text-sm font-medium text-muted-foreground">Sort By</Label>
               <Select defaultValue="trending">
-                <SelectTrigger className="h-9 border-border/40">
+                <SelectTrigger className="h-11 border-border/40 text-base">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -52,9 +52,9 @@ export function FeedFilters() {
             </div>
 
             <div className="space-y-2">
-              <Label className="text-xs font-medium text-muted-foreground">Region</Label>
+              <Label className="text-sm font-medium text-muted-foreground">Region</Label>
               <Select defaultValue="global">
-                <SelectTrigger className="h-9 border-border/40">
+                <SelectTrigger className="h-11 border-border/40 text-base">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -67,9 +67,9 @@ export function FeedFilters() {
             </div>
 
             <div className="space-y-2">
-              <Label className="text-xs font-medium text-muted-foreground">Status</Label>
+              <Label className="text-sm font-medium text-muted-foreground">Status</Label>
               <Select defaultValue="open">
-                <SelectTrigger className="h-9 border-border/40">
+                <SelectTrigger className="h-11 border-border/40 text-base">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -81,9 +81,9 @@ export function FeedFilters() {
             </div>
 
             <div className="space-y-2">
-              <Label className="text-xs font-medium text-muted-foreground">Timeframe</Label>
+              <Label className="text-sm font-medium text-muted-foreground">Timeframe</Label>
               <Select defaultValue="all">
-                <SelectTrigger className="h-9 border-border/40">
+                <SelectTrigger className="h-11 border-border/40 text-base">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -104,7 +104,7 @@ export function FeedFilters() {
           <Badge
             key={category}
             variant={category === "All" ? "default" : "outline"}
-            className="cursor-pointer whitespace-nowrap transition-all hover:bg-primary hover:text-primary-foreground border-border/40 text-xs font-medium px-3 py-1"
+            className="cursor-pointer whitespace-nowrap transition-all hover:bg-primary hover:text-primary-foreground border-border/40 text-sm font-medium px-4 py-2"
           >
             {category}
           </Badge>

@@ -139,8 +139,8 @@ export function MarketGridCard({
                       // Handle bet action
                     }}
                   >
-                    <div className="text-sm font-bold">{outcome.price}¢</div>
-                    <div className="text-[9px] md:text-[10px] opacity-90 truncate">{outcome.label}</div>
+                    <div className="text-base md:text-lg font-bold">{outcome.price}¢</div>
+                    <div className="text-xs md:text-sm opacity-90 truncate">{outcome.label}</div>
                   </button>
                 ))}
               </div>
