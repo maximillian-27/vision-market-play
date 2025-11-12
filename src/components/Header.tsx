@@ -66,10 +66,9 @@ export function Header() {
                   key={item.title}
                   variant="ghost"
                   size="sm"
-                  className="gap-2 font-medium"
+                  className="font-medium"
                   onClick={() => navigate(item.url)}
                 >
-                  <item.icon className="h-4 w-4" />
                   {item.title}
                 </Button>
               ))}
