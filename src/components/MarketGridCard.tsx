@@ -61,11 +61,10 @@ export function MarketGridCard({
       className="group overflow-hidden transition-all hover:shadow-md cursor-pointer border-border/50 animate-fade-in bg-card"
     >
       <CardContent className="p-0">
-        {/* Mobile: Horizontal layout, Desktop: Vertical */}
-        <div className="md:flex-col flex">
-          {/* Market Image */}
+        <div className="flex flex-col">
+          {/* Market Image - Compact */}
           <div 
-            className="relative md:aspect-square aspect-[4/3] md:w-full w-[35%] overflow-hidden bg-muted/50 flex-shrink-0"
+            className="relative aspect-video w-full overflow-hidden bg-muted/50 flex-shrink-0"
             onClick={() => navigate(`/market/${id}`)}
           >
             <img 
@@ -74,9 +73,9 @@ export function MarketGridCard({
               className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
             />
             
-            {/* Creator info - desktop only */}
+            {/* Creator info - overlay on image */}
             <div 
-              className="hidden md:flex absolute top-2 left-2 items-center gap-1.5 bg-black/60 backdrop-blur-sm rounded-full px-2 py-1 hover:bg-black/70 transition-colors z-10"
+              className="absolute top-2 left-2 items-center gap-1.5 bg-black/60 backdrop-blur-sm rounded-full px-2 py-1 hover:bg-black/70 transition-colors z-10 hidden md:flex"
               onClick={(e) => {
                 e.stopPropagation();
                 const profilePath = creator.isCreator !== false 
@@ -85,83 +84,60 @@ export function MarketGridCard({
                 navigate(profilePath);
               }}
             >
-              <Avatar className="h-5 w-5 border border-white/20">
+              <Avatar className="h-4 w-4 border border-white/20">
                 <AvatarImage src={creator.avatar} alt={creator.name} />
-                <AvatarFallback className="text-xs">{creator.name.slice(0, 2).toUpperCase()}</AvatarFallback>
+                <AvatarFallback className="text-[8px]">{creator.name.slice(0, 2).toUpperCase()}</AvatarFallback>
               </Avatar>
-              <span className="text-white text-xs font-medium">{creator.name}</span>
+              <span className="text-white text-[10px] font-medium">{creator.name}</span>
               {creator.isCreator !== false && (
-                <BadgeCheck className="h-3 w-3 text-white fill-white/30 flex-shrink-0" />
+                <BadgeCheck className="h-2.5 w-2.5 text-white fill-white/30 flex-shrink-0" />
               )}
             </div>
           </div>
 
-          {/* Content - beside image on mobile, below on desktop */}
-          <div className="p-3 md:p-4 space-y-2.5 flex-1 flex flex-col">
-            {/* Creator info - mobile only */}
-            <div 
-              className="flex md:hidden items-center gap-1.5 pb-1.5 border-b border-border/40"
-              onClick={(e) => {
-                e.stopPropagation();
-                const profilePath = creator.isCreator !== false 
-                  ? `/creator/${creator.id || creator.name.toLowerCase().replace(/\s+/g, '-')}`
-                  : `/profile/${creator.id || creator.name.toLowerCase().replace(/\s+/g, '-')}`;
-                navigate(profilePath);
-              }}
-            >
-              <Avatar className="h-6 w-6">
-                <AvatarImage src={creator.avatar} alt={creator.name} />
-                <AvatarFallback className="text-xs">{creator.name.slice(0, 2).toUpperCase()}</AvatarFallback>
-              </Avatar>
-              <span className="text-xs font-medium flex-1 truncate">{creator.name}</span>
-              {creator.isCreator !== false && (
-                <BadgeCheck className="h-3.5 w-3.5 text-primary fill-primary/20 flex-shrink-0" />
-              )}
-            </div>
-
+          {/* Content */}
+          <div className="p-2 space-y-2 flex-1 flex flex-col">
             {/* Title */}
             <h3 
-              className="text-[13px] md:text-sm font-semibold leading-tight line-clamp-2 md:min-h-[2.5rem] group-hover:text-primary transition-colors cursor-pointer flex-1"
+              className="text-xs font-semibold leading-tight line-clamp-2 min-h-[2rem] group-hover:text-primary transition-colors cursor-pointer"
               onClick={() => navigate(`/market/${id}`)}
             >
               {title}
             </h3>
 
-            {/* Outcomes - Clickable buttons */}
-            <div className="space-y-1.5">
-              <div className="grid grid-cols-2 gap-2">
-                {visibleOutcomes.map((outcome, index) => (
-                  <button 
-                    key={index}
-                    className={`text-center rounded-lg px-2 md:px-3 py-2 md:py-2.5 border transition-all ${getOutcomeColor(outcome.color)}`}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      // Handle bet action
-                    }}
-                  >
-                    <div className="text-lg md:text-xl font-bold text-foreground">{outcome.price}¢</div>
-                    <div className="text-xs md:text-sm text-muted-foreground font-medium truncate">{outcome.label}</div>
-                  </button>
-                ))}
-              </div>
+            {/* Outcomes - Stacked vertically */}
+            <div className="space-y-1">
+              {visibleOutcomes.map((outcome, index) => (
+                <button 
+                  key={index}
+                  className={`w-full text-left rounded-md px-2 py-1.5 border transition-all ${getOutcomeColor(outcome.color)} flex items-center justify-between`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    // Handle bet action
+                  }}
+                >
+                  <span className="text-[10px] font-medium text-muted-foreground truncate flex-1">{outcome.label}</span>
+                  <span className="text-sm font-bold text-foreground ml-2">{outcome.price}¢</span>
+                </button>
+              ))}
               {remainingCount > 0 && (
                 <button 
-                  className="w-full text-center text-[10px] md:text-xs text-muted-foreground hover:text-foreground transition-colors py-0.5"
+                  className="w-full text-center text-[9px] text-muted-foreground hover:text-foreground transition-colors py-0.5"
                   onClick={() => navigate(`/market/${id}`)}
                 >
-                  +{remainingCount} more option{remainingCount > 1 ? 's' : ''}
+                  +{remainingCount} more
                 </button>
               )}
             </div>
             
             {/* Stats */}
-            <div className="flex items-center justify-between text-[10px] md:text-xs text-muted-foreground pt-1 border-t border-border/40">
+            <div className="flex items-center justify-between text-[9px] text-muted-foreground pt-1 border-t border-border/40">
               <div className="flex items-center gap-1">
-                <TrendingUp className="h-3 w-3 flex-shrink-0" />
+                <TrendingUp className="h-2.5 w-2.5 flex-shrink-0" />
                 <span className="truncate">{volume}</span>
               </div>
               <div className="flex items-center gap-1">
-                <Clock className="h-3 w-3 flex-shrink-0" />
+                <Clock className="h-2.5 w-2.5 flex-shrink-0" />
                 <span className="truncate">{endsIn}</span>
               </div>
             </div>
