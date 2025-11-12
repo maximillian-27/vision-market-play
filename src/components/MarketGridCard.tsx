@@ -53,8 +53,8 @@ export function MarketGridCard({
     }
   };
 
-  const visibleOutcomes = displayOutcomes.slice(0, 4);
-  const remainingCount = displayOutcomes.length - 4;
+  const visibleOutcomes = displayOutcomes.slice(0, 2);
+  const remainingCount = displayOutcomes.length - 2;
 
   return (
     <Card 
@@ -121,12 +121,12 @@ export function MarketGridCard({
                 </button>
               ))}
               {remainingCount > 0 && (
-                <button 
-                  className="w-full text-center text-[9px] text-muted-foreground hover:text-foreground transition-colors py-0.5"
+                <div 
+                  className="w-full text-center text-[9px] text-muted-foreground/60 py-1 cursor-pointer hover:text-muted-foreground transition-colors"
                   onClick={() => navigate(`/market/${id}`)}
                 >
-                  +{remainingCount} more
-                </button>
+                  ⋯ {remainingCount} more
+                </div>
               )}
             </div>
             
