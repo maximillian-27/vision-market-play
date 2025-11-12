@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Globe, LogOut, Settings, User, Wallet, TrendingUp } from "lucide-react";
+import pollgyLogo from "@/assets/pollgy-logo.png";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -43,9 +44,11 @@ export function Header() {
         <div className="flex h-14 items-center justify-between px-4 lg:px-6">
           <div className="flex items-center gap-3 flex-1">
             {!isMobile && <SidebarTrigger />}
-            <h1 className="font-bold text-primary text-xl">
-              PredictX
-            </h1>
+            <img 
+              src={pollgyLogo} 
+              alt="Pollgy" 
+              className="h-6"
+            />
             
             {/* Language Toggle */}
             <DropdownMenu>
