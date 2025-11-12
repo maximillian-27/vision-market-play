@@ -1,4 +1,4 @@
-import { Home, Newspaper, Users, User, MessageSquare } from "lucide-react";
+import { Home, Newspaper, Users, MessageSquare } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
 
@@ -18,7 +18,6 @@ const items = [
   { title: "Community Feed", url: "/community-feed", icon: MessageSquare },
   { title: "News", url: "/news", icon: Newspaper },
   { title: "Community", url: "/community", icon: Users },
-  { title: "Profile", url: "/profile", icon: User },
 ];
 
 export function AppSidebar() {
