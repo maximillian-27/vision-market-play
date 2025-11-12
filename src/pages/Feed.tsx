@@ -239,7 +239,7 @@ export default function Feed() {
         <div className="py-4 lg:py-0">
           <FeedFilters />
         </div>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3 md:gap-4">
           {mockMarkets.map((market, index) => (
             <MarketGridCard 
               key={index} 
