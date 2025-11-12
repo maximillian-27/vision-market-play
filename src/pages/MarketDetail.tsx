@@ -124,24 +124,17 @@ export default function MarketDetail() {
 
             {/* Outcome Buttons */}
             <div className={`grid gap-3 ${market.outcomes.length === 2 ? 'grid-cols-2' : 'grid-cols-3'}`}>
-              {market.outcomes.map((outcome: any, index: number) => {
-                const percentage = outcome.price;
-                const potentialReturn = Math.round((100 / (outcome.price / 100)));
-                
-                return (
-                  <Button
-                    key={index}
-                    variant="outline"
-                    size="lg"
-                    className={`flex-col h-auto py-4 ${getOutcomeColor(outcome.color)}`}
-                  >
-                    <span className="text-sm mb-1">{outcome.label}</span>
-                    <span className="font-bold text-2xl">{outcome.price}¢</span>
-                    <span className="text-xs opacity-70 mt-1">{percentage}%</span>
-                    <span className="text-xs opacity-60 mt-0.5">$100 → ${potentialReturn}</span>
-                  </Button>
-                );
-              })}
+              {market.outcomes.map((outcome: any, index: number) => (
+                <Button
+                  key={index}
+                  variant="outline"
+                  size="lg"
+                  className={`flex-col h-auto py-4 ${getOutcomeColor(outcome.color)}`}
+                >
+                  <span className="font-bold text-lg">{outcome.price}¢</span>
+                  <span className="text-sm">{outcome.label}</span>
+                </Button>
+              ))}
             </div>
           </CardHeader>
         </Card>

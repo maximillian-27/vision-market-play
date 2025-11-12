@@ -90,29 +90,22 @@ export function MarketCard({ id, creator, title, subtitle, image, outcomes, yesP
 
           {/* Outcome Buttons */}
           <div className={`grid gap-2 ${displayOutcomes.length === 2 ? 'grid-cols-2' : displayOutcomes.length === 3 ? 'grid-cols-3' : 'grid-cols-2'}`}>
-            {displayOutcomes.map((outcome, index) => {
-              const percentage = outcome.price;
-              const potentialReturn = Math.round((100 / (outcome.price / 100)));
-              
-              return (
-                <Button 
-                  key={index}
-                  variant="outline" 
-                  className={`flex-1 transition-all ${getOutcomeColor(outcome.color)}`}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    // Handle bet action here
-                  }}
-                >
-                  <div className="flex flex-col items-center w-full gap-0.5">
-                    <span className="font-semibold text-xs md:text-sm">{outcome.label}</span>
-                    <span className="text-xs font-bold">{outcome.price}¢</span>
-                    <span className="text-[10px] opacity-70">{percentage}%</span>
-                    <span className="text-[10px] opacity-60">$100 → ${potentialReturn}</span>
-                  </div>
-                </Button>
-              );
-            })}
+            {displayOutcomes.map((outcome, index) => (
+              <Button 
+                key={index}
+                variant="outline" 
+                className={`flex-1 transition-all ${getOutcomeColor(outcome.color)}`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  // Handle bet action here
+                }}
+              >
+                <div className="flex flex-col items-center w-full">
+                  <span className="font-semibold text-xs md:text-sm">{outcome.label}</span>
+                  <span className="text-xs">{outcome.price}¢</span>
+                </div>
+              </Button>
+            ))}
           </div>
         </div>
       </CardContent>
