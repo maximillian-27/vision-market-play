@@ -101,7 +101,7 @@ export function Header() {
                     </Avatar>
                   </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56 z-50">
+                <DropdownMenuContent align="end" className="w-56 z-50 bg-popover">
                   {/* Mobile-only Portfolio & Cash */}
                   <div className="sm:hidden px-2 py-3 space-y-2">
                     <div className="flex items-center justify-between text-sm">
@@ -131,9 +131,18 @@ export function Header() {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <Button size={isMobile ? "sm" : "default"} onClick={handleLogin}>
-                Login
-              </Button>
+              <>
+                <Button 
+                  variant="ghost" 
+                  size={isMobile ? "sm" : "default"}
+                  className="text-muted-foreground opacity-60 hover:opacity-100 transition-opacity"
+                >
+                  How it works?
+                </Button>
+                <Button size={isMobile ? "sm" : "default"} onClick={handleLogin}>
+                  Login / Sign up
+                </Button>
+              </>
             )}
           </div>
         </div>
