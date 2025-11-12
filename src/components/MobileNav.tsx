@@ -19,7 +19,7 @@ export function MobileNav() {
   return (
     <>
       <Dialog open={showSearch} onOpenChange={setShowSearch}>
-        <DialogContent className="top-[20%] translate-y-0">
+        <DialogContent className="top-2 translate-y-0">
           <DialogHeader>
             <DialogTitle>Search Markets</DialogTitle>
           </DialogHeader>
