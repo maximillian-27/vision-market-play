@@ -1,6 +1,5 @@
 import { FeedFilters } from "@/components/FeedFilters";
 import { MarketCard } from "@/components/MarketCard";
-import { NewsSidebar } from "@/components/NewsSidebar";
 import bitcoinImage from "@/assets/bitcoin-market.jpg";
 import nbaImage from "@/assets/nba-championship.jpg";
 import iphoneImage from "@/assets/foldable-iphone.jpg";
@@ -109,24 +108,14 @@ const mockMarkets = [
 
 export default function Feed() {
   return (
-    <div className="w-full md:container md:max-w-7xl md:py-6">
-      <div className="flex gap-6">
-        {/* Main Feed */}
-        <div className="flex-1 space-y-4 md:space-y-6">
-          <div className="px-4 py-4 md:py-0">
-            <FeedFilters />
-          </div>
-          <div className="space-y-0 md:space-y-4 md:px-4">
-            {mockMarkets.map((market, index) => (
-              <MarketCard key={index} {...market} />
-            ))}
-          </div>
-        </div>
-
-        {/* News Sidebar - Desktop Only */}
-        <div className="hidden lg:block">
-          <NewsSidebar />
-        </div>
+    <div className="w-full md:container md:max-w-2xl md:py-6 space-y-4 md:space-y-6">
+      <div className="px-4 py-4 md:py-0">
+        <FeedFilters />
+      </div>
+      <div className="space-y-0 md:space-y-4 md:px-4">
+        {mockMarkets.map((market, index) => (
+          <MarketCard key={index} {...market} />
+        ))}
       </div>
     </div>
   );
