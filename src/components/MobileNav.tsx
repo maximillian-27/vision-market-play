@@ -1,4 +1,4 @@
-import { Home, Newspaper, Users, MessageSquare } from "lucide-react";
+import { Home, Newspaper, Users, MessageSquare, HelpCircle } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
 
@@ -33,6 +33,12 @@ export function MobileNav() {
             </NavLink>
           );
         })}
+        <button className="flex flex-col items-center justify-center flex-1 h-full gap-1 transition-colors">
+          <HelpCircle className="h-5 w-5 text-muted-foreground opacity-50" />
+          <span className="text-xs text-muted-foreground opacity-50">
+            Help
+          </span>
+        </button>
       </div>
     </nav>
   );

@@ -91,7 +91,20 @@ export function Header() {
             )}
 
             {/* Login Button or Profile Menu */}
-            {isLoggedIn ? (
+            {!isLoggedIn ? (
+              <>
+                <Button 
+                  variant="ghost" 
+                  size="default"
+                  className="hidden md:flex text-muted-foreground opacity-60 hover:opacity-100 transition-opacity"
+                >
+                  How it works?
+                </Button>
+                <Button size={isMobile ? "sm" : "default"} onClick={handleLogin}>
+                  Login / Sign up
+                </Button>
+              </>
+            ) : (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button className="focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-full">
@@ -130,19 +143,6 @@ export function Header() {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-            ) : (
-              <>
-                <Button 
-                  variant="ghost" 
-                  size={isMobile ? "sm" : "default"}
-                  className="text-muted-foreground opacity-60 hover:opacity-100 transition-opacity"
-                >
-                  How it works?
-                </Button>
-                <Button size={isMobile ? "sm" : "default"} onClick={handleLogin}>
-                  Login / Sign up
-                </Button>
-              </>
             )}
           </div>
         </div>
