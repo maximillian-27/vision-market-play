@@ -46,6 +46,21 @@ export function Header() {
             <h1 className="font-bold text-primary text-xl">
               PredictX
             </h1>
+            
+            {/* Language Toggle */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-9 w-9">
+                  <Globe className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="z-50">
+                <DropdownMenuItem>English</DropdownMenuItem>
+                <DropdownMenuItem>Español</DropdownMenuItem>
+                <DropdownMenuItem>Français</DropdownMenuItem>
+                <DropdownMenuItem>Deutsch</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
           
           <div className="flex items-center gap-2">
@@ -74,21 +89,6 @@ export function Header() {
                 </Button>
               </>
             )}
-
-            {/* Language Toggle */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-9 w-9">
-                  <Globe className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="z-50">
-                <DropdownMenuItem>English</DropdownMenuItem>
-                <DropdownMenuItem>Español</DropdownMenuItem>
-                <DropdownMenuItem>Français</DropdownMenuItem>
-                <DropdownMenuItem>Deutsch</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
 
             {/* Login Button or Profile Menu */}
             {isLoggedIn ? (
