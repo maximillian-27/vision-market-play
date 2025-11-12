@@ -41,7 +41,7 @@ export function Header() {
 
   return (
     <>
-      <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-20 w-full">
+      <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 fixed top-0 z-50 w-full">
         <div className="flex h-14 items-center justify-between px-4 lg:px-6 gap-4">
           <div className="flex items-center gap-3">
             {!isMobile && <SidebarTrigger />}

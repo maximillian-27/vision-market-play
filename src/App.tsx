@@ -26,7 +26,7 @@ function AppContent() {
     <SidebarProvider>
       <div className="min-h-screen flex w-full relative">
         {!isMobile && <AppSidebar />}
-        <main className={`flex-1 w-full ${isMobile ? 'pb-16 overflow-x-hidden' : ''}`}>
+        <main className={`flex-1 w-full ${isMobile ? 'pb-16 overflow-x-hidden pt-14' : 'pt-14'}`}>
           <Header />
           <Routes>
             <Route path="/" element={<Feed />} />
