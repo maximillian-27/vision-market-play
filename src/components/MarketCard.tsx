@@ -3,6 +3,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Clock, TrendingUp } from "lucide-react";
 
+interface Outcome {
+  label: string;
+  price: number;
+  color?: string;
+}
+
 interface MarketCardProps {
   creator: {
     name: string;
@@ -10,15 +16,30 @@ interface MarketCardProps {
   };
   title: string;
   image: string;
-  yesPrice: number;
-  noPrice: number;
+  outcomes?: Outcome[];
+  yesPrice?: number;
+  noPrice?: number;
   volume: string;
   endsIn: string;
 }
 
-export function MarketCard({ creator, title, image, yesPrice, noPrice, volume, endsIn }: MarketCardProps) {
+export function MarketCard({ creator, title, image, outcomes, yesPrice, noPrice, volume, endsIn }: MarketCardProps) {
+  // Use outcomes if provided, otherwise fallback to binary yes/no
+  const displayOutcomes = outcomes || [
+    { label: "Yes", price: yesPrice || 0, color: "success" },
+    { label: "No", price: noPrice || 0, color: "destructive" }
+  ];
+
+  const getOutcomeColor = (color?: string) => {
+    switch (color) {
+      case "success": return "border-success text-success hover:bg-success hover:text-success-foreground";
+      case "destructive": return "border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground";
+      default: return "border-primary text-primary hover:bg-primary hover:text-primary-foreground";
+    }
+  };
+
   return (
-    <Card className="overflow-hidden transition-all hover:shadow-md">
+    <Card className="overflow-hidden transition-all hover:shadow-md md:rounded-lg rounded-none border-x-0 md:border-x border-t-0 md:border-t first:border-t">
       <CardContent className="p-0">
         {/* Creator Info */}
         <div className="flex items-center gap-3 p-3 md:p-4 pb-2 md:pb-3">
@@ -56,26 +77,20 @@ export function MarketCard({ creator, title, image, yesPrice, noPrice, volume, e
             </span>
           </div>
 
-          {/* Yes/No Buttons */}
-          <div className="grid grid-cols-2 gap-2">
-            <Button 
-              variant="outline" 
-              className="flex-1 border-success text-success hover:bg-success hover:text-success-foreground transition-all"
-            >
-              <div className="flex flex-col items-center w-full">
-                <span className="font-semibold">Yes</span>
-                <span className="text-xs">{yesPrice}¢</span>
-              </div>
-            </Button>
-            <Button 
-              variant="outline"
-              className="flex-1 border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground transition-all"
-            >
-              <div className="flex flex-col items-center w-full">
-                <span className="font-semibold">No</span>
-                <span className="text-xs">{noPrice}¢</span>
-              </div>
-            </Button>
+          {/* Outcome Buttons */}
+          <div className={`grid gap-2 ${displayOutcomes.length === 2 ? 'grid-cols-2' : displayOutcomes.length === 3 ? 'grid-cols-3' : 'grid-cols-2'}`}>
+            {displayOutcomes.map((outcome, index) => (
+              <Button 
+                key={index}
+                variant="outline" 
+                className={`flex-1 transition-all ${getOutcomeColor(outcome.color)}`}
+              >
+                <div className="flex flex-col items-center w-full">
+                  <span className="font-semibold text-xs md:text-sm">{outcome.label}</span>
+                  <span className="text-xs">{outcome.price}¢</span>
+                </div>
+              </Button>
+            ))}
           </div>
         </div>
       </CardContent>

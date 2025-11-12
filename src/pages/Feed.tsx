@@ -19,10 +19,14 @@ const mockMarkets = [
       name: "Mike Johnson",
       avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Mike",
     },
-    title: "Will the Lakers make the NBA playoffs this season?",
+    title: "Who will win the NBA Championship this season?",
     image: "/placeholder.svg",
-    yesPrice: 45,
-    noPrice: 55,
+    outcomes: [
+      { label: "Lakers", price: 25 },
+      { label: "Celtics", price: 32 },
+      { label: "Nuggets", price: 21 },
+      { label: "Other", price: 22 },
+    ],
     volume: "$890K",
     endsIn: "2 months",
   },
@@ -43,20 +47,37 @@ const mockMarkets = [
       name: "Alex Rodriguez",
       avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Alex",
     },
+    title: "Next US Federal Reserve interest rate decision?",
+    image: "/placeholder.svg",
+    outcomes: [
+      { label: "Cut", price: 45, color: "success" },
+      { label: "Hold", price: 38 },
+      { label: "Raise", price: 17, color: "destructive" },
+    ],
+    volume: "$3.1M",
+    endsIn: "1 month",
+  },
+  {
+    creator: {
+      name: "Jordan Lee",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Jordan",
+    },
     title: "Will AI replace 25% of customer service jobs by 2026?",
     image: "/placeholder.svg",
     yesPrice: 71,
     noPrice: 29,
-    volume: "$3.1M",
+    volume: "$1.8M",
     endsIn: "1 year",
   },
 ];
 
 export default function Feed() {
   return (
-    <div className="w-full md:container md:max-w-2xl py-4 md:py-6 space-y-4 md:space-y-6 px-4">
-      <FeedFilters />
-      <div className="space-y-4">
+    <div className="w-full md:container md:max-w-2xl py-4 md:py-6 space-y-4 md:space-y-6">
+      <div className="px-4">
+        <FeedFilters />
+      </div>
+      <div className="space-y-0 md:space-y-4 md:px-4">
         {mockMarkets.map((market, index) => (
           <MarketCard key={index} {...market} />
         ))}
