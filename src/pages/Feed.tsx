@@ -236,10 +236,13 @@ export default function Feed() {
   return (
     <div className="w-full px-2 md:px-4 lg:px-6 lg:py-6">
       <div className="space-y-4 md:space-y-6">
-        <div className="py-4 lg:py-0">
+        {/* Sticky Filters */}
+        <div className="sticky top-14 z-40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 py-4 border-b border-border/40">
           <FeedFilters />
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3 md:gap-4">
+        
+        {/* Markets Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3 md:gap-4 pt-2">
           {mockMarkets.map((market, index) => (
             <MarketGridCard 
               key={index} 
