@@ -241,21 +241,6 @@ export default function Profile() {
                 <p className="text-3xl font-bold">$5,230</p>
               </div>
             </div>
-            
-            <div className="grid grid-cols-3 gap-3 pb-4 mb-4 border-b">
-              <div className="text-center">
-                <div className="text-lg font-bold">78%</div>
-                <div className="text-xs text-muted-foreground">Accuracy</div>
-              </div>
-              <div className="text-center">
-                <div className="text-lg font-bold">142</div>
-                <div className="text-xs text-muted-foreground">Markets</div>
-              </div>
-              <div className="text-center">
-                <div className="text-lg font-bold">47/60</div>
-                <div className="text-xs text-muted-foreground">Win/Total</div>
-              </div>
-            </div>
 
             <div className="flex gap-3">
               <Button className="flex-1" variant="outline" size="sm">
@@ -421,6 +406,22 @@ export default function Profile() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
+              {/* Core Stats */}
+              <div className="grid grid-cols-3 gap-4 pb-4 border-b">
+                <div className="text-center">
+                  <div className="text-2xl font-bold">78%</div>
+                  <div className="text-xs text-muted-foreground">Accuracy</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold">142</div>
+                  <div className="text-xs text-muted-foreground">Markets</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold">47/60</div>
+                  <div className="text-xs text-muted-foreground">Win/Total</div>
+                </div>
+              </div>
+
               {/* Trading Metrics */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
