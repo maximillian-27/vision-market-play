@@ -21,7 +21,7 @@ export function MarketCard({ creator, title, image, yesPrice, noPrice, volume, e
     <Card className="overflow-hidden transition-all hover:shadow-md">
       <CardContent className="p-0">
         {/* Creator Info */}
-        <div className="flex items-center gap-3 p-4 pb-3">
+        <div className="flex items-center gap-3 p-3 md:p-4 pb-2 md:pb-3">
           <Avatar className="h-10 w-10">
             <AvatarImage src={creator.avatar} alt={creator.name} />
             <AvatarFallback>{creator.name.slice(0, 2).toUpperCase()}</AvatarFallback>
@@ -32,8 +32,8 @@ export function MarketCard({ creator, title, image, yesPrice, noPrice, volume, e
         </div>
 
         {/* Title */}
-        <div className="px-4 pb-3">
-          <h3 className="text-lg font-semibold leading-tight">{title}</h3>
+        <div className="px-3 md:px-4 pb-2 md:pb-3">
+          <h3 className="text-base md:text-lg font-semibold leading-tight">{title}</h3>
         </div>
 
         {/* Market Image */}
@@ -46,7 +46,7 @@ export function MarketCard({ creator, title, image, yesPrice, noPrice, volume, e
         </div>
 
         {/* Market Stats */}
-        <div className="p-4 space-y-3">
+        <div className="p-3 md:p-4 space-y-3">
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <TrendingUp className="h-4 w-4" />
             <span>{volume} volume</span>

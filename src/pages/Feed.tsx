@@ -54,7 +54,7 @@ const mockMarkets = [
 
 export default function Feed() {
   return (
-    <div className="container max-w-2xl py-6 space-y-6">
+    <div className="container max-w-2xl py-4 md:py-6 space-y-4 md:space-y-6 px-4">
       <FeedFilters />
       <div className="space-y-4">
         {mockMarkets.map((market, index) => (
