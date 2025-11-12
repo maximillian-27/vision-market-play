@@ -12,6 +12,8 @@ const mockMarkets = [
     creator: {
       name: "Sarah Chen",
       avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah",
+      id: "sarah-chen",
+      isCreator: true,
     },
     title: "Will Bitcoin reach $100,000 by end of 2025?",
     subtitle: "The ultimate crypto milestone - will BTC finally break six figures?",
@@ -28,6 +30,8 @@ const mockMarkets = [
     creator: {
       name: "Mike Johnson",
       avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Mike",
+      id: "mike-johnson",
+      isCreator: true,
     },
     title: "Who will win the NBA Championship this season?",
     subtitle: "The race for the championship is heating up. Which team takes it all?",
@@ -48,6 +52,8 @@ const mockMarkets = [
     creator: {
       name: "Emma Wilson",
       avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Emma",
+      id: "emma-wilson",
+      isCreator: true,
     },
     title: "Will Apple release a foldable iPhone in 2025?",
     subtitle: "Apple's been quiet on foldables. Will they finally join the trend?",
@@ -64,6 +70,8 @@ const mockMarkets = [
     creator: {
       name: "Alex Rodriguez",
       avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Alex",
+      id: "alex-rodriguez",
+      isCreator: true,
     },
     title: "Next US Federal Reserve interest rate decision?",
     subtitle: "Fed's next move could shake the markets. Cut, hold, or raise?",
@@ -83,6 +91,8 @@ const mockMarkets = [
     creator: {
       name: "Jordan Lee",
       avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Jordan",
+      id: "jordan-lee",
+      isCreator: true,
     },
     title: "Will AI replace 25% of customer service jobs by 2026?",
     subtitle: "AI chatbots are everywhere. How much of the workforce will they replace?",

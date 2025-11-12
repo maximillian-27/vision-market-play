@@ -149,7 +149,7 @@ export default function Community() {
               {topCreators.map((creator) => (
                 <Link 
                   key={creator.rank} 
-                  to={`/profile/${creator.name.toLowerCase().replace(' ', '-')}`}
+                  to={`/creator/${creator.name.toLowerCase().replace(' ', '-')}`}
                   className="flex items-center gap-3 p-3 rounded-lg hover:bg-accent transition-colors cursor-pointer"
                 >
                   <div className="font-bold text-lg text-muted-foreground w-8">
