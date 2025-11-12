@@ -79,10 +79,15 @@ export default function News() {
                       <Badge variant="secondary" className="text-xs font-medium">
                         {item.source}
                       </Badge>
-                      {item.relatedMarkets.length > 0 && (
+                      {item.relatedMarkets.length > 0 ? (
                         <Badge variant="outline" className="text-xs gap-1.5 border-primary/30 text-primary hover:bg-primary/10">
                           <BarChart3 className="h-3.5 w-3.5" />
                           <span className="hidden sm:inline">Check Markets</span>
+                        </Badge>
+                      ) : (
+                        <Badge variant="outline" className="text-xs gap-1.5 border-muted-foreground/20 text-muted-foreground/50 bg-transparent">
+                          <BarChart3 className="h-3 w-3" />
+                          <span className="hidden sm:inline">No markets yet</span>
                         </Badge>
                       )}
                     </div>
