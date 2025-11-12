@@ -19,29 +19,11 @@ const queryClient = new QueryClient();
 function AppContent() {
   const isMobile = useIsMobile();
 
-  if (isMobile) {
-    return (
-      <div className="min-h-screen flex flex-col w-full pb-16">
-        <Header />
-        <main className="flex-1">
-          <Routes>
-            <Route path="/" element={<Feed />} />
-            <Route path="/news" element={<News />} />
-            <Route path="/community" element={<Community />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </main>
-        <MobileNav />
-      </div>
-    );
-  }
-
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full">
-        <AppSidebar />
-        <main className="flex-1">
+        {!isMobile && <AppSidebar />}
+        <main className={`flex-1 ${isMobile ? 'pb-16' : ''}`}>
           <Header />
           <Routes>
             <Route path="/" element={<Feed />} />
@@ -51,6 +33,7 @@ function AppContent() {
             <Route path="*" element={<NotFound />} />
           </Routes>
         </main>
+        {isMobile && <MobileNav />}
       </div>
     </SidebarProvider>
   );
