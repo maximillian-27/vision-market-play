@@ -64,7 +64,7 @@ export function FollowingSidebar() {
   const navigate = useNavigate();
 
   return (
-    <div className="w-64 lg:w-72 space-y-4 hidden lg:block sticky top-20">
+    <div className="w-64 lg:w-72 space-y-4 hidden lg:block sticky top-16 self-start max-h-[calc(100vh-5rem)] overflow-y-auto">
       {/* Following Users */}
       <Card className="border-border/40">
         <CardHeader className="pb-3">
