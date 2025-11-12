@@ -1,11 +1,36 @@
+import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, TrendingUp, Clock, Users, DollarSign } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { ArrowLeft, TrendingUp, Clock, Users, DollarSign, Heart, MessageCircle, Share2 } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { useToast } from "@/hooks/use-toast";
+import { z } from "zod";
+
+const commentSchema = z.object({
+  text: z.string()
+    .trim()
+    .min(1, { message: "Comment cannot be empty" })
+    .max(500, { message: "Comment must be less than 500 characters" })
+});
+
+interface Comment {
+  id: string;
+  author: {
+    name: string;
+    avatar: string;
+    username: string;
+  };
+  text: string;
+  timestamp: string;
+  likes: number;
+  isLiked: boolean;
+  replies: number;
+}
 
 // Mock data - in a real app this would come from an API
 const mockMarketData: Record<string, any> = {
@@ -37,14 +62,115 @@ const mockMarketData: Record<string, any> = {
   // Add more markets as needed
 };
 
+const mockComments: Comment[] = [
+  {
+    id: "1",
+    author: {
+      name: "Alex Chen",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Alex",
+      username: "@alexchen"
+    },
+    text: "Strong institutional adoption signals make this very likely. MicroStrategy and other corporations continue to accumulate.",
+    timestamp: "2h ago",
+    likes: 24,
+    isLiked: false,
+    replies: 3
+  },
+  {
+    id: "2",
+    author: {
+      name: "Jordan Smith",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Jordan",
+      username: "@jsmith"
+    },
+    text: "Regulatory clarity will be key. If we get ETF approval momentum continues, this could easily happen.",
+    timestamp: "4h ago",
+    likes: 18,
+    isLiked: true,
+    replies: 1
+  },
+  {
+    id: "3",
+    author: {
+      name: "Taylor Brown",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Taylor",
+      username: "@tbrown"
+    },
+    text: "The halvening in 2024 historically leads to major price action. Could be a catalyst.",
+    timestamp: "5h ago",
+    likes: 12,
+    isLiked: false,
+    replies: 0
+  }
+];
+
 export default function MarketDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { toast } = useToast();
   const market = mockMarketData[id || "1"];
+  
+  const [commentText, setCommentText] = useState("");
+  const [comments, setComments] = useState<Comment[]>(mockComments);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (!market) {
     return <div className="p-4">Market not found</div>;
   }
+
+  const handleCommentSubmit = () => {
+    try {
+      // Validate comment
+      commentSchema.parse({ text: commentText });
+      
+      setIsSubmitting(true);
+      
+      // Create new comment
+      const newComment: Comment = {
+        id: Date.now().toString(),
+        author: {
+          name: "You",
+          avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=User",
+          username: "@you"
+        },
+        text: commentText,
+        timestamp: "Just now",
+        likes: 0,
+        isLiked: false,
+        replies: 0
+      };
+      
+      setComments([newComment, ...comments]);
+      setCommentText("");
+      
+      toast({
+        title: "Comment posted",
+        description: "Your comment has been added successfully.",
+      });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        toast({
+          title: "Invalid comment",
+          description: error.errors[0].message,
+          variant: "destructive"
+        });
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleLikeComment = (commentId: string) => {
+    setComments(comments.map(comment => 
+      comment.id === commentId 
+        ? { 
+            ...comment, 
+            isLiked: !comment.isLiked,
+            likes: comment.isLiked ? comment.likes - 1 : comment.likes + 1
+          }
+        : comment
+    ));
+  };
 
   const getOutcomeColor = (color?: string) => {
     switch (color) {
@@ -189,9 +315,10 @@ export default function MarketDetail() {
         {/* Details Tabs */}
         <Card>
           <Tabs defaultValue="description" className="w-full">
-            <TabsList className="w-full grid grid-cols-2 md:w-auto md:inline-grid">
+            <TabsList className="w-full grid grid-cols-3 md:w-auto md:inline-grid">
               <TabsTrigger value="description">Description</TabsTrigger>
               <TabsTrigger value="resolution">Resolution</TabsTrigger>
+              <TabsTrigger value="comments">Comments ({comments.length})</TabsTrigger>
             </TabsList>
             
             <Separator className="mb-4" />
@@ -204,6 +331,94 @@ export default function MarketDetail() {
             <TabsContent value="resolution" className="px-6 pb-6 space-y-2">
               <h3 className="font-semibold text-sm text-muted-foreground">Resolution Criteria</h3>
               <p className="text-sm leading-relaxed">{market.resolutionCriteria}</p>
+            </TabsContent>
+
+            <TabsContent value="comments" className="px-0 pb-0">
+              {/* Comment Input */}
+              <div className="px-6 pb-4 border-b">
+                <div className="flex gap-3">
+                  <Avatar className="h-10 w-10 mt-1">
+                    <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=User" />
+                    <AvatarFallback>U</AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 space-y-3">
+                    <Textarea
+                      placeholder="Share your thoughts..."
+                      value={commentText}
+                      onChange={(e) => setCommentText(e.target.value)}
+                      className="min-h-[80px] resize-none border-0 focus-visible:ring-0 p-0 text-base"
+                      maxLength={500}
+                    />
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-muted-foreground">
+                        {commentText.length}/500
+                      </span>
+                      <Button
+                        onClick={handleCommentSubmit}
+                        disabled={!commentText.trim() || isSubmitting}
+                        size="sm"
+                      >
+                        Post
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Comments List */}
+              <div className="divide-y">
+                {comments.map((comment) => (
+                  <div key={comment.id} className="px-6 py-4 hover:bg-muted/50 transition-colors">
+                    <div className="flex gap-3">
+                      <Avatar className="h-10 w-10">
+                        <AvatarImage src={comment.author.avatar} />
+                        <AvatarFallback>{comment.author.name.slice(0, 2)}</AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 space-y-2">
+                        <div className="flex items-center gap-2">
+                          <span className="font-semibold text-sm">{comment.author.name}</span>
+                          <span className="text-xs text-muted-foreground">{comment.author.username}</span>
+                          <span className="text-xs text-muted-foreground">·</span>
+                          <span className="text-xs text-muted-foreground">{comment.timestamp}</span>
+                        </div>
+                        <p className="text-sm leading-relaxed">{comment.text}</p>
+                        <div className="flex items-center gap-4 pt-1">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-auto p-0 hover:bg-transparent group"
+                            onClick={() => handleLikeComment(comment.id)}
+                          >
+                            <div className="flex items-center gap-1.5 text-muted-foreground group-hover:text-destructive transition-colors">
+                              <Heart className={`h-4 w-4 ${comment.isLiked ? 'fill-destructive text-destructive' : ''}`} />
+                              <span className="text-xs">{comment.likes > 0 ? comment.likes : ''}</span>
+                            </div>
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-auto p-0 hover:bg-transparent group"
+                          >
+                            <div className="flex items-center gap-1.5 text-muted-foreground group-hover:text-primary transition-colors">
+                              <MessageCircle className="h-4 w-4" />
+                              <span className="text-xs">{comment.replies > 0 ? comment.replies : ''}</span>
+                            </div>
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-auto p-0 hover:bg-transparent group"
+                          >
+                            <div className="flex items-center gap-1.5 text-muted-foreground group-hover:text-primary transition-colors">
+                              <Share2 className="h-4 w-4" />
+                            </div>
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </TabsContent>
           </Tabs>
         </Card>
