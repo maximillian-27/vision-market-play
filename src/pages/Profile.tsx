@@ -1,18 +1,31 @@
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Settings, Wallet, Activity } from "lucide-react";
+import { Settings, Wallet, Activity, ArrowLeft } from "lucide-react";
 
 export default function Profile() {
   const { userId } = useParams();
+  const navigate = useNavigate();
   const isOwnProfile = !userId;
   const displayName = userId 
     ? userId.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
     : "Your Name";
   return (
     <div className="w-full md:container md:max-w-2xl py-4 md:py-6 space-y-4 md:space-y-6 px-4 md:px-4">
+      {!isOwnProfile && (
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          onClick={() => navigate(-1)}
+          className="mb-2"
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Back
+        </Button>
+      )}
+      
       {/* Profile Header */}
       <Card>
         <CardContent className="pt-4 md:pt-6">
