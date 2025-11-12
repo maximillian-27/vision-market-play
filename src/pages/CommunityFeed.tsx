@@ -245,7 +245,7 @@ export default function CommunityFeed() {
               {/* Embedded Market */}
               <div className="px-4 pb-4">
                 <div className="border rounded-lg overflow-hidden">
-                  <MarketCard {...post.market} />
+                  <MarketCard {...post.market} hideEngagement={true} />
                 </div>
               </div>
 

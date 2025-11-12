@@ -38,9 +38,10 @@ interface MarketCardProps {
   endsIn: string;
   likes?: number;
   comments?: number;
+  hideEngagement?: boolean;
 }
 
-export function MarketCard({ id, creator, title, subtitle, image, outcomes, yesPrice, noPrice, volume, endsIn, likes = 0, comments = 0 }: MarketCardProps) {
+export function MarketCard({ id, creator, title, subtitle, image, outcomes, yesPrice, noPrice, volume, endsIn, likes = 0, comments = 0, hideEngagement = false }: MarketCardProps) {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [showRepostDialog, setShowRepostDialog] = useState(false);
@@ -153,37 +154,39 @@ export function MarketCard({ id, creator, title, subtitle, image, outcomes, yesP
           </div>
 
           {/* Engagement Indicators */}
-          <div className="flex items-center gap-4 pt-2 border-t text-muted-foreground text-sm">
-            <button 
-              className="flex items-center gap-1.5 hover:text-destructive transition-colors"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <Heart className="h-4 w-4" />
-              {likes > 0 && <span>{likes}</span>}
-            </button>
-            <button 
-              className="flex items-center gap-1.5 hover:text-primary transition-colors"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <MessageCircle className="h-4 w-4" />
-              {comments > 0 && <span>{comments}</span>}
-            </button>
-            <button 
-              className="flex items-center gap-1.5 hover:text-primary transition-colors"
-              onClick={(e) => {
-                e.stopPropagation();
-                setShowRepostDialog(true);
-              }}
-            >
-              <Repeat2 className="h-4 w-4" />
-            </button>
-            <button 
-              className="flex items-center gap-1.5 hover:text-primary transition-colors ml-auto"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <Share2 className="h-4 w-4" />
-            </button>
-          </div>
+          {!hideEngagement && (
+            <div className="flex items-center gap-4 pt-2 border-t text-muted-foreground text-sm">
+              <button 
+                className="flex items-center gap-1.5 hover:text-destructive transition-colors"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <Heart className="h-4 w-4" />
+                {likes > 0 && <span>{likes}</span>}
+              </button>
+              <button 
+                className="flex items-center gap-1.5 hover:text-primary transition-colors"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <MessageCircle className="h-4 w-4" />
+                {comments > 0 && <span>{comments}</span>}
+              </button>
+              <button 
+                className="flex items-center gap-1.5 hover:text-primary transition-colors"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowRepostDialog(true);
+                }}
+              >
+                <Repeat2 className="h-4 w-4" />
+              </button>
+              <button 
+                className="flex items-center gap-1.5 hover:text-primary transition-colors ml-auto"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <Share2 className="h-4 w-4" />
+              </button>
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>
