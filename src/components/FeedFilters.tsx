@@ -33,12 +33,12 @@ export function FeedFilters() {
 
       {/* Filter Panel */}
       {showFilters && (
-        <div className="rounded-lg border bg-card/50 backdrop-blur-sm p-4 animate-in fade-in-0 slide-in-from-top-2">
+        <div className="rounded-xl border border-border/40 bg-muted/30 p-4 animate-in fade-in-0 slide-in-from-top-2">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             <div className="space-y-2">
-              <Label className="text-xs text-muted-foreground">Sort By</Label>
+              <Label className="text-xs font-medium text-muted-foreground">Sort By</Label>
               <Select defaultValue="trending">
-                <SelectTrigger className="h-9">
+                <SelectTrigger className="h-9 border-border/40">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -52,9 +52,9 @@ export function FeedFilters() {
             </div>
 
             <div className="space-y-2">
-              <Label className="text-xs text-muted-foreground">Region</Label>
+              <Label className="text-xs font-medium text-muted-foreground">Region</Label>
               <Select defaultValue="global">
-                <SelectTrigger className="h-9">
+                <SelectTrigger className="h-9 border-border/40">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -67,9 +67,9 @@ export function FeedFilters() {
             </div>
 
             <div className="space-y-2">
-              <Label className="text-xs text-muted-foreground">Status</Label>
+              <Label className="text-xs font-medium text-muted-foreground">Status</Label>
               <Select defaultValue="open">
-                <SelectTrigger className="h-9">
+                <SelectTrigger className="h-9 border-border/40">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -81,9 +81,9 @@ export function FeedFilters() {
             </div>
 
             <div className="space-y-2">
-              <Label className="text-xs text-muted-foreground">Timeframe</Label>
+              <Label className="text-xs font-medium text-muted-foreground">Timeframe</Label>
               <Select defaultValue="all">
-                <SelectTrigger className="h-9">
+                <SelectTrigger className="h-9 border-border/40">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -104,7 +104,7 @@ export function FeedFilters() {
           <Badge
             key={category}
             variant={category === "All" ? "default" : "outline"}
-            className="cursor-pointer whitespace-nowrap transition-all hover:bg-primary hover:text-primary-foreground"
+            className="cursor-pointer whitespace-nowrap transition-all hover:bg-primary hover:text-primary-foreground border-border/40 text-xs font-medium px-3 py-1"
           >
             {category}
           </Badge>

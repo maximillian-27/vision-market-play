@@ -216,13 +216,13 @@ export default function CommunityFeed() {
           
           <div className="space-y-4">
             {mockCommunityPosts.map((post) => (
-              <Card key={post.id} className="overflow-hidden">
+              <Card key={post.id} className="overflow-hidden border-border/40">
                 <CardContent className="p-0">
                   {/* User Post Header */}
-                  <div className="p-4 space-y-3">
+                  <div className="p-5 space-y-3">
                     <div className="flex items-start gap-3">
                       <Avatar 
-                        className="h-10 w-10 cursor-pointer hover:opacity-80 transition-opacity"
+                        className="h-9 w-9 cursor-pointer"
                         onClick={() => navigate(`/profile/${post.user.username.slice(1)}`)}
                       >
                         <AvatarImage src={post.user.avatar} alt={post.user.name} />
@@ -231,7 +231,7 @@ export default function CommunityFeed() {
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
                           <span 
-                            className="font-semibold text-sm cursor-pointer hover:underline"
+                            className="font-medium text-sm cursor-pointer"
                             onClick={() => navigate(`/profile/${post.user.username.slice(1)}`)}
                           >
                             {post.user.name}
@@ -240,50 +240,38 @@ export default function CommunityFeed() {
                           <span className="text-xs text-muted-foreground">·</span>
                           <span className="text-xs text-muted-foreground">{post.timestamp}</span>
                         </div>
-                        <p className="text-sm mt-2 leading-relaxed">{post.thoughts}</p>
+                        <p className="text-sm mt-2 leading-relaxed text-foreground/90">{post.thoughts}</p>
                       </div>
                     </div>
                   </div>
 
                   {/* Embedded Market */}
-                  <div className="px-4 pb-4">
-                    <div className="border rounded-lg overflow-hidden">
+                  <div className="px-5 pb-5">
+                    <div className="border border-border/40 rounded-xl overflow-hidden">
                       <MarketCard {...post.market} hideEngagement={true} />
                     </div>
                   </div>
 
                   {/* Engagement Actions */}
-                  <div className="flex items-center gap-1 px-4 pb-3 border-t pt-3">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="flex-1 group"
+                  <div className="flex items-center gap-1 px-4 pb-4">
+                    <button
+                      className="flex items-center gap-1.5 px-2 py-1.5 rounded-md hover:bg-muted/60 text-muted-foreground hover:text-foreground transition-all text-xs"
                     >
-                      <div className="flex items-center gap-2 text-muted-foreground group-hover:text-destructive transition-colors">
-                        <Heart className="h-5 w-5" />
-                        <span className="text-sm">{post.likes}</span>
-                      </div>
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="flex-1 group"
+                      <Heart className="h-3.5 w-3.5" />
+                      <span>{post.likes}</span>
+                    </button>
+                    <button
+                      className="flex items-center gap-1.5 px-2 py-1.5 rounded-md hover:bg-muted/60 text-muted-foreground hover:text-foreground transition-all text-xs"
                       onClick={() => setExpandedComments({ ...expandedComments, [post.id]: !expandedComments[post.id] })}
                     >
-                      <div className="flex items-center gap-2 text-muted-foreground group-hover:text-primary transition-colors">
-                        <MessageCircle className="h-5 w-5" />
-                        <span className="text-sm">{post.comments}</span>
-                      </div>
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="flex-1 group"
+                      <MessageCircle className="h-3.5 w-3.5" />
+                      <span>{post.comments}</span>
+                    </button>
+                    <button
+                      className="flex items-center gap-1.5 px-2 py-1.5 rounded-md hover:bg-muted/60 text-muted-foreground hover:text-foreground transition-all"
                     >
-                      <div className="flex items-center gap-2 text-muted-foreground group-hover:text-primary transition-colors">
-                        <Share2 className="h-5 w-5" />
-                      </div>
-                    </Button>
+                      <Share2 className="h-3.5 w-3.5" />
+                    </button>
                   </div>
 
                   {/* Comments Section */}

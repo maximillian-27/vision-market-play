@@ -76,13 +76,13 @@ export function MarketCard({ id, creator, title, subtitle, image, outcomes, yesP
   return (
     <>
       <Card 
-        className="overflow-hidden transition-all hover:shadow-md md:rounded-lg rounded-none border-x-0 md:border-x border-t-0 md:border-t first:border-t cursor-pointer"
+        className="overflow-hidden transition-all hover:bg-accent/30 md:rounded-xl rounded-none border-x-0 md:border-x border-t-0 md:border-t first:border-t cursor-pointer border-border/40"
         onClick={() => navigate(`/market/${id}`)}
       >
       <CardContent className="p-0">
         {/* Creator Info */}
         <div 
-          className="flex items-center gap-3 p-3 md:p-4 pb-2 md:pb-3 cursor-pointer hover:bg-accent/50 transition-colors"
+          className="flex items-center gap-3 p-4 md:p-5 pb-3 cursor-pointer"
           onClick={(e) => {
             e.stopPropagation();
             const profilePath = creator.isCreator !== false 
@@ -91,30 +91,30 @@ export function MarketCard({ id, creator, title, subtitle, image, outcomes, yesP
             navigate(profilePath);
           }}
         >
-          <Avatar className="h-10 w-10">
+          <Avatar className="h-9 w-9">
             <AvatarImage src={creator.avatar} alt={creator.name} />
             <AvatarFallback>{creator.name.slice(0, 2).toUpperCase()}</AvatarFallback>
           </Avatar>
           <div className="flex-1">
             <div className="flex items-center gap-1.5">
-              <p className="font-semibold text-sm hover:underline">{creator.name}</p>
+              <p className="font-medium text-sm">{creator.name}</p>
               {creator.isCreator !== false && (
-                <BadgeCheck className="h-4 w-4 text-primary fill-primary/20" />
+                <BadgeCheck className="h-3.5 w-3.5 text-primary fill-primary/20" />
               )}
             </div>
           </div>
         </div>
 
         {/* Title */}
-        <div className="px-3 md:px-4 pb-2 md:pb-3">
-          <h3 className="text-base md:text-lg font-semibold leading-tight">{title}</h3>
+        <div className="px-4 md:px-5 pb-3">
+          <h3 className="text-base md:text-lg font-semibold leading-snug">{title}</h3>
           {subtitle && (
-            <p className="text-sm text-muted-foreground mt-1">{subtitle}</p>
+            <p className="text-sm text-muted-foreground mt-1.5 leading-relaxed">{subtitle}</p>
           )}
         </div>
 
         {/* Market Image */}
-        <div className="relative aspect-video w-full overflow-hidden bg-muted">
+        <div className="relative aspect-video w-full overflow-hidden bg-muted/50">
           <img 
             src={image} 
             alt={title}
@@ -123,31 +123,33 @@ export function MarketCard({ id, creator, title, subtitle, image, outcomes, yesP
         </div>
 
         {/* Market Stats */}
-        <div className="p-3 md:p-4 space-y-3">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <TrendingUp className="h-4 w-4" />
-            <span>{volume} volume</span>
-            <span className="ml-auto flex items-center gap-1">
-              <Clock className="h-4 w-4" />
-              {endsIn}
-            </span>
+        <div className="p-4 md:p-5 space-y-3">
+          <div className="flex items-center gap-3 text-xs text-muted-foreground">
+            <div className="flex items-center gap-1.5">
+              <TrendingUp className="h-3.5 w-3.5" />
+              <span>{volume}</span>
+            </div>
+            <div className="flex items-center gap-1.5 ml-auto">
+              <Clock className="h-3.5 w-3.5" />
+              <span>{endsIn}</span>
+            </div>
           </div>
 
           {/* Outcome Buttons */}
-          <div className={`grid gap-2 ${displayOutcomes.length === 2 ? 'grid-cols-2' : displayOutcomes.length === 3 ? 'grid-cols-3' : 'grid-cols-2'}`}>
+          <div className={`grid gap-2.5 ${displayOutcomes.length === 2 ? 'grid-cols-2' : displayOutcomes.length === 3 ? 'grid-cols-3' : 'grid-cols-2'}`}>
             {displayOutcomes.map((outcome, index) => (
               <Button 
                 key={index}
                 variant="outline" 
-                className={`flex-1 transition-all ${getOutcomeColor(outcome.color)}`}
+                className={`flex-1 h-auto py-3 transition-all border-border/60 hover:border-current ${getOutcomeColor(outcome.color)}`}
                 onClick={(e) => {
                   e.stopPropagation();
                   // Handle bet action here
                 }}
               >
-                <div className="flex flex-col items-center w-full">
-                  <span className="font-semibold text-xs md:text-sm">{outcome.label}</span>
-                  <span className="text-xs">{outcome.price}¢</span>
+                <div className="flex flex-col items-center w-full gap-0.5">
+                  <span className="text-xs uppercase tracking-wide opacity-70">{outcome.label}</span>
+                  <span className="text-lg font-bold">{outcome.price}¢</span>
                 </div>
               </Button>
             ))}
@@ -155,35 +157,35 @@ export function MarketCard({ id, creator, title, subtitle, image, outcomes, yesP
 
           {/* Engagement Indicators */}
           {!hideEngagement && (
-            <div className="flex items-center gap-4 pt-2 border-t text-muted-foreground text-sm">
+            <div className="flex items-center gap-1 pt-1">
               <button 
-                className="flex items-center gap-1.5 hover:text-destructive transition-colors"
+                className="flex items-center gap-1.5 px-2 py-1.5 rounded-md hover:bg-muted/60 text-muted-foreground hover:text-foreground transition-all text-xs"
                 onClick={(e) => e.stopPropagation()}
               >
-                <Heart className="h-4 w-4" />
+                <Heart className="h-3.5 w-3.5" />
                 {likes > 0 && <span>{likes}</span>}
               </button>
               <button 
-                className="flex items-center gap-1.5 hover:text-primary transition-colors"
+                className="flex items-center gap-1.5 px-2 py-1.5 rounded-md hover:bg-muted/60 text-muted-foreground hover:text-foreground transition-all text-xs"
                 onClick={(e) => e.stopPropagation()}
               >
-                <MessageCircle className="h-4 w-4" />
+                <MessageCircle className="h-3.5 w-3.5" />
                 {comments > 0 && <span>{comments}</span>}
               </button>
               <button 
-                className="flex items-center gap-1.5 hover:text-primary transition-colors"
+                className="flex items-center gap-1.5 px-2 py-1.5 rounded-md hover:bg-muted/60 text-muted-foreground hover:text-foreground transition-all"
                 onClick={(e) => {
                   e.stopPropagation();
                   setShowRepostDialog(true);
                 }}
               >
-                <Repeat2 className="h-4 w-4" />
+                <Repeat2 className="h-3.5 w-3.5" />
               </button>
               <button 
-                className="flex items-center gap-1.5 hover:text-primary transition-colors ml-auto"
+                className="flex items-center gap-1.5 px-2 py-1.5 rounded-md hover:bg-muted/60 text-muted-foreground hover:text-foreground transition-all ml-auto"
                 onClick={(e) => e.stopPropagation()}
               >
-                <Share2 className="h-4 w-4" />
+                <Share2 className="h-3.5 w-3.5" />
               </button>
             </div>
           )}

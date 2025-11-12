@@ -56,29 +56,29 @@ export function NewsSidebar() {
   return (
     <div className="hidden lg:block lg:w-80 xl:w-96 sticky top-20 h-fit">
       <Card className="border-border/40">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-lg font-semibold">Latest News</CardTitle>
+        <CardHeader className="pb-3 px-5 pt-5">
+          <CardTitle className="text-base font-semibold">Latest News</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-3 p-4 pt-0">
+        <CardContent className="space-y-1 p-3 pt-0">
           {newsArticles.map((article) => (
             <a
               key={article.id}
               href={article.url}
-              className="block group hover:bg-muted/50 rounded-lg p-3 transition-colors border border-transparent hover:border-border/50"
+              className="block group hover:bg-muted/40 rounded-lg p-3 transition-all"
             >
               <div className="space-y-1.5">
                 <div className="flex items-start justify-between gap-2">
-                  <h3 className="font-medium text-sm leading-tight group-hover:text-primary transition-colors">
+                  <h3 className="font-medium text-sm leading-snug">
                     {article.title}
                   </h3>
                   <ExternalLink className="h-3 w-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity shrink-0 mt-0.5" />
                 </div>
-                <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
+                <p className="text-xs text-muted-foreground/80 line-clamp-2 leading-relaxed">
                   {article.summary}
                 </p>
                 <div className="flex items-center justify-between text-xs text-muted-foreground">
                   <span className="font-medium">{article.source}</span>
-                  <span>{article.time}</span>
+                  <span className="opacity-60">{article.time}</span>
                 </div>
               </div>
             </a>
