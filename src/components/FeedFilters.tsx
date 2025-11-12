@@ -1,5 +1,4 @@
-import { SlidersHorizontal, X, Search } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import { SlidersHorizontal, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
@@ -13,21 +12,15 @@ export function FeedFilters() {
 
   return (
     <div className="space-y-4 sticky top-16 z-10 bg-background/95 backdrop-blur-sm py-2 -mt-2">
-      {/* Mobile Search and Filter Button */}
-      <div className="flex gap-2 md:hidden">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-          <Input 
-            placeholder="Search markets..." 
-            className="pl-10 h-12 text-base"
-          />
-        </div>
+      {/* Mobile Filter Button */}
+      <div className="flex justify-end md:hidden">
         <Button 
           variant={showFilters ? "default" : "outline"} 
-          className="h-12 w-12"
+          className="h-10 px-4 gap-2"
           onClick={() => setShowFilters(!showFilters)}
         >
-          {showFilters ? <X className="h-5 w-5" /> : <SlidersHorizontal className="h-5 w-5" />}
+          {showFilters ? <X className="h-4 w-4" /> : <SlidersHorizontal className="h-4 w-4" />}
+          <span className="text-sm">Filters</span>
         </Button>
       </div>
 
