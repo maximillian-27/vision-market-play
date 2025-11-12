@@ -214,24 +214,24 @@ export default function MarketDetail() {
   return (
     <div className="w-full md:container md:max-w-4xl md:py-6 pb-4">
       {/* Back Button */}
-      <div className="sticky top-14 z-10 bg-background border-b md:border-0 px-4 py-3 md:py-4 md:px-0">
+      <div className="sticky top-14 z-10 bg-background/95 backdrop-blur-sm border-b md:border-0 px-4 py-2 md:py-4 md:px-0">
         <Button
           variant="ghost"
           size="sm"
           onClick={() => navigate(-1)}
-          className="gap-2"
+          className="gap-2 -ml-2"
         >
           <ArrowLeft className="h-4 w-4" />
-          Back
+          <span className="text-sm">Back</span>
         </Button>
       </div>
 
-      <div className="space-y-4 px-4 md:px-0">
+      <div className="space-y-3 md:space-y-4 px-4 md:px-0 pt-2 md:pt-0">
         {/* Market Header */}
-        <Card>
-          <CardHeader className="space-y-4">
+        <Card className="border-0 md:border shadow-none md:shadow-sm">
+          <CardHeader className="space-y-3 md:space-y-4 p-4 md:p-6">
             <div className="flex items-center gap-3">
-              <Avatar className="h-10 w-10">
+              <Avatar className="h-9 w-9 md:h-10 md:w-10">
                 <AvatarImage src={market.creator.avatar} alt={market.creator.name} />
                 <AvatarFallback>{market.creator.name.slice(0, 2).toUpperCase()}</AvatarFallback>
               </Avatar>
@@ -241,52 +241,52 @@ export default function MarketDetail() {
               </div>
             </div>
 
-            <h1 className="text-xl md:text-2xl font-bold leading-tight">{market.title}</h1>
+            <h1 className="text-lg md:text-2xl font-bold leading-tight">{market.title}</h1>
             
             {market.subtitle && (
-              <p className="text-base text-muted-foreground">{market.subtitle}</p>
+              <p className="text-sm md:text-base text-muted-foreground leading-relaxed">{market.subtitle}</p>
             )}
 
             {/* Stats Row */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-2">
-              <div className="space-y-1">
-                <div className="flex items-center gap-1 text-muted-foreground">
-                  <TrendingUp className="h-4 w-4" />
+            <div className="grid grid-cols-2 gap-3 md:gap-4 pt-2">
+              <div className="space-y-1 bg-muted/30 rounded-lg p-3">
+                <div className="flex items-center gap-1.5 text-muted-foreground">
+                  <TrendingUp className="h-3.5 w-3.5 md:h-4 md:w-4" />
                   <span className="text-xs">Volume</span>
                 </div>
-                <p className="font-semibold">{market.volume}</p>
+                <p className="font-semibold text-sm md:text-base">{market.volume}</p>
               </div>
-              <div className="space-y-1">
-                <div className="flex items-center gap-1 text-muted-foreground">
-                  <Users className="h-4 w-4" />
+              <div className="space-y-1 bg-muted/30 rounded-lg p-3">
+                <div className="flex items-center gap-1.5 text-muted-foreground">
+                  <Users className="h-3.5 w-3.5 md:h-4 md:w-4" />
                   <span className="text-xs">Traders</span>
                 </div>
-                <p className="font-semibold">{market.traders}</p>
+                <p className="font-semibold text-sm md:text-base">{market.traders}</p>
               </div>
-              <div className="space-y-1">
-                <div className="flex items-center gap-1 text-muted-foreground">
-                  <DollarSign className="h-4 w-4" />
+              <div className="space-y-1 bg-muted/30 rounded-lg p-3">
+                <div className="flex items-center gap-1.5 text-muted-foreground">
+                  <DollarSign className="h-3.5 w-3.5 md:h-4 md:w-4" />
                   <span className="text-xs">Liquidity</span>
                 </div>
-                <p className="font-semibold">{market.liquidity}</p>
+                <p className="font-semibold text-sm md:text-base">{market.liquidity}</p>
               </div>
-              <div className="space-y-1">
-                <div className="flex items-center gap-1 text-muted-foreground">
-                  <Clock className="h-4 w-4" />
+              <div className="space-y-1 bg-muted/30 rounded-lg p-3">
+                <div className="flex items-center gap-1.5 text-muted-foreground">
+                  <Clock className="h-3.5 w-3.5 md:h-4 md:w-4" />
                   <span className="text-xs">Ends In</span>
                 </div>
-                <p className="font-semibold">{market.endsIn}</p>
+                <p className="font-semibold text-sm md:text-base">{market.endsIn}</p>
               </div>
             </div>
 
             {/* Outcome Buttons */}
-            <div className="space-y-2">
+            <div className="space-y-2 pt-1">
               {market.outcomes.map((outcome: any, index: number) => {
                 const payout = outcome.price > 0 ? (10000 / outcome.price).toFixed(0) : 0;
                 return (
                   <button
                     key={index}
-                    className={`w-full text-left rounded-lg px-3 py-3 border transition-all ${getOutcomeColor(outcome.color)} flex items-center gap-3`}
+                    className={`w-full text-left rounded-lg px-3 py-3 md:py-4 border transition-all ${getOutcomeColor(outcome.color)} flex items-center gap-3`}
                     onClick={(e) => {
                       e.stopPropagation();
                       // Handle bet action
@@ -296,57 +296,58 @@ export default function MarketDetail() {
                       {getOutcomeIcon(outcome.color)}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="text-sm font-bold text-foreground">{outcome.label}</div>
+                      <div className="text-sm md:text-base font-bold text-foreground">{outcome.label}</div>
                       <div className="text-xs text-muted-foreground font-medium">
                         $100 → ${payout}
                       </div>
                     </div>
-                    <span className="text-xl font-bold text-foreground ml-auto">{outcome.price}¢</span>
+                    <span className="text-lg md:text-xl font-bold text-foreground ml-auto">{outcome.price}¢</span>
                   </button>
                 );
               })}
             </div>
 
             {/* Engagement Actions */}
-            <div className="flex items-center gap-1 pt-2 border-t">
+            <div className="flex items-center gap-1 pt-2 border-t mt-1">
               <Button
                 variant="ghost"
                 size="sm"
-                className="flex-1 group"
+                className="flex-1 group h-10"
                 onClick={(e) => {
                   e.stopPropagation();
                   handleLikeMarket();
                 }}
               >
                 <div className="flex items-center gap-2 text-muted-foreground group-hover:text-destructive transition-colors">
-                  <Heart className={`h-5 w-5 ${isLiked ? 'fill-destructive text-destructive' : ''}`} />
-                  <span className="text-sm">{likes}</span>
+                  <Heart className={`h-4 w-4 md:h-5 md:w-5 ${isLiked ? 'fill-destructive text-destructive' : ''}`} />
+                  <span className="text-sm font-medium">{likes}</span>
                 </div>
               </Button>
               <Button
                 variant="ghost"
                 size="sm"
-                className="flex-1 group"
+                className="flex-1 group h-10"
                 onClick={(e) => {
                   e.stopPropagation();
                 }}
               >
                 <div className="flex items-center gap-2 text-muted-foreground group-hover:text-primary transition-colors">
-                  <MessageCircle className="h-5 w-5" />
-                  <span className="text-sm">{comments.length}</span>
+                  <MessageCircle className="h-4 w-4 md:h-5 md:w-5" />
+                  <span className="text-sm font-medium">{comments.length}</span>
                 </div>
               </Button>
               <Button
                 variant="ghost"
                 size="sm"
-                className="flex-1 group"
+                className="flex-1 group h-10"
                 onClick={(e) => {
                   e.stopPropagation();
                   handleShareMarket();
                 }}
               >
                 <div className="flex items-center gap-2 text-muted-foreground group-hover:text-primary transition-colors">
-                  <Share2 className="h-5 w-5" />
+                  <Share2 className="h-4 w-4 md:h-5 md:w-5" />
+                  <span className="text-sm font-medium hidden sm:inline">Share</span>
                 </div>
               </Button>
             </div>
@@ -354,12 +355,12 @@ export default function MarketDetail() {
         </Card>
 
         {/* Price Chart */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Price History</CardTitle>
+        <Card className="border-0 md:border shadow-none md:shadow-sm">
+          <CardHeader className="p-4 md:p-6">
+            <CardTitle className="text-base md:text-lg">Price History</CardTitle>
           </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={250}>
+          <CardContent className="p-4 pt-0 md:p-6 md:pt-0">
+            <ResponsiveContainer width="100%" height={200}>
               <LineChart data={market.priceHistory}>
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                 <XAxis 
@@ -401,46 +402,46 @@ export default function MarketDetail() {
         </Card>
 
         {/* Details Tabs */}
-        <Card>
+        <Card className="border-0 md:border shadow-none md:shadow-sm">
           <Tabs defaultValue="description" className="w-full">
-            <TabsList className="w-full grid grid-cols-2 md:w-auto md:inline-grid">
-              <TabsTrigger value="description">Description</TabsTrigger>
-              <TabsTrigger value="resolution">Resolution</TabsTrigger>
+            <TabsList className="w-full grid grid-cols-2 mx-4 md:mx-6 mt-4 md:mt-6 md:w-auto md:inline-grid">
+              <TabsTrigger value="description" className="text-sm">Description</TabsTrigger>
+              <TabsTrigger value="resolution" className="text-sm">Resolution</TabsTrigger>
             </TabsList>
             
-            <Separator className="mb-4" />
+            <Separator className="my-3 md:my-4" />
             
-            <TabsContent value="description" className="px-6 pb-6 space-y-2">
-              <h3 className="font-semibold text-sm text-muted-foreground">Market Description</h3>
-              <p className="text-sm leading-relaxed">{market.description}</p>
+            <TabsContent value="description" className="px-4 md:px-6 pb-4 md:pb-6 space-y-2 mt-0">
+              <h3 className="font-semibold text-xs md:text-sm text-muted-foreground uppercase tracking-wide">Market Description</h3>
+              <p className="text-sm md:text-base leading-relaxed text-foreground/90">{market.description}</p>
             </TabsContent>
             
-            <TabsContent value="resolution" className="px-6 pb-6 space-y-2">
-              <h3 className="font-semibold text-sm text-muted-foreground">Resolution Criteria</h3>
-              <p className="text-sm leading-relaxed">{market.resolutionCriteria}</p>
+            <TabsContent value="resolution" className="px-4 md:px-6 pb-4 md:pb-6 space-y-2 mt-0">
+              <h3 className="font-semibold text-xs md:text-sm text-muted-foreground uppercase tracking-wide">Resolution Criteria</h3>
+              <p className="text-sm md:text-base leading-relaxed text-foreground/90">{market.resolutionCriteria}</p>
             </TabsContent>
           </Tabs>
         </Card>
 
         {/* Comments Section */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Comments ({comments.length})</CardTitle>
+        <Card className="border-0 md:border shadow-none md:shadow-sm">
+          <CardHeader className="p-4 md:p-6 pb-3 md:pb-4">
+            <CardTitle className="text-base md:text-lg">Comments ({comments.length})</CardTitle>
           </CardHeader>
           <CardContent className="px-0">
             {/* Comment Input */}
-            <div className="px-6 pb-4 border-b">
-              <div className="flex gap-3">
-                <Avatar className="h-10 w-10 mt-1">
+            <div className="px-4 md:px-6 pb-4 border-b">
+              <div className="flex gap-2 md:gap-3">
+                <Avatar className="h-8 w-8 md:h-10 md:w-10 mt-1 flex-shrink-0">
                   <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=User" />
                   <AvatarFallback>U</AvatarFallback>
                 </Avatar>
-                <div className="flex-1 space-y-3">
+                <div className="flex-1 space-y-2 md:space-y-3">
                   <Textarea
                     placeholder="Share your thoughts..."
                     value={commentText}
                     onChange={(e) => setCommentText(e.target.value)}
-                    className="min-h-[80px] resize-none border-0 focus-visible:ring-0 p-0 text-base"
+                    className="min-h-[70px] md:min-h-[80px] resize-none border-0 focus-visible:ring-0 p-0 text-sm md:text-base"
                     maxLength={500}
                   />
                   <div className="flex items-center justify-between">
@@ -451,6 +452,7 @@ export default function MarketDetail() {
                       onClick={handleCommentSubmit}
                       disabled={!commentText.trim() || isSubmitting}
                       size="sm"
+                      className="h-8 md:h-9"
                     >
                       Post
                     </Button>
@@ -462,29 +464,29 @@ export default function MarketDetail() {
             {/* Comments List */}
             <div className="divide-y">
               {comments.map((comment) => (
-                <div key={comment.id} className="px-6 py-4 hover:bg-muted/50 transition-colors">
-                  <div className="flex gap-3">
-                    <Avatar className="h-10 w-10">
+                <div key={comment.id} className="px-4 md:px-6 py-3 md:py-4 hover:bg-muted/30 transition-colors">
+                  <div className="flex gap-2 md:gap-3">
+                    <Avatar className="h-8 w-8 md:h-10 md:w-10 flex-shrink-0">
                       <AvatarImage src={comment.author.avatar} />
                       <AvatarFallback>{comment.author.name.slice(0, 2)}</AvatarFallback>
                     </Avatar>
-                    <div className="flex-1 space-y-2">
-                      <div className="flex items-center gap-2">
-                        <span className="font-semibold text-sm">{comment.author.name}</span>
-                        <span className="text-xs text-muted-foreground">{comment.author.username}</span>
+                    <div className="flex-1 space-y-1.5 md:space-y-2 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="font-semibold text-xs md:text-sm">{comment.author.name}</span>
+                        <span className="text-xs text-muted-foreground truncate">{comment.author.username}</span>
                         <span className="text-xs text-muted-foreground">·</span>
                         <span className="text-xs text-muted-foreground">{comment.timestamp}</span>
                       </div>
-                      <p className="text-sm leading-relaxed">{comment.text}</p>
-                      <div className="flex items-center gap-4 pt-1">
+                      <p className="text-sm md:text-base leading-relaxed break-words">{comment.text}</p>
+                      <div className="flex items-center gap-3 md:gap-4 pt-1">
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="h-auto p-0 hover:bg-transparent group"
+                          className="h-auto p-0 hover:bg-transparent group -ml-1"
                           onClick={() => handleLikeComment(comment.id)}
                         >
                           <div className="flex items-center gap-1.5 text-muted-foreground group-hover:text-destructive transition-colors">
-                            <Heart className={`h-4 w-4 ${comment.isLiked ? 'fill-destructive text-destructive' : ''}`} />
+                            <Heart className={`h-3.5 w-3.5 md:h-4 md:w-4 ${comment.isLiked ? 'fill-destructive text-destructive' : ''}`} />
                             <span className="text-xs">{comment.likes > 0 ? comment.likes : ''}</span>
                           </div>
                         </Button>
@@ -494,7 +496,7 @@ export default function MarketDetail() {
                           className="h-auto p-0 hover:bg-transparent group"
                         >
                           <div className="flex items-center gap-1.5 text-muted-foreground group-hover:text-primary transition-colors">
-                            <MessageCircle className="h-4 w-4" />
+                            <MessageCircle className="h-3.5 w-3.5 md:h-4 md:w-4" />
                             <span className="text-xs">{comment.replies > 0 ? comment.replies : ''}</span>
                           </div>
                         </Button>
@@ -504,7 +506,7 @@ export default function MarketDetail() {
                           className="h-auto p-0 hover:bg-transparent group"
                         >
                           <div className="flex items-center gap-1.5 text-muted-foreground group-hover:text-primary transition-colors">
-                            <Share2 className="h-4 w-4" />
+                            <Share2 className="h-3.5 w-3.5 md:h-4 md:w-4" />
                           </div>
                         </Button>
                       </div>
