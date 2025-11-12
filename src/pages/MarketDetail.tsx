@@ -10,6 +10,7 @@ import { ArrowLeft, TrendingUp, Clock, Users, DollarSign, Heart, MessageCircle, 
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
+import { BuyDialog } from "@/components/BuyDialog";
 
 const commentSchema = z.object({
   text: z.string()
@@ -115,6 +116,8 @@ export default function MarketDetail() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
   const [likes, setLikes] = useState(142);
+  const [showBuyDialog, setShowBuyDialog] = useState(false);
+  const [selectedOutcome, setSelectedOutcome] = useState<any>(null);
 
   if (!market) {
     return <div className="p-4">Market not found</div>;
@@ -211,8 +214,21 @@ export default function MarketDetail() {
     }
   };
 
+  const handleOutcomeClick = (e: React.MouseEvent, outcome: any) => {
+    e.stopPropagation();
+    setSelectedOutcome(outcome);
+    setShowBuyDialog(true);
+  };
+
   return (
     <div className="w-full md:container md:max-w-4xl md:py-6 pb-4">
+      <BuyDialog
+        open={showBuyDialog}
+        onOpenChange={setShowBuyDialog}
+        outcome={selectedOutcome || market.outcomes[0]}
+        marketTitle={market.title}
+        marketId={id || "1"}
+      />
       {/* Back Button */}
       <div className="sticky top-0 md:top-0 z-20 bg-background/95 backdrop-blur-sm border-b md:border-0 px-4 py-2 md:py-4 md:px-0">
         <Button
@@ -323,10 +339,7 @@ export default function MarketDetail() {
                   <button
                     key={index}
                     className={`w-full text-left rounded-lg px-3 py-3 md:py-4 border transition-all ${getOutcomeColor(outcome.color)} flex items-center gap-3`}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      // Handle bet action
-                    }}
+                    onClick={(e) => handleOutcomeClick(e, outcome)}
                   >
                     <div className={`rounded-full p-1.5 flex-shrink-0 ${getIconBgColor(outcome.color)}`}>
                       {getOutcomeIcon(outcome.color)}

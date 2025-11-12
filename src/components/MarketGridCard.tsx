@@ -1,7 +1,9 @@
+import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Clock, TrendingUp, BadgeCheck, Check, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { BuyDialog } from "@/components/BuyDialog";
 
 interface Outcome {
   label: string;
@@ -38,6 +40,8 @@ export function MarketGridCard({
   endsIn 
 }: MarketGridCardProps) {
   const navigate = useNavigate();
+  const [showBuyDialog, setShowBuyDialog] = useState(false);
+  const [selectedOutcome, setSelectedOutcome] = useState<Outcome | null>(null);
   
   // Use outcomes if provided, otherwise fallback to binary yes/no
   const displayOutcomes = outcomes || [
@@ -71,10 +75,25 @@ export function MarketGridCard({
 
   const hasMultipleOutcomes = displayOutcomes.length > 2;
 
+  const handleOutcomeClick = (e: React.MouseEvent, outcome: Outcome) => {
+    e.stopPropagation();
+    setSelectedOutcome(outcome);
+    setShowBuyDialog(true);
+  };
+
   return (
-    <Card 
-      className="group overflow-hidden transition-all hover:shadow-md cursor-pointer border-border/50 animate-fade-in bg-card"
-    >
+    <>
+      <BuyDialog
+        open={showBuyDialog}
+        onOpenChange={setShowBuyDialog}
+        outcome={selectedOutcome || displayOutcomes[0]}
+        marketTitle={title}
+        marketId={id}
+      />
+      
+      <Card 
+        className="group overflow-hidden transition-all hover:shadow-md cursor-pointer border-border/50 animate-fade-in bg-card"
+      >
       <CardContent className="p-0">
         {/* Mobile: Horizontal compact, Desktop: Vertical */}
         <div className="flex sm:flex-col">
@@ -129,10 +148,7 @@ export function MarketGridCard({
                   <button 
                     key={index}
                     className={`w-full text-left rounded-lg px-2 sm:px-2.5 py-1.5 sm:py-2 border transition-all ${getOutcomeColor(outcome.color)} flex items-center gap-1.5 sm:gap-2`}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      // Handle bet action
-                    }}
+                    onClick={(e) => handleOutcomeClick(e, outcome)}
                   >
                     <div className={`rounded-full p-1 flex-shrink-0 ${getIconBgColor(outcome.color)}`}>
                       {getOutcomeIcon(outcome.color)}
@@ -164,5 +180,6 @@ export function MarketGridCard({
         </div>
       </CardContent>
     </Card>
+    </>
   );
 }
