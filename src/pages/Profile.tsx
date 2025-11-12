@@ -10,11 +10,36 @@ import { MarketCard } from "@/components/MarketCard";
 // Mock data to determine if user is a creator
 const creatorNames = ['marketmaven', 'predictpro', 'trendsetter', 'insighthub', 'datadriven'];
 const creatorData = {
-  'marketmaven': { markets: 47, volume: '$2.8M', followers: '12.3K' },
-  'predictpro': { markets: 38, volume: '$2.1M', followers: '9.8K' },
-  'trendsetter': { markets: 31, volume: '$1.7M', followers: '8.2K' },
-  'insighthub': { markets: 29, volume: '$1.5M', followers: '7.1K' },
-  'datadriven': { markets: 24, volume: '$1.2M', followers: '6.4K' },
+  'marketmaven': { 
+    markets: 47, 
+    volume: '$2.8M', 
+    followers: '12.3K',
+    description: 'Professional market analyst specializing in crypto and tech predictions. Creating high-quality markets since 2023.'
+  },
+  'predictpro': { 
+    markets: 38, 
+    volume: '$2.1M', 
+    followers: '9.8K',
+    description: 'Data-driven predictions across finance, sports, and politics. Building the future of forecasting.'
+  },
+  'trendsetter': { 
+    markets: 31, 
+    volume: '$1.7M', 
+    followers: '8.2K',
+    description: 'Identifying emerging trends before they go mainstream. Tech enthusiast and market creator.'
+  },
+  'insighthub': { 
+    markets: 29, 
+    volume: '$1.5M', 
+    followers: '7.1K',
+    description: 'Providing actionable insights through well-researched prediction markets. Focus on business and economics.'
+  },
+  'datadriven': { 
+    markets: 24, 
+    volume: '$1.2M', 
+    followers: '6.4K',
+    description: 'Quantitative analyst creating markets based on statistical analysis and data science.'
+  },
 };
 
 const mockCreatorMarkets = [
@@ -25,6 +50,7 @@ const mockCreatorMarkets = [
       avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Maven"
     },
     title: "Will Bitcoin reach $100K by end of 2025?",
+    subtitle: "Major crypto milestone approaching as institutional adoption accelerates",
     yesPrice: 68,
     noPrice: 32,
     volume: "$1.2M",
@@ -38,6 +64,7 @@ const mockCreatorMarkets = [
       avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Maven"
     },
     title: "Will Apple release a foldable iPhone in 2025?",
+    subtitle: "Apple's next innovation could reshape the smartphone market",
     yesPrice: 45,
     noPrice: 55,
     volume: "$890K",
@@ -51,6 +78,7 @@ const mockCreatorMarkets = [
       avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Maven"
     },
     title: "Federal Reserve cuts rates by 0.5% in next meeting?",
+    subtitle: "Economic indicators suggest potential policy shift ahead",
     yesPrice: 73,
     noPrice: 27,
     volume: "$2.1M",
@@ -100,6 +128,9 @@ export default function Profile() {
                 <Badge variant="outline">
                   {isOwnProfile ? "Basic User" : isCreator ? "Creator" : "Community Member"}
                 </Badge>
+                {isCreator && creatorStats && creatorStats.description && (
+                  <p className="text-sm text-muted-foreground pt-1">{creatorStats.description}</p>
+                )}
                 {isOwnProfile && (
                   <div className="flex gap-2 pt-2">
                     <Button size="sm" variant="outline">
