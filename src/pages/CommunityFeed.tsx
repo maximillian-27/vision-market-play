@@ -234,9 +234,8 @@ export default function CommunityFeed() {
                             className="font-medium text-sm cursor-pointer"
                             onClick={() => navigate(`/profile/${post.user.username.slice(1)}`)}
                           >
-                            {post.user.name}
+                            {post.user.username}
                           </span>
-                          <span className="text-xs text-muted-foreground">{post.user.username}</span>
                           <span className="text-xs text-muted-foreground">·</span>
                           <span className="text-xs text-muted-foreground">{post.timestamp}</span>
                         </div>
@@ -307,8 +306,7 @@ export default function CommunityFeed() {
                             </Avatar>
                             <div className="flex-1">
                               <div className="flex items-center gap-2">
-                                <span className="font-semibold text-xs">John Doe</span>
-                                <span className="text-xs text-muted-foreground">@johndoe</span>
+                                <span className="font-semibold text-xs">@johndoe</span>
                                 <span className="text-xs text-muted-foreground">·</span>
                                 <span className="text-xs text-muted-foreground">1h ago</span>
                               </div>
