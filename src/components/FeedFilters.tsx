@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
-const categories = ["All", "Politics", "Sports", "Crypto", "Tech", "Entertainment", "Finance"];
+const categories = ["All", "Following", "Hot", "Politics", "Sports", "Crypto", "Tech", "Entertainment", "Finance"];
 
 export function FeedFilters() {
   return (
