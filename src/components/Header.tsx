@@ -118,26 +118,28 @@ export function Header() {
           
             {isLoggedIn && (
               <>
-                {/* Portfolio & Cash - Visible on all screens */}
-                <div className="flex items-center gap-2 md:gap-3 mr-1 md:mr-2">
-                  <div className="flex items-center gap-1 md:gap-1.5 text-xs md:text-sm">
-                    <TrendingUp className="h-3.5 w-3.5 md:h-4 md:w-4 text-success" />
+                {/* Portfolio & Cash - Compact on mobile */}
+                <div className="flex items-center gap-1.5 md:gap-3 mr-1">
+                  <div className="flex items-center gap-0.5 md:gap-1 text-xs md:text-sm">
+                    <TrendingUp className="h-3 w-3 md:h-4 md:w-4 text-success" />
                     <span className="font-semibold">${portfolioValue.toLocaleString()}</span>
                   </div>
-                  <div className="flex items-center gap-1 md:gap-1.5 text-xs md:text-sm">
-                    <Wallet className="h-3.5 w-3.5 md:h-4 md:w-4 text-muted-foreground" />
+                  <div className="h-3 w-px bg-border" />
+                  <div className="flex items-center gap-0.5 md:gap-1 text-xs md:text-sm">
+                    <Wallet className="h-3 w-3 md:h-4 md:w-4 text-muted-foreground" />
                     <span className="font-semibold">${cashBalance.toLocaleString()}</span>
                   </div>
                 </div>
 
-                {/* Deposit Button - Always shows text */}
+                {/* Deposit Button - Icon only on mobile */}
                 <Button 
                   size="sm" 
                   variant="default"
                   onClick={() => setShowDepositDialog(true)}
-                  className="h-8 md:h-9 text-xs md:text-sm"
+                  className="h-8 md:h-9 w-8 md:w-auto md:px-4"
                 >
-                  Deposit
+                  <Wallet className="h-4 w-4" />
+                  <span className="hidden md:inline ml-1.5">Deposit</span>
                 </Button>
               </>
             )}
