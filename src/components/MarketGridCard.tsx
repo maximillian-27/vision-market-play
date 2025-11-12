@@ -47,9 +47,9 @@ export function MarketGridCard({
 
   const getOutcomeColor = (color?: string) => {
     switch (color) {
-      case "success": return "bg-success/10 text-success border-success/40 hover:bg-success/20";
-      case "destructive": return "bg-destructive/10 text-destructive border-destructive/40 hover:bg-destructive/20";
-      default: return "bg-primary/10 text-primary border-primary/40 hover:bg-primary/20";
+      case "success": return "bg-success/15 text-success border-success/50 hover:bg-success/25 hover:border-success";
+      case "destructive": return "bg-destructive/15 text-destructive border-destructive/50 hover:bg-destructive/25 hover:border-destructive";
+      default: return "bg-primary/15 text-primary border-primary/50 hover:bg-primary/25 hover:border-primary";
     }
   };
 
@@ -128,25 +128,25 @@ export function MarketGridCard({
             </h3>
 
             {/* Outcomes - Clickable buttons */}
-            <div className="space-y-1">
-              <div className="grid grid-cols-2 gap-1.5">
+            <div className="space-y-1.5">
+              <div className="grid grid-cols-2 gap-2">
                 {visibleOutcomes.map((outcome, index) => (
                   <button 
                     key={index}
-                    className={`text-center rounded-md px-1.5 md:px-2 py-1.5 border transition-all font-medium ${getOutcomeColor(outcome.color)}`}
+                    className={`text-center rounded-lg px-2 md:px-3 py-2 md:py-2.5 border-2 transition-all duration-200 font-medium shadow-sm hover:shadow-md active:scale-95 ${getOutcomeColor(outcome.color)}`}
                     onClick={(e) => {
                       e.stopPropagation();
                       // Handle bet action
                     }}
                   >
-                    <div className="text-sm font-bold">{outcome.price}¢</div>
-                    <div className="text-[9px] md:text-[10px] opacity-90 truncate">{outcome.label}</div>
+                    <div className="text-base md:text-lg font-bold leading-none mb-1">{outcome.price}¢</div>
+                    <div className="text-[10px] md:text-xs font-medium opacity-80 truncate leading-tight">{outcome.label}</div>
                   </button>
                 ))}
               </div>
               {remainingCount > 0 && (
                 <button 
-                  className="w-full text-center text-[10px] md:text-xs text-muted-foreground hover:text-foreground transition-colors py-0.5"
+                  className="w-full text-center text-xs font-medium text-muted-foreground hover:text-foreground transition-colors py-1.5 rounded-md hover:bg-muted/50"
                   onClick={() => navigate(`/market/${id}`)}
                 >
                   +{remainingCount} more option{remainingCount > 1 ? 's' : ''}
