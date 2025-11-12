@@ -75,7 +75,7 @@ export function Header() {
 
           {/* Desktop Navigation Items */}
           {!isMobile && (
-            <nav className="flex items-center gap-1 flex-1 justify-center">
+            <nav className="flex items-center gap-4 lg:gap-6 ml-4 lg:ml-8">
               {navItems.map((item) => (
                 <Button
                   key={item.title}
@@ -91,7 +91,7 @@ export function Header() {
           )}
 
           {/* Search Bar and Right Side Items */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 ml-auto">
             {/* Search Bar - Hidden on mobile */}
             <div className="hidden md:flex relative w-64 lg:w-80">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
