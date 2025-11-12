@@ -3,6 +3,7 @@ import { MarketCard } from "@/components/MarketCard";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Heart, MessageCircle, Share2 } from "lucide-react";
 import bitcoinImage from "@/assets/bitcoin-market.jpg";
@@ -183,13 +184,30 @@ const mockCommunityPosts: CommunityPost[] = [
   }
 ];
 
+const categories = ["Hot", "Following", "Politics", "Sports", "Crypto", "Tech", "Entertainment", "Finance"];
+
 export default function CommunityFeed() {
   const [commentInputs, setCommentInputs] = useState<{ [key: string]: string }>({});
   const [expandedComments, setExpandedComments] = useState<{ [key: string]: boolean }>({});
+  const [selectedFilter, setSelectedFilter] = useState("Hot");
 
   return (
     <div className="w-full md:container md:max-w-2xl py-4 md:py-6 space-y-4 md:space-y-6 px-4 md:px-4">
       <h1 className="text-2xl font-bold">Community Feed</h1>
+      
+      {/* Category Filters */}
+      <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+        {categories.map((category) => (
+          <Badge
+            key={category}
+            variant={category === selectedFilter ? "default" : "outline"}
+            className="cursor-pointer whitespace-nowrap transition-all hover:bg-primary hover:text-primary-foreground"
+            onClick={() => setSelectedFilter(category)}
+          >
+            {category}
+          </Badge>
+        ))}
+      </div>
       
       <div className="space-y-4">
         {mockCommunityPosts.map((post) => (
