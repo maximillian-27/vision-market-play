@@ -47,30 +47,34 @@ export function MarketGridCard({
 
   const getOutcomeColor = (color?: string) => {
     switch (color) {
-      case "success": return "bg-success/20 text-success border-success/30";
-      case "destructive": return "bg-destructive/20 text-destructive border-destructive/30";
-      default: return "bg-primary/20 text-primary border-primary/30";
+      case "success": return "bg-success/10 text-success border-success/40 hover:bg-success/20";
+      case "destructive": return "bg-destructive/10 text-destructive border-destructive/40 hover:bg-destructive/20";
+      default: return "bg-primary/10 text-primary border-primary/40 hover:bg-primary/20";
     }
   };
+
+  const visibleOutcomes = displayOutcomes.slice(0, 4);
+  const remainingCount = displayOutcomes.length - 4;
 
   return (
     <Card 
       className="group overflow-hidden transition-all hover:shadow-lg hover:scale-[1.02] cursor-pointer border-border/40 animate-fade-in"
-      onClick={() => navigate(`/market/${id}`)}
     >
       <CardContent className="p-0">
         {/* Market Image */}
-        <div className="relative aspect-square w-full overflow-hidden bg-muted/50">
+        <div 
+          className="relative aspect-square w-full overflow-hidden bg-muted/50"
+          onClick={() => navigate(`/market/${id}`)}
+        >
           <img 
             src={image} 
             alt={title}
             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
           
           {/* Creator info at top */}
           <div 
-            className="absolute top-2 left-2 flex items-center gap-1.5 bg-black/50 backdrop-blur-sm rounded-full px-2 py-1"
+            className="absolute top-2 left-2 flex items-center gap-1.5 bg-black/60 backdrop-blur-sm rounded-full px-2 py-1 hover:bg-black/70 transition-colors z-10"
             onClick={(e) => {
               e.stopPropagation();
               const profilePath = creator.isCreator !== false 
@@ -88,31 +92,47 @@ export function MarketGridCard({
               <BadgeCheck className="h-3 w-3 text-white fill-white/30" />
             )}
           </div>
-
-          {/* Outcomes at bottom */}
-          <div className="absolute bottom-0 left-0 right-0 p-2 space-y-1">
-            <div className="grid grid-cols-2 gap-1.5">
-              {displayOutcomes.slice(0, 4).map((outcome, index) => (
-                <div 
-                  key={index}
-                  className={`text-center rounded-md px-2 py-1 border backdrop-blur-sm ${getOutcomeColor(outcome.color)}`}
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <div className="text-xs font-semibold">{outcome.price}¢</div>
-                  <div className="text-[10px] opacity-90 truncate">{outcome.label}</div>
-                </div>
-              ))}
-            </div>
-          </div>
         </div>
 
-        {/* Title & Stats */}
-        <div className="p-3 space-y-2">
-          <h3 className="text-sm font-semibold leading-tight line-clamp-2 min-h-[2.5rem] group-hover:text-primary transition-colors">
+        {/* Content below image */}
+        <div className="p-3 space-y-2.5">
+          {/* Title */}
+          <h3 
+            className="text-sm font-semibold leading-tight line-clamp-2 min-h-[2.5rem] group-hover:text-primary transition-colors cursor-pointer"
+            onClick={() => navigate(`/market/${id}`)}
+          >
             {title}
           </h3>
+
+          {/* Outcomes - Clickable buttons */}
+          <div className="space-y-1.5">
+            <div className="grid grid-cols-2 gap-1.5">
+              {visibleOutcomes.map((outcome, index) => (
+                <button 
+                  key={index}
+                  className={`text-center rounded-md px-2 py-1.5 border transition-all font-medium ${getOutcomeColor(outcome.color)}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    // Handle bet action
+                  }}
+                >
+                  <div className="text-sm font-bold">{outcome.price}¢</div>
+                  <div className="text-[10px] opacity-90 truncate">{outcome.label}</div>
+                </button>
+              ))}
+            </div>
+            {remainingCount > 0 && (
+              <button 
+                className="w-full text-center text-xs text-muted-foreground hover:text-foreground transition-colors py-1"
+                onClick={() => navigate(`/market/${id}`)}
+              >
+                +{remainingCount} more option{remainingCount > 1 ? 's' : ''}
+              </button>
+            )}
+          </div>
           
-          <div className="flex items-center justify-between text-xs text-muted-foreground">
+          {/* Stats */}
+          <div className="flex items-center justify-between text-xs text-muted-foreground pt-1 border-t">
             <div className="flex items-center gap-1">
               <TrendingUp className="h-3 w-3" />
               <span>{volume}</span>
