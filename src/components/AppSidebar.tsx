@@ -15,9 +15,9 @@ import {
 
 const items = [
   { title: "Markets", url: "/", icon: Home },
-  { title: "Community Feed", url: "/community-feed", icon: MessageSquare },
+  { title: "Community", url: "/community-feed", icon: MessageSquare },
   { title: "News", url: "/news", icon: Newspaper },
-  { title: "Community", url: "/community", icon: Users },
+  { title: "Leaderboards", url: "/community", icon: Users },
 ];
 
 export function AppSidebar() {
