@@ -206,7 +206,7 @@ export default function CommunityFeed() {
               <Badge
                 key={category}
                 variant={category === selectedFilter ? "default" : "outline"}
-                className="cursor-pointer whitespace-nowrap transition-all hover:bg-primary hover:text-primary-foreground"
+                className="cursor-pointer whitespace-nowrap transition-all hover:bg-primary hover:text-primary-foreground border-border/40 text-sm font-medium px-4 py-2"
                 onClick={() => setSelectedFilter(category)}
               >
                 {category}
