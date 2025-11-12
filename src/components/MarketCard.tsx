@@ -17,6 +17,7 @@ interface MarketCardProps {
     avatar: string;
   };
   title: string;
+  subtitle?: string;
   image: string;
   outcomes?: Outcome[];
   yesPrice?: number;
@@ -25,7 +26,7 @@ interface MarketCardProps {
   endsIn: string;
 }
 
-export function MarketCard({ id, creator, title, image, outcomes, yesPrice, noPrice, volume, endsIn }: MarketCardProps) {
+export function MarketCard({ id, creator, title, subtitle, image, outcomes, yesPrice, noPrice, volume, endsIn }: MarketCardProps) {
   const navigate = useNavigate();
   
   // Use outcomes if provided, otherwise fallback to binary yes/no
@@ -62,6 +63,9 @@ export function MarketCard({ id, creator, title, image, outcomes, yesPrice, noPr
         {/* Title */}
         <div className="px-3 md:px-4 pb-2 md:pb-3">
           <h3 className="text-base md:text-lg font-semibold leading-tight">{title}</h3>
+          {subtitle && (
+            <p className="text-sm text-muted-foreground mt-1">{subtitle}</p>
+          )}
         </div>
 
         {/* Market Image */}

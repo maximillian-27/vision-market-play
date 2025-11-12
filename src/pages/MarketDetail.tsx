@@ -15,6 +15,7 @@ const mockMarketData: Record<string, any> = {
       avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah",
     },
     title: "Will Bitcoin reach $100,000 by end of 2025?",
+    subtitle: "The ultimate crypto milestone - will BTC finally break six figures?",
     description: "This market resolves to YES if Bitcoin (BTC) reaches or exceeds $100,000 USD on any major exchange (Coinbase, Binance, or Kraken) before 11:59 PM ET on December 31, 2025. The price must be sustained for at least 5 minutes.",
     resolutionCriteria: "The market will resolve based on data from CoinGecko's Bitcoin price index. A screenshot of the price exceeding $100,000 for at least 5 consecutive minutes will be required. If there are disputes, the median price across the three exchanges (Coinbase, Binance, Kraken) will be used.",
     outcomes: [
@@ -84,6 +85,10 @@ export default function MarketDetail() {
             </div>
 
             <h1 className="text-xl md:text-2xl font-bold leading-tight">{market.title}</h1>
+            
+            {market.subtitle && (
+              <p className="text-base text-muted-foreground">{market.subtitle}</p>
+            )}
 
             {/* Stats Row */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-2">
