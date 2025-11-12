@@ -44,7 +44,7 @@ export function AppSidebar() {
                         className="flex items-center gap-3 transition-colors"
                       >
                         <item.icon className="h-5 w-5" />
-                        <span>{item.title}</span>
+                        <span className="font-semibold">{item.title}</span>
                       </NavLink>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
