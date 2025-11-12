@@ -25,8 +25,11 @@ export function AppSidebar() {
   const location = useLocation();
 
   return (
-    <Sidebar collapsible="icon">
-      <SidebarContent>
+    <Sidebar 
+      collapsible="offcanvas"
+      className="fixed left-0 top-0 z-40 h-screen"
+    >
+      <SidebarContent className="bg-background border-r">
         <SidebarGroup>
           <SidebarGroupContent className="pt-4">
             <SidebarMenu>
