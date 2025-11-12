@@ -6,7 +6,7 @@ import { Settings, Wallet, TrendingUp, Activity } from "lucide-react";
 
 export default function Profile() {
   return (
-    <div className="container max-w-2xl py-4 md:py-6 space-y-4 md:space-y-6 px-4">
+    <div className="w-full md:container md:max-w-2xl py-4 md:py-6 space-y-4 md:space-y-6 px-4">
       {/* Profile Header */}
       <Card>
         <CardContent className="pt-4 md:pt-6">

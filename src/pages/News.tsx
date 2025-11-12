@@ -21,7 +21,7 @@ const newsItems = [
 
 export default function News() {
   return (
-    <div className="container max-w-2xl py-4 md:py-6 space-y-4 px-4">
+    <div className="w-full md:container md:max-w-2xl py-4 md:py-6 space-y-4 px-4">
       <h1 className="text-2xl font-bold mb-4 md:mb-6">Latest News</h1>
       {newsItems.map((item, index) => (
         <Card key={index} className="cursor-pointer transition-all hover:shadow-md">

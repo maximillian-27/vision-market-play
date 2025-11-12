@@ -13,7 +13,7 @@ const leaderboard = [
 
 export default function Community() {
   return (
-    <div className="container max-w-2xl py-4 md:py-6 space-y-4 md:space-y-6 px-4">
+    <div className="w-full md:container md:max-w-2xl py-4 md:py-6 space-y-4 md:space-y-6 px-4">
       <h1 className="text-2xl font-bold">Community</h1>
       
       <Card>

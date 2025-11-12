@@ -28,12 +28,7 @@ export function AppSidebar() {
     <Sidebar collapsible="icon">
       <SidebarContent>
         <SidebarGroup>
-          <div className="px-4 py-6">
-            <h1 className={`font-bold text-primary transition-all ${open ? "text-2xl" : "text-xl"}`}>
-              {open ? "PredictX" : "PX"}
-            </h1>
-          </div>
-          <SidebarGroupContent>
+          <SidebarGroupContent className="pt-6">
             <SidebarMenu>
               {items.map((item) => {
                 const isActive = location.pathname === item.url;

@@ -14,7 +14,7 @@ export function Header() {
 
   return (
     <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-20">
-      <div className="container flex h-14 items-center justify-between px-4">
+      <div className="w-full flex h-14 items-center justify-between px-4 md:container">
         <div className="flex items-center gap-3">
           {!isMobile && <SidebarTrigger />}
           <h1 className="font-bold text-primary text-xl">
