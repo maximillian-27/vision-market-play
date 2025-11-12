@@ -236,7 +236,7 @@ export default function Feed() {
   return (
     <div className="w-full px-2 md:px-4 lg:px-6 lg:py-4">
       <div className="space-y-3 md:space-y-4">
-        <div className="sticky top-0 md:top-16 z-20 bg-background/95 backdrop-blur-sm py-2 -mb-2">
+        <div className="py-2 lg:py-0">
           <FeedFilters />
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3 md:gap-4">
