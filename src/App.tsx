@@ -3,8 +3,6 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { SidebarProvider } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/AppSidebar";
 import { Header } from "@/components/Header";
 import { MobileNav } from "@/components/MobileNav";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -23,26 +21,23 @@ function AppContent() {
   const isMobile = useIsMobile();
 
   return (
-    <SidebarProvider>
-      <div className="min-h-screen flex w-full relative">
-        {!isMobile && <AppSidebar />}
-        <main className={`flex-1 w-full ${isMobile ? 'pb-16 overflow-x-hidden pt-14' : 'pt-14'}`}>
-          <Header />
-          <Routes>
-            <Route path="/" element={<Feed />} />
-            <Route path="/market/:id" element={<MarketDetail />} />
-            <Route path="/community-feed" element={<CommunityFeed />} />
-            <Route path="/news" element={<News />} />
-            <Route path="/community" element={<Community />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/profile/:userId" element={<Profile />} />
-            <Route path="/creator/:userId" element={<CreatorProfile />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </main>
-        {isMobile && <MobileNav />}
-      </div>
-    </SidebarProvider>
+    <div className="min-h-screen flex w-full relative">
+      <main className={`flex-1 w-full ${isMobile ? 'pb-16 overflow-x-hidden pt-14' : 'pt-14'}`}>
+        <Header />
+        <Routes>
+          <Route path="/" element={<Feed />} />
+          <Route path="/market/:id" element={<MarketDetail />} />
+          <Route path="/community-feed" element={<CommunityFeed />} />
+          <Route path="/news" element={<News />} />
+          <Route path="/community" element={<Community />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/profile/:userId" element={<Profile />} />
+          <Route path="/creator/:userId" element={<CreatorProfile />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </main>
+      {isMobile && <MobileNav />}
+    </div>
   );
 }
 
