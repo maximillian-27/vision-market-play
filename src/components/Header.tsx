@@ -118,6 +118,18 @@ export function Header() {
           
             {isLoggedIn && (
               <>
+                {/* Portfolio & Cash - Desktop only */}
+                <div className="hidden md:flex items-center gap-3 mr-2">
+                  <div className="flex items-center gap-1.5 text-sm">
+                    <TrendingUp className="h-4 w-4 text-success" />
+                    <span className="font-semibold">${portfolioValue.toLocaleString()}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 text-sm">
+                    <Wallet className="h-4 w-4 text-muted-foreground" />
+                    <span className="font-semibold">${cashBalance.toLocaleString()}</span>
+                  </div>
+                </div>
+
                 {/* Deposit Button - Always shows text */}
                 <Button 
                   size="sm" 
