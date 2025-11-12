@@ -39,7 +39,6 @@ const mockMarketData: Record<string, any> = {
       name: "Sarah Chen",
       avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah",
     },
-    image: "https://images.unsplash.com/photo-1518546305927-5a555bb7020d?w=800&auto=format&fit=crop&q=80",
     title: "Will Bitcoin reach $100,000 by end of 2025?",
     subtitle: "The ultimate crypto milestone - will BTC finally break six figures?",
     description: "This market resolves to YES if Bitcoin (BTC) reaches or exceeds $100,000 USD on any major exchange (Coinbase, Binance, or Kraken) before 11:59 PM ET on December 31, 2025. The price must be sustained for at least 5 minutes.",
@@ -241,17 +240,6 @@ export default function MarketDetail() {
                 <p className="text-xs text-muted-foreground">Market Creator</p>
               </div>
             </div>
-
-            {/* Market Image */}
-            {market.image && (
-              <div className="relative w-full h-32 md:h-40 overflow-hidden rounded-lg bg-muted">
-                <img 
-                  src={market.image} 
-                  alt={market.title}
-                  className="h-full w-full object-cover"
-                />
-              </div>
-            )}
 
             <h1 className="text-xl md:text-2xl font-bold leading-tight">{market.title}</h1>
             
