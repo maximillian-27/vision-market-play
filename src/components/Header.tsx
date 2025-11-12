@@ -118,28 +118,14 @@ export function Header() {
           
             {isLoggedIn && (
               <>
-                {/* Portfolio & Cash - Compact on mobile */}
-                <div className="flex items-center gap-1.5 md:gap-3 mr-1">
-                  <div className="flex items-center gap-0.5 md:gap-1 text-xs md:text-sm">
-                    <TrendingUp className="h-3 w-3 md:h-4 md:w-4 text-success" />
-                    <span className="font-semibold">${portfolioValue.toLocaleString()}</span>
-                  </div>
-                  <div className="h-3 w-px bg-border" />
-                  <div className="flex items-center gap-0.5 md:gap-1 text-xs md:text-sm">
-                    <Wallet className="h-3 w-3 md:h-4 md:w-4 text-muted-foreground" />
-                    <span className="font-semibold">${cashBalance.toLocaleString()}</span>
-                  </div>
-                </div>
-
-                {/* Deposit Button - Icon only on mobile */}
+                {/* Deposit Button - Always shows text */}
                 <Button 
                   size="sm" 
                   variant="default"
                   onClick={() => setShowDepositDialog(true)}
-                  className="h-8 md:h-9 w-8 md:w-auto md:px-4"
+                  className="h-8 md:h-9 text-xs md:text-sm"
                 >
-                  <Wallet className="h-4 w-4" />
-                  <span className="hidden md:inline ml-1.5">Deposit</span>
+                  Deposit
                 </Button>
               </>
             )}
@@ -169,6 +155,19 @@ export function Header() {
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56 z-50 bg-popover">
+                  {/* Portfolio & Cash */}
+                  <div className="px-2 py-3 space-y-2">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-muted-foreground">Portfolio</span>
+                      <span className="font-semibold text-success">${portfolioValue.toLocaleString()}</span>
+                    </div>
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-muted-foreground">Cash</span>
+                      <span className="font-semibold">${cashBalance.toLocaleString()}</span>
+                    </div>
+                  </div>
+                  <DropdownMenuSeparator />
+                  
                   <DropdownMenuItem onClick={() => navigate("/profile")}>
                     <User className="mr-2 h-4 w-4" />
                     Profile
