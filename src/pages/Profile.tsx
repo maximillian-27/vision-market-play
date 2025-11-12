@@ -180,45 +180,29 @@ export default function Profile() {
       
       {/* Profile Header */}
       <Card>
-        <CardContent className="pt-4 md:pt-6">
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex items-start gap-4">
-              <Avatar className="h-20 w-20">
-                <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${displayName}`} alt={displayName} />
-                <AvatarFallback>{displayName.slice(0, 2).toUpperCase()}</AvatarFallback>
-              </Avatar>
-              <div className="flex-1 space-y-2">
-                <div className="flex items-center gap-2">
-                  <h2 className="text-2xl font-bold">{displayName}</h2>
-                  {isCreator && <BadgeCheck className="h-6 w-6 text-primary" />}
-                </div>
-                <Badge variant="outline">
-                  {isOwnProfile ? "Basic User" : isCreator ? "Creator" : "Community Member"}
-                </Badge>
-                {!isCreator && (
-                  <div className="flex items-center gap-4 text-sm text-muted-foreground pt-1">
-                    <span>Joined {joinDate}</span>
-                    <span>•</span>
-                    <span>{followerCount} followers</span>
-                  </div>
-                )}
-                {isCreator && creatorStats && creatorStats.description && (
-                  <p className="text-sm text-muted-foreground pt-1">{creatorStats.description}</p>
-                )}
-                {isOwnProfile && (
-                  <div className="flex gap-2 pt-2">
-                    <Button size="sm" variant="outline">
-                      <Settings className="h-4 w-4 mr-2" />
-                      Settings
-                    </Button>
-                    <Button size="sm" variant="outline">
-                      <Wallet className="h-4 w-4 mr-2" />
-                      Wallet
-                    </Button>
-                  </div>
-                )}
+        <CardContent className="pt-6">
+          <div className="flex items-start gap-4">
+            <Avatar className="h-16 w-16">
+              <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${displayName}`} alt={displayName} />
+              <AvatarFallback>{displayName.slice(0, 2).toUpperCase()}</AvatarFallback>
+            </Avatar>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 mb-1">
+                <h2 className="text-xl font-bold">{displayName}</h2>
+                {isCreator && <BadgeCheck className="h-5 w-5 text-primary" />}
               </div>
+              <p className="text-sm text-muted-foreground">Joined {joinDate}</p>
             </div>
+            {isOwnProfile && (
+              <div className="flex gap-2">
+                <Button size="sm" variant="ghost">
+                  <Settings className="h-4 w-4" />
+                </Button>
+                <Button size="sm" variant="ghost">
+                  <Wallet className="h-4 w-4" />
+                </Button>
+              </div>
+            )}
             {!isOwnProfile && (
               <Button 
                 variant={isFollowing ? "outline" : "default"}
@@ -242,82 +226,98 @@ export default function Profile() {
         </CardContent>
       </Card>
 
-      {/* Financial Overview - Only for own profile */}
+      {/* Financial Overview & Key Stats - Only for own profile */}
       {isOwnProfile && (
         <Card>
-          <CardContent className="pt-6 pb-6">
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <p className="text-xs text-muted-foreground">Portfolio Balance</p>
-                  <p className="text-2xl font-bold">$18,450</p>
-                </div>
-                <div className="space-y-1">
-                  <p className="text-xs text-muted-foreground">Cash Balance</p>
-                  <p className="text-2xl font-bold text-muted-foreground">$5,230</p>
-                </div>
+          <CardContent className="pt-6">
+            <div className="grid grid-cols-2 gap-6 mb-6">
+              <div>
+                <p className="text-xs text-muted-foreground mb-1">Portfolio Balance</p>
+                <p className="text-3xl font-bold">$18,450</p>
+                <p className="text-xs text-success mt-1">+$12,450 profit</p>
               </div>
-              <div className="flex gap-3 pt-2">
-                <Button className="flex-1" variant="outline" size="sm">
-                  <ArrowDownLeft className="h-4 w-4 mr-2" />
-                  Withdraw
-                </Button>
-                <Button className="flex-1" size="sm">
-                  <ArrowUpRight className="h-4 w-4 mr-2" />
-                  Deposit
-                </Button>
+              <div>
+                <p className="text-xs text-muted-foreground mb-1">Cash Balance</p>
+                <p className="text-3xl font-bold">$5,230</p>
               </div>
+            </div>
+            
+            <div className="grid grid-cols-3 gap-3 pb-4 mb-4 border-b">
+              <div className="text-center">
+                <div className="text-lg font-bold">78%</div>
+                <div className="text-xs text-muted-foreground">Accuracy</div>
+              </div>
+              <div className="text-center">
+                <div className="text-lg font-bold">142</div>
+                <div className="text-xs text-muted-foreground">Markets</div>
+              </div>
+              <div className="text-center">
+                <div className="text-lg font-bold">47/60</div>
+                <div className="text-xs text-muted-foreground">Win/Total</div>
+              </div>
+            </div>
+
+            <div className="flex gap-3">
+              <Button className="flex-1" variant="outline" size="sm">
+                <ArrowDownLeft className="h-4 w-4 mr-2" />
+                Withdraw
+              </Button>
+              <Button className="flex-1" size="sm">
+                <ArrowUpRight className="h-4 w-4 mr-2" />
+                Deposit
+              </Button>
             </div>
           </CardContent>
         </Card>
       )}
 
-      {/* Stats */}
-      <div className="grid grid-cols-3 gap-4">
-        {isCreator && creatorStats ? (
-          <>
-            <Card>
-              <CardContent className="pt-6 text-center">
-                <div className="text-2xl font-bold text-primary">{creatorStats.markets}</div>
-                <p className="text-sm text-muted-foreground mt-1">Markets Created</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="pt-6 text-center">
-                <div className="text-2xl font-bold text-success">{creatorStats.volume}</div>
-                <p className="text-sm text-muted-foreground mt-1">Volume Generated</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="pt-6 text-center">
-                <div className="text-2xl font-bold">{creatorStats.followers}</div>
-                <p className="text-sm text-muted-foreground mt-1">Followers</p>
-              </CardContent>
-            </Card>
-          </>
-        ) : (
-          <>
-            <Card>
-              <CardContent className="pt-6 text-center">
-                <div className="text-2xl font-bold text-success">+$12,450</div>
-                <p className="text-sm text-muted-foreground mt-1">Total Profit</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="pt-6 text-center">
-                <div className="text-2xl font-bold">78%</div>
-                <p className="text-sm text-muted-foreground mt-1">Accuracy</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="pt-6 text-center">
-                <div className="text-2xl font-bold">142</div>
-                <p className="text-sm text-muted-foreground mt-1">Markets</p>
-              </CardContent>
-            </Card>
-          </>
-        )}
-      </div>
+      {/* Creator Stats */}
+      {isCreator && creatorStats && (
+        <div className="grid grid-cols-3 gap-4">
+          <Card>
+            <CardContent className="pt-6 text-center">
+              <div className="text-2xl font-bold text-primary">{creatorStats.markets}</div>
+              <p className="text-sm text-muted-foreground mt-1">Markets Created</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="pt-6 text-center">
+              <div className="text-2xl font-bold text-success">{creatorStats.volume}</div>
+              <p className="text-sm text-muted-foreground mt-1">Volume Generated</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="pt-6 text-center">
+              <div className="text-2xl font-bold">{creatorStats.followers}</div>
+              <p className="text-sm text-muted-foreground mt-1">Followers</p>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {/* Community member stats */}
+      {!isOwnProfile && !isCreator && (
+        <div className="grid grid-cols-3 gap-4">
+          <Card>
+            <CardContent className="pt-6 text-center">
+              <div className="text-2xl font-bold text-success">+$8,320</div>
+              <p className="text-sm text-muted-foreground mt-1">Total Profit</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="pt-6 text-center">
+              <div className="text-2xl font-bold">72%</div>
+              <p className="text-sm text-muted-foreground mt-1">Accuracy</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="pt-6 text-center">
+              <div className="text-2xl font-bold">89</div>
+              <p className="text-sm text-muted-foreground mt-1">Markets</p>
+            </CardContent>
+          </Card>
+        </div>
+      )}
 
       {/* Active Positions or Created Markets */}
       {isCreator ? (
@@ -329,117 +329,88 @@ export default function Profile() {
         </div>
       ) : isOwnProfile ? (
         <>
-          {/* Achievements */}
+          {/* Active Positions */}
           <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Award className="h-5 w-5" />
-                Achievements
-              </CardTitle>
+            <CardHeader className="pb-3">
+              <CardTitle>Active Positions</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-2 gap-3">
-                <div className="flex items-center gap-3 p-3 bg-primary/10 rounded-lg">
-                  <div className="p-2 bg-primary/20 rounded-full">
-                    <Target className="h-5 w-5 text-primary" />
+              <Tabs defaultValue="active" className="w-full">
+                <TabsList className="grid w-full grid-cols-2 mb-4">
+                  <TabsTrigger value="active">Active</TabsTrigger>
+                  <TabsTrigger value="history">History</TabsTrigger>
+                </TabsList>
+                
+                <TabsContent value="active" className="space-y-3 mt-0">
+                  <div className="space-y-3">
+                    <div className="p-4 border rounded-lg space-y-2">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-sm">Bitcoin reaches $100K by 2025?</h3>
+                          <p className="text-xs text-muted-foreground mt-1">Your position: Yes at 68¢</p>
+                          <div className="flex items-center gap-2 mt-2">
+                            <Clock className="h-3 w-3 text-muted-foreground" />
+                            <span className="text-xs text-muted-foreground">3 months left</span>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-sm font-semibold text-success">+$124</div>
+                          <div className="text-xs text-muted-foreground">+15.2%</div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="p-4 border rounded-lg space-y-2">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-sm">Lakers make NBA playoffs?</h3>
+                          <p className="text-xs text-muted-foreground mt-1">Your position: No at 55¢</p>
+                          <div className="flex items-center gap-2 mt-2">
+                            <Clock className="h-3 w-3 text-muted-foreground" />
+                            <span className="text-xs text-muted-foreground">2 weeks left</span>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-sm font-semibold text-destructive">-$45</div>
+                          <div className="text-xs text-muted-foreground">-8.1%</div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  <div>
-                    <div className="font-semibold text-sm">First Win</div>
-                    <div className="text-xs text-muted-foreground">Unlocked</div>
+                </TabsContent>
+
+                <TabsContent value="history" className="space-y-3 mt-0">
+                  <div className="space-y-3">
+                    <div className="p-4 border rounded-lg space-y-2">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-sm">Apple releases new iPhone in Sept?</h3>
+                          <p className="text-xs text-muted-foreground mt-1">Position: Yes at 89¢</p>
+                          <Badge variant="outline" className="mt-2 text-xs">Resolved: Yes</Badge>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-sm font-semibold text-success">+$89</div>
+                          <div className="text-xs text-muted-foreground">Won</div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="p-4 border rounded-lg space-y-2">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-sm">Tesla stock hits $300?</h3>
+                          <p className="text-xs text-muted-foreground mt-1">Position: Yes at 72¢</p>
+                          <Badge variant="outline" className="mt-2 text-xs">Resolved: No</Badge>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-sm font-semibold text-destructive">-$72</div>
+                          <div className="text-xs text-muted-foreground">Lost</div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                </div>
-                <div className="flex items-center gap-3 p-3 bg-success/10 rounded-lg">
-                  <div className="p-2 bg-success/20 rounded-full">
-                    <TrendingUp className="h-5 w-5 text-success" />
-                  </div>
-                  <div>
-                    <div className="font-semibold text-sm">Hot Streak</div>
-                    <div className="text-xs text-muted-foreground">5 wins</div>
-                  </div>
-                </div>
-              </div>
+                </TabsContent>
+              </Tabs>
             </CardContent>
           </Card>
-
-          {/* Active Positions */}
-          <Tabs defaultValue="active" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="active">Active Positions</TabsTrigger>
-              <TabsTrigger value="history">History</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="active" className="space-y-3 mt-4">
-              <Card>
-                <CardContent className="p-4 space-y-3">
-                  <div className="p-4 border rounded-lg space-y-2">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <h3 className="font-semibold text-sm">Bitcoin reaches $100K by 2025?</h3>
-                        <p className="text-xs text-muted-foreground mt-1">Your position: Yes at 68¢</p>
-                        <div className="flex items-center gap-2 mt-2">
-                          <Clock className="h-3 w-3 text-muted-foreground" />
-                          <span className="text-xs text-muted-foreground">3 months left</span>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-sm font-semibold text-success">+$124</div>
-                        <div className="text-xs text-muted-foreground">+15.2%</div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="p-4 border rounded-lg space-y-2">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <h3 className="font-semibold text-sm">Lakers make NBA playoffs?</h3>
-                        <p className="text-xs text-muted-foreground mt-1">Your position: No at 55¢</p>
-                        <div className="flex items-center gap-2 mt-2">
-                          <Clock className="h-3 w-3 text-muted-foreground" />
-                          <span className="text-xs text-muted-foreground">2 weeks left</span>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-sm font-semibold text-destructive">-$45</div>
-                        <div className="text-xs text-muted-foreground">-8.1%</div>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="history" className="space-y-3 mt-4">
-              <Card>
-                <CardContent className="p-4 space-y-3">
-                  <div className="p-4 border rounded-lg space-y-2">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <h3 className="font-semibold text-sm">Apple releases new iPhone in Sept?</h3>
-                        <p className="text-xs text-muted-foreground mt-1">Position: Yes at 89¢</p>
-                        <Badge variant="outline" className="mt-2 text-xs">Resolved: Yes</Badge>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-sm font-semibold text-success">+$89</div>
-                        <div className="text-xs text-muted-foreground">Won</div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="p-4 border rounded-lg space-y-2">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <h3 className="font-semibold text-sm">Tesla stock hits $300?</h3>
-                        <p className="text-xs text-muted-foreground mt-1">Position: Yes at 72¢</p>
-                        <Badge variant="outline" className="mt-2 text-xs">Resolved: No</Badge>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-sm font-semibold text-destructive">-$72</div>
-                        <div className="text-xs text-muted-foreground">Lost</div>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-          </Tabs>
 
           {/* Performance Overview */}
           <Card>
@@ -472,6 +443,38 @@ export default function Profile() {
                 <div className="text-center p-3 bg-muted/50 rounded-lg">
                   <div className="text-lg font-bold">13</div>
                   <div className="text-xs text-muted-foreground">Losses</div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Achievements */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Award className="h-5 w-5" />
+                Achievements
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="flex items-center gap-3 p-3 bg-primary/10 rounded-lg">
+                  <div className="p-2 bg-primary/20 rounded-full">
+                    <Target className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <div className="font-semibold text-sm">First Win</div>
+                    <div className="text-xs text-muted-foreground">Unlocked</div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 p-3 bg-success/10 rounded-lg">
+                  <div className="p-2 bg-success/20 rounded-full">
+                    <TrendingUp className="h-5 w-5 text-success" />
+                  </div>
+                  <div>
+                    <div className="font-semibold text-sm">Hot Streak</div>
+                    <div className="text-xs text-muted-foreground">5 wins</div>
+                  </div>
                 </div>
               </div>
             </CardContent>
