@@ -65,7 +65,7 @@ export function MarketGridCard({
         <div className="md:flex-col flex">
           {/* Market Image */}
           <div 
-            className="relative md:aspect-square aspect-video md:w-full w-2/5 overflow-hidden bg-muted/50 flex-shrink-0"
+            className="relative md:aspect-square aspect-[4/3] md:w-full w-[35%] overflow-hidden bg-muted/50 flex-shrink-0"
             onClick={() => navigate(`/market/${id}`)}
           >
             <img 
@@ -74,9 +74,9 @@ export function MarketGridCard({
               className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
             />
             
-            {/* Creator info at top */}
+            {/* Creator info - desktop only */}
             <div 
-              className="absolute top-2 left-2 flex items-center gap-1.5 bg-black/60 backdrop-blur-sm rounded-full px-2 py-1 hover:bg-black/70 transition-colors z-10"
+              className="hidden md:flex absolute top-2 left-2 items-center gap-1.5 bg-black/60 backdrop-blur-sm rounded-full px-2 py-1 hover:bg-black/70 transition-colors z-10"
               onClick={(e) => {
                 e.stopPropagation();
                 const profilePath = creator.isCreator !== false 
@@ -89,7 +89,7 @@ export function MarketGridCard({
                 <AvatarImage src={creator.avatar} alt={creator.name} />
                 <AvatarFallback className="text-xs">{creator.name.slice(0, 2).toUpperCase()}</AvatarFallback>
               </Avatar>
-              <span className="text-white text-xs font-medium max-w-[80px] md:max-w-none truncate">{creator.name}</span>
+              <span className="text-white text-xs font-medium">{creator.name}</span>
               {creator.isCreator !== false && (
                 <BadgeCheck className="h-3 w-3 text-white fill-white/30 flex-shrink-0" />
               )}
@@ -97,35 +97,56 @@ export function MarketGridCard({
           </div>
 
           {/* Content - beside image on mobile, below on desktop */}
-          <div className="p-3 space-y-2 md:space-y-2.5 flex-1 flex flex-col justify-between">
+          <div className="p-2.5 md:p-3 space-y-2 flex-1 flex flex-col">
+            {/* Creator info - mobile only */}
+            <div 
+              className="flex md:hidden items-center gap-1.5 pb-1.5 border-b border-border/40"
+              onClick={(e) => {
+                e.stopPropagation();
+                const profilePath = creator.isCreator !== false 
+                  ? `/creator/${creator.id || creator.name.toLowerCase().replace(/\s+/g, '-')}`
+                  : `/profile/${creator.id || creator.name.toLowerCase().replace(/\s+/g, '-')}`;
+                navigate(profilePath);
+              }}
+            >
+              <Avatar className="h-6 w-6">
+                <AvatarImage src={creator.avatar} alt={creator.name} />
+                <AvatarFallback className="text-xs">{creator.name.slice(0, 2).toUpperCase()}</AvatarFallback>
+              </Avatar>
+              <span className="text-xs font-medium flex-1 truncate">{creator.name}</span>
+              {creator.isCreator !== false && (
+                <BadgeCheck className="h-3.5 w-3.5 text-primary fill-primary/20 flex-shrink-0" />
+              )}
+            </div>
+
             {/* Title */}
             <h3 
-              className="text-sm md:text-sm font-semibold leading-tight line-clamp-2 md:min-h-[2.5rem] group-hover:text-primary transition-colors cursor-pointer"
+              className="text-[13px] md:text-sm font-semibold leading-tight line-clamp-2 md:min-h-[2.5rem] group-hover:text-primary transition-colors cursor-pointer flex-1"
               onClick={() => navigate(`/market/${id}`)}
             >
               {title}
             </h3>
 
             {/* Outcomes - Clickable buttons */}
-            <div className="space-y-1.5">
+            <div className="space-y-1">
               <div className="grid grid-cols-2 gap-1.5">
                 {visibleOutcomes.map((outcome, index) => (
                   <button 
                     key={index}
-                    className={`text-center rounded-md px-2 py-1.5 border transition-all font-medium ${getOutcomeColor(outcome.color)}`}
+                    className={`text-center rounded-md px-1.5 md:px-2 py-1.5 border transition-all font-medium ${getOutcomeColor(outcome.color)}`}
                     onClick={(e) => {
                       e.stopPropagation();
                       // Handle bet action
                     }}
                   >
                     <div className="text-sm font-bold">{outcome.price}¢</div>
-                    <div className="text-[10px] opacity-90 truncate">{outcome.label}</div>
+                    <div className="text-[9px] md:text-[10px] opacity-90 truncate">{outcome.label}</div>
                   </button>
                 ))}
               </div>
               {remainingCount > 0 && (
                 <button 
-                  className="w-full text-center text-xs text-muted-foreground hover:text-foreground transition-colors py-1"
+                  className="w-full text-center text-[10px] md:text-xs text-muted-foreground hover:text-foreground transition-colors py-0.5"
                   onClick={() => navigate(`/market/${id}`)}
                 >
                   +{remainingCount} more option{remainingCount > 1 ? 's' : ''}
@@ -134,14 +155,14 @@ export function MarketGridCard({
             </div>
             
             {/* Stats */}
-            <div className="flex items-center justify-between text-xs text-muted-foreground pt-1 border-t">
+            <div className="flex items-center justify-between text-[10px] md:text-xs text-muted-foreground pt-1 border-t border-border/40">
               <div className="flex items-center gap-1">
-                <TrendingUp className="h-3 w-3" />
-                <span className="text-[11px] md:text-xs">{volume}</span>
+                <TrendingUp className="h-3 w-3 flex-shrink-0" />
+                <span className="truncate">{volume}</span>
               </div>
               <div className="flex items-center gap-1">
-                <Clock className="h-3 w-3" />
-                <span className="text-[11px] md:text-xs">{endsIn}</span>
+                <Clock className="h-3 w-3 flex-shrink-0" />
+                <span className="truncate">{endsIn}</span>
               </div>
             </div>
           </div>
