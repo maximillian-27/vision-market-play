@@ -13,8 +13,8 @@ export function Header() {
   const isMobile = useIsMobile();
 
   return (
-    <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-20">
-      <div className="w-full flex h-14 items-center justify-between px-4 md:container">
+    <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-20 w-full">
+      <div className="w-full md:container md:max-w-2xl flex h-14 items-center justify-between px-4 mx-auto">
         <div className="flex items-center gap-3">
           {!isMobile && <SidebarTrigger />}
           <h1 className="font-bold text-primary text-xl">
