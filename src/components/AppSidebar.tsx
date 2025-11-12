@@ -32,7 +32,7 @@ export function AppSidebar() {
       <SidebarContent className="bg-background border-r">
         <SidebarGroup>
           <SidebarGroupContent className="pt-4">
-            <SidebarMenu>
+            <SidebarMenu className="space-y-2">
               {items.map((item) => {
                 const isActive = location.pathname === item.url;
                 return (

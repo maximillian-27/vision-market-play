@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { MarketCard } from "@/components/MarketCard";
-import { NewsSidebar } from "@/components/NewsSidebar";
+import { HottestMarkets } from "@/components/HottestMarkets";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -326,7 +326,7 @@ export default function CommunityFeed() {
             ))}
           </div>
         </div>
-        <NewsSidebar />
+        <HottestMarkets />
       </div>
     </div>
   );
