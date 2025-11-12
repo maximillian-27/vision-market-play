@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -107,7 +108,11 @@ export default function Community() {
             </CardHeader>
             <CardContent className="space-y-2">
               {communityData.map((trader) => (
-                <div key={trader.rank} className="flex items-center gap-3 p-3 rounded-lg hover:bg-accent transition-colors">
+                <Link 
+                  key={trader.rank} 
+                  to={`/profile/${trader.name.toLowerCase().replace(' ', '-')}`}
+                  className="flex items-center gap-3 p-3 rounded-lg hover:bg-accent transition-colors cursor-pointer"
+                >
                   <div className="font-bold text-lg text-muted-foreground w-8">
                     #{trader.rank}
                   </div>
@@ -126,7 +131,7 @@ export default function Community() {
                     </div>
                   </div>
                   <TrendingUp className="h-4 w-4 text-success flex-shrink-0" />
-                </div>
+                </Link>
               ))}
             </CardContent>
           </Card>
@@ -142,7 +147,11 @@ export default function Community() {
             </CardHeader>
             <CardContent className="space-y-2">
               {topCreators.map((creator) => (
-                <div key={creator.rank} className="flex items-center gap-3 p-3 rounded-lg hover:bg-accent transition-colors">
+                <Link 
+                  key={creator.rank} 
+                  to={`/profile/${creator.name.toLowerCase().replace(' ', '-')}`}
+                  className="flex items-center gap-3 p-3 rounded-lg hover:bg-accent transition-colors cursor-pointer"
+                >
                   <div className="font-bold text-lg text-muted-foreground w-8">
                     #{creator.rank}
                   </div>
@@ -161,7 +170,7 @@ export default function Community() {
                     </div>
                   </div>
                   <Trophy className="h-4 w-4 text-primary flex-shrink-0" />
-                </div>
+                </Link>
               ))}
             </CardContent>
           </Card>

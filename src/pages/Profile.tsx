@@ -1,10 +1,16 @@
+import { useParams } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Settings, Wallet, TrendingUp, Activity } from "lucide-react";
+import { Settings, Wallet, Activity } from "lucide-react";
 
 export default function Profile() {
+  const { userId } = useParams();
+  const isOwnProfile = !userId;
+  const displayName = userId 
+    ? userId.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
+    : "Your Name";
   return (
     <div className="w-full md:container md:max-w-2xl py-4 md:py-6 space-y-4 md:space-y-6 px-4 md:px-4">
       {/* Profile Header */}
@@ -12,22 +18,24 @@ export default function Profile() {
         <CardContent className="pt-4 md:pt-6">
           <div className="flex items-start gap-4">
             <Avatar className="h-20 w-20">
-              <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=User" alt="User" />
-              <AvatarFallback>U</AvatarFallback>
+              <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${displayName}`} alt={displayName} />
+              <AvatarFallback>{displayName.slice(0, 2).toUpperCase()}</AvatarFallback>
             </Avatar>
             <div className="flex-1 space-y-2">
-              <h2 className="text-2xl font-bold">Your Name</h2>
-              <Badge variant="outline">Basic User</Badge>
-              <div className="flex gap-2 pt-2">
-                <Button size="sm" variant="outline">
-                  <Settings className="h-4 w-4 mr-2" />
-                  Settings
-                </Button>
-                <Button size="sm" variant="outline">
-                  <Wallet className="h-4 w-4 mr-2" />
-                  Wallet
-                </Button>
-              </div>
+              <h2 className="text-2xl font-bold">{displayName}</h2>
+              <Badge variant="outline">{isOwnProfile ? "Basic User" : "Community Member"}</Badge>
+              {isOwnProfile && (
+                <div className="flex gap-2 pt-2">
+                  <Button size="sm" variant="outline">
+                    <Settings className="h-4 w-4 mr-2" />
+                    Settings
+                  </Button>
+                  <Button size="sm" variant="outline">
+                    <Wallet className="h-4 w-4 mr-2" />
+                    Wallet
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
         </CardContent>

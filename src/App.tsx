@@ -32,6 +32,7 @@ function AppContent() {
             <Route path="/news" element={<News />} />
             <Route path="/community" element={<Community />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/profile/:userId" element={<Profile />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </main>
