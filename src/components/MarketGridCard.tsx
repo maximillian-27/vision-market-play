@@ -121,7 +121,7 @@ export function MarketGridCard({
                   >
                     <span className="text-[9px] sm:text-[10px] font-medium text-muted-foreground truncate flex-1">{outcome.label}</span>
                     <span className="absolute left-1/2 -translate-x-1/2 text-[8px] sm:text-[9px] text-muted-foreground/30 font-medium pointer-events-none">
-                      ${payout}
+                      100$...{payout}$
                     </span>
                     <span className="text-xs sm:text-sm font-bold text-foreground ml-2">{outcome.price}%</span>
                   </button>
