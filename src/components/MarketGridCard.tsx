@@ -69,8 +69,7 @@ export function MarketGridCard({
     }
   };
 
-  const visibleOutcomes = displayOutcomes.slice(0, 2);
-  const remainingCount = displayOutcomes.length - 2;
+  const hasMultipleOutcomes = displayOutcomes.length > 2;
 
   return (
     <Card 
@@ -122,9 +121,9 @@ export function MarketGridCard({
               {title}
             </h3>
 
-            {/* Outcomes - Stacked vertically */}
-            <div className="space-y-1">
-              {visibleOutcomes.map((outcome, index) => {
+            {/* Outcomes - Scrollable for multi-outcome polls */}
+            <div className={`space-y-1 ${hasMultipleOutcomes ? 'max-h-[120px] sm:max-h-[140px] overflow-y-auto scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent hover:scrollbar-thumb-border/60 pr-1' : ''}`}>
+              {displayOutcomes.map((outcome, index) => {
                 const payout = outcome.price > 0 ? (10000 / outcome.price).toFixed(0) : 0;
                 return (
                   <button 
@@ -148,14 +147,6 @@ export function MarketGridCard({
                   </button>
                 );
               })}
-              {remainingCount > 0 && (
-                <div 
-                  className="w-full text-center text-[8px] sm:text-[9px] text-muted-foreground/60 py-0.5 sm:py-1 cursor-pointer hover:text-muted-foreground transition-colors"
-                  onClick={() => navigate(`/market/${id}`)}
-                >
-                  ⋯ {remainingCount} more
-                </div>
-              )}
             </div>
             
             {/* Stats */}
