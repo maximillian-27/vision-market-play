@@ -229,8 +229,44 @@ export default function MarketDetail() {
       <div className="space-y-3 md:space-y-4 px-4 md:px-0 pt-2 md:pt-0">
         {/* Market Header */}
         <Card className="border-0 md:border shadow-none md:shadow-sm">
-          <CardHeader className="space-y-3 md:space-y-4 p-4 md:p-6">
-            <div className="flex items-center gap-3">
+          <CardHeader className="space-y-3 md:space-y-4 p-4 md:p-6 relative">
+            {/* Engagement Actions - Top Right */}
+            <div className="absolute top-4 right-4 md:top-6 md:right-6 flex items-center gap-0.5 md:gap-1">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 w-8 md:h-9 md:w-9 p-0"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleLikeMarket();
+                }}
+              >
+                <Heart className={`h-4 w-4 ${isLiked ? 'fill-destructive text-destructive' : 'text-muted-foreground hover:text-destructive'}`} />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 w-8 md:h-9 md:w-9 p-0"
+                onClick={(e) => {
+                  e.stopPropagation();
+                }}
+              >
+                <MessageCircle className="h-4 w-4 text-muted-foreground hover:text-primary" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 w-8 md:h-9 md:w-9 p-0"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleShareMarket();
+                }}
+              >
+                <Share2 className="h-4 w-4 text-muted-foreground hover:text-primary" />
+              </Button>
+            </div>
+
+            <div className="flex items-center gap-3 pr-24 md:pr-32">
               <Avatar className="h-9 w-9 md:h-10 md:w-10">
                 <AvatarImage src={market.creator.avatar} alt={market.creator.name} />
                 <AvatarFallback>{market.creator.name.slice(0, 2).toUpperCase()}</AvatarFallback>
@@ -307,50 +343,6 @@ export default function MarketDetail() {
               })}
             </div>
 
-            {/* Engagement Actions */}
-            <div className="flex items-center gap-1 pt-2 border-t mt-1">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="flex-1 group h-10"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleLikeMarket();
-                }}
-              >
-                <div className="flex items-center gap-2 text-muted-foreground group-hover:text-destructive transition-colors">
-                  <Heart className={`h-4 w-4 md:h-5 md:w-5 ${isLiked ? 'fill-destructive text-destructive' : ''}`} />
-                  <span className="text-sm font-medium">{likes}</span>
-                </div>
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="flex-1 group h-10"
-                onClick={(e) => {
-                  e.stopPropagation();
-                }}
-              >
-                <div className="flex items-center gap-2 text-muted-foreground group-hover:text-primary transition-colors">
-                  <MessageCircle className="h-4 w-4 md:h-5 md:w-5" />
-                  <span className="text-sm font-medium">{comments.length}</span>
-                </div>
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="flex-1 group h-10"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleShareMarket();
-                }}
-              >
-                <div className="flex items-center gap-2 text-muted-foreground group-hover:text-primary transition-colors">
-                  <Share2 className="h-4 w-4 md:h-5 md:w-5" />
-                  <span className="text-sm font-medium hidden sm:inline">Share</span>
-                </div>
-              </Button>
-            </div>
           </CardHeader>
         </Card>
 
