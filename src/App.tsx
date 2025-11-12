@@ -13,6 +13,7 @@ import CommunityFeed from "./pages/CommunityFeed";
 import News from "./pages/News";
 import Community from "./pages/Community";
 import Profile from "./pages/Profile";
+import CreatorProfile from "./pages/CreatorProfile";
 import MarketDetail from "./pages/MarketDetail";
 import NotFound from "./pages/NotFound";
 
@@ -35,6 +36,7 @@ function AppContent() {
             <Route path="/community" element={<Community />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/profile/:userId" element={<Profile />} />
+            <Route path="/creator/:userId" element={<CreatorProfile />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </main>

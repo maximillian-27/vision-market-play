@@ -84,7 +84,10 @@ export function MarketCard({ id, creator, title, subtitle, image, outcomes, yesP
           className="flex items-center gap-3 p-3 md:p-4 pb-2 md:pb-3 cursor-pointer hover:bg-accent/50 transition-colors"
           onClick={(e) => {
             e.stopPropagation();
-            navigate(`/profile/${creator.id || creator.name.toLowerCase().replace(/\s+/g, '-')}`);
+            const profilePath = creator.isCreator !== false 
+              ? `/creator/${creator.id || creator.name.toLowerCase().replace(/\s+/g, '-')}`
+              : `/profile/${creator.id || creator.name.toLowerCase().replace(/\s+/g, '-')}`;
+            navigate(profilePath);
           }}
         >
           <Avatar className="h-10 w-10">
