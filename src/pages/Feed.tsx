@@ -1,5 +1,10 @@
 import { FeedFilters } from "@/components/FeedFilters";
 import { MarketCard } from "@/components/MarketCard";
+import bitcoinImage from "@/assets/bitcoin-market.jpg";
+import nbaImage from "@/assets/nba-championship.jpg";
+import iphoneImage from "@/assets/foldable-iphone.jpg";
+import fedImage from "@/assets/federal-reserve.jpg";
+import aiImage from "@/assets/ai-customer-service.jpg";
 
 const mockMarkets = [
   {
@@ -8,7 +13,7 @@ const mockMarkets = [
       avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah",
     },
     title: "Will Bitcoin reach $100,000 by end of 2025?",
-    image: "/placeholder.svg",
+    image: bitcoinImage,
     yesPrice: 68,
     noPrice: 32,
     volume: "$2.4M",
@@ -20,7 +25,7 @@ const mockMarkets = [
       avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Mike",
     },
     title: "Who will win the NBA Championship this season?",
-    image: "/placeholder.svg",
+    image: nbaImage,
     outcomes: [
       { label: "Lakers", price: 25 },
       { label: "Celtics", price: 32 },
@@ -36,7 +41,7 @@ const mockMarkets = [
       avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Emma",
     },
     title: "Will Apple release a foldable iPhone in 2025?",
-    image: "/placeholder.svg",
+    image: iphoneImage,
     yesPrice: 23,
     noPrice: 77,
     volume: "$1.2M",
@@ -48,7 +53,7 @@ const mockMarkets = [
       avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Alex",
     },
     title: "Next US Federal Reserve interest rate decision?",
-    image: "/placeholder.svg",
+    image: fedImage,
     outcomes: [
       { label: "Cut", price: 45, color: "success" },
       { label: "Hold", price: 38 },
@@ -63,7 +68,7 @@ const mockMarkets = [
       avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Jordan",
     },
     title: "Will AI replace 25% of customer service jobs by 2026?",
-    image: "/placeholder.svg",
+    image: aiImage,
     yesPrice: 71,
     noPrice: 29,
     volume: "$1.8M",
