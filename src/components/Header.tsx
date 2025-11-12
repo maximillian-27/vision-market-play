@@ -40,7 +40,7 @@ export function Header() {
   return (
     <>
       <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-20 w-full">
-        <div className="w-full md:container md:max-w-2xl flex h-14 items-center justify-between px-4 mx-auto">
+        <div className="flex h-14 items-center justify-between px-4 lg:px-6">
           <div className="flex items-center gap-3 flex-1">
             {!isMobile && <SidebarTrigger />}
             <h1 className="font-bold text-primary text-xl">
@@ -54,7 +54,7 @@ export function Header() {
                   <Globe className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="z-50">
+              <DropdownMenuContent align="start" className="z-50 bg-popover">
                 <DropdownMenuItem>English</DropdownMenuItem>
                 <DropdownMenuItem>Español</DropdownMenuItem>
                 <DropdownMenuItem>Français</DropdownMenuItem>
