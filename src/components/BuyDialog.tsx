@@ -69,7 +69,7 @@ export function BuyDialog({ open, onOpenChange, outcome, marketTitle, marketId }
 
   const quickAmounts = [10, 25, 50, 100];
 
-  const content = (
+  const contentWithoutButton = (
     <div className="space-y-6">
       {/* Market Info */}
       <div className="space-y-2">
@@ -149,6 +149,12 @@ export function BuyDialog({ open, onOpenChange, outcome, marketTitle, marketId }
         <Wallet className="h-4 w-4" />
         <span>Available: $5,230.00</span>
       </div>
+    </div>
+  );
+
+  const content = (
+    <div className="space-y-6">
+      {contentWithoutButton}
 
       {/* Buy Button */}
       <Button
@@ -164,11 +170,22 @@ export function BuyDialog({ open, onOpenChange, outcome, marketTitle, marketId }
   if (isMobile) {
     return (
       <Drawer open={open} onOpenChange={onOpenChange}>
-        <DrawerContent className="px-4 pb-6 max-h-[90vh] overflow-y-auto">
-          <DrawerHeader className="px-0">
+        <DrawerContent className="px-4 pb-6 flex flex-col max-h-[85vh]">
+          <DrawerHeader className="px-0 pb-4 flex-shrink-0">
             <DrawerTitle>Place Order</DrawerTitle>
           </DrawerHeader>
-          {content}
+          <div className="overflow-y-auto flex-1 -mx-4 px-4">
+            {contentWithoutButton}
+          </div>
+          <div className="pt-6 flex-shrink-0 border-t mt-4">
+            <Button
+              className="w-full h-12 text-base font-semibold"
+              onClick={handleBuy}
+              disabled={isSubmitting || amountNum < 1 || amountNum > 10000}
+            >
+              {isSubmitting ? "Placing order..." : `Buy ${outcome.label} for $${amountNum.toFixed(2)}`}
+            </Button>
+          </div>
         </DrawerContent>
       </Drawer>
     );
