@@ -1,7 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Clock, TrendingUp, Heart, MessageCircle, Share2, Repeat2, BadgeCheck } from "lucide-react";
+import { Clock, TrendingUp, Heart, MessageCircle, Share2, Repeat2, BadgeCheck, Check, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import {
@@ -55,11 +55,29 @@ export function MarketCard({ id, creator, title, subtitle, image, outcomes, yesP
 
   const getOutcomeColor = (color?: string) => {
     switch (color) {
-      case "success": return "border-success text-success hover:bg-success hover:text-success-foreground";
-      case "destructive": return "border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground";
-      default: return "border-primary text-primary hover:bg-primary hover:text-primary-foreground";
+      case "success": return "bg-success/10 border-success/20 hover:bg-success/15";
+      case "destructive": return "bg-muted/30 border-border/30 hover:bg-muted/40";
+      default: return "bg-primary/10 border-primary/20 hover:bg-primary/15";
     }
   };
+
+  const getOutcomeIcon = (color?: string) => {
+    switch (color) {
+      case "success": return <Check className="h-4 w-4" />;
+      case "destructive": return <X className="h-4 w-4" />;
+      default: return <Check className="h-4 w-4" />;
+    }
+  };
+
+  const getIconBgColor = (color?: string) => {
+    switch (color) {
+      case "success": return "bg-success text-success-foreground";
+      case "destructive": return "bg-destructive text-destructive-foreground";
+      default: return "bg-primary text-primary-foreground";
+    }
+  };
+
+  const hasMultipleOutcomes = displayOutcomes.length > 2;
 
   const handleRepost = () => {
     if (repostThoughts.trim()) {
@@ -136,23 +154,31 @@ export function MarketCard({ id, creator, title, subtitle, image, outcomes, yesP
           </div>
 
           {/* Outcome Buttons */}
-          <div className={`grid gap-2 ${displayOutcomes.length === 2 ? 'grid-cols-2' : displayOutcomes.length === 3 ? 'grid-cols-3' : 'grid-cols-2'}`}>
-            {displayOutcomes.map((outcome, index) => (
-              <Button 
-                key={index}
-                variant="outline" 
-                className={`flex-1 h-auto py-1.5 md:py-2 transition-all border-border/60 hover:border-current ${getOutcomeColor(outcome.color)}`}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  // Handle bet action here
-                }}
-              >
-                <div className="flex flex-col items-center w-full gap-0.5">
-                  <span className="text-[10px] md:text-xs uppercase tracking-wide opacity-70">{outcome.label}</span>
-                  <span className="text-sm md:text-base font-bold">{outcome.price}¢</span>
-                </div>
-              </Button>
-            ))}
+          <div className={`space-y-2 ${hasMultipleOutcomes ? 'max-h-[200px] overflow-y-auto scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent hover:scrollbar-thumb-border/60 pr-1' : ''}`}>
+            {displayOutcomes.map((outcome, index) => {
+              const payout = outcome.price > 0 ? (10000 / outcome.price).toFixed(0) : 0;
+              return (
+                <button 
+                  key={index}
+                  className={`w-full text-left rounded-lg px-3 py-2.5 border transition-all ${getOutcomeColor(outcome.color)} flex items-center gap-2.5`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    // Handle bet action
+                  }}
+                >
+                  <div className={`rounded-full p-1.5 flex-shrink-0 ${getIconBgColor(outcome.color)}`}>
+                    {getOutcomeIcon(outcome.color)}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-sm font-bold text-foreground">{outcome.label}</div>
+                    <div className="text-xs text-muted-foreground font-medium">
+                      $100 → ${payout}
+                    </div>
+                  </div>
+                  <span className="text-lg font-bold text-foreground ml-auto">{outcome.price}¢</span>
+                </button>
+              );
+            })}
           </div>
 
           {/* Engagement Indicators */}
