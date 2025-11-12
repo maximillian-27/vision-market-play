@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { ExternalLink } from "lucide-react";
+import { Clock, TrendingUp } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { FeedFilters } from "@/components/FeedFilters";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { MarketCard } from "@/components/MarketCard";
@@ -60,21 +61,44 @@ export default function News() {
       <div className="px-4">
         <FeedFilters />
       </div>
-      <div className="space-y-0 md:space-y-4 md:px-4">
+      <div className="space-y-3 md:space-y-4 md:px-4">
         {newsItems.map((item, index) => (
           <Card 
             key={index} 
-            className="cursor-pointer transition-all hover:shadow-md md:rounded-lg rounded-none border-x-0 md:border-x border-t-0 md:border-t first:border-t"
+            className="group cursor-pointer transition-all duration-200 hover:shadow-lg hover:scale-[1.01] md:rounded-lg rounded-none border-0 md:border animate-fade-in"
+            style={{ animationDelay: `${index * 50}ms` }}
             onClick={() => setSelectedNews(item)}
           >
             <CardContent className="p-4 md:p-6">
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex-1 space-y-2">
-                  <h3 className="font-semibold text-base md:text-lg leading-tight">{item.title}</h3>
-                  <p className="text-sm text-muted-foreground">{item.summary}</p>
-                  <p className="text-xs text-muted-foreground">{item.time}</p>
+              <div className="space-y-3">
+                {/* Header with source and market indicator */}
+                <div className="flex items-center justify-between gap-2">
+                  <Badge variant="secondary" className="text-xs font-medium">
+                    {item.source}
+                  </Badge>
+                  {item.relatedMarkets.length > 0 && (
+                    <Badge variant="outline" className="text-xs gap-1">
+                      <TrendingUp className="h-3 w-3" />
+                      <span className="hidden sm:inline">Markets</span>
+                    </Badge>
+                  )}
                 </div>
-                <ExternalLink className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+
+                {/* Title */}
+                <h3 className="font-bold text-base md:text-lg leading-tight group-hover:text-primary transition-colors">
+                  {item.title}
+                </h3>
+
+                {/* Summary */}
+                <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
+                  {item.summary}
+                </p>
+
+                {/* Time */}
+                <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                  <Clock className="h-3.5 w-3.5" />
+                  <span>{item.time}</span>
+                </div>
               </div>
             </CardContent>
           </Card>
