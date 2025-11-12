@@ -6,6 +6,7 @@ import { FeedFilters } from "@/components/FeedFilters";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { MarketCard } from "@/components/MarketCard";
 import { HottestMarkets } from "@/components/HottestMarkets";
+import { ActivitySidebar } from "@/components/ActivitySidebar";
 import federalReserveImage from "@/assets/federal-reserve.jpg";
 import bitcoinImage from "@/assets/bitcoin-market.jpg";
 
@@ -59,6 +60,7 @@ export default function News() {
   return (
     <div className="w-full lg:container lg:max-w-7xl py-4 lg:py-6">
       <div className="flex gap-6 justify-center">
+        <ActivitySidebar />
         <div className="w-full md:max-w-2xl space-y-4">
           <h1 className="text-2xl font-bold mb-4 md:mb-6 px-4">Latest News</h1>
           <div className="px-4">

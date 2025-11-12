@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Trophy, TrendingUp, Target, Zap, Award } from "lucide-react";
 import { HottestMarkets } from "@/components/HottestMarkets";
+import { ActivitySidebar } from "@/components/ActivitySidebar";
 
 const topEarners = [
   { name: "Alex Chen", profit: "+$45,230", accuracy: "87%", trades: 342, rank: 1, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Alex" },
@@ -74,6 +75,7 @@ export default function Community() {
   return (
     <div className="w-full lg:container lg:max-w-7xl py-4 lg:py-6">
       <div className="flex gap-6 justify-center">
+        <ActivitySidebar />
         <div className="w-full md:max-w-2xl space-y-4 md:space-y-6 px-4 md:px-4">
           <h1 className="text-2xl font-bold">Leaderboards</h1>
           
