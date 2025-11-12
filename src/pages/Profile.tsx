@@ -106,6 +106,11 @@ export default function Profile() {
   
   const isCreator = userId && creatorNames.includes(userId.toLowerCase());
   const creatorStats = isCreator && userId ? creatorData[userId.toLowerCase() as keyof typeof creatorData] : null;
+  
+  // Mock data for community members
+  const joinDate = isOwnProfile ? "Mar 2024" : "Feb 2024";
+  const followerCount = isOwnProfile ? "247" : "189";
+  
   return (
     <div className="w-full md:container md:max-w-2xl py-4 md:py-6 space-y-4 md:space-y-6 px-4 md:px-4">
       {!isOwnProfile && (
@@ -136,6 +141,13 @@ export default function Profile() {
                 <Badge variant="outline">
                   {isOwnProfile ? "Basic User" : isCreator ? "Creator" : "Community Member"}
                 </Badge>
+                {!isCreator && (
+                  <div className="flex items-center gap-4 text-sm text-muted-foreground pt-1">
+                    <span>Joined {joinDate}</span>
+                    <span>•</span>
+                    <span>{followerCount} followers</span>
+                  </div>
+                )}
                 {isCreator && creatorStats && creatorStats.description && (
                   <p className="text-sm text-muted-foreground pt-1">{creatorStats.description}</p>
                 )}
@@ -382,40 +394,75 @@ export default function Profile() {
           </Tabs>
         </>
       ) : (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Activity className="h-5 w-5" />
-              Active Positions
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div className="p-4 border rounded-lg space-y-2">
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <h3 className="font-semibold text-sm">Bitcoin reaches $100K by 2025?</h3>
-                  <p className="text-xs text-muted-foreground mt-1">Your position: Yes at 68¢</p>
+        <>
+          {/* Achievements for other community members */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Award className="h-5 w-5" />
+                Achievements
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="flex items-center gap-3 p-3 bg-primary/10 rounded-lg">
+                  <div className="p-2 bg-primary/20 rounded-full">
+                    <Target className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <div className="font-semibold text-sm">First Win</div>
+                    <div className="text-xs text-muted-foreground">Unlocked</div>
+                  </div>
                 </div>
-                <div className="text-right">
-                  <div className="text-sm font-semibold text-success">+$124</div>
-                  <div className="text-xs text-muted-foreground">+15.2%</div>
+                <div className="flex items-center gap-3 p-3 bg-success/10 rounded-lg">
+                  <div className="p-2 bg-success/20 rounded-full">
+                    <TrendingUp className="h-5 w-5 text-success" />
+                  </div>
+                  <div>
+                    <div className="font-semibold text-sm">Hot Streak</div>
+                    <div className="text-xs text-muted-foreground">5 wins</div>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="p-4 border rounded-lg space-y-2">
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <h3 className="font-semibold text-sm">Lakers make NBA playoffs?</h3>
-                  <p className="text-xs text-muted-foreground mt-1">Your position: No at 55¢</p>
-                </div>
-                <div className="text-right">
-                  <div className="text-sm font-semibold text-destructive">-$45</div>
-                  <div className="text-xs text-muted-foreground">-8.1%</div>
+            </CardContent>
+          </Card>
+
+          {/* Active Positions for other users */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Activity className="h-5 w-5" />
+                Active Positions
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="p-4 border rounded-lg space-y-2">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-sm">Bitcoin reaches $100K by 2025?</h3>
+                    <p className="text-xs text-muted-foreground mt-1">Your position: Yes at 68¢</p>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-sm font-semibold text-success">+$124</div>
+                    <div className="text-xs text-muted-foreground">+15.2%</div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </CardContent>
-        </Card>
+              <div className="p-4 border rounded-lg space-y-2">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-sm">Lakers make NBA playoffs?</h3>
+                    <p className="text-xs text-muted-foreground mt-1">Your position: No at 55¢</p>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-sm font-semibold text-destructive">-$45</div>
+                    <div className="text-xs text-muted-foreground">-8.1%</div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </>
       )}
     </div>
   );
