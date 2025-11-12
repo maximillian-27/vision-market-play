@@ -201,17 +201,19 @@ export default function CommunityFeed() {
           <h1 className="text-2xl font-bold">Community Feed</h1>
           
           {/* Category Filters */}
-          <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
-            {categories.map((category) => (
-              <Badge
-                key={category}
-                variant={category === selectedFilter ? "default" : "outline"}
-                className="cursor-pointer whitespace-nowrap transition-all hover:bg-primary hover:text-primary-foreground"
-                onClick={() => setSelectedFilter(category)}
-              >
-                {category}
-              </Badge>
-            ))}
+          <div className="sticky top-0 md:top-16 z-20 bg-background/95 backdrop-blur-sm py-3 -mx-4 px-4 lg:mx-0 lg:px-0">
+            <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+              {categories.map((category) => (
+                <Badge
+                  key={category}
+                  variant={category === selectedFilter ? "default" : "outline"}
+                  className="cursor-pointer whitespace-nowrap transition-all hover:bg-primary hover:text-primary-foreground"
+                  onClick={() => setSelectedFilter(category)}
+                >
+                  {category}
+                </Badge>
+              ))}
+            </div>
           </div>
           
           <div className="space-y-4">
