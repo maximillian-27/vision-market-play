@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { MarketCard } from "@/components/MarketCard";
+import { MarketGridCard } from "@/components/MarketGridCard";
 import { HottestMarkets } from "@/components/HottestMarkets";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -247,9 +247,7 @@ export default function CommunityFeed() {
 
                   {/* Embedded Market */}
                   <div className="px-5 pb-5">
-                    <div className="border border-border/40 rounded-xl overflow-hidden">
-                      <MarketCard {...post.market} hideEngagement={true} />
-                    </div>
+                    <MarketGridCard {...post.market} />
                   </div>
 
                   {/* Engagement Actions */}
