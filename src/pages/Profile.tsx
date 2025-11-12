@@ -6,8 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Settings, Wallet, Activity, ArrowLeft, UserPlus, UserCheck, BadgeCheck, TrendingUp, Target, Award, Clock } from "lucide-react";
+import { Settings, Wallet, Activity, ArrowLeft, UserPlus, UserCheck, BadgeCheck, TrendingUp, Target, Award, Clock, Repeat2 } from "lucide-react";
 import { MarketCard } from "@/components/MarketCard";
+import bitcoinImage from "@/assets/bitcoin-market.jpg";
+import nbaImage from "@/assets/nba-championship.jpg";
 
 // Mock data to determine if user is a creator
 const creatorNames = ['marketmaven', 'predictpro', 'trendsetter', 'insighthub', 'datadriven'];
@@ -92,6 +94,58 @@ const mockCreatorMarkets = [
     image: "/src/assets/federal-reserve.jpg",
     likes: 215,
     comments: 64,
+  }
+];
+
+// Mock user reposts
+const mockUserReposts = [
+  {
+    id: "r1",
+    timestamp: "2 days ago",
+    thoughts: "This is actually more likely than people think. Institutional adoption is accelerating and the ETF approvals have brought in serious capital.",
+    market: {
+      id: "1",
+      creator: {
+        name: "Sarah Chen",
+        avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah",
+        isCreator: true
+      },
+      title: "Will Bitcoin reach $100,000 by end of 2025?",
+      subtitle: "The ultimate crypto milestone - will BTC finally break six figures?",
+      image: bitcoinImage,
+      yesPrice: 68,
+      noPrice: 32,
+      volume: "$2.4M",
+      endsIn: "3 months",
+      likes: 142,
+      comments: 38,
+    }
+  },
+  {
+    id: "r2",
+    timestamp: "5 days ago",
+    thoughts: "The Lakers have the star power but their depth is questionable. I'm not convinced they can make a deep playoff run this year.",
+    market: {
+      id: "2",
+      creator: {
+        name: "Mike Johnson",
+        avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Mike",
+        isCreator: true
+      },
+      title: "Who will win the NBA Championship this season?",
+      subtitle: "The race for the championship is heating up. Which team takes it all?",
+      image: nbaImage,
+      outcomes: [
+        { label: "Lakers", price: 25 },
+        { label: "Celtics", price: 32 },
+        { label: "Nuggets", price: 21 },
+        { label: "Other", price: 22 },
+      ],
+      volume: "$890K",
+      endsIn: "2 months",
+      likes: 89,
+      comments: 24,
+    }
   }
 ];
 
@@ -460,6 +514,32 @@ export default function Profile() {
                   </div>
                 </div>
               </div>
+            </CardContent>
+          </Card>
+
+          {/* User Activity - Reposts */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Repeat2 className="h-5 w-5" />
+                Recent Activity
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {mockUserReposts.map((repost) => (
+                <div key={repost.id} className="space-y-3">
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Repeat2 className="h-4 w-4" />
+                    <span>Reposted {repost.timestamp}</span>
+                  </div>
+                  {repost.thoughts && (
+                    <p className="text-sm leading-relaxed pl-6">{repost.thoughts}</p>
+                  )}
+                  <div className="pl-6 border-l-2 border-border">
+                    <MarketCard {...repost.market} />
+                  </div>
+                </div>
+              ))}
             </CardContent>
           </Card>
         </>
