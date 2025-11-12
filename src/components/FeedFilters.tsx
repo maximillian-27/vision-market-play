@@ -14,8 +14,8 @@ export function FeedFilters() {
   return (
     <div className="space-y-4">
       {/* Mobile Search and Filter Button */}
-      <div className="flex gap-2">
-        <div className="relative flex-1 md:hidden">
+      <div className="flex gap-2 md:hidden">
+        <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
           <Input 
             placeholder="Search markets..." 
@@ -98,17 +98,29 @@ export function FeedFilters() {
         </div>
       )}
 
-      {/* Category Tags */}
-      <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
-        {categories.map((category) => (
-          <Badge
-            key={category}
-            variant={category === "All" ? "default" : "outline"}
-            className="cursor-pointer whitespace-nowrap transition-all hover:bg-primary hover:text-primary-foreground border-border/40 text-sm font-medium px-4 py-2"
-          >
-            {category}
-          </Badge>
-        ))}
+      {/* Category Tags with Filter Button */}
+      <div className="flex gap-2 items-center">
+        {/* Filter Button - Desktop only */}
+        <Button 
+          variant={showFilters ? "default" : "outline"} 
+          className="hidden md:flex h-10 px-3 gap-2"
+          onClick={() => setShowFilters(!showFilters)}
+        >
+          <SlidersHorizontal className="h-4 w-4" />
+          <span className="text-sm font-medium">Filters</span>
+        </Button>
+        
+        <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+          {categories.map((category) => (
+            <Badge
+              key={category}
+              variant={category === "All" ? "default" : "outline"}
+              className="cursor-pointer whitespace-nowrap transition-all hover:bg-primary hover:text-primary-foreground border-border/40 text-sm font-medium px-4 py-2"
+            >
+              {category}
+            </Badge>
+          ))}
+        </div>
       </div>
     </div>
   );
