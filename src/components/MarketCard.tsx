@@ -1,8 +1,18 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Clock, TrendingUp, Heart, MessageCircle, Share2 } from "lucide-react";
+import { Clock, TrendingUp, Heart, MessageCircle, Share2, Repeat2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/hooks/use-toast";
 
 interface Outcome {
   label: string;
@@ -30,6 +40,9 @@ interface MarketCardProps {
 
 export function MarketCard({ id, creator, title, subtitle, image, outcomes, yesPrice, noPrice, volume, endsIn, likes = 0, comments = 0 }: MarketCardProps) {
   const navigate = useNavigate();
+  const { toast } = useToast();
+  const [showRepostDialog, setShowRepostDialog] = useState(false);
+  const [repostThoughts, setRepostThoughts] = useState("");
   
   // Use outcomes if provided, otherwise fallback to binary yes/no
   const displayOutcomes = outcomes || [
@@ -45,11 +58,24 @@ export function MarketCard({ id, creator, title, subtitle, image, outcomes, yesP
     }
   };
 
+  const handleRepost = () => {
+    if (repostThoughts.trim()) {
+      // In a real app, this would save to the backend
+      toast({
+        title: "Market reposted!",
+        description: "Your thoughts have been shared to the Community Feed.",
+      });
+      setRepostThoughts("");
+      setShowRepostDialog(false);
+    }
+  };
+
   return (
-    <Card 
-      className="overflow-hidden transition-all hover:shadow-md md:rounded-lg rounded-none border-x-0 md:border-x border-t-0 md:border-t first:border-t cursor-pointer"
-      onClick={() => navigate(`/market/${id}`)}
-    >
+    <>
+      <Card 
+        className="overflow-hidden transition-all hover:shadow-md md:rounded-lg rounded-none border-x-0 md:border-x border-t-0 md:border-t first:border-t cursor-pointer"
+        onClick={() => navigate(`/market/${id}`)}
+      >
       <CardContent className="p-0">
         {/* Creator Info */}
         <div className="flex items-center gap-3 p-3 md:p-4 pb-2 md:pb-3">
@@ -127,6 +153,15 @@ export function MarketCard({ id, creator, title, subtitle, image, outcomes, yesP
               {comments > 0 && <span>{comments}</span>}
             </button>
             <button 
+              className="flex items-center gap-1.5 hover:text-primary transition-colors"
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowRepostDialog(true);
+              }}
+            >
+              <Repeat2 className="h-4 w-4" />
+            </button>
+            <button 
               className="flex items-center gap-1.5 hover:text-primary transition-colors ml-auto"
               onClick={(e) => e.stopPropagation()}
             >
@@ -136,5 +171,49 @@ export function MarketCard({ id, creator, title, subtitle, image, outcomes, yesP
         </div>
       </CardContent>
     </Card>
+
+    {/* Repost Dialog */}
+    <Dialog open={showRepostDialog} onOpenChange={setShowRepostDialog}>
+      <DialogContent onClick={(e) => e.stopPropagation()}>
+        <DialogHeader>
+          <DialogTitle>Repost to Community Feed</DialogTitle>
+          <DialogDescription>
+            Share your thoughts on this market with the community
+          </DialogDescription>
+        </DialogHeader>
+        <div className="space-y-4 pt-4">
+          <Textarea
+            placeholder="What do you think about this market?"
+            value={repostThoughts}
+            onChange={(e) => setRepostThoughts(e.target.value)}
+            className="min-h-[120px]"
+            maxLength={500}
+          />
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-muted-foreground">
+              {repostThoughts.length}/500
+            </span>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowRepostDialog(false);
+                  setRepostThoughts("");
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleRepost}
+                disabled={!repostThoughts.trim()}
+              >
+                Repost
+              </Button>
+            </div>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  </>
   );
 }

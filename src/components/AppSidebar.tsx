@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/sidebar";
 
 const items = [
-  { title: "Feed", url: "/", icon: Home },
+  { title: "Markets", url: "/", icon: Home },
   { title: "Community Feed", url: "/community-feed", icon: MessageSquare },
   { title: "News", url: "/news", icon: Newspaper },
   { title: "Community", url: "/community", icon: Users },

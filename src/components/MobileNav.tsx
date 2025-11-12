@@ -3,7 +3,7 @@ import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
 
 const items = [
-  { title: "Feed", url: "/", icon: Home },
+  { title: "Markets", url: "/", icon: Home },
   { title: "Community", url: "/community-feed", icon: MessageSquare },
   { title: "News", url: "/news", icon: Newspaper },
   { title: "Leaderboard", url: "/community", icon: Users },
