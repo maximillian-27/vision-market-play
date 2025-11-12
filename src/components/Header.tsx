@@ -47,7 +47,8 @@ export function Header() {
             <img 
               src={pollgyLogo} 
               alt="Pollgy" 
-              className="h-6"
+              className="h-6 cursor-pointer"
+              onClick={() => navigate("/")}
             />
             
             {/* Language Toggle */}
