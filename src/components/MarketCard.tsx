@@ -148,8 +148,8 @@ export function MarketCard({ id, creator, title, subtitle, image, outcomes, yesP
                 }}
               >
                 <div className="flex flex-col items-center w-full gap-0.5">
-                  <span className="text-[10px] md:text-xs uppercase tracking-wide opacity-70 font-bold">{outcome.label}</span>
-                  <span className="text-sm md:text-base font-light">{outcome.price}¢</span>
+                  <span className="text-[10px] md:text-xs uppercase tracking-wide opacity-70">{outcome.label}</span>
+                  <span className="text-sm md:text-base font-bold">{outcome.price}¢</span>
                 </div>
               </Button>
             ))}
