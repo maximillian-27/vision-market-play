@@ -86,52 +86,53 @@ export default function Profile() {
       {/* Profile Header */}
       <Card>
         <CardContent className="pt-4 md:pt-6">
-          <div className="flex items-start gap-4">
-            <Avatar className="h-20 w-20">
-              <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${displayName}`} alt={displayName} />
-              <AvatarFallback>{displayName.slice(0, 2).toUpperCase()}</AvatarFallback>
-            </Avatar>
-            <div className="flex-1 space-y-2">
-              <div className="flex items-center gap-2">
-                <h2 className="text-2xl font-bold">{displayName}</h2>
-                {isCreator && <BadgeCheck className="h-6 w-6 text-primary" />}
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex items-start gap-4">
+              <Avatar className="h-20 w-20">
+                <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${displayName}`} alt={displayName} />
+                <AvatarFallback>{displayName.slice(0, 2).toUpperCase()}</AvatarFallback>
+              </Avatar>
+              <div className="flex-1 space-y-2">
+                <div className="flex items-center gap-2">
+                  <h2 className="text-2xl font-bold">{displayName}</h2>
+                  {isCreator && <BadgeCheck className="h-6 w-6 text-primary" />}
+                </div>
+                <Badge variant="outline">
+                  {isOwnProfile ? "Basic User" : isCreator ? "Creator" : "Community Member"}
+                </Badge>
+                {isOwnProfile && (
+                  <div className="flex gap-2 pt-2">
+                    <Button size="sm" variant="outline">
+                      <Settings className="h-4 w-4 mr-2" />
+                      Settings
+                    </Button>
+                    <Button size="sm" variant="outline">
+                      <Wallet className="h-4 w-4 mr-2" />
+                      Wallet
+                    </Button>
+                  </div>
+                )}
               </div>
-              <Badge variant="outline">
-                {isOwnProfile ? "Basic User" : isCreator ? "Creator" : "Community Member"}
-              </Badge>
-              {isOwnProfile ? (
-                <div className="flex gap-2 pt-2">
-                  <Button size="sm" variant="outline">
-                    <Settings className="h-4 w-4 mr-2" />
-                    Settings
-                  </Button>
-                  <Button size="sm" variant="outline">
-                    <Wallet className="h-4 w-4 mr-2" />
-                    Wallet
-                  </Button>
-                </div>
-              ) : (
-                <div className="pt-2">
-                  <Button 
-                    variant={isFollowing ? "outline" : "default"}
-                    size="sm" 
-                    onClick={() => setIsFollowing(!isFollowing)}
-                  >
-                    {isFollowing ? (
-                      <>
-                        <UserCheck className="h-4 w-4 mr-2" />
-                        Following
-                      </>
-                    ) : (
-                      <>
-                        <UserPlus className="h-4 w-4 mr-2" />
-                        Follow
-                      </>
-                    )}
-                  </Button>
-                </div>
-              )}
             </div>
+            {!isOwnProfile && (
+              <Button 
+                variant={isFollowing ? "outline" : "default"}
+                size="sm" 
+                onClick={() => setIsFollowing(!isFollowing)}
+              >
+                {isFollowing ? (
+                  <>
+                    <UserCheck className="h-4 w-4 mr-2" />
+                    Following
+                  </>
+                ) : (
+                  <>
+                    <UserPlus className="h-4 w-4 mr-2" />
+                    Follow
+                  </>
+                )}
+              </Button>
+            )}
           </div>
         </CardContent>
       </Card>
