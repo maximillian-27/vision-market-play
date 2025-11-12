@@ -1,5 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { Clock, TrendingUp, BadgeCheck, ArrowRight } from "lucide-react";
+import { Clock, TrendingUp, BadgeCheck, Check, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
@@ -47,9 +47,25 @@ export function MarketGridCard({
 
   const getOutcomeColor = (color?: string) => {
     switch (color) {
-      case "success": return "bg-background border-border/60 hover:border-success/60 hover:bg-success/5 text-foreground";
-      case "destructive": return "bg-background border-border/60 hover:border-destructive/60 hover:bg-destructive/5 text-foreground";
-      default: return "bg-background border-border/60 hover:border-primary/60 hover:bg-primary/5 text-foreground";
+      case "success": return "bg-success/10 border-success/20 hover:bg-success/15";
+      case "destructive": return "bg-muted/30 border-border/30 hover:bg-muted/40";
+      default: return "bg-primary/10 border-primary/20 hover:bg-primary/15";
+    }
+  };
+
+  const getOutcomeIcon = (color?: string) => {
+    switch (color) {
+      case "success": return <Check className="h-3 w-3 sm:h-3.5 sm:w-3.5" />;
+      case "destructive": return <X className="h-3 w-3 sm:h-3.5 sm:w-3.5" />;
+      default: return <Check className="h-3 w-3 sm:h-3.5 sm:w-3.5" />;
+    }
+  };
+
+  const getIconBgColor = (color?: string) => {
+    switch (color) {
+      case "success": return "bg-success text-success-foreground";
+      case "destructive": return "bg-destructive text-destructive-foreground";
+      default: return "bg-primary text-primary-foreground";
     }
   };
 
@@ -113,17 +129,22 @@ export function MarketGridCard({
                 return (
                   <button 
                     key={index}
-                    className={`w-full text-left rounded-md px-1.5 sm:px-2 py-1 sm:py-1.5 border transition-all ${getOutcomeColor(outcome.color)} relative flex items-center justify-between`}
+                    className={`w-full text-left rounded-lg px-2 sm:px-2.5 py-1.5 sm:py-2 border transition-all ${getOutcomeColor(outcome.color)} flex items-center gap-1.5 sm:gap-2`}
                     onClick={(e) => {
                       e.stopPropagation();
                       // Handle bet action
                     }}
                   >
-                    <span className="text-[9px] sm:text-[10px] font-medium text-muted-foreground truncate flex-1">{outcome.label}</span>
-                    <span className="absolute left-1/2 -translate-x-1/2 text-[8px] sm:text-[9px] text-muted-foreground/30 font-medium pointer-events-none flex items-center gap-0.5">
-                      100$ <ArrowRight className="h-2 w-2" /> {payout}$
-                    </span>
-                    <span className="text-xs sm:text-sm font-bold text-foreground ml-2">{outcome.price}%</span>
+                    <div className={`rounded-full p-1 flex-shrink-0 ${getIconBgColor(outcome.color)}`}>
+                      {getOutcomeIcon(outcome.color)}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-[10px] sm:text-xs font-bold text-foreground">{outcome.label}</div>
+                      <div className="text-[8px] sm:text-[9px] text-muted-foreground font-medium">
+                        $100 → ${payout}
+                      </div>
+                    </div>
+                    <span className="text-sm sm:text-base font-bold text-foreground ml-auto">{outcome.price}¢</span>
                   </button>
                 );
               })}
