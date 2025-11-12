@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Clock, TrendingUp } from "lucide-react";
+import { Clock, TrendingUp, BarChart3 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { FeedFilters } from "@/components/FeedFilters";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -13,7 +13,7 @@ const newsItems = [
   {
     id: 1,
     title: "Federal Reserve Announces New Interest Rate Decision",
-    summary: "The Fed maintains rates at 5.25-5.50% amid economic uncertainty and inflation concerns.",
+    summary: "The Fed maintains rates at 5.25-5.50% amid economic uncertainty and inflation concerns. This decision comes after months of careful monitoring of economic indicators including employment data, consumer spending, and inflation metrics.",
     fullContent: "The Federal Reserve announced today that it will maintain interest rates at 5.25-5.50%, citing ongoing economic uncertainty and persistent inflation concerns. This decision comes after months of careful monitoring of economic indicators including employment data, consumer spending, and inflation metrics. Fed Chair Jerome Powell emphasized the committee's commitment to achieving price stability while supporting maximum employment. The decision was widely anticipated by market analysts and reflects the Fed's cautious approach to monetary policy in the current economic climate.",
     time: "2h ago",
     source: "Federal Reserve",
@@ -36,7 +36,7 @@ const newsItems = [
   {
     id: 2,
     title: "Major Tech Company Reports Record Quarterly Earnings",
-    summary: "Q4 results exceed expectations with 25% revenue growth year-over-year.",
+    summary: "Q4 results exceed expectations with 25% revenue growth year-over-year. The company posted a 25% revenue growth driven primarily by strong cloud services adoption and AI product launches, with analysts now revising their annual projections upward.",
     fullContent: "In a stunning display of market dominance, the tech giant reported record-breaking quarterly earnings that exceeded Wall Street expectations by a significant margin. The company posted a 25% revenue growth year-over-year, driven primarily by strong cloud services adoption and AI product launches. CEO highlighted the successful integration of artificial intelligence across their product portfolio as a key growth driver. Analysts are now revising their annual projections upward, citing the company's strong market position and innovative product pipeline.",
     time: "5h ago",
     source: "Tech News Daily",
@@ -45,7 +45,7 @@ const newsItems = [
   {
     id: 3,
     title: "Global Climate Summit Reaches Historic Agreement",
-    summary: "195 nations commit to new carbon reduction targets for the next decade.",
+    summary: "195 nations commit to new carbon reduction targets for the next decade. The agreement includes binding commitments to reduce greenhouse gas emissions by 50% by 2030, with specific provisions for technology transfer and financial support for developing nations.",
     fullContent: "In a historic moment for global climate action, 195 nations have reached a comprehensive agreement on carbon reduction targets for the next decade. The agreement includes binding commitments to reduce greenhouse gas emissions by 50% by 2030, with specific provisions for technology transfer and financial support for developing nations. Environmental experts are calling this the most significant climate agreement since the Paris Accord, though some activists argue the targets don't go far enough to prevent catastrophic climate change.",
     time: "8h ago",
     source: "Global News Network",
@@ -80,9 +80,9 @@ export default function News() {
                         {item.source}
                       </Badge>
                       {item.relatedMarkets.length > 0 && (
-                        <Badge variant="outline" className="text-xs gap-1">
-                          <TrendingUp className="h-3 w-3" />
-                          <span className="hidden sm:inline">Markets</span>
+                        <Badge variant="outline" className="text-xs gap-1.5 border-primary/30 text-primary hover:bg-primary/10">
+                          <BarChart3 className="h-3.5 w-3.5" />
+                          <span className="hidden sm:inline">Check Markets</span>
                         </Badge>
                       )}
                     </div>
@@ -93,7 +93,7 @@ export default function News() {
                     </h3>
 
                     {/* Summary */}
-                    <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
+                    <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2 md:line-clamp-3">
                       {item.summary}
                     </p>
 
