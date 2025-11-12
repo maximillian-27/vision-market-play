@@ -110,8 +110,8 @@ const mockMarkets = [
 export default function Feed() {
   return (
     <div className="w-full lg:container lg:max-w-7xl lg:py-6">
-      <div className="flex gap-6">
-        <div className="flex-1 space-y-4 md:space-y-6 min-w-0">
+      <div className="flex gap-6 justify-center">
+        <div className="w-full md:max-w-2xl space-y-4 md:space-y-6">
           <div className="px-4 py-4 lg:py-0">
             <FeedFilters />
           </div>

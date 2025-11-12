@@ -196,8 +196,8 @@ export default function CommunityFeed() {
 
   return (
     <div className="w-full lg:container lg:max-w-7xl py-4 lg:py-6">
-      <div className="flex gap-6">
-        <div className="flex-1 space-y-4 md:space-y-6 px-4 lg:px-0 min-w-0">
+      <div className="flex gap-6 justify-center">
+        <div className="w-full md:max-w-2xl space-y-4 md:space-y-6 px-4 lg:px-0">
           <h1 className="text-2xl font-bold">Community Feed</h1>
           
           {/* Category Filters */}
