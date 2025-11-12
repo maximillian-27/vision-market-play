@@ -108,19 +108,25 @@ export function MarketGridCard({
 
             {/* Outcomes - Stacked vertically */}
             <div className="space-y-1">
-              {visibleOutcomes.map((outcome, index) => (
-                <button 
-                  key={index}
-                  className={`w-full text-left rounded-md px-1.5 sm:px-2 py-1 sm:py-1.5 border transition-all ${getOutcomeColor(outcome.color)} flex items-center justify-between`}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    // Handle bet action
-                  }}
-                >
-                  <span className="text-[9px] sm:text-[10px] font-medium text-muted-foreground truncate flex-1">{outcome.label}</span>
-                  <span className="text-xs sm:text-sm font-bold text-foreground ml-2">{outcome.price}¢</span>
-                </button>
-              ))}
+              {visibleOutcomes.map((outcome, index) => {
+                const payout = outcome.price > 0 ? (10000 / outcome.price).toFixed(0) : 0;
+                return (
+                  <button 
+                    key={index}
+                    className={`w-full text-left rounded-md px-1.5 sm:px-2 py-1 sm:py-1.5 border transition-all ${getOutcomeColor(outcome.color)} relative flex items-center justify-between`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      // Handle bet action
+                    }}
+                  >
+                    <span className="text-[9px] sm:text-[10px] font-medium text-muted-foreground truncate flex-1">{outcome.label}</span>
+                    <span className="absolute left-1/2 -translate-x-1/2 text-[8px] sm:text-[9px] text-muted-foreground/30 font-medium pointer-events-none">
+                      ${payout}
+                    </span>
+                    <span className="text-xs sm:text-sm font-bold text-foreground ml-2">{outcome.price}%</span>
+                  </button>
+                );
+              })}
               {remainingCount > 0 && (
                 <div 
                   className="w-full text-center text-[8px] sm:text-[9px] text-muted-foreground/60 py-0.5 sm:py-1 cursor-pointer hover:text-muted-foreground transition-colors"
