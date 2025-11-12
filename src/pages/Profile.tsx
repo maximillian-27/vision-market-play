@@ -448,6 +448,110 @@ export default function Profile() {
             </CardContent>
           </Card>
 
+          {/* Performance Overview */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <TrendingUp className="h-5 w-5" />
+                Performance Analytics
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Trading Metrics */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <p className="text-xs text-muted-foreground">Avg Return/Trade</p>
+                  <p className="text-lg font-bold text-success">+$208</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-xs text-muted-foreground">Best Single Trade</p>
+                  <p className="text-lg font-bold text-success">+$1,240</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-xs text-muted-foreground">Active Position Value</p>
+                  <p className="text-lg font-bold">$3,280</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-xs text-muted-foreground">Profit Factor</p>
+                  <p className="text-lg font-bold">2.8x</p>
+                </div>
+              </div>
+
+              {/* Performance Breakdown */}
+              <div className="space-y-3 pt-2 border-t">
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">Last 7 Days</span>
+                    <span className="font-semibold text-success">+$842 (+4.8%)</span>
+                  </div>
+                  <Progress value={85} className="h-2" />
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">Last 30 Days</span>
+                    <span className="font-semibold text-success">+$2,450 (+15.3%)</span>
+                  </div>
+                  <Progress value={70} className="h-2" />
+                </div>
+              </div>
+
+              {/* Category Performance */}
+              <div className="space-y-3 pt-2 border-t">
+                <p className="text-sm font-medium">Performance by Category</p>
+                <div className="space-y-3">
+                  <div>
+                    <div className="flex items-center justify-between text-sm mb-1">
+                      <span className="text-muted-foreground">Crypto</span>
+                      <span className="font-semibold text-success">+$4,820 (82% win)</span>
+                    </div>
+                    <Progress value={82} className="h-1.5" />
+                  </div>
+                  <div>
+                    <div className="flex items-center justify-between text-sm mb-1">
+                      <span className="text-muted-foreground">Sports</span>
+                      <span className="font-semibold text-success">+$3,240 (76% win)</span>
+                    </div>
+                    <Progress value={76} className="h-1.5" />
+                  </div>
+                  <div>
+                    <div className="flex items-center justify-between text-sm mb-1">
+                      <span className="text-muted-foreground">Finance</span>
+                      <span className="font-semibold text-success">+$2,890 (71% win)</span>
+                    </div>
+                    <Progress value={71} className="h-1.5" />
+                  </div>
+                  <div>
+                    <div className="flex items-center justify-between text-sm mb-1">
+                      <span className="text-muted-foreground">Politics</span>
+                      <span className="font-semibold text-destructive">-$520 (58% win)</span>
+                    </div>
+                    <Progress value={58} className="h-1.5" />
+                  </div>
+                </div>
+              </div>
+
+              {/* Risk Metrics */}
+              <div className="grid grid-cols-2 gap-4 pt-2 border-t">
+                <div className="space-y-1">
+                  <p className="text-xs text-muted-foreground">Avg Hold Time</p>
+                  <p className="text-sm font-semibold">12 days</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-xs text-muted-foreground">Current Streak</p>
+                  <p className="text-sm font-semibold text-success">5 wins</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-xs text-muted-foreground">Best Streak</p>
+                  <p className="text-sm font-semibold">8 wins</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-xs text-muted-foreground">Sharpe Ratio</p>
+                  <p className="text-sm font-semibold">1.82</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
           {/* Achievements */}
           <Card>
             <CardHeader>
