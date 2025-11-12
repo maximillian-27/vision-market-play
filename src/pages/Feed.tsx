@@ -234,12 +234,12 @@ const mockMarkets = [
 
 export default function Feed() {
   return (
-    <div className="w-full lg:container lg:max-w-6xl lg:py-6">
+    <div className="w-full px-2 md:px-4 lg:px-6 lg:py-6">
       <div className="space-y-4 md:space-y-6">
-        <div className="px-4 py-4 lg:py-0">
+        <div className="py-4 lg:py-0">
           <FeedFilters />
         </div>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-4 px-4 lg:px-0">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-4">
           {mockMarkets.map((market, index) => (
             <MarketGridCard 
               key={index} 
