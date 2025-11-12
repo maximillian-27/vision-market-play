@@ -74,10 +74,9 @@ export default function Community() {
       <h1 className="text-2xl font-bold">Community</h1>
       
       <Tabs defaultValue="community" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="community">Traders</TabsTrigger>
           <TabsTrigger value="creators">Creators</TabsTrigger>
-          <TabsTrigger value="challenges">Challenges</TabsTrigger>
         </TabsList>
 
         <TabsContent value="community" className="space-y-4 mt-4">
@@ -168,40 +167,43 @@ export default function Community() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="challenges" className="space-y-4 mt-4">
-          <div className="grid gap-4">
-            {challenges.map((challenge, index) => {
-              const Icon = challenge.icon;
-              return (
-                <Card key={index} className="hover:shadow-md transition-shadow">
-                  <CardContent className="p-4">
-                    <div className="flex items-start gap-4">
-                      <div className="p-2 rounded-lg bg-primary/10">
-                        <Icon className="h-5 w-5 text-primary" />
-                      </div>
-                      <div className="flex-1 space-y-2">
-                        <div className="flex items-start justify-between gap-2">
-                          <div>
-                            <h3 className="font-semibold">{challenge.title}</h3>
-                            <p className="text-sm text-muted-foreground mt-1">{challenge.description}</p>
-                          </div>
-                          <Badge variant="outline" className="flex-shrink-0">
-                            {challenge.difficulty}
-                          </Badge>
-                        </div>
-                        <div className="flex items-center justify-between text-sm">
-                          <span className="text-muted-foreground">Progress: <span className="font-medium text-foreground">{challenge.progress}</span></span>
-                          <span className="text-primary font-medium">{challenge.reward}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-        </TabsContent>
       </Tabs>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Target className="h-5 w-5 text-primary" />
+            Active Challenges
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="grid gap-4">
+          {challenges.map((challenge, index) => {
+            const Icon = challenge.icon;
+            return (
+              <div key={index} className="flex items-start gap-4 p-3 rounded-lg hover:bg-accent transition-colors">
+                <div className="p-2 rounded-lg bg-primary/10">
+                  <Icon className="h-5 w-5 text-primary" />
+                </div>
+                <div className="flex-1 space-y-2">
+                  <div className="flex items-start justify-between gap-2">
+                    <div>
+                      <h3 className="font-semibold">{challenge.title}</h3>
+                      <p className="text-sm text-muted-foreground mt-1">{challenge.description}</p>
+                    </div>
+                    <Badge variant="outline" className="flex-shrink-0">
+                      {challenge.difficulty}
+                    </Badge>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">Progress: <span className="font-medium text-foreground">{challenge.progress}</span></span>
+                    <span className="text-primary font-medium">{challenge.reward}</span>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </CardContent>
+      </Card>
     </div>
   );
 }
