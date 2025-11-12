@@ -49,13 +49,28 @@ export function Header() {
     <>
       <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 fixed top-0 z-50 w-full">
         <div className="flex h-14 items-center justify-between px-4 lg:px-6 gap-4">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <img 
               src={pollgyLogo} 
               alt="Pollgy" 
               className="h-6 cursor-pointer"
               onClick={() => navigate("/")}
             />
+            
+            {/* Language Toggle - Next to logo on mobile */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-9 w-9 md:hidden">
+                  <Globe className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="z-50 bg-popover">
+                <DropdownMenuItem>English</DropdownMenuItem>
+                <DropdownMenuItem>Español</DropdownMenuItem>
+                <DropdownMenuItem>Français</DropdownMenuItem>
+                <DropdownMenuItem>Deutsch</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
 
           {/* Desktop Navigation Items */}
@@ -86,10 +101,10 @@ export function Header() {
               />
             </div>
 
-            {/* Language Toggle */}
+            {/* Language Toggle - Desktop only */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-9 w-9">
+                <Button variant="ghost" size="icon" className="h-9 w-9 hidden md:flex">
                   <Globe className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
@@ -103,26 +118,26 @@ export function Header() {
           
             {isLoggedIn && (
               <>
-                {/* Portfolio & Cash - Hidden on small mobile */}
-                <div className="hidden sm:flex items-center gap-3 mr-2">
-                  <div className="flex items-center gap-1.5 text-sm">
-                    <TrendingUp className="h-4 w-4 text-success" />
+                {/* Portfolio & Cash - Visible on all screens */}
+                <div className="flex items-center gap-2 md:gap-3 mr-1 md:mr-2">
+                  <div className="flex items-center gap-1 md:gap-1.5 text-xs md:text-sm">
+                    <TrendingUp className="h-3.5 w-3.5 md:h-4 md:w-4 text-success" />
                     <span className="font-semibold">${portfolioValue.toLocaleString()}</span>
                   </div>
-                  <div className="flex items-center gap-1.5 text-sm">
-                    <Wallet className="h-4 w-4 text-muted-foreground" />
+                  <div className="flex items-center gap-1 md:gap-1.5 text-xs md:text-sm">
+                    <Wallet className="h-3.5 w-3.5 md:h-4 md:w-4 text-muted-foreground" />
                     <span className="font-semibold">${cashBalance.toLocaleString()}</span>
                   </div>
                 </div>
 
-                {/* Deposit Button */}
+                {/* Deposit Button - Always shows text */}
                 <Button 
                   size="sm" 
                   variant="default"
                   onClick={() => setShowDepositDialog(true)}
+                  className="h-8 md:h-9 text-xs md:text-sm"
                 >
-                  <Wallet className="h-4 w-4 mr-1.5" />
-                  {!isMobile && "Deposit"}
+                  Deposit
                 </Button>
               </>
             )}
@@ -152,19 +167,6 @@ export function Header() {
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56 z-50 bg-popover">
-                  {/* Mobile-only Portfolio & Cash */}
-                  <div className="sm:hidden px-2 py-3 space-y-2">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">Portfolio</span>
-                      <span className="font-semibold text-success">${portfolioValue.toLocaleString()}</span>
-                    </div>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">Cash</span>
-                      <span className="font-semibold">${cashBalance.toLocaleString()}</span>
-                    </div>
-                  </div>
-                  <DropdownMenuSeparator className="sm:hidden" />
-                  
                   <DropdownMenuItem onClick={() => navigate("/profile")}>
                     <User className="mr-2 h-4 w-4" />
                     Profile
