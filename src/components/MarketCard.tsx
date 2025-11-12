@@ -1,7 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Clock, TrendingUp } from "lucide-react";
+import { Clock, TrendingUp, Heart, MessageCircle, Share2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface Outcome {
@@ -24,9 +24,11 @@ interface MarketCardProps {
   noPrice?: number;
   volume: string;
   endsIn: string;
+  likes?: number;
+  comments?: number;
 }
 
-export function MarketCard({ id, creator, title, subtitle, image, outcomes, yesPrice, noPrice, volume, endsIn }: MarketCardProps) {
+export function MarketCard({ id, creator, title, subtitle, image, outcomes, yesPrice, noPrice, volume, endsIn, likes = 0, comments = 0 }: MarketCardProps) {
   const navigate = useNavigate();
   
   // Use outcomes if provided, otherwise fallback to binary yes/no
@@ -106,6 +108,30 @@ export function MarketCard({ id, creator, title, subtitle, image, outcomes, yesP
                 </div>
               </Button>
             ))}
+          </div>
+
+          {/* Engagement Indicators */}
+          <div className="flex items-center gap-4 pt-2 border-t text-muted-foreground text-sm">
+            <button 
+              className="flex items-center gap-1.5 hover:text-destructive transition-colors"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <Heart className="h-4 w-4" />
+              {likes > 0 && <span>{likes}</span>}
+            </button>
+            <button 
+              className="flex items-center gap-1.5 hover:text-primary transition-colors"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <MessageCircle className="h-4 w-4" />
+              {comments > 0 && <span>{comments}</span>}
+            </button>
+            <button 
+              className="flex items-center gap-1.5 hover:text-primary transition-colors ml-auto"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <Share2 className="h-4 w-4" />
+            </button>
           </div>
         </div>
       </CardContent>

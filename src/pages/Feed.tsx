@@ -20,6 +20,8 @@ const mockMarkets = [
     noPrice: 32,
     volume: "$2.4M",
     endsIn: "3 months",
+    likes: 142,
+    comments: 38,
   },
   {
     id: "2",
@@ -38,6 +40,8 @@ const mockMarkets = [
     ],
     volume: "$890K",
     endsIn: "2 months",
+    likes: 89,
+    comments: 24,
   },
   {
     id: "3",
@@ -52,6 +56,8 @@ const mockMarkets = [
     noPrice: 77,
     volume: "$1.2M",
     endsIn: "11 months",
+    likes: 203,
+    comments: 67,
   },
   {
     id: "4",
@@ -69,6 +75,8 @@ const mockMarkets = [
     ],
     volume: "$3.1M",
     endsIn: "1 month",
+    likes: 321,
+    comments: 95,
   },
   {
     id: "5",
@@ -83,6 +91,8 @@ const mockMarkets = [
     noPrice: 29,
     volume: "$1.8M",
     endsIn: "1 year",
+    likes: 176,
+    comments: 52,
   },
 ];
 

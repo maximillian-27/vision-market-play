@@ -57,7 +57,9 @@ const mockCreatorMarkets = [
     noPrice: 32,
     volume: "$1.2M",
     endsIn: "3 months",
-    image: "/src/assets/bitcoin-market.jpg"
+    image: "/src/assets/bitcoin-market.jpg",
+    likes: 142,
+    comments: 38,
   },
   {
     id: "2",
@@ -71,7 +73,9 @@ const mockCreatorMarkets = [
     noPrice: 55,
     volume: "$890K",
     endsIn: "8 months",
-    image: "/src/assets/foldable-iphone.jpg"
+    image: "/src/assets/foldable-iphone.jpg",
+    likes: 98,
+    comments: 29,
   },
   {
     id: "3",
@@ -85,7 +89,9 @@ const mockCreatorMarkets = [
     noPrice: 27,
     volume: "$2.1M",
     endsIn: "2 weeks",
-    image: "/src/assets/federal-reserve.jpg"
+    image: "/src/assets/federal-reserve.jpg",
+    likes: 215,
+    comments: 64,
   }
 ];
 

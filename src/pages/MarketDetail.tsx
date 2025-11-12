@@ -113,6 +113,8 @@ export default function MarketDetail() {
   const [commentText, setCommentText] = useState("");
   const [comments, setComments] = useState<Comment[]>(mockComments);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLiked, setIsLiked] = useState(false);
+  const [likes, setLikes] = useState(142);
 
   if (!market) {
     return <div className="p-4">Market not found</div>;
@@ -170,6 +172,19 @@ export default function MarketDetail() {
           }
         : comment
     ));
+  };
+
+  const handleLikeMarket = () => {
+    setIsLiked(!isLiked);
+    setLikes(isLiked ? likes - 1 : likes + 1);
+  };
+
+  const handleShareMarket = () => {
+    navigator.clipboard.writeText(window.location.href);
+    toast({
+      title: "Link copied",
+      description: "Market link has been copied to clipboard.",
+    });
   };
 
   const getOutcomeColor = (color?: string) => {
@@ -262,6 +277,50 @@ export default function MarketDetail() {
                 </Button>
               ))}
             </div>
+
+            {/* Engagement Actions */}
+            <div className="flex items-center gap-1 pt-2 border-t">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="flex-1 group"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleLikeMarket();
+                }}
+              >
+                <div className="flex items-center gap-2 text-muted-foreground group-hover:text-destructive transition-colors">
+                  <Heart className={`h-5 w-5 ${isLiked ? 'fill-destructive text-destructive' : ''}`} />
+                  <span className="text-sm">{likes}</span>
+                </div>
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="flex-1 group"
+                onClick={(e) => {
+                  e.stopPropagation();
+                }}
+              >
+                <div className="flex items-center gap-2 text-muted-foreground group-hover:text-primary transition-colors">
+                  <MessageCircle className="h-5 w-5" />
+                  <span className="text-sm">{comments.length}</span>
+                </div>
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="flex-1 group"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleShareMarket();
+                }}
+              >
+                <div className="flex items-center gap-2 text-muted-foreground group-hover:text-primary transition-colors">
+                  <Share2 className="h-5 w-5" />
+                </div>
+              </Button>
+            </div>
           </CardHeader>
         </Card>
 
@@ -315,10 +374,9 @@ export default function MarketDetail() {
         {/* Details Tabs */}
         <Card>
           <Tabs defaultValue="description" className="w-full">
-            <TabsList className="w-full grid grid-cols-3 md:w-auto md:inline-grid">
+            <TabsList className="w-full grid grid-cols-2 md:w-auto md:inline-grid">
               <TabsTrigger value="description">Description</TabsTrigger>
               <TabsTrigger value="resolution">Resolution</TabsTrigger>
-              <TabsTrigger value="comments">Comments ({comments.length})</TabsTrigger>
             </TabsList>
             
             <Separator className="mb-4" />
@@ -332,95 +390,101 @@ export default function MarketDetail() {
               <h3 className="font-semibold text-sm text-muted-foreground">Resolution Criteria</h3>
               <p className="text-sm leading-relaxed">{market.resolutionCriteria}</p>
             </TabsContent>
+          </Tabs>
+        </Card>
 
-            <TabsContent value="comments" className="px-0 pb-0">
-              {/* Comment Input */}
-              <div className="px-6 pb-4 border-b">
-                <div className="flex gap-3">
-                  <Avatar className="h-10 w-10 mt-1">
-                    <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=User" />
-                    <AvatarFallback>U</AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1 space-y-3">
-                    <Textarea
-                      placeholder="Share your thoughts..."
-                      value={commentText}
-                      onChange={(e) => setCommentText(e.target.value)}
-                      className="min-h-[80px] resize-none border-0 focus-visible:ring-0 p-0 text-base"
-                      maxLength={500}
-                    />
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-muted-foreground">
-                        {commentText.length}/500
-                      </span>
-                      <Button
-                        onClick={handleCommentSubmit}
-                        disabled={!commentText.trim() || isSubmitting}
-                        size="sm"
-                      >
-                        Post
-                      </Button>
-                    </div>
+        {/* Comments Section */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Comments ({comments.length})</CardTitle>
+          </CardHeader>
+          <CardContent className="px-0">
+            {/* Comment Input */}
+            <div className="px-6 pb-4 border-b">
+              <div className="flex gap-3">
+                <Avatar className="h-10 w-10 mt-1">
+                  <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=User" />
+                  <AvatarFallback>U</AvatarFallback>
+                </Avatar>
+                <div className="flex-1 space-y-3">
+                  <Textarea
+                    placeholder="Share your thoughts..."
+                    value={commentText}
+                    onChange={(e) => setCommentText(e.target.value)}
+                    className="min-h-[80px] resize-none border-0 focus-visible:ring-0 p-0 text-base"
+                    maxLength={500}
+                  />
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-muted-foreground">
+                      {commentText.length}/500
+                    </span>
+                    <Button
+                      onClick={handleCommentSubmit}
+                      disabled={!commentText.trim() || isSubmitting}
+                      size="sm"
+                    >
+                      Post
+                    </Button>
                   </div>
                 </div>
               </div>
+            </div>
 
-              {/* Comments List */}
-              <div className="divide-y">
-                {comments.map((comment) => (
-                  <div key={comment.id} className="px-6 py-4 hover:bg-muted/50 transition-colors">
-                    <div className="flex gap-3">
-                      <Avatar className="h-10 w-10">
-                        <AvatarImage src={comment.author.avatar} />
-                        <AvatarFallback>{comment.author.name.slice(0, 2)}</AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1 space-y-2">
-                        <div className="flex items-center gap-2">
-                          <span className="font-semibold text-sm">{comment.author.name}</span>
-                          <span className="text-xs text-muted-foreground">{comment.author.username}</span>
-                          <span className="text-xs text-muted-foreground">·</span>
-                          <span className="text-xs text-muted-foreground">{comment.timestamp}</span>
-                        </div>
-                        <p className="text-sm leading-relaxed">{comment.text}</p>
-                        <div className="flex items-center gap-4 pt-1">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-auto p-0 hover:bg-transparent group"
-                            onClick={() => handleLikeComment(comment.id)}
-                          >
-                            <div className="flex items-center gap-1.5 text-muted-foreground group-hover:text-destructive transition-colors">
-                              <Heart className={`h-4 w-4 ${comment.isLiked ? 'fill-destructive text-destructive' : ''}`} />
-                              <span className="text-xs">{comment.likes > 0 ? comment.likes : ''}</span>
-                            </div>
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-auto p-0 hover:bg-transparent group"
-                          >
-                            <div className="flex items-center gap-1.5 text-muted-foreground group-hover:text-primary transition-colors">
-                              <MessageCircle className="h-4 w-4" />
-                              <span className="text-xs">{comment.replies > 0 ? comment.replies : ''}</span>
-                            </div>
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-auto p-0 hover:bg-transparent group"
-                          >
-                            <div className="flex items-center gap-1.5 text-muted-foreground group-hover:text-primary transition-colors">
-                              <Share2 className="h-4 w-4" />
-                            </div>
-                          </Button>
-                        </div>
+            {/* Comments List */}
+            <div className="divide-y">
+              {comments.map((comment) => (
+                <div key={comment.id} className="px-6 py-4 hover:bg-muted/50 transition-colors">
+                  <div className="flex gap-3">
+                    <Avatar className="h-10 w-10">
+                      <AvatarImage src={comment.author.avatar} />
+                      <AvatarFallback>{comment.author.name.slice(0, 2)}</AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 space-y-2">
+                      <div className="flex items-center gap-2">
+                        <span className="font-semibold text-sm">{comment.author.name}</span>
+                        <span className="text-xs text-muted-foreground">{comment.author.username}</span>
+                        <span className="text-xs text-muted-foreground">·</span>
+                        <span className="text-xs text-muted-foreground">{comment.timestamp}</span>
+                      </div>
+                      <p className="text-sm leading-relaxed">{comment.text}</p>
+                      <div className="flex items-center gap-4 pt-1">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-auto p-0 hover:bg-transparent group"
+                          onClick={() => handleLikeComment(comment.id)}
+                        >
+                          <div className="flex items-center gap-1.5 text-muted-foreground group-hover:text-destructive transition-colors">
+                            <Heart className={`h-4 w-4 ${comment.isLiked ? 'fill-destructive text-destructive' : ''}`} />
+                            <span className="text-xs">{comment.likes > 0 ? comment.likes : ''}</span>
+                          </div>
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-auto p-0 hover:bg-transparent group"
+                        >
+                          <div className="flex items-center gap-1.5 text-muted-foreground group-hover:text-primary transition-colors">
+                            <MessageCircle className="h-4 w-4" />
+                            <span className="text-xs">{comment.replies > 0 ? comment.replies : ''}</span>
+                          </div>
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-auto p-0 hover:bg-transparent group"
+                        >
+                          <div className="flex items-center gap-1.5 text-muted-foreground group-hover:text-primary transition-colors">
+                            <Share2 className="h-4 w-4" />
+                          </div>
+                        </Button>
                       </div>
                     </div>
                   </div>
-                ))}
-              </div>
-            </TabsContent>
-          </Tabs>
+                </div>
+              ))}
+            </div>
+          </CardContent>
         </Card>
       </div>
     </div>
