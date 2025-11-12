@@ -2,6 +2,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Clock, TrendingUp } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface Outcome {
   label: string;
@@ -10,6 +11,7 @@ interface Outcome {
 }
 
 interface MarketCardProps {
+  id: string;
   creator: {
     name: string;
     avatar: string;
@@ -23,7 +25,9 @@ interface MarketCardProps {
   endsIn: string;
 }
 
-export function MarketCard({ creator, title, image, outcomes, yesPrice, noPrice, volume, endsIn }: MarketCardProps) {
+export function MarketCard({ id, creator, title, image, outcomes, yesPrice, noPrice, volume, endsIn }: MarketCardProps) {
+  const navigate = useNavigate();
+  
   // Use outcomes if provided, otherwise fallback to binary yes/no
   const displayOutcomes = outcomes || [
     { label: "Yes", price: yesPrice || 0, color: "success" },
@@ -39,7 +43,10 @@ export function MarketCard({ creator, title, image, outcomes, yesPrice, noPrice,
   };
 
   return (
-    <Card className="overflow-hidden transition-all hover:shadow-md md:rounded-lg rounded-none border-x-0 md:border-x border-t-0 md:border-t first:border-t">
+    <Card 
+      className="overflow-hidden transition-all hover:shadow-md md:rounded-lg rounded-none border-x-0 md:border-x border-t-0 md:border-t first:border-t cursor-pointer"
+      onClick={() => navigate(`/market/${id}`)}
+    >
       <CardContent className="p-0">
         {/* Creator Info */}
         <div className="flex items-center gap-3 p-3 md:p-4 pb-2 md:pb-3">
@@ -84,6 +91,10 @@ export function MarketCard({ creator, title, image, outcomes, yesPrice, noPrice,
                 key={index}
                 variant="outline" 
                 className={`flex-1 transition-all ${getOutcomeColor(outcome.color)}`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  // Handle bet action here
+                }}
               >
                 <div className="flex flex-col items-center w-full">
                   <span className="font-semibold text-xs md:text-sm">{outcome.label}</span>

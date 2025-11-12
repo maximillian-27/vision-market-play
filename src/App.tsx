@@ -12,6 +12,7 @@ import Feed from "./pages/Feed";
 import News from "./pages/News";
 import Community from "./pages/Community";
 import Profile from "./pages/Profile";
+import MarketDetail from "./pages/MarketDetail";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -27,6 +28,7 @@ function AppContent() {
           <Header />
           <Routes>
             <Route path="/" element={<Feed />} />
+            <Route path="/market/:id" element={<MarketDetail />} />
             <Route path="/news" element={<News />} />
             <Route path="/community" element={<Community />} />
             <Route path="/profile" element={<Profile />} />

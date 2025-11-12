@@ -8,6 +8,7 @@ import aiImage from "@/assets/ai-customer-service.jpg";
 
 const mockMarkets = [
   {
+    id: "1",
     creator: {
       name: "Sarah Chen",
       avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah",
@@ -20,6 +21,7 @@ const mockMarkets = [
     endsIn: "3 months",
   },
   {
+    id: "2",
     creator: {
       name: "Mike Johnson",
       avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Mike",
@@ -36,6 +38,7 @@ const mockMarkets = [
     endsIn: "2 months",
   },
   {
+    id: "3",
     creator: {
       name: "Emma Wilson",
       avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Emma",
@@ -48,6 +51,7 @@ const mockMarkets = [
     endsIn: "11 months",
   },
   {
+    id: "4",
     creator: {
       name: "Alex Rodriguez",
       avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Alex",
@@ -63,6 +67,7 @@ const mockMarkets = [
     endsIn: "1 month",
   },
   {
+    id: "5",
     creator: {
       name: "Jordan Lee",
       avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Jordan",
