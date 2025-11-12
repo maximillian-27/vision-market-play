@@ -244,7 +244,7 @@ export default function MarketDetail() {
 
             {/* Market Image */}
             {market.image && (
-              <div className="relative aspect-video w-full overflow-hidden rounded-lg bg-muted -mx-6 md:mx-0 md:w-[calc(100%+3rem)]">
+              <div className="relative w-full h-32 md:h-40 overflow-hidden rounded-lg bg-muted">
                 <img 
                   src={market.image} 
                   alt={market.title}
