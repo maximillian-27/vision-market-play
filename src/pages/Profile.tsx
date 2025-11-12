@@ -4,7 +4,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Settings, Wallet, Activity, ArrowLeft, UserPlus, UserCheck, BadgeCheck } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Settings, Wallet, Activity, ArrowLeft, UserPlus, UserCheck, BadgeCheck, TrendingUp, Target, Award, Clock } from "lucide-react";
 import { MarketCard } from "@/components/MarketCard";
 
 // Mock data to determine if user is a creator
@@ -223,6 +225,156 @@ export default function Profile() {
             <MarketCard key={index} {...market} />
           ))}
         </div>
+      ) : isOwnProfile ? (
+        <>
+          {/* Performance Overview */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <TrendingUp className="h-5 w-5" />
+                Performance Overview
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">Win Rate</span>
+                  <span className="font-semibold">78%</span>
+                </div>
+                <Progress value={78} className="h-2" />
+              </div>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">Portfolio Growth</span>
+                  <span className="font-semibold text-success">+24.5%</span>
+                </div>
+                <Progress value={65} className="h-2" />
+              </div>
+              <div className="grid grid-cols-2 gap-4 pt-2">
+                <div className="text-center p-3 bg-muted/50 rounded-lg">
+                  <div className="text-lg font-bold">47</div>
+                  <div className="text-xs text-muted-foreground">Wins</div>
+                </div>
+                <div className="text-center p-3 bg-muted/50 rounded-lg">
+                  <div className="text-lg font-bold">13</div>
+                  <div className="text-xs text-muted-foreground">Losses</div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Achievements */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Award className="h-5 w-5" />
+                Achievements
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="flex items-center gap-3 p-3 bg-primary/10 rounded-lg">
+                  <div className="p-2 bg-primary/20 rounded-full">
+                    <Target className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <div className="font-semibold text-sm">First Win</div>
+                    <div className="text-xs text-muted-foreground">Unlocked</div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 p-3 bg-success/10 rounded-lg">
+                  <div className="p-2 bg-success/20 rounded-full">
+                    <TrendingUp className="h-5 w-5 text-success" />
+                  </div>
+                  <div>
+                    <div className="font-semibold text-sm">Hot Streak</div>
+                    <div className="text-xs text-muted-foreground">5 wins</div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Active Positions */}
+          <Tabs defaultValue="active" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="active">Active Positions</TabsTrigger>
+              <TabsTrigger value="history">History</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="active" className="space-y-3 mt-4">
+              <Card>
+                <CardContent className="p-4 space-y-3">
+                  <div className="p-4 border rounded-lg space-y-2">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-sm">Bitcoin reaches $100K by 2025?</h3>
+                        <p className="text-xs text-muted-foreground mt-1">Your position: Yes at 68¢</p>
+                        <div className="flex items-center gap-2 mt-2">
+                          <Clock className="h-3 w-3 text-muted-foreground" />
+                          <span className="text-xs text-muted-foreground">3 months left</span>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-sm font-semibold text-success">+$124</div>
+                        <div className="text-xs text-muted-foreground">+15.2%</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="p-4 border rounded-lg space-y-2">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-sm">Lakers make NBA playoffs?</h3>
+                        <p className="text-xs text-muted-foreground mt-1">Your position: No at 55¢</p>
+                        <div className="flex items-center gap-2 mt-2">
+                          <Clock className="h-3 w-3 text-muted-foreground" />
+                          <span className="text-xs text-muted-foreground">2 weeks left</span>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-sm font-semibold text-destructive">-$45</div>
+                        <div className="text-xs text-muted-foreground">-8.1%</div>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="history" className="space-y-3 mt-4">
+              <Card>
+                <CardContent className="p-4 space-y-3">
+                  <div className="p-4 border rounded-lg space-y-2">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-sm">Apple releases new iPhone in Sept?</h3>
+                        <p className="text-xs text-muted-foreground mt-1">Position: Yes at 89¢</p>
+                        <Badge variant="outline" className="mt-2 text-xs">Resolved: Yes</Badge>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-sm font-semibold text-success">+$89</div>
+                        <div className="text-xs text-muted-foreground">Won</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="p-4 border rounded-lg space-y-2">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-sm">Tesla stock hits $300?</h3>
+                        <p className="text-xs text-muted-foreground mt-1">Position: Yes at 72¢</p>
+                        <Badge variant="outline" className="mt-2 text-xs">Resolved: No</Badge>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-sm font-semibold text-destructive">-$72</div>
+                        <div className="text-xs text-muted-foreground">Lost</div>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
+        </>
       ) : (
         <Card>
           <CardHeader>
