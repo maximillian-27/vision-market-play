@@ -48,12 +48,12 @@ export function Header() {
   return (
     <>
       <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 fixed top-0 z-50 w-full">
-        <div className="flex h-14 items-center justify-between px-4 lg:px-6 gap-4">
+        <div className="flex h-14 items-center px-4 lg:px-8 gap-4 max-w-[1800px] mx-auto">
           <div className="flex items-center gap-2">
             <img 
               src={pollgyLogo} 
               alt="Pollgy" 
-              className="h-6 cursor-pointer"
+              className="h-6 md:h-8 cursor-pointer"
               onClick={() => navigate("/")}
             />
             
@@ -75,7 +75,7 @@ export function Header() {
 
           {/* Desktop Navigation Items */}
           {!isMobile && (
-            <nav className="flex items-center gap-1">
+            <nav className="flex items-center gap-1 flex-1 justify-center">
               {navItems.map((item) => (
                 <Button
                   key={item.title}
@@ -91,9 +91,9 @@ export function Header() {
           )}
 
           {/* Search Bar and Right Side Items */}
-          <div className="flex items-center gap-2 ml-auto">
+          <div className="flex items-center gap-3">
             {/* Search Bar - Hidden on mobile */}
-            <div className="hidden md:flex relative w-64">
+            <div className="hidden md:flex relative w-64 lg:w-80">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input 
                 placeholder="Search markets..." 
