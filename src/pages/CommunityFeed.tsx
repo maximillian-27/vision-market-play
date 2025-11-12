@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { MarketGridCard } from "@/components/MarketGridCard";
 import { HottestMarkets } from "@/components/HottestMarkets";
+import { FollowingSidebar } from "@/components/FollowingSidebar";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -197,6 +198,7 @@ export default function CommunityFeed() {
   return (
     <div className="w-full lg:container lg:max-w-7xl py-4 lg:py-6">
       <div className="flex gap-6 justify-center">
+        <FollowingSidebar />
         <div className="w-full md:max-w-2xl space-y-4 md:space-y-6 px-4 lg:px-0">
           <h1 className="text-2xl font-bold">Community Feed</h1>
           
