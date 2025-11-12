@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { MarketCard } from "@/components/MarketCard";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -187,6 +188,7 @@ const mockCommunityPosts: CommunityPost[] = [
 const categories = ["Hot", "Following", "Politics", "Sports", "Crypto", "Tech", "Entertainment", "Finance"];
 
 export default function CommunityFeed() {
+  const navigate = useNavigate();
   const [commentInputs, setCommentInputs] = useState<{ [key: string]: string }>({});
   const [expandedComments, setExpandedComments] = useState<{ [key: string]: boolean }>({});
   const [selectedFilter, setSelectedFilter] = useState("Hot");
@@ -216,13 +218,21 @@ export default function CommunityFeed() {
               {/* User Post Header */}
               <div className="p-4 space-y-3">
                 <div className="flex items-start gap-3">
-                  <Avatar className="h-10 w-10">
+                  <Avatar 
+                    className="h-10 w-10 cursor-pointer hover:opacity-80 transition-opacity"
+                    onClick={() => navigate(`/profile/${post.user.username.slice(1)}`)}
+                  >
                     <AvatarImage src={post.user.avatar} alt={post.user.name} />
                     <AvatarFallback>{post.user.name.slice(0, 2)}</AvatarFallback>
                   </Avatar>
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
-                      <span className="font-semibold text-sm">{post.user.name}</span>
+                      <span 
+                        className="font-semibold text-sm cursor-pointer hover:underline"
+                        onClick={() => navigate(`/profile/${post.user.username.slice(1)}`)}
+                      >
+                        {post.user.name}
+                      </span>
                       <span className="text-xs text-muted-foreground">{post.user.username}</span>
                       <span className="text-xs text-muted-foreground">·</span>
                       <span className="text-xs text-muted-foreground">{post.timestamp}</span>
