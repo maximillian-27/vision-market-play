@@ -5,6 +5,7 @@ import { Globe, LogOut, Settings, User, Wallet, TrendingUp, Search, Home, Newspa
 import { Input } from "@/components/ui/input";
 import pollgyLogo from "@/assets/pollgy-logo-new.png";
 import { useNavigate } from "react-router-dom";
+import { NavLink } from "@/components/NavLink";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -77,15 +78,14 @@ export function Header() {
           {!isMobile && (
             <nav className="flex items-center gap-4 lg:gap-6 ml-4 lg:ml-8">
               {navItems.map((item) => (
-                <Button
+                <NavLink
                   key={item.title}
-                  variant="ghost"
-                  size="sm"
-                  className="font-medium"
-                  onClick={() => navigate(item.url)}
+                  to={item.url}
+                  className="px-3 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                  activeClassName="font-bold text-foreground"
                 >
                   {item.title}
-                </Button>
+                </NavLink>
               ))}
             </nav>
           )}
