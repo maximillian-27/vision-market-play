@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Globe, LogOut, Settings, User, Wallet, TrendingUp, Search, Home, Newspaper, Users, MessageSquare } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import pollgyLogo from "@/assets/pollgy-logo-new.png";
+import pollgyLogo from "@/assets/pollgy-logo-new.jpg";
 import { useNavigate } from "react-router-dom";
 import { NavLink } from "@/components/NavLink";
 import {
