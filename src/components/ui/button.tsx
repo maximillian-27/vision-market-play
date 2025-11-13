@@ -15,6 +15,7 @@ const buttonVariants = cva(
         secondary: "bg-muted text-foreground hover:bg-muted/80 hover:scale-[1.02] active:scale-[0.98]",
         ghost: "hover:bg-muted hover:text-foreground",
         link: "text-foreground underline-offset-4 hover:underline",
+        gradient: "[background:var(--gradient-pollgy)] text-white hover:[background:var(--gradient-pollgy-hover)] hover:scale-[1.02] active:scale-[0.98]",
         login: "[background:var(--gradient-pollgy)] text-white hover:[background:var(--gradient-pollgy-hover)] hover:scale-[1.05] hover:shadow-lg active:scale-[0.98] font-semibold",
       },
       size: {
