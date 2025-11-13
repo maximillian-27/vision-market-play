@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Clock, TrendingUp, BadgeCheck, CircleCheck, CircleX, Circle } from "lucide-react";
+import { Clock, TrendingUp, BadgeCheck, Check, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { BuyDialog } from "@/components/BuyDialog";
@@ -59,17 +59,17 @@ export function MarketGridCard({
 
   const getOutcomeIcon = (color?: string) => {
     switch (color) {
-      case "success": return <CircleCheck className="h-4 w-4 sm:h-4.5 sm:w-4.5 stroke-[1.5]" />;
-      case "destructive": return <CircleX className="h-4 w-4 sm:h-4.5 sm:w-4.5 stroke-[1.5]" />;
-      default: return <Circle className="h-4 w-4 sm:h-4.5 sm:w-4.5 stroke-[1.5]" />;
+      case "success": return <Check className="h-3 w-3 sm:h-3.5 sm:w-3.5" />;
+      case "destructive": return <X className="h-3 w-3 sm:h-3.5 sm:w-3.5" />;
+      default: return <Check className="h-3 w-3 sm:h-3.5 sm:w-3.5" />;
     }
   };
 
-  const getIconColor = (color?: string) => {
+  const getIconBgColor = (color?: string) => {
     switch (color) {
-      case "success": return "text-success";
-      case "destructive": return "text-destructive";
-      default: return "text-primary";
+      case "success": return "bg-success text-success-foreground";
+      case "destructive": return "bg-destructive text-destructive-foreground";
+      default: return "bg-primary text-primary-foreground";
     }
   };
 
@@ -147,10 +147,10 @@ export function MarketGridCard({
                 return (
                   <button 
                     key={index}
-                    className={`w-full text-left rounded-lg px-2 sm:px-2.5 py-1.5 sm:py-2 border transition-all ${getOutcomeColor(outcome.color)} flex items-center gap-2 sm:gap-2.5`}
+                    className={`w-full text-left rounded-lg px-2 sm:px-2.5 py-1.5 sm:py-2 border transition-all ${getOutcomeColor(outcome.color)} flex items-center gap-1.5 sm:gap-2`}
                     onClick={(e) => handleOutcomeClick(e, outcome)}
                   >
-                    <div className={`flex-shrink-0 ${getIconColor(outcome.color)}`}>
+                    <div className={`rounded-full p-1 flex-shrink-0 ${getIconBgColor(outcome.color)}`}>
                       {getOutcomeIcon(outcome.color)}
                     </div>
                     <div className="flex-1 min-w-0">
