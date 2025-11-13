@@ -121,7 +121,7 @@ export function Header() {
                 {/* Deposit Button - Always shows text */}
                 <Button 
                   size="sm" 
-                  variant="default"
+                  variant="outline"
                   onClick={() => setShowDepositDialog(true)}
                   className="h-8 md:h-9 text-xs md:text-sm"
                 >
@@ -140,7 +140,7 @@ export function Header() {
                 >
                   How it works?
                 </Button>
-                <Button size={isMobile ? "sm" : "default"} onClick={handleLogin}>
+                <Button size={isMobile ? "sm" : "default"} variant="login" onClick={handleLogin}>
                   Login / Sign up
                 </Button>
               </>
