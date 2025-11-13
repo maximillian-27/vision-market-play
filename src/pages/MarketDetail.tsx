@@ -362,10 +362,15 @@ export default function MarketDetail() {
                       
                       {/* Label */}
                       <div className="flex-1">
-                        <div className="text-base md:text-lg font-semibold text-foreground mb-0.5">{outcome.label}</div>
-                        <div className="text-xs text-muted-foreground">
-                          $100 → ${payout}
-                        </div>
+                        <div className="text-base md:text-lg font-semibold text-foreground">{outcome.label}</div>
+                        <div className="text-xs text-muted-foreground">{outcome.price}¢ per share</div>
+                      </div>
+                      
+                      {/* $100 conversion */}
+                      <div className="hidden md:flex items-center gap-1.5 text-xs text-muted-foreground">
+                        <span>$100</span>
+                        <span>→</span>
+                        <span className="font-semibold text-foreground">${payout}</span>
                       </div>
                       
                       {/* Percentage */}
