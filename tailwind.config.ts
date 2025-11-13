@@ -39,6 +39,10 @@ export default {
           DEFAULT: "hsl(var(--pollgy-blue))",
           foreground: "hsl(var(--pollgy-blue-foreground))",
         },
+        "pollgy-green": {
+          DEFAULT: "hsl(var(--pollgy-green))",
+          foreground: "hsl(var(--pollgy-green-foreground))",
+        },
         muted: {
           DEFAULT: "hsl(var(--muted))",
           foreground: "hsl(var(--muted-foreground))",

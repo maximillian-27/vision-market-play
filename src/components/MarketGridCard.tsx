@@ -63,8 +63,8 @@ export function MarketGridCard({
 
   const getIconBgColor = (color?: string) => {
     switch (color) {
-      case "success": return "bg-success text-success-foreground";
-      case "destructive": return "bg-destructive text-destructive-foreground";
+      case "success": return "bg-pollgy-green text-pollgy-green-foreground";
+      case "destructive": return "bg-pollgy-blue text-pollgy-blue-foreground";
       default: return "bg-primary text-primary-foreground";
     }
   };
