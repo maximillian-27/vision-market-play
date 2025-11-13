@@ -328,19 +328,14 @@ export default function MarketDetail() {
                         <div className="text-sm md:text-lg font-bold text-foreground mb-1">{outcome.label}</div>
                         <div className="text-xs md:text-sm text-muted-foreground">{outcome.price}¢ per share</div>
                       </div>
+                      <div className="hidden md:flex flex-1 items-center justify-center">
+                        <div className="text-xs text-muted-foreground/60">
+                          $100 → <span className="text-foreground/70">${payout}</span>
+                        </div>
+                      </div>
                       <div className="text-right">
                         <div className="text-2xl md:text-4xl font-bold text-foreground">{percentage}%</div>
                         <div className="text-[10px] md:text-xs text-muted-foreground">probability</div>
-                      </div>
-                    </div>
-                    
-                    {/* Secondary info - Desktop only */}
-                    <div className="hidden md:flex items-center justify-between pt-3 mt-3 border-t border-border/30">
-                      <div className="text-sm text-muted-foreground">
-                        Potential: <span className="font-semibold text-foreground">${payout}</span> per $100
-                      </div>
-                      <div className="text-sm text-muted-foreground">
-                        Volume: <span className="font-semibold text-foreground">{volume}</span>
                       </div>
                     </div>
                   </button>
