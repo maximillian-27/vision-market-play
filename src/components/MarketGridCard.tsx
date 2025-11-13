@@ -127,7 +127,7 @@ export function MarketGridCard({
           </div>
 
           {/* Content */}
-          <div className="p-2 sm:p-2 space-y-1.5 sm:space-y-2 flex-1 flex flex-col">
+          <div className="p-2 sm:p-2 space-y-1.5 sm:space-y-2 flex flex-col">
             {/* Title */}
             <h3 
               className="text-[11px] sm:text-xs font-semibold leading-tight line-clamp-2 min-h-[1.8rem] sm:min-h-[2rem] group-hover:text-primary transition-colors cursor-pointer"
