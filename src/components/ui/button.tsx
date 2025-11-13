@@ -16,7 +16,7 @@ const buttonVariants = cva(
         ghost: "hover:[background:var(--gradient-pollgy)]",
         link: "text-foreground underline-offset-4 hover:underline",
         gradient: "[background:var(--gradient-pollgy)] hover:[background:var(--gradient-pollgy-hover)]",
-        login: "[background:var(--gradient-pollgy-accent)] text-white hover:opacity-90 hover:scale-[1.02] font-medium shadow-sm",
+        login: "bg-pollgy-blue text-pollgy-blue-foreground hover:opacity-90 hover:scale-[1.02] font-medium shadow-sm",
       },
       size: {
         default: "h-10 px-4 py-2",

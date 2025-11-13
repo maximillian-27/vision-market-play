@@ -35,6 +35,9 @@ All colors MUST be HSL.
     --success: 110 35% 45%;
     --success-foreground: 0 0% 100%;
 
+    --pollgy-blue: 217 91% 60%;
+    --pollgy-blue-foreground: 0 0% 100%;
+
     --border: 0 0% 92%;
     --input: 0 0% 92%;
     --ring: 110 35% 45%;
@@ -84,6 +87,9 @@ All colors MUST be HSL.
 
     --success: 110 35% 50%;
     --success-foreground: 0 0% 100%;
+
+    --pollgy-blue: 217 91% 60%;
+    --pollgy-blue-foreground: 0 0% 100%;
 
     --border: 0 0% 20%;
     --input: 0 0% 20%;
