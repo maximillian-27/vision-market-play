@@ -53,7 +53,7 @@ export function Header() {
             <img 
               src={pollgyLogo} 
               alt="Pollgy" 
-              className="h-6 md:h-8 cursor-pointer"
+              className="h-8 md:h-10 cursor-pointer"
               onClick={() => navigate("/")}
             />
             
