@@ -191,11 +191,7 @@ export default function MarketDetail() {
   };
 
   const getOutcomeColor = (color?: string) => {
-    switch (color) {
-      case "success": return "bg-success/10 border-success/20 hover:bg-success/15";
-      case "destructive": return "bg-muted/30 border-border/30 hover:bg-muted/40";
-      default: return "bg-primary/10 border-primary/20 hover:bg-primary/15";
-    }
+    return "bg-background border-border hover:bg-muted/20";
   };
 
   const getOutcomeIcon = (color?: string) => {
@@ -243,67 +239,77 @@ export default function MarketDetail() {
       </div>
 
       <div className="space-y-3 md:space-y-4 px-4 md:px-0 pt-2 md:pt-0">
-        {/* Market Header */}
-        <Card className="border-0 md:border shadow-none md:shadow-sm">
-          <CardHeader className="space-y-3 md:space-y-4 p-3 md:p-6 relative">
-            {/* Engagement Actions - Top Right - Desktop Only */}
-            <div className="hidden md:flex absolute top-6 right-6 items-center gap-1">
+        {/* Market Header - Clean & Minimal */}
+        <div className="space-y-4 md:space-y-5">
+          {/* Creator Info - Subtle */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Avatar className="h-6 w-6 md:h-8 md:w-8">
+                <AvatarImage src={market.creator.avatar} alt={market.creator.name} />
+                <AvatarFallback className="text-[10px] md:text-xs">{market.creator.name.slice(0, 2).toUpperCase()}</AvatarFallback>
+              </Avatar>
+              <span className="text-xs md:text-sm text-muted-foreground">{market.creator.name}</span>
+            </div>
+            
+            {/* Desktop Engagement Actions */}
+            <div className="hidden md:flex items-center gap-1">
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-9 w-9 p-0"
+                className="h-8 w-8 p-0"
                 onClick={(e) => {
                   e.stopPropagation();
                   handleLikeMarket();
                 }}
               >
-                <Heart className={`h-4 w-4 ${isLiked ? 'fill-destructive text-destructive' : 'text-muted-foreground hover:text-destructive'}`} />
+                <Heart className={`h-3.5 w-3.5 ${isLiked ? 'fill-destructive text-destructive' : 'text-muted-foreground hover:text-destructive'}`} />
               </Button>
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-9 w-9 p-0"
+                className="h-8 w-8 p-0"
                 onClick={(e) => {
                   e.stopPropagation();
                 }}
               >
-                <MessageCircle className="h-4 w-4 text-muted-foreground hover:text-primary" />
+                <MessageCircle className="h-3.5 w-3.5 text-muted-foreground hover:text-primary" />
               </Button>
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-9 w-9 p-0"
+                className="h-8 w-8 p-0"
                 onClick={(e) => {
                   e.stopPropagation();
                   handleShareMarket();
                 }}
               >
-                <Share2 className="h-4 w-4 text-muted-foreground hover:text-primary" />
+                <Share2 className="h-3.5 w-3.5 text-muted-foreground hover:text-primary" />
               </Button>
             </div>
+          </div>
 
-            {/* Creator Info - Mobile: Compact, Desktop: Full */}
-            <div className="flex items-center gap-2 md:gap-3 md:pr-32">
-              <Avatar className="h-7 w-7 md:h-10 md:w-10">
-                <AvatarImage src={market.creator.avatar} alt={market.creator.name} />
-                <AvatarFallback className="text-[10px] md:text-sm">{market.creator.name.slice(0, 2).toUpperCase()}</AvatarFallback>
-              </Avatar>
-              <div>
-                <p className="font-semibold text-xs md:text-sm">{market.creator.name}</p>
-                <p className="text-[10px] md:text-xs text-muted-foreground hidden md:block">Market Creator</p>
-              </div>
+          {/* Title - Prominent */}
+          <h1 className="text-xl md:text-3xl font-bold leading-tight">{market.title}</h1>
+          
+          {/* Subtitle */}
+          {market.subtitle && (
+            <p className="text-sm md:text-base text-muted-foreground leading-relaxed">{market.subtitle}</p>
+          )}
+
+          {/* Stats - Clean, no backgrounds */}
+          <div className="flex items-center gap-4 md:gap-6 text-xs md:text-sm">
+            <div className="flex items-center gap-1.5 text-muted-foreground">
+              <TrendingUp className="h-3.5 w-3.5 md:h-4 md:w-4" />
+              <span className="font-medium text-foreground">{market.volume}</span>
             </div>
+            <div className="flex items-center gap-1.5 text-muted-foreground">
+              <Clock className="h-3.5 w-3.5 md:h-4 md:w-4" />
+              <span className="font-medium text-foreground">{market.endsIn}</span>
+            </div>
+          </div>
 
-            {/* Title */}
-            <h1 className="text-base md:text-2xl font-bold leading-tight pr-2">{market.title}</h1>
-            
-            {/* Subtitle - Desktop Only */}
-            {market.subtitle && (
-              <p className="hidden md:block text-base text-muted-foreground leading-relaxed">{market.subtitle}</p>
-            )}
-
-            {/* Outcome Buttons - Prominent Position on Mobile */}
-            <div className="space-y-2 md:space-y-3 pt-1 md:pt-2">
+          {/* Outcomes - Clean & Prominent */}
+          <div className="space-y-2 md:space-y-2.5 pt-2">
               {market.outcomes.map((outcome: any, index: number) => {
                 const payout = outcome.price > 0 ? (100 / (outcome.price / 100)).toFixed(2) : 0;
                 const percentage = outcome.price;
@@ -313,138 +319,74 @@ export default function MarketDetail() {
                 return (
                   <button
                     key={index}
-                    className={`w-full text-left rounded-xl px-3 py-3 md:px-4 md:py-5 border transition-all hover:scale-[1.01] active:scale-[0.99] ${getOutcomeColor(outcome.color)} relative overflow-hidden group`}
+                    className={`w-full text-left rounded-lg px-3 py-3 md:px-4 md:py-4 border transition-all hover:scale-[1.01] active:scale-[0.99] ${getOutcomeColor(outcome.color)}`}
                     onClick={(e) => handleOutcomeClick(e, outcome)}
                   >
-                    {/* Background gradient bar - desktop only */}
-                    <div 
-                      className="hidden md:block absolute inset-0 opacity-[0.03] group-hover:opacity-[0.06] transition-opacity"
-                      style={{
-                        background: outcome.color === 'success' 
-                          ? 'linear-gradient(90deg, hsl(var(--success)) 0%, transparent 100%)'
-                          : 'linear-gradient(90deg, hsl(var(--destructive)) 0%, transparent 100%)',
-                        width: `${percentage}%`
-                      }}
-                    />
-                    
-                    {/* Mobile: Simple horizontal layout */}
-                    <div className="md:hidden relative flex items-center justify-between gap-3">
+                    {/* Mobile & Desktop: Clean unified layout */}
+                    <div className="flex items-center justify-between gap-4">
                       <div className="flex-1 min-w-0">
-                        <div className="text-sm font-bold text-foreground mb-1">{outcome.label}</div>
-                        <div className="text-xs text-muted-foreground">{outcome.price}¢</div>
+                        <div className="text-sm md:text-lg font-bold text-foreground mb-1">{outcome.label}</div>
+                        <div className="text-xs md:text-sm text-muted-foreground">{outcome.price}¢ per share</div>
                       </div>
                       <div className="text-right">
-                        <div className="text-xl font-bold text-foreground mb-1">{percentage}%</div>
-                        <div className="text-xs text-muted-foreground">${payout} per $100</div>
+                        <div className="text-2xl md:text-4xl font-bold text-foreground">{percentage}%</div>
+                        <div className="text-[10px] md:text-xs text-muted-foreground">probability</div>
                       </div>
                     </div>
-
-                    {/* Desktop: Full layout with icon */}
-                    <div className="hidden md:flex relative items-start gap-4">
-                      {/* Icon */}
-                      <div className={`rounded-full p-2 flex-shrink-0 ${getIconBgColor(outcome.color)}`}>
-                        {getOutcomeIcon(outcome.color)}
+                    
+                    {/* Secondary info - Desktop only */}
+                    <div className="hidden md:flex items-center justify-between pt-3 mt-3 border-t border-border/30">
+                      <div className="text-sm text-muted-foreground">
+                        Potential: <span className="font-semibold text-foreground">${payout}</span> per $100
                       </div>
-                      
-                      {/* Content */}
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-start justify-between gap-3 mb-3">
-                          <div>
-                            <div className="text-lg font-bold text-foreground mb-1">{outcome.label}</div>
-                            <div className="text-xs text-muted-foreground flex items-center gap-2">
-                              <span>{outcome.price}¢ per share</span>
-                              <span className={priceChange.startsWith('+') ? 'text-success font-medium' : 'text-destructive font-medium'}>
-                                {priceChange}
-                              </span>
-                            </div>
-                          </div>
-                          <div className="text-right">
-                            <div className="text-3xl font-bold text-foreground">
-                              {percentage}%
-                            </div>
-                            <div className="text-xs text-muted-foreground">probability</div>
-                          </div>
-                        </div>
-                        
-                        {/* Stats row */}
-                        <div className="flex items-center justify-between pt-3 border-t border-border/30">
-                          <div>
-                            <div className="text-xs text-muted-foreground mb-0.5">Potential return</div>
-                            <div className="text-sm font-semibold text-foreground">
-                              ${payout} <span className="text-xs text-muted-foreground font-normal">per $100</span>
-                            </div>
-                          </div>
-                          <div className="text-right">
-                            <div className="text-xs text-muted-foreground mb-0.5">Volume</div>
-                            <div className="text-sm font-semibold text-foreground">{volume}</div>
-                          </div>
-                        </div>
+                      <div className="text-sm text-muted-foreground">
+                        Volume: <span className="font-semibold text-foreground">{volume}</span>
                       </div>
                     </div>
                   </button>
                 );
               })}
-            </div>
+          </div>
 
-            {/* Stats Row - Minimal: Only Volume and Ends In */}
-            <div className="grid grid-cols-2 gap-2 md:gap-4 pt-2 md:pt-3">
-              <div className="space-y-0.5 md:space-y-1 bg-muted/30 rounded-lg p-2 md:p-3">
-                <div className="flex md:items-center gap-1 md:gap-1.5 text-muted-foreground">
-                  <TrendingUp className="h-3 w-3 md:h-4 md:w-4 flex-shrink-0" />
-                  <span className="text-[10px] md:text-xs leading-tight">Volume</span>
-                </div>
-                <p className="font-semibold text-xs md:text-base">{market.volume}</p>
-              </div>
-              <div className="space-y-0.5 md:space-y-1 bg-muted/30 rounded-lg p-2 md:p-3">
-                <div className="flex md:items-center gap-1 md:gap-1.5 text-muted-foreground">
-                  <Clock className="h-3 w-3 md:h-4 md:w-4 flex-shrink-0" />
-                  <span className="text-[10px] md:text-xs leading-tight">Ends In</span>
-                </div>
-                <p className="font-semibold text-xs md:text-base">{market.endsIn}</p>
-              </div>
-            </div>
-
-            {/* Mobile Engagement Actions - Bottom */}
-            <div className="flex md:hidden items-center justify-center gap-6 pt-3 border-t border-border/30">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-8 gap-1.5"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleLikeMarket();
-                }}
-              >
-                <Heart className={`h-4 w-4 ${isLiked ? 'fill-destructive text-destructive' : 'text-muted-foreground'}`} />
-                <span className="text-xs">Like</span>
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-8 gap-1.5"
-                onClick={(e) => {
-                  e.stopPropagation();
-                }}
-              >
-                <MessageCircle className="h-4 w-4 text-muted-foreground" />
-                <span className="text-xs">Comment</span>
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-8 gap-1.5"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleShareMarket();
-                }}
-              >
-                <Share2 className="h-4 w-4 text-muted-foreground" />
-                <span className="text-xs">Share</span>
-              </Button>
-            </div>
-
-          </CardHeader>
-        </Card>
+          {/* Mobile Engagement Actions */}
+          <div className="flex md:hidden items-center justify-center gap-6 pt-2 pb-1">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 gap-1.5"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleLikeMarket();
+              }}
+            >
+              <Heart className={`h-3.5 w-3.5 ${isLiked ? 'fill-destructive text-destructive' : 'text-muted-foreground'}`} />
+              <span className="text-xs">Like</span>
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 gap-1.5"
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
+            >
+              <MessageCircle className="h-3.5 w-3.5 text-muted-foreground" />
+              <span className="text-xs">Comment</span>
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 gap-1.5"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleShareMarket();
+              }}
+            >
+              <Share2 className="h-3.5 w-3.5 text-muted-foreground" />
+              <span className="text-xs">Share</span>
+            </Button>
+          </div>
+        </div>
 
         {/* Price Chart */}
         <Card className="border-0 md:border shadow-none md:shadow-sm">
