@@ -50,11 +50,7 @@ export function MarketGridCard({
   ];
 
   const getOutcomeColor = (color?: string) => {
-    switch (color) {
-      case "success": return "bg-success/10 border-success/20 hover:bg-success/15";
-      case "destructive": return "bg-muted/30 border-border/30 hover:bg-muted/40";
-      default: return "bg-primary/10 border-primary/20 hover:bg-primary/15";
-    }
+    return "bg-muted/20 border-border/30 hover:bg-muted/30";
   };
 
   const getOutcomeIcon = (color?: string) => {
