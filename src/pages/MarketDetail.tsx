@@ -386,28 +386,14 @@ export default function MarketDetail() {
               })}
             </div>
 
-            {/* Stats Row - Compact on Mobile, Full on Desktop */}
-            <div className="grid grid-cols-4 md:grid-cols-2 gap-2 md:gap-4 pt-2 md:pt-3">
+            {/* Stats Row - Minimal: Only Volume and Ends In */}
+            <div className="grid grid-cols-2 gap-2 md:gap-4 pt-2 md:pt-3">
               <div className="space-y-0.5 md:space-y-1 bg-muted/30 rounded-lg p-2 md:p-3">
                 <div className="flex md:items-center gap-1 md:gap-1.5 text-muted-foreground">
                   <TrendingUp className="h-3 w-3 md:h-4 md:w-4 flex-shrink-0" />
                   <span className="text-[10px] md:text-xs leading-tight">Volume</span>
                 </div>
                 <p className="font-semibold text-xs md:text-base">{market.volume}</p>
-              </div>
-              <div className="space-y-0.5 md:space-y-1 bg-muted/30 rounded-lg p-2 md:p-3">
-                <div className="flex md:items-center gap-1 md:gap-1.5 text-muted-foreground">
-                  <Users className="h-3 w-3 md:h-4 md:w-4 flex-shrink-0" />
-                  <span className="text-[10px] md:text-xs leading-tight">Traders</span>
-                </div>
-                <p className="font-semibold text-xs md:text-base">{market.traders}</p>
-              </div>
-              <div className="space-y-0.5 md:space-y-1 bg-muted/30 rounded-lg p-2 md:p-3">
-                <div className="flex md:items-center gap-1 md:gap-1.5 text-muted-foreground">
-                  <DollarSign className="h-3 w-3 md:h-4 md:w-4 flex-shrink-0" />
-                  <span className="text-[10px] md:text-xs leading-tight">Liquidity</span>
-                </div>
-                <p className="font-semibold text-xs md:text-base">{market.liquidity}</p>
               </div>
               <div className="space-y-0.5 md:space-y-1 bg-muted/30 rounded-lg p-2 md:p-3">
                 <div className="flex md:items-center gap-1 md:gap-1.5 text-muted-foreground">
