@@ -9,14 +9,14 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "[background:var(--gradient-pollgy)] text-white hover:[background:var(--gradient-pollgy-hover)] hover:scale-[1.02] active:scale-[0.98]",
-        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90 hover:scale-[1.02] active:scale-[0.98]",
-        outline: "border-2 border-border bg-background hover:bg-muted hover:border-foreground/20 hover:scale-[1.02] active:scale-[0.98]",
-        secondary: "bg-muted text-foreground hover:bg-muted/80 hover:scale-[1.02] active:scale-[0.98]",
-        ghost: "hover:bg-muted hover:text-foreground",
+        default: "bg-foreground text-background hover:bg-foreground/90",
+        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+        outline: "border border-border bg-background hover:[background:var(--gradient-pollgy)] hover:border-transparent",
+        secondary: "bg-muted text-foreground hover:bg-muted/80",
+        ghost: "hover:[background:var(--gradient-pollgy)]",
         link: "text-foreground underline-offset-4 hover:underline",
-        gradient: "[background:var(--gradient-pollgy)] text-white hover:[background:var(--gradient-pollgy-hover)] hover:scale-[1.02] active:scale-[0.98]",
-        login: "[background:var(--gradient-pollgy)] text-white hover:[background:var(--gradient-pollgy-hover)] hover:scale-[1.05] hover:shadow-lg active:scale-[0.98] font-semibold",
+        gradient: "[background:var(--gradient-pollgy)] hover:[background:var(--gradient-pollgy-hover)]",
+        login: "[background:var(--gradient-pollgy-accent)] text-white hover:opacity-90 hover:scale-[1.02] font-medium shadow-sm",
       },
       size: {
         default: "h-10 px-4 py-2",

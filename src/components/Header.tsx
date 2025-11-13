@@ -79,7 +79,7 @@ export function Header() {
               {navItems.map((item) => (
                 <Button
                   key={item.title}
-                  variant="gradient"
+                  variant="ghost"
                   size="sm"
                   className="font-medium"
                   onClick={() => navigate(item.url)}

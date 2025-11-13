@@ -83,7 +83,7 @@ export function FeedFilters() {
       <div className="flex gap-2 items-center">
         {/* Filter Button - Icon only */}
         <Button 
-          variant={showFilters ? "gradient" : "outline"} 
+          variant={showFilters ? "outline" : "outline"} 
           size="icon"
           className="h-10 w-10 flex-shrink-0"
           onClick={() => setShowFilters(!showFilters)}
@@ -95,7 +95,7 @@ export function FeedFilters() {
           {categories.map((category) => (
             <Button
               key={category}
-              variant={category === "All" ? "gradient" : "outline"}
+              variant={category === "All" ? "outline" : "outline"}
               size="sm"
               className="whitespace-nowrap font-medium px-4"
             >
