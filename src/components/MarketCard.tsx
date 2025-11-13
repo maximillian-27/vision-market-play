@@ -156,26 +156,49 @@ export function MarketCard({ id, creator, title, subtitle, image, outcomes, yesP
           {/* Outcome Buttons */}
           <div className={`space-y-2 ${hasMultipleOutcomes ? 'max-h-[200px] overflow-y-auto scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent hover:scrollbar-thumb-border/60 pr-1' : ''}`}>
             {displayOutcomes.map((outcome, index) => {
-              const payout = outcome.price > 0 ? (10000 / outcome.price).toFixed(0) : 0;
+              const payout = outcome.price > 0 ? (100 / (outcome.price / 100)).toFixed(0) : 0;
+              const percentage = outcome.price;
+              
               return (
                 <button 
                   key={index}
-                  className={`w-full text-left rounded-lg px-3 py-2.5 border transition-all ${getOutcomeColor(outcome.color)} flex items-center gap-2.5`}
+                  className={`w-full text-left rounded-lg px-3 py-3 border transition-all hover:scale-[1.01] active:scale-[0.99] ${getOutcomeColor(outcome.color)} flex items-center gap-2.5 relative overflow-hidden group`}
                   onClick={(e) => {
                     e.stopPropagation();
                     // Handle bet action
                   }}
                 >
-                  <div className={`rounded-full p-1.5 flex-shrink-0 ${getIconBgColor(outcome.color)}`}>
+                  {/* Background gradient bar */}
+                  <div 
+                    className="absolute inset-0 opacity-[0.02] group-hover:opacity-[0.05] transition-opacity"
+                    style={{
+                      background: outcome.color === 'success' 
+                        ? 'linear-gradient(90deg, hsl(var(--success)) 0%, transparent 100%)'
+                        : 'linear-gradient(90deg, hsl(var(--destructive)) 0%, transparent 100%)',
+                      width: `${percentage}%`
+                    }}
+                  />
+                  
+                  <div className={`rounded-full p-1.5 flex-shrink-0 relative z-10 ${getIconBgColor(outcome.color)}`}>
                     {getOutcomeIcon(outcome.color)}
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="text-sm font-bold text-foreground">{outcome.label}</div>
-                    <div className="text-xs text-muted-foreground font-medium">
-                      $100 → ${payout}
+                  <div className="flex-1 min-w-0 relative z-10">
+                    <div className="text-sm font-semibold text-foreground">{outcome.label}</div>
+                    <div className="text-xs text-muted-foreground">
+                      {outcome.price}¢ per share
                     </div>
                   </div>
-                  <span className="text-lg font-bold text-foreground ml-auto">{outcome.price}¢</span>
+                  
+                  {/* $100 conversion - desktop only */}
+                  <div className="hidden md:flex items-center gap-1 text-xs text-muted-foreground relative z-10">
+                    <span>$100</span>
+                    <span>→</span>
+                    <span className="font-semibold text-foreground">${payout}</span>
+                  </div>
+                  
+                  <div className="text-right relative z-10">
+                    <div className="text-xl font-bold text-foreground">{percentage}%</div>
+                  </div>
                 </button>
               );
             })}

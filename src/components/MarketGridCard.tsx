@@ -143,23 +143,46 @@ export function MarketGridCard({
             {/* Outcomes - Scrollable for multi-outcome polls */}
             <div className={`space-y-1 ${hasMultipleOutcomes ? 'max-h-[120px] sm:max-h-[140px] overflow-y-auto scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent hover:scrollbar-thumb-border/60 pr-1' : ''}`}>
               {displayOutcomes.map((outcome, index) => {
-                const payout = outcome.price > 0 ? (10000 / outcome.price).toFixed(0) : 0;
+                const payout = outcome.price > 0 ? (100 / (outcome.price / 100)).toFixed(0) : 0;
+                const percentage = outcome.price;
+                
                 return (
                   <button 
                     key={index}
-                    className={`w-full text-left rounded-lg px-2 sm:px-2.5 py-1.5 sm:py-2 border transition-all ${getOutcomeColor(outcome.color)} flex items-center gap-1.5 sm:gap-2`}
+                    className={`w-full text-left rounded-lg px-2 sm:px-2.5 py-1.5 sm:py-2 border transition-all hover:scale-[1.01] active:scale-[0.99] ${getOutcomeColor(outcome.color)} flex items-center gap-1.5 sm:gap-2 relative overflow-hidden group`}
                     onClick={(e) => handleOutcomeClick(e, outcome)}
                   >
-                    <div className={`rounded-full p-1 flex-shrink-0 ${getIconBgColor(outcome.color)}`}>
+                    {/* Background gradient bar */}
+                    <div 
+                      className="absolute inset-0 opacity-[0.02] group-hover:opacity-[0.05] transition-opacity"
+                      style={{
+                        background: outcome.color === 'success' 
+                          ? 'linear-gradient(90deg, hsl(var(--success)) 0%, transparent 100%)'
+                          : 'linear-gradient(90deg, hsl(var(--destructive)) 0%, transparent 100%)',
+                        width: `${percentage}%`
+                      }}
+                    />
+                    
+                    <div className={`rounded-full p-1 flex-shrink-0 relative z-10 ${getIconBgColor(outcome.color)}`}>
                       {getOutcomeIcon(outcome.color)}
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="text-[10px] sm:text-xs font-bold text-foreground">{outcome.label}</div>
-                      <div className="text-[8px] sm:text-[9px] text-muted-foreground font-medium">
-                        $100 → ${payout}
+                    <div className="flex-1 min-w-0 relative z-10">
+                      <div className="text-[10px] sm:text-xs font-semibold text-foreground">{outcome.label}</div>
+                      <div className="text-[8px] sm:text-[9px] text-muted-foreground">
+                        {outcome.price}¢ per share
                       </div>
                     </div>
-                    <span className="text-sm sm:text-base font-bold text-foreground ml-auto">{outcome.price}¢</span>
+                    
+                    {/* $100 conversion - hidden on mobile for space */}
+                    <div className="hidden sm:flex items-center gap-0.5 text-[8px] text-muted-foreground relative z-10">
+                      <span>$100</span>
+                      <span>→</span>
+                      <span className="font-semibold text-foreground">${payout}</span>
+                    </div>
+                    
+                    <div className="text-right relative z-10">
+                      <span className="text-sm sm:text-base font-bold text-foreground">{percentage}%</span>
+                    </div>
                   </button>
                 );
               })}
