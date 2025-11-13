@@ -205,14 +205,17 @@ export default function CommunityFeed() {
           {/* Category Filters */}
           <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
             {categories.map((category) => (
-              <Badge
+              <button
                 key={category}
-                variant={category === selectedFilter ? "default" : "outline"}
-                className="cursor-pointer whitespace-nowrap transition-all hover:bg-primary hover:text-primary-foreground border-border/40 text-sm font-medium px-4 py-2"
                 onClick={() => setSelectedFilter(category)}
+                className={`whitespace-nowrap font-medium px-4 py-2 text-sm transition-colors border-b-2 ${
+                  category === selectedFilter 
+                    ? "border-foreground text-foreground" 
+                    : "border-transparent text-muted-foreground hover:text-foreground"
+                }`}
               >
                 {category}
-              </Badge>
+              </button>
             ))}
           </div>
           
