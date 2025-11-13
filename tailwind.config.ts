@@ -38,12 +38,6 @@ export default {
         "pollgy-blue": {
           DEFAULT: "hsl(var(--pollgy-blue))",
           foreground: "hsl(var(--pollgy-blue-foreground))",
-          glow: "hsl(var(--pollgy-blue-glow))",
-        },
-        "pollgy-green": {
-          DEFAULT: "hsl(var(--pollgy-green))",
-          foreground: "hsl(var(--pollgy-green-foreground))",
-          glow: "hsl(var(--pollgy-green-glow))",
         },
         muted: {
           DEFAULT: "hsl(var(--muted))",

@@ -46,7 +46,6 @@ export function MarketCard({ id, creator, title, subtitle, image, outcomes, yesP
   const { toast } = useToast();
   const [showRepostDialog, setShowRepostDialog] = useState(false);
   const [repostThoughts, setRepostThoughts] = useState("");
-  const [votedOutcome, setVotedOutcome] = useState<string | null>(null);
   
   // Use outcomes if provided, otherwise fallback to binary yes/no
   const displayOutcomes = outcomes || [
@@ -54,32 +53,27 @@ export function MarketCard({ id, creator, title, subtitle, image, outcomes, yesP
     { label: "No", price: noPrice || 0, color: "destructive" }
   ];
 
-  const getOutcomeColor = (color?: string, isVoted?: boolean) => {
-    if (isVoted) {
-      return color === "success" 
-        ? "bg-pollgy-green text-pollgy-green-foreground shadow-[0_0_20px_hsl(var(--pollgy-green-glow))] scale-[1.02] border-pollgy-green" 
-        : "bg-pollgy-blue text-pollgy-blue-foreground shadow-[0_0_20px_hsl(var(--pollgy-blue-glow))] scale-[1.02] border-pollgy-blue";
-    }
-    return color === "success"
-      ? "bg-pollgy-green/10 border-pollgy-green/30 hover:bg-pollgy-green/20 hover:border-pollgy-green/50 hover:shadow-[0_0_15px_hsl(var(--pollgy-green-glow))]"
-      : "bg-pollgy-blue/10 border-pollgy-blue/30 hover:bg-pollgy-blue/20 hover:border-pollgy-blue/50 hover:shadow-[0_0_15px_hsl(var(--pollgy-blue-glow))]";
-  };
-
-  const getOutcomeIcon = (color?: string, isVoted?: boolean) => {
-    const iconClass = isVoted ? "h-5 w-5" : "h-4 w-4";
+  const getOutcomeColor = (color?: string) => {
     switch (color) {
-      case "success": return <Check className={iconClass} />;
-      case "destructive": return <X className={iconClass} />;
-      default: return <Check className={iconClass} />;
+      case "success": return "bg-success/10 border-success/20 hover:bg-success/15";
+      case "destructive": return "bg-muted/30 border-border/30 hover:bg-muted/40";
+      default: return "bg-primary/10 border-primary/20 hover:bg-primary/15";
     }
   };
 
-  const getIconBgColor = (color?: string, isVoted?: boolean) => {
-    if (isVoted) return "bg-white/20";
+  const getOutcomeIcon = (color?: string) => {
     switch (color) {
-      case "success": return "bg-pollgy-green/20 text-pollgy-green";
-      case "destructive": return "bg-pollgy-blue/20 text-pollgy-blue";
-      default: return "bg-primary/20 text-primary";
+      case "success": return <Check className="h-4 w-4" />;
+      case "destructive": return <X className="h-4 w-4" />;
+      default: return <Check className="h-4 w-4" />;
+    }
+  };
+
+  const getIconBgColor = (color?: string) => {
+    switch (color) {
+      case "success": return "bg-success text-success-foreground";
+      case "destructive": return "bg-destructive text-destructive-foreground";
+      default: return "bg-primary text-primary-foreground";
     }
   };
 
@@ -160,33 +154,28 @@ export function MarketCard({ id, creator, title, subtitle, image, outcomes, yesP
           </div>
 
           {/* Outcome Buttons */}
-          <div className={`space-y-2.5 ${hasMultipleOutcomes ? 'max-h-[200px] overflow-y-auto scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent hover:scrollbar-thumb-border/60 pr-1' : ''}`}>
+          <div className={`space-y-2 ${hasMultipleOutcomes ? 'max-h-[200px] overflow-y-auto scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent hover:scrollbar-thumb-border/60 pr-1' : ''}`}>
             {displayOutcomes.map((outcome, index) => {
               const payout = outcome.price > 0 ? (10000 / outcome.price).toFixed(0) : 0;
-              const isVoted = votedOutcome === outcome.label;
               return (
                 <button 
                   key={index}
-                  className={`w-full text-left rounded-xl px-3 py-3 border-2 transition-all duration-300 ${getOutcomeColor(outcome.color, isVoted)} flex items-center gap-2.5 relative overflow-hidden ${isVoted ? 'animate-scale-in' : ''}`}
+                  className={`w-full text-left rounded-lg px-3 py-2.5 border transition-all ${getOutcomeColor(outcome.color)} flex items-center gap-2.5`}
                   onClick={(e) => {
                     e.stopPropagation();
-                    setVotedOutcome(outcome.label);
-                    setTimeout(() => setVotedOutcome(null), 2000);
+                    // Handle bet action
                   }}
                 >
-                  {isVoted && (
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-slide-in-right" />
-                  )}
-                  <div className={`rounded-full p-1.5 flex-shrink-0 transition-all duration-300 ${getIconBgColor(outcome.color, isVoted)}`}>
-                    {getOutcomeIcon(outcome.color, isVoted)}
+                  <div className={`rounded-full p-1.5 flex-shrink-0 ${getIconBgColor(outcome.color)}`}>
+                    {getOutcomeIcon(outcome.color)}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className={`text-sm font-bold ${isVoted ? 'text-white' : 'text-foreground'}`}>{outcome.label}</div>
-                    <div className={`text-xs font-medium ${isVoted ? 'text-white/80' : 'text-muted-foreground'}`}>
+                    <div className="text-sm font-bold text-foreground">{outcome.label}</div>
+                    <div className="text-xs text-muted-foreground font-medium">
                       $100 → ${payout}
                     </div>
                   </div>
-                  <span className={`text-lg font-bold ml-auto ${isVoted ? 'text-white' : 'text-foreground'}`}>{outcome.price}¢</span>
+                  <span className="text-lg font-bold text-foreground ml-auto">{outcome.price}¢</span>
                 </button>
               );
             })}

@@ -42,7 +42,6 @@ export function MarketGridCard({
   const navigate = useNavigate();
   const [showBuyDialog, setShowBuyDialog] = useState(false);
   const [selectedOutcome, setSelectedOutcome] = useState<Outcome | null>(null);
-  const [votedOutcome, setVotedOutcome] = useState<string | null>(null);
   
   // Use outcomes if provided, otherwise fallback to binary yes/no
   const displayOutcomes = outcomes || [
@@ -50,32 +49,23 @@ export function MarketGridCard({
     { label: "No", price: noPrice || 0, color: "destructive" }
   ];
 
-  const getOutcomeColor = (color?: string, isVoted?: boolean) => {
-    if (isVoted) {
-      return color === "success" 
-        ? "bg-pollgy-green text-pollgy-green-foreground shadow-[0_0_20px_hsl(var(--pollgy-green-glow))] scale-[1.02] border-pollgy-green" 
-        : "bg-pollgy-blue text-pollgy-blue-foreground shadow-[0_0_20px_hsl(var(--pollgy-blue-glow))] scale-[1.02] border-pollgy-blue";
-    }
-    return color === "success"
-      ? "bg-pollgy-green/10 border-pollgy-green/30 hover:bg-pollgy-green/20 hover:border-pollgy-green/50 hover:shadow-[0_0_15px_hsl(var(--pollgy-green-glow))] text-foreground"
-      : "bg-pollgy-blue/10 border-pollgy-blue/30 hover:bg-pollgy-blue/20 hover:border-pollgy-blue/50 hover:shadow-[0_0_15px_hsl(var(--pollgy-blue-glow))] text-foreground";
+  const getOutcomeColor = (color?: string) => {
+    return "bg-muted/20 border-border/30 hover:bg-muted/30";
   };
 
-  const getOutcomeIcon = (color?: string, isVoted?: boolean) => {
-    const iconClass = isVoted ? "h-4 w-4" : "h-3 w-3 sm:h-3.5 sm:w-3.5";
+  const getOutcomeIcon = (color?: string) => {
     switch (color) {
-      case "success": return <Check className={iconClass} />;
-      case "destructive": return <X className={iconClass} />;
-      default: return <Check className={iconClass} />;
+      case "success": return <Check className="h-3 w-3 sm:h-3.5 sm:w-3.5" />;
+      case "destructive": return <X className="h-3 w-3 sm:h-3.5 sm:w-3.5" />;
+      default: return <Check className="h-3 w-3 sm:h-3.5 sm:w-3.5" />;
     }
   };
 
-  const getIconBgColor = (color?: string, isVoted?: boolean) => {
-    if (isVoted) return "bg-white/20";
+  const getIconBgColor = (color?: string) => {
     switch (color) {
-      case "success": return "bg-pollgy-green/20 text-pollgy-green";
-      case "destructive": return "bg-pollgy-blue/20 text-pollgy-blue";
-      default: return "bg-primary/20 text-primary";
+      case "success": return "bg-success text-success-foreground";
+      case "destructive": return "bg-destructive text-destructive-foreground";
+      default: return "bg-primary text-primary-foreground";
     }
   };
 
@@ -83,9 +73,6 @@ export function MarketGridCard({
 
   const handleOutcomeClick = (e: React.MouseEvent, outcome: Outcome) => {
     e.stopPropagation();
-    setVotedOutcome(outcome.label);
-    // Reset after animation
-    setTimeout(() => setVotedOutcome(null), 2000);
     setSelectedOutcome(outcome);
     setShowBuyDialog(true);
   };
@@ -101,7 +88,7 @@ export function MarketGridCard({
       />
       
       <Card 
-        className="group overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 cursor-pointer border-border/50 animate-fade-in bg-card rounded-2xl"
+        className="group overflow-hidden transition-all hover:shadow-md cursor-pointer border-border/50 animate-fade-in bg-card"
       >
       <CardContent className="p-0">
         {/* Mobile: Horizontal compact, Desktop: Vertical */}
@@ -143,36 +130,32 @@ export function MarketGridCard({
           <div className="p-2 sm:p-2 space-y-1.5 sm:space-y-2 flex flex-col">
             {/* Title */}
             <h3 
-              className="text-[11px] sm:text-xs font-bold leading-tight line-clamp-2 min-h-[1.8rem] sm:min-h-[2rem] group-hover:text-primary transition-colors cursor-pointer"
+              className="text-[11px] sm:text-xs font-semibold leading-tight line-clamp-2 min-h-[1.8rem] sm:min-h-[2rem] group-hover:text-primary transition-colors cursor-pointer"
               onClick={() => navigate(`/market/${id}`)}
             >
               {title}
             </h3>
 
             {/* Outcomes - Scrollable for multi-outcome polls */}
-            <div className={`space-y-1.5 ${hasMultipleOutcomes ? 'max-h-[120px] sm:max-h-[140px] overflow-y-auto scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent hover:scrollbar-thumb-border/60 pr-1' : ''}`}>
+            <div className={`space-y-1 ${hasMultipleOutcomes ? 'max-h-[120px] sm:max-h-[140px] overflow-y-auto scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent hover:scrollbar-thumb-border/60 pr-1' : ''}`}>
               {displayOutcomes.map((outcome, index) => {
                 const payout = outcome.price > 0 ? (10000 / outcome.price).toFixed(0) : 0;
-                const isVoted = votedOutcome === outcome.label;
                 return (
                   <button 
                     key={index}
-                    className={`w-full text-left rounded-xl px-2 sm:px-2.5 py-2 sm:py-2.5 border-2 transition-all duration-300 ${getOutcomeColor(outcome.color, isVoted)} flex items-center gap-1.5 sm:gap-2 relative overflow-hidden ${isVoted ? 'animate-scale-in' : ''}`}
+                    className={`w-full text-left rounded-lg px-2 sm:px-2.5 py-1.5 sm:py-2 border transition-all ${getOutcomeColor(outcome.color)} flex items-center gap-1.5 sm:gap-2`}
                     onClick={(e) => handleOutcomeClick(e, outcome)}
                   >
-                    {isVoted && (
-                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-slide-in-right" />
-                    )}
-                    <div className={`rounded-full p-1 sm:p-1.5 flex-shrink-0 transition-all duration-300 ${getIconBgColor(outcome.color, isVoted)}`}>
-                      {getOutcomeIcon(outcome.color, isVoted)}
+                    <div className={`rounded-full p-1 flex-shrink-0 ${getIconBgColor(outcome.color)}`}>
+                      {getOutcomeIcon(outcome.color)}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className={`text-[10px] sm:text-xs font-bold ${isVoted ? 'text-white' : 'text-foreground'}`}>{outcome.label}</div>
-                      <div className={`text-[8px] sm:text-[9px] font-medium ${isVoted ? 'text-white/80' : 'text-muted-foreground'}`}>
+                      <div className="text-[10px] sm:text-xs font-bold text-foreground">{outcome.label}</div>
+                      <div className="text-[8px] sm:text-[9px] text-muted-foreground font-medium">
                         $100 → ${payout}
                       </div>
                     </div>
-                    <span className={`text-sm sm:text-base font-bold ml-auto ${isVoted ? 'text-white' : 'text-foreground'}`}>{outcome.price}¢</span>
+                    <span className="text-sm sm:text-base font-bold text-foreground ml-auto">{outcome.price}¢</span>
                   </button>
                 );
               })}

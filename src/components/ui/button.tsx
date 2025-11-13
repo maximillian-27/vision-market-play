@@ -17,8 +17,6 @@ const buttonVariants = cva(
         link: "text-foreground underline-offset-4 hover:underline",
         gradient: "[background:var(--gradient-pollgy)] hover:[background:var(--gradient-pollgy-hover)]",
         login: "bg-pollgy-blue text-pollgy-blue-foreground hover:opacity-90 hover:scale-[1.02] font-medium shadow-sm",
-        "pollgy-green": "bg-pollgy-green text-pollgy-green-foreground hover:bg-pollgy-green/90 hover:shadow-[0_0_20px_hsl(var(--pollgy-green-glow))] transition-all duration-300",
-        "pollgy-blue": "bg-pollgy-blue text-pollgy-blue-foreground hover:bg-pollgy-blue/90 hover:shadow-[0_0_20px_hsl(var(--pollgy-blue-glow))] transition-all duration-300",
       },
       size: {
         default: "h-10 px-4 py-2",
