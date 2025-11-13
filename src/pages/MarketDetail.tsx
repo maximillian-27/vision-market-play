@@ -342,12 +342,12 @@ export default function MarketDetail() {
                 return (
                   <button
                     key={index}
-                    className={`w-full text-left rounded-xl px-4 py-4 md:py-5 border-2 transition-all hover:scale-[1.01] active:scale-[0.99] ${getOutcomeColor(outcome.color)} relative overflow-hidden group`}
+                    className={`w-full text-left rounded-xl px-3 py-3 md:px-4 md:py-5 border transition-all hover:scale-[1.01] active:scale-[0.99] ${getOutcomeColor(outcome.color)} relative overflow-hidden group`}
                     onClick={(e) => handleOutcomeClick(e, outcome)}
                   >
-                    {/* Background gradient bar */}
+                    {/* Background gradient bar - desktop only */}
                     <div 
-                      className="absolute inset-0 opacity-[0.03] group-hover:opacity-[0.06] transition-opacity"
+                      className="hidden md:block absolute inset-0 opacity-[0.03] group-hover:opacity-[0.06] transition-opacity"
                       style={{
                         background: outcome.color === 'success' 
                           ? 'linear-gradient(90deg, hsl(var(--success)) 0%, transparent 100%)'
@@ -356,7 +356,20 @@ export default function MarketDetail() {
                       }}
                     />
                     
-                    <div className="relative flex items-start gap-4">
+                    {/* Mobile: Simple horizontal layout */}
+                    <div className="md:hidden relative flex items-center justify-between gap-3">
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm font-bold text-foreground mb-1">{outcome.label}</div>
+                        <div className="text-xs text-muted-foreground">{outcome.price}¢</div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-xl font-bold text-foreground mb-1">{percentage}%</div>
+                        <div className="text-xs text-muted-foreground">${payout} per $100</div>
+                      </div>
+                    </div>
+
+                    {/* Desktop: Full layout with icon */}
+                    <div className="hidden md:flex relative items-start gap-4">
                       {/* Icon */}
                       <div className={`rounded-full p-2 flex-shrink-0 ${getIconBgColor(outcome.color)}`}>
                         {getOutcomeIcon(outcome.color)}
@@ -366,7 +379,7 @@ export default function MarketDetail() {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between gap-3 mb-3">
                           <div>
-                            <div className="text-base md:text-lg font-bold text-foreground mb-1">{outcome.label}</div>
+                            <div className="text-lg font-bold text-foreground mb-1">{outcome.label}</div>
                             <div className="text-xs text-muted-foreground flex items-center gap-2">
                               <span>{outcome.price}¢ per share</span>
                               <span className={priceChange.startsWith('+') ? 'text-success font-medium' : 'text-destructive font-medium'}>
@@ -375,7 +388,7 @@ export default function MarketDetail() {
                             </div>
                           </div>
                           <div className="text-right">
-                            <div className="text-2xl md:text-3xl font-bold text-foreground">
+                            <div className="text-3xl font-bold text-foreground">
                               {percentage}%
                             </div>
                             <div className="text-xs text-muted-foreground">probability</div>
