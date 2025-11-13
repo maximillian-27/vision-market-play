@@ -18,6 +18,7 @@ interface Outcome {
   label: string;
   price: number;
   color?: string;
+  logo?: string;
 }
 
 interface MarketCardProps {
@@ -166,8 +167,12 @@ export function MarketCard({ id, creator, title, subtitle, image, outcomes, yesP
                     // Handle bet action
                   }}
                 >
-                  <div className={`rounded-full p-1.5 flex-shrink-0 ${getIconBgColor(outcome.color)}`}>
-                    {getOutcomeIcon(outcome.color)}
+                  <div className={`rounded-full flex-shrink-0 ${outcome.logo ? 'p-0.5 bg-white border-2 border-white' : `p-1.5 ${getIconBgColor(outcome.color)}`}`}>
+                    {outcome.logo ? (
+                      <img src={outcome.logo} alt={outcome.label} className="h-6 w-6 rounded-full object-contain" />
+                    ) : (
+                      getOutcomeIcon(outcome.color)
+                    )}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="text-sm font-bold text-foreground">{outcome.label}</div>

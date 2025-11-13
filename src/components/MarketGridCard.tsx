@@ -9,6 +9,7 @@ interface Outcome {
   label: string;
   price: number;
   color?: string;
+  logo?: string;
 }
 
 interface MarketGridCardProps {
@@ -146,8 +147,12 @@ export function MarketGridCard({
                     className={`w-full text-left rounded-lg px-2 sm:px-2.5 py-1.5 sm:py-2 border transition-all ${getOutcomeColor(outcome.color)} flex items-center gap-1.5 sm:gap-2`}
                     onClick={(e) => handleOutcomeClick(e, outcome)}
                   >
-                    <div className={`rounded-full p-1 flex-shrink-0 ${getIconBgColor(outcome.color)}`}>
-                      {getOutcomeIcon(outcome.color)}
+                    <div className={`rounded-full flex-shrink-0 ${outcome.logo ? 'p-0.5 bg-white border-2 border-white' : `p-1 ${getIconBgColor(outcome.color)}`}`}>
+                      {outcome.logo ? (
+                        <img src={outcome.logo} alt={outcome.label} className="h-5 w-5 sm:h-6 sm:w-6 rounded-full object-contain" />
+                      ) : (
+                        getOutcomeIcon(outcome.color)
+                      )}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="text-[10px] sm:text-xs font-bold text-foreground">{outcome.label}</div>

@@ -56,9 +56,9 @@ const mockMarkets = [
     subtitle: "The race for the championship is heating up. Which team takes it all?",
     image: nbaImage,
     outcomes: [
-      { label: "Lakers", price: 25 },
-      { label: "Celtics", price: 32 },
-      { label: "Nuggets", price: 21 },
+      { label: "Lakers", price: 25, logo: "https://cdn.nba.com/logos/nba/1610612747/primary/L/logo.svg" },
+      { label: "Celtics", price: 32, logo: "https://cdn.nba.com/logos/nba/1610612738/primary/L/logo.svg" },
+      { label: "Nuggets", price: 21, logo: "https://cdn.nba.com/logos/nba/1610612743/primary/L/logo.svg" },
       { label: "Other", price: 22 },
     ],
     volume: "$890K",
