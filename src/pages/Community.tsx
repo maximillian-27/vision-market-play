@@ -116,7 +116,7 @@ export default function Community() {
                     <Link 
                       key={trader.rank} 
                       to={`/profile/${trader.name.toLowerCase().replace(' ', '-')}`}
-                      className="flex items-center gap-3 p-3 rounded-lg hover:bg-accent transition-colors cursor-pointer"
+                      className="flex items-center gap-3 p-3 rounded-lg hover:bg-muted/30 transition-colors cursor-pointer"
                     >
                       <div className="font-bold text-lg text-muted-foreground w-8">
                         #{trader.rank}
@@ -155,7 +155,7 @@ export default function Community() {
                     <Link 
                       key={creator.rank} 
                       to={`/creator/${creator.name.toLowerCase().replace(' ', '-')}`}
-                      className="flex items-center gap-3 p-3 rounded-lg hover:bg-accent transition-colors cursor-pointer"
+                      className="flex items-center gap-3 p-3 rounded-lg hover:bg-muted/30 transition-colors cursor-pointer"
                     >
                       <div className="font-bold text-lg text-muted-foreground w-8">
                         #{creator.rank}
@@ -194,7 +194,7 @@ export default function Community() {
               {challenges.map((challenge, index) => {
                 const Icon = challenge.icon;
                 return (
-                  <div key={index} className="flex items-start gap-4 p-3 rounded-lg hover:bg-accent transition-colors">
+                  <div key={index} className="flex items-start gap-4 p-3 rounded-lg hover:bg-muted/30 transition-colors">
                     <div className="p-2 rounded-lg bg-primary/10">
                       <Icon className="h-5 w-5 text-primary" />
                     </div>
