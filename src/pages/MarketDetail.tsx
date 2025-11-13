@@ -332,25 +332,71 @@ export default function MarketDetail() {
             </div>
 
             {/* Outcome Buttons */}
-            <div className="space-y-2 pt-1">
+            <div className="space-y-3 pt-2">
               {market.outcomes.map((outcome: any, index: number) => {
-                const payout = outcome.price > 0 ? (10000 / outcome.price).toFixed(0) : 0;
+                const payout = outcome.price > 0 ? (100 / (outcome.price / 100)).toFixed(2) : 0;
+                const percentage = outcome.price;
+                const priceChange = index === 0 ? "+5.2%" : "-5.2%";
+                const volume = index === 0 ? "$1.6M" : "$780K";
+                
                 return (
                   <button
                     key={index}
-                    className={`w-full text-left rounded-lg px-3 py-3 md:py-4 border transition-all ${getOutcomeColor(outcome.color)} flex items-center gap-3`}
+                    className={`w-full text-left rounded-xl px-4 py-4 md:py-5 border-2 transition-all hover:scale-[1.01] active:scale-[0.99] ${getOutcomeColor(outcome.color)} relative overflow-hidden group`}
                     onClick={(e) => handleOutcomeClick(e, outcome)}
                   >
-                    <div className={`rounded-full p-1.5 flex-shrink-0 ${getIconBgColor(outcome.color)}`}>
-                      {getOutcomeIcon(outcome.color)}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="text-sm md:text-base font-bold text-foreground">{outcome.label}</div>
-                      <div className="text-xs text-muted-foreground font-medium">
-                        $100 → ${payout}
+                    {/* Background gradient bar */}
+                    <div 
+                      className="absolute inset-0 opacity-[0.03] group-hover:opacity-[0.06] transition-opacity"
+                      style={{
+                        background: outcome.color === 'success' 
+                          ? 'linear-gradient(90deg, hsl(var(--success)) 0%, transparent 100%)'
+                          : 'linear-gradient(90deg, hsl(var(--destructive)) 0%, transparent 100%)',
+                        width: `${percentage}%`
+                      }}
+                    />
+                    
+                    <div className="relative flex items-start gap-4">
+                      {/* Icon */}
+                      <div className={`rounded-full p-2 flex-shrink-0 ${getIconBgColor(outcome.color)}`}>
+                        {getOutcomeIcon(outcome.color)}
+                      </div>
+                      
+                      {/* Content */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-start justify-between gap-3 mb-3">
+                          <div>
+                            <div className="text-base md:text-lg font-bold text-foreground mb-1">{outcome.label}</div>
+                            <div className="text-xs text-muted-foreground flex items-center gap-2">
+                              <span>{outcome.price}¢ per share</span>
+                              <span className={priceChange.startsWith('+') ? 'text-success font-medium' : 'text-destructive font-medium'}>
+                                {priceChange}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <div className="text-2xl md:text-3xl font-bold text-foreground">
+                              {percentage}%
+                            </div>
+                            <div className="text-xs text-muted-foreground">probability</div>
+                          </div>
+                        </div>
+                        
+                        {/* Stats row */}
+                        <div className="flex items-center justify-between pt-3 border-t border-border/30">
+                          <div>
+                            <div className="text-xs text-muted-foreground mb-0.5">Potential return</div>
+                            <div className="text-sm font-semibold text-foreground">
+                              ${payout} <span className="text-xs text-muted-foreground font-normal">per $100</span>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <div className="text-xs text-muted-foreground mb-0.5">Volume</div>
+                            <div className="text-sm font-semibold text-foreground">{volume}</div>
+                          </div>
+                        </div>
                       </div>
                     </div>
-                    <span className="text-lg md:text-xl font-bold text-foreground ml-auto">{outcome.price}¢</span>
                   </button>
                 );
               })}
