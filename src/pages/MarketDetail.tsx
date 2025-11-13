@@ -383,51 +383,149 @@ export default function MarketDetail() {
           </div>
         </div>
 
-        {/* Price Chart */}
+        {/* Price Chart & Analytics */}
         <Card className="border-0 md:border shadow-none md:shadow-sm">
-          <CardHeader className="p-4 md:p-6">
-            <CardTitle className="text-base md:text-lg">Price History</CardTitle>
-          </CardHeader>
-          <CardContent className="p-4 pt-0 md:p-6 md:pt-0">
-            <ResponsiveContainer width="100%" height={200}>
-              <LineChart data={market.priceHistory}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                <XAxis 
-                  dataKey="date" 
-                  stroke="hsl(var(--muted-foreground))"
-                  fontSize={12}
-                />
-                <YAxis 
-                  stroke="hsl(var(--muted-foreground))"
-                  fontSize={12}
-                  domain={[0, 100]}
-                />
-                <Tooltip 
-                  contentStyle={{
-                    backgroundColor: "hsl(var(--background))",
-                    border: "1px solid hsl(var(--border))",
-                    borderRadius: "8px"
-                  }}
-                />
-                <Line 
-                  type="monotone" 
-                  dataKey="yes" 
-                  stroke="hsl(var(--success))" 
-                  strokeWidth={2}
-                  name="Yes"
-                  dot={{ fill: "hsl(var(--success))" }}
-                />
-                <Line 
-                  type="monotone" 
-                  dataKey="no" 
-                  stroke="hsl(var(--destructive))" 
-                  strokeWidth={2}
-                  name="No"
-                  dot={{ fill: "hsl(var(--destructive))" }}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </CardContent>
+          <Tabs defaultValue="price" className="w-full">
+            <CardHeader className="p-4 md:p-6 pb-0">
+              <TabsList className="w-full grid grid-cols-2">
+                <TabsTrigger value="price">Price History</TabsTrigger>
+                <TabsTrigger value="analytics">Analytics</TabsTrigger>
+              </TabsList>
+            </CardHeader>
+            
+            <TabsContent value="price" className="mt-0">
+              <CardContent className="p-4 pt-4 md:p-6 md:pt-6">
+                <ResponsiveContainer width="100%" height={200}>
+                  <LineChart data={market.priceHistory}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                    <XAxis 
+                      dataKey="date" 
+                      stroke="hsl(var(--muted-foreground))"
+                      fontSize={12}
+                    />
+                    <YAxis 
+                      stroke="hsl(var(--muted-foreground))"
+                      fontSize={12}
+                      domain={[0, 100]}
+                    />
+                    <Tooltip 
+                      contentStyle={{
+                        backgroundColor: "hsl(var(--background))",
+                        border: "1px solid hsl(var(--border))",
+                        borderRadius: "8px"
+                      }}
+                    />
+                    <Line 
+                      type="monotone" 
+                      dataKey="yes" 
+                      stroke="hsl(var(--success))" 
+                      strokeWidth={2}
+                      name="Yes"
+                      dot={{ fill: "hsl(var(--success))" }}
+                    />
+                    <Line 
+                      type="monotone" 
+                      dataKey="no" 
+                      stroke="hsl(var(--destructive))" 
+                      strokeWidth={2}
+                      name="No"
+                      dot={{ fill: "hsl(var(--destructive))" }}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </TabsContent>
+            
+            <TabsContent value="analytics" className="mt-0">
+              <CardContent className="p-4 pt-4 md:p-6 md:pt-6 space-y-6">
+                {/* Trading Volume Breakdown */}
+                <div className="space-y-3">
+                  <h4 className="text-sm font-semibold text-muted-foreground">Volume Breakdown</h4>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                      <div className="text-xs text-muted-foreground">Yes Volume</div>
+                      <div className="text-lg font-bold text-success">$1.6M</div>
+                      <div className="text-xs text-muted-foreground">67% of total</div>
+                    </div>
+                    <div className="space-y-1">
+                      <div className="text-xs text-muted-foreground">No Volume</div>
+                      <div className="text-lg font-bold text-destructive">$780K</div>
+                      <div className="text-xs text-muted-foreground">33% of total</div>
+                    </div>
+                  </div>
+                </div>
+
+                <Separator />
+
+                {/* Market Depth */}
+                <div className="space-y-3">
+                  <h4 className="text-sm font-semibold text-muted-foreground">Market Depth</h4>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                      <div className="text-xs text-muted-foreground">Total Liquidity</div>
+                      <div className="text-lg font-bold">$450K</div>
+                    </div>
+                    <div className="space-y-1">
+                      <div className="text-xs text-muted-foreground">Active Traders</div>
+                      <div className="text-lg font-bold">12.4K</div>
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="text-xs text-muted-foreground">Avg Position Size</div>
+                    <div className="text-base font-semibold">$193</div>
+                  </div>
+                </div>
+
+                <Separator />
+
+                {/* Market Momentum */}
+                <div className="space-y-3">
+                  <h4 className="text-sm font-semibold text-muted-foreground">Market Momentum</h4>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                      <div className="text-xs text-muted-foreground">24h Price Change</div>
+                      <div className="text-base font-semibold text-success">+5.2%</div>
+                    </div>
+                    <div className="space-y-1">
+                      <div className="text-xs text-muted-foreground">24h Volume</div>
+                      <div className="text-base font-semibold">$340K</div>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                      <div className="text-xs text-muted-foreground">7d Volatility</div>
+                      <div className="text-base font-semibold">12.4%</div>
+                    </div>
+                    <div className="space-y-1">
+                      <div className="text-xs text-muted-foreground">Spread</div>
+                      <div className="text-base font-semibold">1.2¢</div>
+                    </div>
+                  </div>
+                </div>
+
+                <Separator />
+
+                {/* Risk Metrics */}
+                <div className="space-y-3">
+                  <h4 className="text-sm font-semibold text-muted-foreground">Risk Metrics</h4>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                      <div className="text-xs text-muted-foreground">Implied Probability</div>
+                      <div className="text-base font-semibold">68%</div>
+                    </div>
+                    <div className="space-y-1">
+                      <div className="text-xs text-muted-foreground">Kelly Criterion</div>
+                      <div className="text-base font-semibold">15%</div>
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="text-xs text-muted-foreground">Expected Value (Yes @ 68¢)</div>
+                    <div className="text-base font-semibold text-success">+$0.47 per $1</div>
+                  </div>
+                </div>
+              </CardContent>
+            </TabsContent>
+          </Tabs>
         </Card>
 
         {/* Details Tabs */}
