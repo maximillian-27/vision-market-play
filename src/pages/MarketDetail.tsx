@@ -245,13 +245,13 @@ export default function MarketDetail() {
       <div className="space-y-3 md:space-y-4 px-4 md:px-0 pt-2 md:pt-0">
         {/* Market Header */}
         <Card className="border-0 md:border shadow-none md:shadow-sm">
-          <CardHeader className="space-y-3 md:space-y-4 p-4 md:p-6 relative">
-            {/* Engagement Actions - Top Right */}
-            <div className="absolute top-4 right-4 md:top-6 md:right-6 flex items-center gap-0.5 md:gap-1">
+          <CardHeader className="space-y-3 md:space-y-4 p-3 md:p-6 relative">
+            {/* Engagement Actions - Top Right - Desktop Only */}
+            <div className="hidden md:flex absolute top-6 right-6 items-center gap-1">
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-8 w-8 md:h-9 md:w-9 p-0"
+                className="h-9 w-9 p-0"
                 onClick={(e) => {
                   e.stopPropagation();
                   handleLikeMarket();
@@ -262,7 +262,7 @@ export default function MarketDetail() {
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-8 w-8 md:h-9 md:w-9 p-0"
+                className="h-9 w-9 p-0"
                 onClick={(e) => {
                   e.stopPropagation();
                 }}
@@ -272,7 +272,7 @@ export default function MarketDetail() {
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-8 w-8 md:h-9 md:w-9 p-0"
+                className="h-9 w-9 p-0"
                 onClick={(e) => {
                   e.stopPropagation();
                   handleShareMarket();
@@ -282,57 +282,28 @@ export default function MarketDetail() {
               </Button>
             </div>
 
-            <div className="flex items-center gap-3 pr-24 md:pr-32">
-              <Avatar className="h-9 w-9 md:h-10 md:w-10">
+            {/* Creator Info - Mobile: Compact, Desktop: Full */}
+            <div className="flex items-center gap-2 md:gap-3 md:pr-32">
+              <Avatar className="h-7 w-7 md:h-10 md:w-10">
                 <AvatarImage src={market.creator.avatar} alt={market.creator.name} />
-                <AvatarFallback>{market.creator.name.slice(0, 2).toUpperCase()}</AvatarFallback>
+                <AvatarFallback className="text-[10px] md:text-sm">{market.creator.name.slice(0, 2).toUpperCase()}</AvatarFallback>
               </Avatar>
               <div>
-                <p className="font-semibold text-sm">{market.creator.name}</p>
-                <p className="text-xs text-muted-foreground">Market Creator</p>
+                <p className="font-semibold text-xs md:text-sm">{market.creator.name}</p>
+                <p className="text-[10px] md:text-xs text-muted-foreground hidden md:block">Market Creator</p>
               </div>
             </div>
 
-            <h1 className="text-lg md:text-2xl font-bold leading-tight">{market.title}</h1>
+            {/* Title */}
+            <h1 className="text-base md:text-2xl font-bold leading-tight pr-2">{market.title}</h1>
             
+            {/* Subtitle - Desktop Only */}
             {market.subtitle && (
-              <p className="text-sm md:text-base text-muted-foreground leading-relaxed">{market.subtitle}</p>
+              <p className="hidden md:block text-base text-muted-foreground leading-relaxed">{market.subtitle}</p>
             )}
 
-            {/* Stats Row */}
-            <div className="grid grid-cols-2 gap-3 md:gap-4 pt-2">
-              <div className="space-y-1 bg-muted/30 rounded-lg p-3">
-                <div className="flex items-center gap-1.5 text-muted-foreground">
-                  <TrendingUp className="h-3.5 w-3.5 md:h-4 md:w-4" />
-                  <span className="text-xs">Volume</span>
-                </div>
-                <p className="font-semibold text-sm md:text-base">{market.volume}</p>
-              </div>
-              <div className="space-y-1 bg-muted/30 rounded-lg p-3">
-                <div className="flex items-center gap-1.5 text-muted-foreground">
-                  <Users className="h-3.5 w-3.5 md:h-4 md:w-4" />
-                  <span className="text-xs">Traders</span>
-                </div>
-                <p className="font-semibold text-sm md:text-base">{market.traders}</p>
-              </div>
-              <div className="space-y-1 bg-muted/30 rounded-lg p-3">
-                <div className="flex items-center gap-1.5 text-muted-foreground">
-                  <DollarSign className="h-3.5 w-3.5 md:h-4 md:w-4" />
-                  <span className="text-xs">Liquidity</span>
-                </div>
-                <p className="font-semibold text-sm md:text-base">{market.liquidity}</p>
-              </div>
-              <div className="space-y-1 bg-muted/30 rounded-lg p-3">
-                <div className="flex items-center gap-1.5 text-muted-foreground">
-                  <Clock className="h-3.5 w-3.5 md:h-4 md:w-4" />
-                  <span className="text-xs">Ends In</span>
-                </div>
-                <p className="font-semibold text-sm md:text-base">{market.endsIn}</p>
-              </div>
-            </div>
-
-            {/* Outcome Buttons */}
-            <div className="space-y-3 pt-2">
+            {/* Outcome Buttons - Prominent Position on Mobile */}
+            <div className="space-y-2 md:space-y-3 pt-1 md:pt-2">
               {market.outcomes.map((outcome: any, index: number) => {
                 const payout = outcome.price > 0 ? (100 / (outcome.price / 100)).toFixed(2) : 0;
                 const percentage = outcome.price;
@@ -413,6 +384,77 @@ export default function MarketDetail() {
                   </button>
                 );
               })}
+            </div>
+
+            {/* Stats Row - Compact on Mobile, Full on Desktop */}
+            <div className="grid grid-cols-4 md:grid-cols-2 gap-2 md:gap-4 pt-2 md:pt-3">
+              <div className="space-y-0.5 md:space-y-1 bg-muted/30 rounded-lg p-2 md:p-3">
+                <div className="flex md:items-center gap-1 md:gap-1.5 text-muted-foreground">
+                  <TrendingUp className="h-3 w-3 md:h-4 md:w-4 flex-shrink-0" />
+                  <span className="text-[10px] md:text-xs leading-tight">Volume</span>
+                </div>
+                <p className="font-semibold text-xs md:text-base">{market.volume}</p>
+              </div>
+              <div className="space-y-0.5 md:space-y-1 bg-muted/30 rounded-lg p-2 md:p-3">
+                <div className="flex md:items-center gap-1 md:gap-1.5 text-muted-foreground">
+                  <Users className="h-3 w-3 md:h-4 md:w-4 flex-shrink-0" />
+                  <span className="text-[10px] md:text-xs leading-tight">Traders</span>
+                </div>
+                <p className="font-semibold text-xs md:text-base">{market.traders}</p>
+              </div>
+              <div className="space-y-0.5 md:space-y-1 bg-muted/30 rounded-lg p-2 md:p-3">
+                <div className="flex md:items-center gap-1 md:gap-1.5 text-muted-foreground">
+                  <DollarSign className="h-3 w-3 md:h-4 md:w-4 flex-shrink-0" />
+                  <span className="text-[10px] md:text-xs leading-tight">Liquidity</span>
+                </div>
+                <p className="font-semibold text-xs md:text-base">{market.liquidity}</p>
+              </div>
+              <div className="space-y-0.5 md:space-y-1 bg-muted/30 rounded-lg p-2 md:p-3">
+                <div className="flex md:items-center gap-1 md:gap-1.5 text-muted-foreground">
+                  <Clock className="h-3 w-3 md:h-4 md:w-4 flex-shrink-0" />
+                  <span className="text-[10px] md:text-xs leading-tight">Ends In</span>
+                </div>
+                <p className="font-semibold text-xs md:text-base">{market.endsIn}</p>
+              </div>
+            </div>
+
+            {/* Mobile Engagement Actions - Bottom */}
+            <div className="flex md:hidden items-center justify-center gap-6 pt-3 border-t border-border/30">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 gap-1.5"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleLikeMarket();
+                }}
+              >
+                <Heart className={`h-4 w-4 ${isLiked ? 'fill-destructive text-destructive' : 'text-muted-foreground'}`} />
+                <span className="text-xs">Like</span>
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 gap-1.5"
+                onClick={(e) => {
+                  e.stopPropagation();
+                }}
+              >
+                <MessageCircle className="h-4 w-4 text-muted-foreground" />
+                <span className="text-xs">Comment</span>
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 gap-1.5"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleShareMarket();
+                }}
+              >
+                <Share2 className="h-4 w-4 text-muted-foreground" />
+                <span className="text-xs">Share</span>
+              </Button>
             </div>
 
           </CardHeader>
