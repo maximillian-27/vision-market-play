@@ -9,6 +9,7 @@ const categories = ["All", "Following", "Hot", "Politics", "Sports", "Crypto", "
 
 export function FeedFilters() {
   const [showFilters, setShowFilters] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState("All");
 
   return (
     <div className="space-y-4 sticky top-16 z-10 bg-background/95 backdrop-blur-sm py-2 -mt-2">
@@ -93,14 +94,17 @@ export function FeedFilters() {
         
         <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
           {categories.map((category) => (
-            <Button
+            <button
               key={category}
-              variant={category === "All" ? "outline" : "outline"}
-              size="sm"
-              className="whitespace-nowrap font-medium px-4"
+              onClick={() => setSelectedCategory(category)}
+              className={`whitespace-nowrap font-medium px-4 py-2 text-sm transition-colors border-b-2 ${
+                category === selectedCategory 
+                  ? "border-foreground text-foreground" 
+                  : "border-transparent text-muted-foreground hover:text-foreground"
+              }`}
             >
               {category}
-            </Button>
+            </button>
           ))}
         </div>
       </div>
