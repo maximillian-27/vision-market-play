@@ -335,6 +335,7 @@ export default function MarketDetail() {
             <div className="space-y-2.5 pt-2">
               {market.outcomes.map((outcome: any, index: number) => {
                 const percentage = outcome.price;
+                const payout = outcome.price > 0 ? (100 / (outcome.price / 100)).toFixed(0) : 0;
                 
                 return (
                   <button
@@ -361,8 +362,10 @@ export default function MarketDetail() {
                       
                       {/* Label */}
                       <div className="flex-1">
-                        <div className="text-base md:text-lg font-semibold text-foreground">{outcome.label}</div>
-                        <div className="text-xs text-muted-foreground">{outcome.price}¢ per share</div>
+                        <div className="text-base md:text-lg font-semibold text-foreground mb-0.5">{outcome.label}</div>
+                        <div className="text-xs text-muted-foreground">
+                          $100 → ${payout}
+                        </div>
                       </div>
                       
                       {/* Percentage */}
