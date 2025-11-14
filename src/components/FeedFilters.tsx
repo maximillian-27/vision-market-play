@@ -15,64 +15,64 @@ export function FeedFilters() {
     <div className="space-y-3 sticky top-16 z-10 bg-background/98 backdrop-blur-md py-3 -mt-2">
       {/* Filter Panel */}
       {showFilters && (
-        <div className="rounded-lg bg-background/50 border border-border/30 p-3 animate-in fade-in-0 slide-in-from-top-2 duration-200">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5">
-            <div className="space-y-1.5">
-              <Label className="text-xs font-medium text-muted-foreground">Sort By</Label>
+        <div className="rounded-xl border border-border/20 bg-card/40 backdrop-blur-sm p-4 animate-in fade-in-0 slide-in-from-top-2 duration-200 shadow-sm">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div className="space-y-2">
+              <Label className="text-xs font-semibold text-foreground/70 uppercase tracking-wide">Sort By</Label>
               <Select defaultValue="trending">
-                <SelectTrigger className="h-9 border-border/20 bg-background/80 text-sm hover:bg-background transition-colors">
+                <SelectTrigger className="h-10 border border-border/40 bg-background hover:border-border transition-all text-sm font-medium rounded-lg">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="trending">Trending</SelectItem>
-                  <SelectItem value="volume">Highest Volume</SelectItem>
-                  <SelectItem value="newest">Newest</SelectItem>
-                  <SelectItem value="ending">Ending Soon</SelectItem>
-                  <SelectItem value="active">Most Active</SelectItem>
+                <SelectContent className="rounded-lg border-border/40">
+                  <SelectItem value="trending" className="rounded-md">Trending</SelectItem>
+                  <SelectItem value="volume" className="rounded-md">Highest Volume</SelectItem>
+                  <SelectItem value="newest" className="rounded-md">Newest</SelectItem>
+                  <SelectItem value="ending" className="rounded-md">Ending Soon</SelectItem>
+                  <SelectItem value="active" className="rounded-md">Most Active</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
-            <div className="space-y-1.5">
-              <Label className="text-xs font-medium text-muted-foreground">Region</Label>
+            <div className="space-y-2">
+              <Label className="text-xs font-semibold text-foreground/70 uppercase tracking-wide">Region</Label>
               <Select defaultValue="global">
-                <SelectTrigger className="h-9 border-border/20 bg-background/80 text-sm hover:bg-background transition-colors">
+                <SelectTrigger className="h-10 border border-border/40 bg-background hover:border-border transition-all text-sm font-medium rounded-lg">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="global">Global</SelectItem>
-                  <SelectItem value="us">United States</SelectItem>
-                  <SelectItem value="europe">Europe</SelectItem>
-                  <SelectItem value="asia">Asia</SelectItem>
+                <SelectContent className="rounded-lg border-border/40">
+                  <SelectItem value="global" className="rounded-md">Global</SelectItem>
+                  <SelectItem value="us" className="rounded-md">United States</SelectItem>
+                  <SelectItem value="europe" className="rounded-md">Europe</SelectItem>
+                  <SelectItem value="asia" className="rounded-md">Asia</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
-            <div className="space-y-1.5">
-              <Label className="text-xs font-medium text-muted-foreground">Status</Label>
+            <div className="space-y-2">
+              <Label className="text-xs font-semibold text-foreground/70 uppercase tracking-wide">Status</Label>
               <Select defaultValue="open">
-                <SelectTrigger className="h-9 border-border/20 bg-background/80 text-sm hover:bg-background transition-colors">
+                <SelectTrigger className="h-10 border border-border/40 bg-background hover:border-border transition-all text-sm font-medium rounded-lg">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="open">Open</SelectItem>
-                  <SelectItem value="closing">Closing Soon</SelectItem>
-                  <SelectItem value="resolved">Resolved</SelectItem>
+                <SelectContent className="rounded-lg border-border/40">
+                  <SelectItem value="open" className="rounded-md">Open</SelectItem>
+                  <SelectItem value="closing" className="rounded-md">Closing Soon</SelectItem>
+                  <SelectItem value="resolved" className="rounded-md">Resolved</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
-            <div className="space-y-1.5">
-              <Label className="text-xs font-medium text-muted-foreground">Timeframe</Label>
+            <div className="space-y-2">
+              <Label className="text-xs font-semibold text-foreground/70 uppercase tracking-wide">Timeframe</Label>
               <Select defaultValue="all">
-                <SelectTrigger className="h-9 border-border/20 bg-background/80 text-sm hover:bg-background transition-colors">
+                <SelectTrigger className="h-10 border border-border/40 bg-background hover:border-border transition-all text-sm font-medium rounded-lg">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="24h">Last 24 hours</SelectItem>
-                  <SelectItem value="7d">Last 7 days</SelectItem>
-                  <SelectItem value="30d">Last 30 days</SelectItem>
-                  <SelectItem value="all">All time</SelectItem>
+                <SelectContent className="rounded-lg border-border/40">
+                  <SelectItem value="24h" className="rounded-md">Last 24 hours</SelectItem>
+                  <SelectItem value="7d" className="rounded-md">Last 7 days</SelectItem>
+                  <SelectItem value="30d" className="rounded-md">Last 30 days</SelectItem>
+                  <SelectItem value="all" className="rounded-md">All time</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -92,15 +92,15 @@ export function FeedFilters() {
           <SlidersHorizontal className="h-4 w-4" />
         </Button>
         
-        <div className="flex gap-1 overflow-x-auto pb-1 scrollbar-hide">
+        <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
           {categories.map((category) => (
             <button
               key={category}
               onClick={() => setSelectedCategory(category)}
-              className={`whitespace-nowrap font-medium px-3.5 py-1.5 text-sm rounded-full transition-all duration-200 ${
+              className={`whitespace-nowrap font-medium px-4 py-2 text-sm transition-colors border-b-2 ${
                 category === selectedCategory 
-                  ? "bg-foreground text-background shadow-sm" 
-                  : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                  ? "border-foreground text-foreground" 
+                  : "border-transparent text-muted-foreground hover:text-foreground"
               }`}
             >
               {category}
