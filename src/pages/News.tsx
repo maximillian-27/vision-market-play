@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Clock, TrendingUp, BarChart3 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { FeedFilters } from "@/components/FeedFilters";
+import { NewsFilters } from "@/components/NewsFilters";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { MarketCard } from "@/components/MarketCard";
 import { HottestMarkets } from "@/components/HottestMarkets";
@@ -64,7 +64,7 @@ export default function News() {
         <div className="w-full md:max-w-2xl space-y-4">
           <h1 className="text-2xl font-bold mb-4 md:mb-6 px-4">Latest News</h1>
           <div className="px-4">
-            <FeedFilters />
+            <NewsFilters />
           </div>
           <div className="space-y-3 md:space-y-4 md:px-4">
             {newsItems.map((item, index) => (
