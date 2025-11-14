@@ -12,15 +12,15 @@ export function FeedFilters() {
   const [selectedCategory, setSelectedCategory] = useState("All");
 
   return (
-    <div className="space-y-4 sticky top-16 z-10 bg-background/95 backdrop-blur-sm py-2 -mt-2">
+    <div className="space-y-3 sticky top-16 z-10 bg-background/98 backdrop-blur-md py-3 -mt-2">
       {/* Filter Panel */}
       {showFilters && (
-        <div className="rounded-xl border border-border/40 bg-muted/30 p-4 animate-in fade-in-0 slide-in-from-top-2">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <div className="space-y-2">
-              <Label className="text-sm font-medium text-muted-foreground">Sort By</Label>
+        <div className="rounded-lg bg-background/50 border border-border/30 p-3 animate-in fade-in-0 slide-in-from-top-2 duration-200">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5">
+            <div className="space-y-1.5">
+              <Label className="text-xs font-medium text-muted-foreground">Sort By</Label>
               <Select defaultValue="trending">
-                <SelectTrigger className="h-11 border-border/40 text-base">
+                <SelectTrigger className="h-9 border-border/20 bg-background/80 text-sm hover:bg-background transition-colors">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -33,10 +33,10 @@ export function FeedFilters() {
               </Select>
             </div>
 
-            <div className="space-y-2">
-              <Label className="text-sm font-medium text-muted-foreground">Region</Label>
+            <div className="space-y-1.5">
+              <Label className="text-xs font-medium text-muted-foreground">Region</Label>
               <Select defaultValue="global">
-                <SelectTrigger className="h-11 border-border/40 text-base">
+                <SelectTrigger className="h-9 border-border/20 bg-background/80 text-sm hover:bg-background transition-colors">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -48,10 +48,10 @@ export function FeedFilters() {
               </Select>
             </div>
 
-            <div className="space-y-2">
-              <Label className="text-sm font-medium text-muted-foreground">Status</Label>
+            <div className="space-y-1.5">
+              <Label className="text-xs font-medium text-muted-foreground">Status</Label>
               <Select defaultValue="open">
-                <SelectTrigger className="h-11 border-border/40 text-base">
+                <SelectTrigger className="h-9 border-border/20 bg-background/80 text-sm hover:bg-background transition-colors">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -62,10 +62,10 @@ export function FeedFilters() {
               </Select>
             </div>
 
-            <div className="space-y-2">
-              <Label className="text-sm font-medium text-muted-foreground">Timeframe</Label>
+            <div className="space-y-1.5">
+              <Label className="text-xs font-medium text-muted-foreground">Timeframe</Label>
               <Select defaultValue="all">
-                <SelectTrigger className="h-11 border-border/40 text-base">
+                <SelectTrigger className="h-9 border-border/20 bg-background/80 text-sm hover:bg-background transition-colors">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -84,23 +84,23 @@ export function FeedFilters() {
       <div className="flex gap-2 items-center">
         {/* Filter Button - Icon only */}
         <Button 
-          variant={showFilters ? "outline" : "outline"} 
+          variant={showFilters ? "secondary" : "ghost"} 
           size="icon"
-          className="h-10 w-10 flex-shrink-0"
+          className="h-9 w-9 flex-shrink-0 rounded-full"
           onClick={() => setShowFilters(!showFilters)}
         >
           <SlidersHorizontal className="h-4 w-4" />
         </Button>
         
-        <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+        <div className="flex gap-1 overflow-x-auto pb-1 scrollbar-hide">
           {categories.map((category) => (
             <button
               key={category}
               onClick={() => setSelectedCategory(category)}
-              className={`whitespace-nowrap font-medium px-4 py-2 text-sm transition-colors border-b-2 ${
+              className={`whitespace-nowrap font-medium px-3.5 py-1.5 text-sm rounded-full transition-all duration-200 ${
                 category === selectedCategory 
-                  ? "border-foreground text-foreground" 
-                  : "border-transparent text-muted-foreground hover:text-foreground"
+                  ? "bg-foreground text-background shadow-sm" 
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
               }`}
             >
               {category}
