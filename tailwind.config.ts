@@ -14,10 +14,13 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
       },
       colors: {
-        border: "hsl(var(--border))",
+        border: {
+          DEFAULT: "hsl(var(--border))",
+          hover: "hsl(var(--border-hover))",
+        },
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
@@ -25,18 +28,35 @@ export default {
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
+          hover: "hsl(var(--primary-hover))",
+          muted: "hsl(var(--primary-muted))",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
           foreground: "hsl(var(--secondary-foreground))",
+          hover: "hsl(var(--secondary-hover))",
         },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
           foreground: "hsl(var(--destructive-foreground))",
+          muted: "hsl(var(--destructive-muted))",
         },
         success: {
           DEFAULT: "hsl(var(--success))",
           foreground: "hsl(var(--success-foreground))",
+          muted: "hsl(var(--success-muted))",
+        },
+        yes: {
+          DEFAULT: "hsl(var(--yes))",
+          foreground: "hsl(var(--yes-foreground))",
+          muted: "hsl(var(--yes-muted))",
+          hover: "hsl(var(--yes-hover))",
+        },
+        no: {
+          DEFAULT: "hsl(var(--no))",
+          foreground: "hsl(var(--no-foreground))",
+          muted: "hsl(var(--no-muted))",
+          hover: "hsl(var(--no-hover))",
         },
         "pollgy-blue": {
           DEFAULT: "hsl(var(--pollgy-blue))",
@@ -81,6 +101,7 @@ export default {
         "2xl": "calc(var(--radius) + 8px)",
       },
       boxShadow: {
+        'xs': 'var(--shadow-xs)',
         'card': 'var(--shadow-card)',
         'card-hover': 'var(--shadow-card-hover)',
         'soft': 'var(--shadow-sm)',
@@ -97,29 +118,29 @@ export default {
           to: { height: "0" },
         },
         "fade-in": {
-          from: { opacity: "0", transform: "translateY(8px)" },
+          from: { opacity: "0", transform: "translateY(6px)" },
           to: { opacity: "1", transform: "translateY(0)" },
         },
         "fade-out": {
           from: { opacity: "1", transform: "translateY(0)" },
-          to: { opacity: "0", transform: "translateY(8px)" },
+          to: { opacity: "0", transform: "translateY(6px)" },
         },
         "scale-in": {
-          from: { opacity: "0", transform: "scale(0.95)" },
+          from: { opacity: "0", transform: "scale(0.96)" },
           to: { opacity: "1", transform: "scale(1)" },
         },
         "slide-up": {
-          from: { opacity: "0", transform: "translateY(16px)" },
+          from: { opacity: "0", transform: "translateY(12px)" },
           to: { opacity: "1", transform: "translateY(0)" },
         },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        "fade-in": "fade-in 0.3s ease-out",
-        "fade-out": "fade-out 0.3s ease-out",
+        "fade-in": "fade-in 0.25s ease-out",
+        "fade-out": "fade-out 0.25s ease-out",
         "scale-in": "scale-in 0.2s ease-out",
-        "slide-up": "slide-up 0.4s ease-out",
+        "slide-up": "slide-up 0.35s ease-out",
       },
     },
   },

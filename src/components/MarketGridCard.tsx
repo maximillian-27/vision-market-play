@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Clock, TrendingUp, AlertTriangle, CheckCircle2, Timer, Users, Bookmark, Share2, Repeat2 } from "lucide-react";
+import { Clock, TrendingUp, AlertTriangle, CheckCircle2, Timer, Bookmark, Share2, Repeat2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { MarketDialog } from "@/components/MarketDialog";
@@ -114,21 +114,21 @@ export function MarketGridCard({
     switch (status) {
       case "closing":
         return (
-          <Badge className="bg-amber-500 text-white border-0 text-[10px] font-semibold px-2 py-0.5">
+          <Badge className="bg-amber-500/90 text-white border-0 text-[10px] font-medium px-2 py-0.5 shadow-sm">
             <Timer className="h-3 w-3 mr-1" />
             Closing Soon
           </Badge>
         );
       case "closed":
         return (
-          <Badge className="bg-orange-500 text-white border-0 text-[10px] font-semibold px-2 py-0.5">
+          <Badge className="bg-orange-500/90 text-white border-0 text-[10px] font-medium px-2 py-0.5 shadow-sm">
             <AlertTriangle className="h-3 w-3 mr-1" />
             Dispute Period
           </Badge>
         );
       case "resolved":
         return (
-          <Badge className="bg-success text-white border-0 text-[10px] font-semibold px-2 py-0.5">
+          <Badge className="bg-primary/90 text-primary-foreground border-0 text-[10px] font-medium px-2 py-0.5 shadow-sm">
             <CheckCircle2 className="h-3 w-3 mr-1" />
             Resolved
           </Badge>
@@ -148,8 +148,8 @@ export function MarketGridCard({
     endsIn,
   };
 
-  // Calculate percentage for progress bar (binary markets)
   const yesPercent = isBinary ? displayOutcomes[0].price : 50;
+  const noPercent = isBinary ? displayOutcomes[1].price : 50;
 
   return (
     <>
@@ -170,7 +170,7 @@ export function MarketGridCard({
       />
       
       <Dialog open={showDisputeDialog} onOpenChange={setShowDisputeDialog}>
-        <DialogContent onClick={(e) => e.stopPropagation()} className="rounded-xl border-border/60">
+        <DialogContent onClick={(e) => e.stopPropagation()} className="rounded-xl border-border">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <AlertTriangle className="h-5 w-5 text-orange-500" />
@@ -208,68 +208,67 @@ export function MarketGridCard({
       </Dialog>
       
       <Card 
-        className={`group overflow-hidden cursor-pointer border-border/40 bg-card hover:border-border/60 transition-all ${isClosedOrResolved ? 'opacity-70' : ''}`}
+        className={`group overflow-hidden cursor-pointer border-border bg-card card-hover ${isClosedOrResolved ? 'opacity-75' : ''}`}
         onClick={handleCardClick}
       >
-        {/* Mobile: Horizontal compact layout, Desktop: Vertical layout */}
+        {/* Desktop Layout */}
         <div className="sm:block hidden">
-          {/* Desktop Layout */}
-          <div className={`relative aspect-[16/9] w-full overflow-hidden bg-secondary ${isClosedOrResolved ? 'grayscale-[30%]' : ''}`}>
+          {/* Image */}
+          <div className={`relative aspect-[16/9] w-full overflow-hidden bg-secondary ${isClosedOrResolved ? 'grayscale-[20%]' : ''}`}>
             <img 
               src={image} 
               alt={title}
-              className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+              className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
             />
             
             {getStatusBadge() && (
-              <div className="absolute top-1.5 left-1.5">
+              <div className="absolute top-2 left-2">
                 {getStatusBadge()}
               </div>
             )}
             
-            {/* Action buttons - only show when open */}
+            {/* Action buttons overlay */}
             {!isClosedOrResolved && (
-              <div className="absolute top-1.5 right-1.5 flex items-center gap-1">
+              <div className="absolute top-2 right-2 flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
                 <button 
-                  className="p-1.5 rounded-full bg-black/40 backdrop-blur-sm hover:bg-black/60 transition-colors"
+                  className="p-1.5 rounded-full bg-background/90 backdrop-blur-sm hover:bg-background transition-colors shadow-sm"
                   onClick={(e) => {
                     e.stopPropagation();
                     navigator.clipboard.writeText(`${window.location.origin}/market/${id}`);
                     toast({ title: "Link copied!" });
                   }}
                 >
-                  <Share2 className="h-3 w-3 text-white" />
+                  <Share2 className="h-3.5 w-3.5 text-foreground" />
                 </button>
                 <button 
-                  className="p-1.5 rounded-full bg-black/40 backdrop-blur-sm hover:bg-black/60 transition-colors"
+                  className="p-1.5 rounded-full bg-background/90 backdrop-blur-sm hover:bg-background transition-colors shadow-sm"
                   onClick={(e) => {
                     e.stopPropagation();
                     setShowRepostDialog(true);
                   }}
                 >
-                  <Repeat2 className="h-3 w-3 text-white" />
+                  <Repeat2 className="h-3.5 w-3.5 text-foreground" />
                 </button>
               </div>
             )}
             
-            {/* Bookmark for closed/resolved */}
             {isClosedOrResolved && (
               <button 
-                className="absolute top-1.5 right-1.5 p-1 rounded-full bg-black/40 backdrop-blur-sm hover:bg-black/60 transition-colors"
+                className="absolute top-2 right-2 p-1.5 rounded-full bg-background/90 backdrop-blur-sm hover:bg-background transition-colors shadow-sm"
                 onClick={(e) => {
                   e.stopPropagation();
                   toast({ title: "Saved to watchlist" });
                 }}
               >
-                <Bookmark className="h-3 w-3 text-white" />
+                <Bookmark className="h-3.5 w-3.5 text-foreground" />
               </button>
             )}
           </div>
 
-          <div className="p-2 space-y-2">
+          <div className="p-3 space-y-2.5">
             {/* Creator */}
             <button 
-              className="flex items-center gap-1.5 hover:opacity-80 transition-opacity"
+              className="flex items-center gap-1.5 hover:opacity-70 transition-opacity"
               onClick={(e) => {
                 e.stopPropagation();
                 const profilePath = creator.isCreator !== false 
@@ -278,108 +277,114 @@ export function MarketGridCard({
                 navigate(profilePath);
               }}
             >
-              <Avatar className="h-4 w-4">
+              <Avatar className="h-5 w-5">
                 <AvatarImage src={creator.avatar} alt={creator.name} />
-                <AvatarFallback className="text-[6px]">{creator.name.slice(0, 2)}</AvatarFallback>
+                <AvatarFallback className="text-[8px] font-medium">{creator.name.slice(0, 2)}</AvatarFallback>
               </Avatar>
-              <span className="text-[10px] text-muted-foreground font-medium truncate max-w-[80px]">{creator.name}</span>
+              <span className="text-xs text-muted-foreground font-medium truncate max-w-[120px]">{creator.name}</span>
             </button>
             
-            <h3 className="text-xs font-semibold leading-tight line-clamp-2 min-h-[2rem] group-hover:text-primary transition-colors">
+            {/* Title */}
+            <h3 className="text-sm font-semibold leading-snug line-clamp-2 min-h-[2.5rem] group-hover:text-primary transition-colors text-balance">
               {title}
             </h3>
 
             {isClosedOrResolved ? (
-              <div className="space-y-1.5">
-                <div className={`text-center py-1.5 rounded-md ${
-                  resolution?.toLowerCase() === "yes" ? 'bg-success/10' : 
-                  resolution?.toLowerCase() === "no" ? 'bg-secondary' : 'bg-primary/10'
+              <div className="space-y-2">
+                <div className={`text-center py-2 rounded-lg ${
+                  resolution?.toLowerCase() === "yes" ? 'bg-yes-muted' : 
+                  resolution?.toLowerCase() === "no" ? 'bg-no-muted' : 'bg-primary-muted'
                 }`}>
-                  <span className={`font-bold text-xs ${
-                    resolution?.toLowerCase() === "yes" ? 'text-success' : 
-                    resolution?.toLowerCase() === "no" ? 'text-muted-foreground' : 'text-primary'
+                  <span className={`font-bold text-sm ${
+                    resolution?.toLowerCase() === "yes" ? 'text-yes' : 
+                    resolution?.toLowerCase() === "no" ? 'text-no' : 'text-primary'
                   }`}>
                     {resolution}
                   </span>
-                  <p className="text-[9px] text-muted-foreground">
-                    {status === "closed" ? `Dispute: ${disputeEndsIn}` : resolvedAt}
+                  <p className="text-[10px] text-muted-foreground mt-0.5">
+                    {status === "closed" ? `Dispute ends: ${disputeEndsIn}` : resolvedAt}
                   </p>
                 </div>
                 {status === "closed" && (
                   <Button
                     variant="outline"
                     size="sm"
-                    className="w-full text-orange-600 border-orange-500/30 hover:bg-orange-500/10 text-[10px] h-6"
+                    className="w-full text-orange-600 border-orange-500/30 hover:bg-orange-500/10 text-xs h-8"
                     onClick={(e) => {
                       e.stopPropagation();
                       setShowDisputeDialog(true);
                     }}
                   >
-                    <AlertTriangle className="h-2.5 w-2.5 mr-1" />
+                    <AlertTriangle className="h-3 w-3 mr-1.5" />
                     Dispute
                   </Button>
                 )}
               </div>
             ) : isBinary ? (
-              <div className="space-y-1.5">
-                <div className="flex items-center gap-1.5 text-[10px] font-bold">
-                  <span className="text-success">{yesPercent}%</span>
-                  <div className="flex-1 h-1 rounded-full bg-muted overflow-hidden">
+              <div className="space-y-2.5">
+                {/* Probability bar */}
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="font-semibold text-yes">{yesPercent}%</span>
+                    <span className="font-semibold text-no">{noPercent}%</span>
+                  </div>
+                  <div className="h-1.5 rounded-full bg-no-muted overflow-hidden">
                     <div 
-                      className="h-full rounded-full bg-gradient-to-r from-success to-success/80"
+                      className="h-full rounded-full bg-yes transition-all duration-300"
                       style={{ width: `${yesPercent}%` }}
                     />
                   </div>
-                  <span className="text-muted-foreground">{100 - yesPercent}%</span>
                 </div>
                 
-                <div className="grid grid-cols-2 gap-1.5">
+                {/* Yes/No buttons - Polymarket style */}
+                <div className="grid grid-cols-2 gap-2">
                   <button 
-                    className="rounded-md py-1.5 text-center bg-success/10 hover:bg-success/20 text-success border border-success/20 transition-all active:scale-[0.98]"
+                    className="rounded-lg py-2 text-center bg-yes-muted hover:bg-yes text-yes hover:text-yes-foreground border border-yes/20 hover:border-yes transition-all active:scale-[0.98]"
                     onClick={handleOutcomeClick}
                   >
-                    <span className="text-[10px] font-bold uppercase">Yes</span>
+                    <span className="text-xs font-bold">Yes {yesPercent}¢</span>
                   </button>
                   <button 
-                    className="rounded-md py-1.5 text-center bg-destructive/10 hover:bg-destructive/20 text-destructive border border-destructive/20 transition-all active:scale-[0.98]"
+                    className="rounded-lg py-2 text-center bg-no-muted hover:bg-no text-no hover:text-no-foreground border border-no/20 hover:border-no transition-all active:scale-[0.98]"
                     onClick={handleOutcomeClick}
                   >
-                    <span className="text-[10px] font-bold uppercase">No</span>
+                    <span className="text-xs font-bold">No {noPercent}¢</span>
                   </button>
                 </div>
               </div>
             ) : (
-              <div className="space-y-1">
+              <div className="space-y-1.5">
                 {displayOutcomes.slice(0, 2).map((outcome, index) => (
                   <button 
                     key={index}
-                    className="w-full flex items-center gap-1.5 rounded-md px-2 py-1.5 bg-secondary/60 hover:bg-secondary border border-border/30 hover:border-border/50 transition-all text-left active:scale-[0.98]"
+                    className="w-full flex items-center gap-2 rounded-lg px-2.5 py-2 bg-secondary hover:bg-secondary-hover border border-border hover:border-border-hover transition-all text-left active:scale-[0.99]"
                     onClick={handleOutcomeClick}
                   >
                     {outcome.logo ? (
-                      <img src={outcome.logo} alt={outcome.label} className="h-4 w-4 object-contain rounded-sm" />
+                      <img src={outcome.logo} alt={outcome.label} className="h-5 w-5 object-contain rounded" />
                     ) : (
-                      <div className="h-4 w-4 rounded-sm bg-primary/10 flex items-center justify-center text-[8px] font-bold text-primary">
+                      <div className="h-5 w-5 rounded bg-primary-muted flex items-center justify-center text-[10px] font-bold text-primary">
                         {outcome.label.charAt(0)}
                       </div>
                     )}
-                    <span className="flex-1 text-[10px] font-medium truncate">{outcome.label}</span>
-                    <span className="text-[10px] font-bold text-primary">{outcome.price}%</span>
+                    <span className="flex-1 text-xs font-medium truncate">{outcome.label}</span>
+                    <span className="text-xs font-bold text-primary">{outcome.price}%</span>
                   </button>
                 ))}
                 {displayOutcomes.length > 2 && (
-                  <p className="text-[9px] text-muted-foreground text-center">+{displayOutcomes.length - 2} more</p>
+                  <p className="text-[10px] text-muted-foreground text-center pt-0.5">+{displayOutcomes.length - 2} more options</p>
                 )}
               </div>
             )}
             
-            <div className="flex items-center justify-between text-[9px] text-muted-foreground pt-1.5 border-t border-border/40">
-              <span className="flex items-center gap-0.5 font-medium">
-                <TrendingUp className="h-2.5 w-2.5" />
+            {/* Stats footer */}
+            <div className="flex items-center justify-between text-[11px] text-muted-foreground pt-2 border-t border-border">
+              <span className="flex items-center gap-1 font-medium">
+                <TrendingUp className="h-3 w-3" />
                 {volume}
               </span>
-              <span className="flex items-center gap-0.5">
-                <Clock className="h-2.5 w-2.5" />
+              <span className="flex items-center gap-1">
+                <Clock className="h-3 w-3" />
                 {endsIn}
               </span>
             </div>
@@ -390,24 +395,24 @@ export function MarketGridCard({
         <div className="sm:hidden flex flex-col">
           <div className="flex gap-3 p-3 pb-2">
             {/* Thumbnail */}
-            <div className={`relative w-24 h-24 rounded-xl overflow-hidden bg-secondary flex-shrink-0 ${isClosedOrResolved ? 'grayscale-[30%]' : ''}`}>
+            <div className={`relative w-20 h-20 rounded-lg overflow-hidden bg-secondary flex-shrink-0 ${isClosedOrResolved ? 'grayscale-[20%]' : ''}`}>
               <img 
                 src={image} 
                 alt={title}
                 className="h-full w-full object-cover"
               />
               {getStatusBadge() && (
-                <div className="absolute top-1.5 left-1.5 scale-[0.8] origin-top-left">
+                <div className="absolute top-1 left-1 scale-75 origin-top-left">
                   {getStatusBadge()}
                 </div>
               )}
             </div>
 
             {/* Content */}
-            <div className="flex-1 min-w-0 flex flex-col gap-2">
+            <div className="flex-1 min-w-0 flex flex-col gap-1.5">
               {/* Creator */}
               <button 
-                className="flex items-center gap-1.5 hover:opacity-80 transition-opacity w-fit"
+                className="flex items-center gap-1.5 hover:opacity-70 transition-opacity w-fit"
                 onClick={(e) => {
                   e.stopPropagation();
                   const profilePath = creator.isCreator !== false 
@@ -416,9 +421,9 @@ export function MarketGridCard({
                   navigate(profilePath);
                 }}
               >
-                <Avatar className="h-5 w-5">
+                <Avatar className="h-4 w-4">
                   <AvatarImage src={creator.avatar} alt={creator.name} />
-                  <AvatarFallback className="text-[7px]">{creator.name.slice(0, 2)}</AvatarFallback>
+                  <AvatarFallback className="text-[6px]">{creator.name.slice(0, 2)}</AvatarFallback>
                 </Avatar>
                 <span className="text-[11px] text-muted-foreground font-medium truncate max-w-[140px]">{creator.name}</span>
               </button>
@@ -429,37 +434,37 @@ export function MarketGridCard({
 
               {isClosedOrResolved ? (
                 <div className={`inline-flex items-center gap-1 px-2 py-1 rounded-md w-fit mt-auto ${
-                  resolution?.toLowerCase() === "yes" ? 'bg-success/10' : 
-                  resolution?.toLowerCase() === "no" ? 'bg-secondary' : 'bg-primary/10'
+                  resolution?.toLowerCase() === "yes" ? 'bg-yes-muted' : 
+                  resolution?.toLowerCase() === "no" ? 'bg-no-muted' : 'bg-primary-muted'
                 }`}>
                   <span className={`font-bold text-xs ${
-                    resolution?.toLowerCase() === "yes" ? 'text-success' : 
-                    resolution?.toLowerCase() === "no" ? 'text-muted-foreground' : 'text-primary'
+                    resolution?.toLowerCase() === "yes" ? 'text-yes' : 
+                    resolution?.toLowerCase() === "no" ? 'text-no' : 'text-primary'
                   }`}>
                     {resolution}
                   </span>
                 </div>
               ) : isBinary ? (
                 <div className="flex items-center gap-2 mt-auto">
-                  <span className="text-xs font-bold text-success">{yesPercent}%</span>
-                  <div className="flex-1 h-1.5 rounded-full bg-muted overflow-hidden">
+                  <span className="text-xs font-bold text-yes">{yesPercent}%</span>
+                  <div className="flex-1 h-1.5 rounded-full bg-no-muted overflow-hidden">
                     <div 
-                      className="h-full rounded-full bg-success"
+                      className="h-full rounded-full bg-yes"
                       style={{ width: `${yesPercent}%` }}
                     />
                   </div>
                   <div className="flex gap-1.5">
                     <button 
-                      className="px-3 py-1.5 rounded-md bg-success/10 text-success border border-success/20 text-[11px] font-bold active:scale-95 transition-transform"
+                      className="px-2.5 py-1 rounded-md bg-yes-muted text-yes border border-yes/20 text-[11px] font-bold active:scale-95 transition-transform"
                       onClick={handleOutcomeClick}
                     >
-                      YES
+                      Yes
                     </button>
                     <button 
-                      className="px-3 py-1.5 rounded-md bg-destructive/10 text-destructive border border-destructive/20 text-[11px] font-bold active:scale-95 transition-transform"
+                      className="px-2.5 py-1 rounded-md bg-no-muted text-no border border-no/20 text-[11px] font-bold active:scale-95 transition-transform"
                       onClick={handleOutcomeClick}
                     >
-                      NO
+                      No
                     </button>
                   </div>
                 </div>
@@ -468,7 +473,7 @@ export function MarketGridCard({
                   {displayOutcomes.slice(0, 2).map((outcome, index) => (
                     <button 
                       key={index}
-                      className="flex items-center gap-1.5 rounded-md px-2.5 py-1.5 bg-secondary/80 border border-border/40 text-[11px] active:scale-95 transition-transform flex-shrink-0"
+                      className="flex items-center gap-1.5 rounded-md px-2 py-1.5 bg-secondary border border-border text-[11px] active:scale-95 transition-transform flex-shrink-0"
                       style={{ maxWidth: index === 0 ? '55%' : '45%' }}
                       onClick={handleOutcomeClick}
                     >
@@ -488,13 +493,13 @@ export function MarketGridCard({
           </div>
 
           {/* Bottom stats bar */}
-          <div className="flex items-center justify-between px-3 py-2 border-t border-border/30 text-[11px] text-muted-foreground">
-            <span className="flex items-center gap-1.5 font-medium">
-              <TrendingUp className="h-3.5 w-3.5" />
+          <div className="flex items-center justify-between px-3 py-2 border-t border-border text-[11px] text-muted-foreground">
+            <span className="flex items-center gap-1 font-medium">
+              <TrendingUp className="h-3 w-3" />
               {volume}
             </span>
-            <span className="flex items-center gap-1.5">
-              <Clock className="h-3.5 w-3.5" />
+            <span className="flex items-center gap-1">
+              <Clock className="h-3 w-3" />
               {endsIn}
             </span>
           </div>
