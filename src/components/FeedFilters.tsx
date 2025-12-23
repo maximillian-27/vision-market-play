@@ -50,7 +50,7 @@ export function FeedFilters({ filters, onFiltersChange }: FeedFiltersProps) {
               onClick={() => updateFilter('category', category)}
               className={`whitespace-nowrap font-medium px-1 py-1.5 text-sm transition-colors border-b-2 ${
                 category === filters.category 
-                  ? "text-foreground border-primary" 
+                  ? "text-primary border-primary" 
                   : "text-muted-foreground hover:text-foreground border-transparent"
               }`}
             >
