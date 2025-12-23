@@ -381,10 +381,10 @@ export default function CreatorProfile() {
         <ProfileStats 
           type="creator"
           stats={{
-            marketsCreated: creator.markets,
             totalVolume: creator.volume,
-            followers: creator.followers,
-            successRate: creator.successRate,
+            marketsCreated: creator.markets,
+            rank: 12,
+            avgVolume: creator.avgVolume,
           }}
         />
 

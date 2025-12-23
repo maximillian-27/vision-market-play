@@ -21,6 +21,7 @@ interface ProfileStatsProps {
     avgVolume?: string;
     successRate?: number;
     totalViews?: string | number;
+    rank?: number;
   };
 }
 
@@ -29,26 +30,25 @@ export function ProfileStats({ type, stats }: ProfileStatsProps) {
     return (
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <StatCard
-          icon={<BarChart3 className="h-4 w-4" />}
-          label="Markets"
-          value={stats.marketsCreated?.toString() || "0"}
-        />
-        <StatCard
           icon={<DollarSign className="h-4 w-4" />}
           label="Volume"
           value={stats.totalVolume || "$0"}
           valueClassName="text-success"
         />
         <StatCard
-          icon={<Users className="h-4 w-4" />}
-          label="Followers"
-          value={formatNumber(stats.followers)}
+          icon={<BarChart3 className="h-4 w-4" />}
+          label="Markets Created"
+          value={stats.marketsCreated?.toString() || "0"}
         />
         <StatCard
-          icon={<Target className="h-4 w-4" />}
-          label="Success Rate"
-          value={`${stats.successRate || 0}%`}
-          valueClassName="text-success"
+          icon={<Award className="h-4 w-4" />}
+          label="Rank"
+          value={`#${stats.rank || "-"}`}
+        />
+        <StatCard
+          icon={<TrendingUp className="h-4 w-4" />}
+          label="Avg Vol / Market"
+          value={stats.avgVolume || "$0"}
         />
       </div>
     );
