@@ -134,7 +134,7 @@ export default function News() {
               <div className="sticky top-0 z-10 bg-background border-b border-border/50 px-6 py-4">
                 <button 
                   onClick={() => setSelectedNews(null)}
-                  className="flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors mx-auto"
+                  className="flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors"
                 >
                   <ArrowLeft className="h-5 w-5" />
                   <span className="text-base">Back</span>
