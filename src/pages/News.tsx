@@ -1,13 +1,13 @@
 import { useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Clock, BarChart3 } from "lucide-react";
+import { Clock, TrendingUp, ChevronRight, ExternalLink } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { NewsFilters } from "@/components/NewsFilters";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { MarketCard } from "@/components/MarketCard";
 import { HottestMarkets } from "@/components/HottestMarkets";
 import { ActivitySidebar } from "@/components/ActivitySidebar";
 import { PageHeader } from "@/components/PageHeader";
+import { Separator } from "@/components/ui/separator";
 import federalReserveImage from "@/assets/federal-reserve.jpg";
 
 const newsItems = [
@@ -18,6 +18,7 @@ const newsItems = [
     fullContent: "The Federal Reserve announced today that it will maintain interest rates at 5.25-5.50%, citing ongoing economic uncertainty and persistent inflation concerns. This decision comes after months of careful monitoring of economic indicators including employment data, consumer spending, and inflation metrics. Fed Chair Jerome Powell emphasized the committee's commitment to achieving price stability while supporting maximum employment. The decision was widely anticipated by market analysts and reflects the Fed's cautious approach to monetary policy in the current economic climate.",
     time: "2h ago",
     source: "Federal Reserve",
+    category: "Economy",
     relatedMarkets: [
       {
         id: "fed-rate-2024",
@@ -37,19 +38,21 @@ const newsItems = [
   {
     id: 2,
     title: "Major Tech Company Reports Record Quarterly Earnings",
-    summary: "Q4 results exceed expectations with 25% revenue growth year-over-year. The company posted a 25% revenue growth driven primarily by strong cloud services adoption and AI product launches, with analysts now revising their annual projections upward.",
+    summary: "Q4 results exceed expectations with 25% revenue growth year-over-year. The company posted a 25% revenue growth driven primarily by strong cloud services adoption and AI product launches.",
     fullContent: "In a stunning display of market dominance, the tech giant reported record-breaking quarterly earnings that exceeded Wall Street expectations by a significant margin. The company posted a 25% revenue growth year-over-year, driven primarily by strong cloud services adoption and AI product launches. CEO highlighted the successful integration of artificial intelligence across their product portfolio as a key growth driver. Analysts are now revising their annual projections upward, citing the company's strong market position and innovative product pipeline.",
     time: "5h ago",
     source: "Tech News Daily",
+    category: "Tech",
     relatedMarkets: [],
   },
   {
     id: 3,
     title: "Global Climate Summit Reaches Historic Agreement",
-    summary: "195 nations commit to new carbon reduction targets for the next decade. The agreement includes binding commitments to reduce greenhouse gas emissions by 50% by 2030, with specific provisions for technology transfer and financial support for developing nations.",
+    summary: "195 nations commit to new carbon reduction targets for the next decade. The agreement includes binding commitments to reduce greenhouse gas emissions by 50% by 2030.",
     fullContent: "In a historic moment for global climate action, 195 nations have reached a comprehensive agreement on carbon reduction targets for the next decade. The agreement includes binding commitments to reduce greenhouse gas emissions by 50% by 2030, with specific provisions for technology transfer and financial support for developing nations. Environmental experts are calling this the most significant climate agreement since the Paris Accord, though some activists argue the targets don't go far enough to prevent catastrophic climate change.",
     time: "8h ago",
     source: "Global News Network",
+    category: "Politics",
     relatedMarkets: [],
   },
 ];
@@ -70,47 +73,50 @@ export default function News() {
           
           <NewsFilters />
           
-          <div className="space-y-3">
+          <div className="space-y-1">
             {newsItems.map((item, index) => (
-              <Card 
-                key={index} 
-                className="group cursor-pointer transition-all duration-200 hover:shadow-md hover:border-primary/20 border-border/50"
+              <article
+                key={item.id}
+                className="group cursor-pointer py-5 transition-colors hover:bg-muted/30 -mx-4 px-4 rounded-lg"
                 onClick={() => setSelectedNews(item)}
               >
-                <CardContent className="p-4 md:p-5">
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between gap-2">
-                      <Badge variant="secondary" className="text-xs font-medium">
-                        {item.source}
-                      </Badge>
-                      {item.relatedMarkets.length > 0 ? (
-                        <Badge variant="outline" className="text-xs gap-1.5 border-primary/30 text-primary hover:bg-primary/10">
-                          <BarChart3 className="h-3.5 w-3.5" />
-                          <span className="hidden sm:inline">Trade this</span>
-                        </Badge>
-                      ) : (
-                        <Badge variant="outline" className="text-xs gap-1.5 border-muted-foreground/20 text-muted-foreground/50 bg-transparent">
-                          <BarChart3 className="h-3 w-3" />
-                          <span className="hidden sm:inline">No markets</span>
-                        </Badge>
+                <div className="flex items-start gap-4">
+                  <div className="flex-1 min-w-0 space-y-2.5">
+                    {/* Meta info */}
+                    <div className="flex items-center gap-2 text-xs">
+                      <span className="font-medium text-primary">{item.source}</span>
+                      <span className="text-muted-foreground/40">•</span>
+                      <span className="text-muted-foreground">{item.time}</span>
+                      {item.relatedMarkets.length > 0 && (
+                        <>
+                          <span className="text-muted-foreground/40">•</span>
+                          <Badge variant="outline" className="h-5 text-[10px] gap-1 border-primary/40 text-primary bg-primary/5 px-1.5">
+                            <TrendingUp className="h-3 w-3" />
+                            Trade
+                          </Badge>
+                        </>
                       )}
                     </div>
-
-                    <h3 className="font-semibold text-base leading-tight group-hover:text-primary transition-colors">
+                    
+                    {/* Title */}
+                    <h2 className="font-semibold text-[15px] leading-snug group-hover:text-primary transition-colors line-clamp-2">
                       {item.title}
-                    </h3>
-
+                    </h2>
+                    
+                    {/* Summary */}
                     <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
                       {item.summary}
                     </p>
-
-                    <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                      <Clock className="h-3.5 w-3.5" />
-                      <span>{item.time}</span>
-                    </div>
                   </div>
-                </CardContent>
-              </Card>
+                  
+                  {/* Arrow indicator */}
+                  <ChevronRight className="h-5 w-5 text-muted-foreground/30 group-hover:text-primary/60 transition-colors mt-6 shrink-0" />
+                </div>
+                
+                {index < newsItems.length - 1 && (
+                  <Separator className="mt-5 opacity-50" />
+                )}
+              </article>
             ))}
           </div>
         </div>
@@ -118,32 +124,55 @@ export default function News() {
         <HottestMarkets />
       </div>
 
+      {/* Article Dialog */}
       <Dialog open={!!selectedNews} onOpenChange={(open) => !open && setSelectedNews(null)}>
-        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="text-xl font-bold pr-6">
-              {selectedNews?.title}
-            </DialogTitle>
-          </DialogHeader>
-          
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto p-0 gap-0">
           {selectedNews && (
-            <div className="space-y-6">
-              <div className="space-y-4">
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <span>{selectedNews.source}</span>
-                  <span>•</span>
-                  <span>{selectedNews.time}</span>
+            <div className="flex flex-col">
+              {/* Header */}
+              <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-xl border-b border-border/50 px-6 py-4">
+                <div className="flex items-center justify-between gap-4">
+                  <div className="flex items-center gap-2 text-sm">
+                    <span className="font-medium text-primary">{selectedNews.source}</span>
+                    <span className="text-muted-foreground/40">•</span>
+                    <span className="text-muted-foreground flex items-center gap-1">
+                      <Clock className="h-3.5 w-3.5" />
+                      {selectedNews.time}
+                    </span>
+                  </div>
+                  <Badge variant="secondary" className="text-xs">
+                    {selectedNews.category}
+                  </Badge>
                 </div>
+              </div>
+              
+              {/* Content */}
+              <div className="px-6 py-6 space-y-6">
+                <h1 className="text-xl font-bold leading-tight">
+                  {selectedNews.title}
+                </h1>
                 
-                <p className="text-base leading-relaxed">
+                <p className="text-base text-foreground/90 leading-[1.8]">
                   {selectedNews.fullContent}
                 </p>
+                
+                <a 
+                  href="#" 
+                  className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline"
+                >
+                  Read full article
+                  <ExternalLink className="h-3.5 w-3.5" />
+                </a>
               </div>
 
+              {/* Related Markets */}
               {selectedNews.relatedMarkets.length > 0 && (
-                <div className="space-y-4 pt-4 border-t">
-                  <h3 className="font-semibold">Related Markets</h3>
-                  <div className="space-y-4">
+                <div className="border-t border-border/50 bg-muted/20 px-6 py-5 space-y-4">
+                  <div className="flex items-center gap-2">
+                    <TrendingUp className="h-4 w-4 text-primary" />
+                    <h3 className="font-semibold text-sm">Related Markets</h3>
+                  </div>
+                  <div className="space-y-3">
                     {selectedNews.relatedMarkets.map((market) => (
                       <MarketCard key={market.id} {...market} />
                     ))}
