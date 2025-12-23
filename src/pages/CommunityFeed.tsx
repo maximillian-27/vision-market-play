@@ -242,18 +242,18 @@ export default function CommunityFeed() {
           {/* Creator Post Composer */}
           {isCreator && (
             <Card className="border-border/50">
-              <CardContent className="p-4">
+              <CardContent className="p-3">
                 <div className="flex gap-3">
-                  <Avatar className="h-10 w-10">
+                  <Avatar className="h-9 w-9">
                     <AvatarImage src={currentUser.avatar} alt={currentUser.name} />
                     <AvatarFallback>{currentUser.name.slice(0, 2)}</AvatarFallback>
                   </Avatar>
-                  <div className="flex-1 space-y-3">
+                  <div className="flex-1 space-y-2">
                     <Textarea
                       placeholder="What's happening in the markets?"
                       value={postContent}
                       onChange={(e) => setPostContent(e.target.value)}
-                      className="min-h-[80px] text-sm bg-transparent border-0 resize-none focus-visible:ring-0 p-0 placeholder:text-muted-foreground/60"
+                      className="min-h-[40px] text-sm bg-transparent border-0 resize-none focus-visible:ring-0 p-0 placeholder:text-muted-foreground/60"
                       maxLength={280}
                     />
                     
