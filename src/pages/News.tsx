@@ -131,28 +131,14 @@ export default function News() {
           {selectedNews && (
             <div className="flex flex-col">
               {/* Header */}
-              <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-xl border-b border-border/50 px-6 py-4">
-                <div className="flex items-center gap-4">
-                  <button 
-                    onClick={() => setSelectedNews(null)}
-                    className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    <ArrowLeft className="h-4 w-4" />
-                    <span>Back</span>
-                  </button>
-                  <div className="flex-1" />
-                  <div className="flex items-center gap-2 text-sm">
-                    <span className="font-medium text-primary">{selectedNews.source}</span>
-                    <span className="text-muted-foreground/40">•</span>
-                    <span className="text-muted-foreground flex items-center gap-1">
-                      <Clock className="h-3.5 w-3.5" />
-                      {selectedNews.time}
-                    </span>
-                  </div>
-                  <Badge variant="secondary" className="text-xs">
-                    {selectedNews.category}
-                  </Badge>
-                </div>
+              <div className="sticky top-0 z-10 bg-background border-b border-border/50 px-6 py-4">
+                <button 
+                  onClick={() => setSelectedNews(null)}
+                  className="flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors mx-auto"
+                >
+                  <ArrowLeft className="h-5 w-5" />
+                  <span className="text-base">Back</span>
+                </button>
               </div>
               
               {/* Content */}
