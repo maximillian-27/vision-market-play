@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Plus, Sparkles, Check, AlertCircle, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -18,7 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useToast } from "@/hooks/use-toast";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const categories = [
   "Crypto",
@@ -30,33 +30,281 @@ const categories = [
   "Science",
 ];
 
+interface AIRecommendation {
+  type: "success" | "warning" | "suggestion";
+  message: string;
+}
+
 export function CreateMarketButton() {
   const [open, setOpen] = useState(false);
+  const [step, setStep] = useState(1);
+  const [isChecking, setIsChecking] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { toast } = useToast();
+  const [aiChecked, setAiChecked] = useState(false);
+  const [runAiCheck, setRunAiCheck] = useState(true);
+  const [recommendations, setRecommendations] = useState<AIRecommendation[]>([]);
+  const [submitted, setSubmitted] = useState(false);
 
   const [formData, setFormData] = useState({
     title: "",
     description: "",
     category: "",
     endDate: "",
+    outcomeYes: "Yes",
+    outcomeNo: "No",
+    resolutionCriteria: "",
+    resolutionSource: "",
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleAICheck = async () => {
+    setIsChecking(true);
+    
+    // Simulate AI check
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    const mockRecommendations: AIRecommendation[] = [];
+    
+    if (formData.title.length < 20) {
+      mockRecommendations.push({
+        type: "suggestion",
+        message: "Consider making your question more specific for better engagement."
+      });
+    }
+    
+    if (!formData.resolutionCriteria || formData.resolutionCriteria.length < 30) {
+      mockRecommendations.push({
+        type: "warning",
+        message: "Add more detailed resolution criteria to avoid disputes."
+      });
+    }
+    
+    if (!formData.resolutionSource) {
+      mockRecommendations.push({
+        type: "suggestion",
+        message: "Specify a trusted source for resolution verification."
+      });
+    }
+    
+    if (mockRecommendations.length === 0) {
+      mockRecommendations.push({
+        type: "success",
+        message: "Your market looks great! Ready for submission."
+      });
+    }
+    
+    setRecommendations(mockRecommendations);
+    setAiChecked(true);
+    setIsChecking(false);
+  };
+
+  const handleSubmit = async () => {
+    if (runAiCheck && !aiChecked) {
+      await handleAICheck();
+      return;
+    }
+    
     setIsSubmitting(true);
-    
-    // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    toast({
-      title: "Market created!",
-      description: "Your prediction market is now live.",
-    });
-    
     setIsSubmitting(false);
+    setSubmitted(true);
+  };
+
+  const handleClose = () => {
     setOpen(false);
-    setFormData({ title: "", description: "", category: "", endDate: "" });
+    setTimeout(() => {
+      setStep(1);
+      setAiChecked(false);
+      setSubmitted(false);
+      setRecommendations([]);
+      setFormData({
+        title: "",
+        description: "",
+        category: "",
+        endDate: "",
+        outcomeYes: "Yes",
+        outcomeNo: "No",
+        resolutionCriteria: "",
+        resolutionSource: "",
+      });
+    }, 300);
+  };
+
+  const canProceedStep1 = formData.title && formData.description && formData.category;
+  const canProceedStep2 = formData.outcomeYes && formData.outcomeNo && formData.resolutionCriteria;
+  const canProceedStep3 = formData.endDate;
+
+  const renderStep = () => {
+    if (submitted) {
+      return (
+        <div className="py-8 text-center space-y-4">
+          <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
+            <Check className="h-8 w-8 text-primary" />
+          </div>
+          <h3 className="text-lg font-semibold">Market Submitted!</h3>
+          <p className="text-sm text-muted-foreground max-w-sm mx-auto">
+            Our moderation team will review your market and notify you of any needed changes or when it's approved. This usually takes less than 24 hours.
+          </p>
+          <Button onClick={handleClose} className="mt-4">
+            Done
+          </Button>
+        </div>
+      );
+    }
+
+    switch (step) {
+      case 1:
+        return (
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="title">Market Question *</Label>
+              <Input
+                id="title"
+                placeholder="Will [event] happen by [date]?"
+                value={formData.title}
+                onChange={(e) => setFormData({...formData, title: e.target.value})}
+              />
+              <p className="text-xs text-muted-foreground">Make it clear and specific</p>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="description">Description *</Label>
+              <Textarea
+                id="description"
+                placeholder="Provide context about the market..."
+                value={formData.description}
+                onChange={(e) => setFormData({...formData, description: e.target.value})}
+                className="resize-none"
+                rows={3}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Category *</Label>
+              <Select 
+                value={formData.category} 
+                onValueChange={(value) => setFormData({...formData, category: value})}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select category..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {categories.map((cat) => (
+                    <SelectItem key={cat} value={cat.toLowerCase()}>{cat}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        );
+
+      case 2:
+        return (
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="outcomeYes">Outcome 1 *</Label>
+                <Input
+                  id="outcomeYes"
+                  placeholder="Yes"
+                  value={formData.outcomeYes}
+                  onChange={(e) => setFormData({...formData, outcomeYes: e.target.value})}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="outcomeNo">Outcome 2 *</Label>
+                <Input
+                  id="outcomeNo"
+                  placeholder="No"
+                  value={formData.outcomeNo}
+                  onChange={(e) => setFormData({...formData, outcomeNo: e.target.value})}
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="resolutionCriteria">Resolution Criteria *</Label>
+              <Textarea
+                id="resolutionCriteria"
+                placeholder="Describe exactly how this market will be resolved..."
+                value={formData.resolutionCriteria}
+                onChange={(e) => setFormData({...formData, resolutionCriteria: e.target.value})}
+                className="resize-none"
+                rows={3}
+              />
+              <p className="text-xs text-muted-foreground">Be specific to avoid disputes</p>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="resolutionSource">Resolution Source</Label>
+              <Input
+                id="resolutionSource"
+                placeholder="e.g., Official announcement, Reuters, etc."
+                value={formData.resolutionSource}
+                onChange={(e) => setFormData({...formData, resolutionSource: e.target.value})}
+              />
+            </div>
+          </div>
+        );
+
+      case 3:
+        return (
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="endDate">Market End Date *</Label>
+              <Input
+                id="endDate"
+                type="date"
+                value={formData.endDate}
+                onChange={(e) => setFormData({...formData, endDate: e.target.value})}
+              />
+              <p className="text-xs text-muted-foreground">When trading should close</p>
+            </div>
+
+            <div className="p-4 rounded-lg bg-muted/50 space-y-3">
+              <h4 className="font-medium text-sm">Market Summary</h4>
+              <div className="space-y-2 text-sm">
+                <p><span className="text-muted-foreground">Question:</span> {formData.title}</p>
+                <p><span className="text-muted-foreground">Category:</span> {formData.category}</p>
+                <p><span className="text-muted-foreground">Outcomes:</span> {formData.outcomeYes} / {formData.outcomeNo}</p>
+              </div>
+            </div>
+
+            <div className="flex items-center space-x-2 pt-2">
+              <Checkbox 
+                id="aiCheck" 
+                checked={runAiCheck}
+                onCheckedChange={(checked) => setRunAiCheck(checked as boolean)}
+              />
+              <Label htmlFor="aiCheck" className="text-sm font-normal cursor-pointer flex items-center gap-2">
+                <Sparkles className="h-4 w-4 text-primary" />
+                Run AI check before posting
+              </Label>
+            </div>
+
+            {aiChecked && recommendations.length > 0 && (
+              <div className="space-y-2 pt-2">
+                {recommendations.map((rec, idx) => (
+                  <div 
+                    key={idx} 
+                    className={`p-3 rounded-lg text-sm flex items-start gap-2 ${
+                      rec.type === "success" ? "bg-green-500/10 text-green-600" :
+                      rec.type === "warning" ? "bg-yellow-500/10 text-yellow-600" :
+                      "bg-blue-500/10 text-blue-600"
+                    }`}
+                  >
+                    {rec.type === "success" ? <Check className="h-4 w-4 mt-0.5 shrink-0" /> : 
+                     <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" />}
+                    {rec.message}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        );
+
+      default:
+        return null;
+    }
   };
 
   return (
@@ -69,79 +317,69 @@ export function CreateMarketButton() {
         <Plus className="h-6 w-6" />
       </Button>
 
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="sm:max-w-lg">
-          <DialogHeader>
-            <DialogTitle>Create a Market</DialogTitle>
-            <DialogDescription>
-              Create a new prediction market for your followers
-            </DialogDescription>
-          </DialogHeader>
+      <Dialog open={open} onOpenChange={handleClose}>
+        <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+          {!submitted && (
+            <DialogHeader>
+              <DialogTitle>Create a Market</DialogTitle>
+              <DialogDescription>
+                Step {step} of 3 — {step === 1 ? "Basic Info" : step === 2 ? "Outcomes & Resolution" : "Review & Submit"}
+              </DialogDescription>
+            </DialogHeader>
+          )}
 
-          <form onSubmit={handleSubmit} className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="title">Market Question</Label>
-              <Input
-                id="title"
-                placeholder="Will [event] happen by [date]?"
-                value={formData.title}
-                onChange={(e) => setFormData({...formData, title: e.target.value})}
-                required
-              />
-            </div>
+          <div className="py-2">
+            {!submitted && (
+              <div className="flex gap-1 mb-4">
+                {[1, 2, 3].map((s) => (
+                  <div 
+                    key={s} 
+                    className={`h-1 flex-1 rounded-full transition-colors ${
+                      s <= step ? "bg-primary" : "bg-muted"
+                    }`}
+                  />
+                ))}
+              </div>
+            )}
 
-            <div className="space-y-2">
-              <Label htmlFor="description">Description</Label>
-              <Textarea
-                id="description"
-                placeholder="Provide context and resolution criteria..."
-                value={formData.description}
-                onChange={(e) => setFormData({...formData, description: e.target.value})}
-                className="resize-none"
-                rows={3}
-                required
-              />
-            </div>
+            {renderStep()}
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Category</Label>
-                <Select 
-                  value={formData.category} 
-                  onValueChange={(value) => setFormData({...formData, category: value})}
+            {!submitted && (
+              <div className="flex justify-between gap-3 pt-4">
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  onClick={() => step > 1 ? setStep(step - 1) : handleClose()}
                 >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {categories.map((cat) => (
-                      <SelectItem key={cat} value={cat.toLowerCase()}>{cat}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                  {step > 1 ? <><ChevronLeft className="h-4 w-4 mr-1" /> Back</> : "Cancel"}
+                </Button>
+                
+                {step < 3 ? (
+                  <Button 
+                    onClick={() => setStep(step + 1)}
+                    disabled={step === 1 ? !canProceedStep1 : !canProceedStep2}
+                  >
+                    Next <ChevronRight className="h-4 w-4 ml-1" />
+                  </Button>
+                ) : (
+                  <Button 
+                    onClick={handleSubmit}
+                    disabled={!canProceedStep3 || isChecking || isSubmitting}
+                  >
+                    {isChecking ? (
+                      <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Checking...</>
+                    ) : isSubmitting ? (
+                      <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Submitting...</>
+                    ) : runAiCheck && !aiChecked ? (
+                      <><Sparkles className="h-4 w-4 mr-2" /> Check & Submit</>
+                    ) : (
+                      "Submit Market"
+                    )}
+                  </Button>
+                )}
               </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="endDate">End Date</Label>
-                <Input
-                  id="endDate"
-                  type="date"
-                  value={formData.endDate}
-                  onChange={(e) => setFormData({...formData, endDate: e.target.value})}
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="flex justify-end gap-3 pt-4">
-              <Button type="button" variant="outline" onClick={() => setOpen(false)}>
-                Cancel
-              </Button>
-              <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? "Creating..." : "Create Market"}
-              </Button>
-            </div>
-          </form>
+            )}
+          </div>
         </DialogContent>
       </Dialog>
     </>
