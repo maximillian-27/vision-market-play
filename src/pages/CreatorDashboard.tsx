@@ -1,15 +1,12 @@
 import { useState, useEffect } from "react";
-import { PageHeader } from "@/components/PageHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { 
   TrendingUp, 
   Users, 
-  Eye, 
   DollarSign,
   BarChart3,
-  Calendar,
   ArrowUpRight,
   Plus,
   Settings,
@@ -17,9 +14,6 @@ import {
   Clock,
   Sparkles,
   Trophy,
-  CircleDot,
-  CheckCircle2,
-  AlertTriangle,
   XCircle
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -61,11 +55,12 @@ const marketsByStatus = {
 };
 
 const recentMarkets = [
-  { id: 1, title: "Will Bitcoin reach $100k by 2025?", status: "Open", volume: 125000, traders: 2340, created: "2024-01-10" },
-  { id: 2, title: "Fed rate cut in March 2025?", status: "Open", volume: 89000, traders: 1560, created: "2024-01-08" },
-  { id: 3, title: "Tesla Q4 earnings beat estimates?", status: "Resolved", volume: 156000, traders: 3200, created: "2024-01-01", resolution: "Yes" },
-  { id: 4, title: "Apple Vision Pro sales exceed 1M in Q1?", status: "Open", volume: 67000, traders: 890, created: "2023-12-28" },
-  { id: 5, title: "Will OpenAI release GPT-5 in Q1?", status: "Disputing", volume: 234000, traders: 4100, created: "2023-12-15" },
+  { id: 1, title: "Will Bitcoin reach $100k by 2025?", status: "Open", volume: 125000, earnings: 312, traders: 2340, created: "2024-01-10" },
+  { id: 2, title: "Fed rate cut in March 2025?", status: "Open", volume: 89000, earnings: 178, traders: 1560, created: "2024-01-08" },
+  { id: 3, title: "Tesla Q4 earnings beat estimates?", status: "Resolved", volume: 156000, earnings: 468, traders: 3200, created: "2024-01-01", resolution: "Yes" },
+  { id: 4, title: "Apple Vision Pro sales exceed 1M in Q1?", status: "Open", volume: 67000, earnings: 134, traders: 890, created: "2023-12-28" },
+  { id: 5, title: "Will OpenAI release GPT-5 in Q1?", status: "Disputing", volume: 234000, earnings: 585, traders: 4100, created: "2023-12-15" },
+  { id: 6, title: "Nvidia stock above $800 by Feb?", status: "Cancelled", volume: 45000, earnings: 0, traders: 650, created: "2023-12-10" },
 ];
 
 const CreatorDashboard = () => {
@@ -73,6 +68,8 @@ const CreatorDashboard = () => {
   const [timeframe, setTimeframe] = useState("30d");
   const [marketTokens, setMarketTokens] = useState(1);
   const [timeUntilRefresh, setTimeUntilRefresh] = useState("");
+  const [marketFilter, setMarketFilter] = useState<"all" | "open" | "closed" | "cancelled">("all");
+  const [marketSort, setMarketSort] = useState<"newest" | "volume">("newest");
 
   // Calculate time until midnight GMT+1
   useEffect(() => {
@@ -281,82 +278,155 @@ const CreatorDashboard = () => {
 
         {/* Your Markets Section */}
         <Card className="border-border/40">
-          <CardHeader className="p-3 sm:p-4 pb-2 sm:pb-3">
-            <div className="flex items-center justify-between">
+          <CardHeader className="p-3 sm:p-4 pb-0">
+            <div className="flex items-center justify-between mb-3">
               <CardTitle className="text-sm sm:text-lg font-semibold">Your Markets</CardTitle>
               <Button size="sm" className="gap-1 h-7 sm:h-8 text-[10px] sm:text-sm px-2 sm:px-3">
                 <Plus className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
                 <span>New</span>
               </Button>
             </div>
-          </CardHeader>
-          <CardContent className="p-3 sm:p-4 pt-0 space-y-3 sm:space-y-4">
-            {/* Markets Status Overview */}
-            <div className="grid grid-cols-4 gap-1.5 sm:gap-2">
-              <div className="flex flex-col items-center p-2 sm:p-3 rounded-lg bg-primary/5 border border-primary/20">
-                <CircleDot className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary mb-0.5" />
-                <p className="text-base sm:text-xl font-bold">{marketsByStatus.open}</p>
-                <p className="text-[8px] sm:text-[10px] text-muted-foreground">Open</p>
+            
+            {/* Status Filters & Sort */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3">
+              {/* Status Tabs */}
+              <div className="flex gap-1">
+                <button
+                  onClick={() => setMarketFilter("all")}
+                  className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-md text-[10px] sm:text-xs font-medium transition-colors ${
+                    marketFilter === "all" 
+                      ? "bg-foreground text-background" 
+                      : "bg-muted/50 text-muted-foreground hover:bg-muted"
+                  }`}
+                >
+                  All ({marketsByStatus.open + marketsByStatus.resolved + marketsByStatus.disputing + marketsByStatus.cancelled})
+                </button>
+                <button
+                  onClick={() => setMarketFilter("open")}
+                  className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-md text-[10px] sm:text-xs font-medium transition-colors ${
+                    marketFilter === "open" 
+                      ? "bg-primary text-primary-foreground" 
+                      : "bg-primary/10 text-primary hover:bg-primary/20"
+                  }`}
+                >
+                  Open ({marketsByStatus.open})
+                </button>
+                <button
+                  onClick={() => setMarketFilter("closed")}
+                  className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-md text-[10px] sm:text-xs font-medium transition-colors ${
+                    marketFilter === "closed" 
+                      ? "bg-success text-success-foreground" 
+                      : "bg-success/10 text-success hover:bg-success/20"
+                  }`}
+                >
+                  <span className="hidden sm:inline">Resolved/Disputing</span>
+                  <span className="sm:hidden">Closed</span>
+                  <span className="ml-1">({marketsByStatus.resolved + marketsByStatus.disputing})</span>
+                </button>
+                <button
+                  onClick={() => setMarketFilter("cancelled")}
+                  className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-md text-[10px] sm:text-xs font-medium transition-colors ${
+                    marketFilter === "cancelled" 
+                      ? "bg-muted-foreground text-background" 
+                      : "bg-muted/50 text-muted-foreground hover:bg-muted"
+                  }`}
+                >
+                  <XCircle className="h-3 w-3 sm:hidden" />
+                  <span className="hidden sm:inline">Cancelled ({marketsByStatus.cancelled})</span>
+                </button>
               </div>
-              <div className="flex flex-col items-center p-2 sm:p-3 rounded-lg bg-success/5 border border-success/20">
-                <CheckCircle2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-success mb-0.5" />
-                <p className="text-base sm:text-xl font-bold">{marketsByStatus.resolved}</p>
-                <p className="text-[8px] sm:text-[10px] text-muted-foreground">Resolved</p>
-              </div>
-              <div className="flex flex-col items-center p-2 sm:p-3 rounded-lg bg-amber-500/5 border border-amber-500/20">
-                <AlertTriangle className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-amber-500 mb-0.5" />
-                <p className="text-base sm:text-xl font-bold">{marketsByStatus.disputing}</p>
-                <p className="text-[8px] sm:text-[10px] text-muted-foreground">Disputing</p>
-              </div>
-              <div className="flex flex-col items-center p-2 sm:p-3 rounded-lg bg-muted/50 border border-border/40">
-                <XCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground mb-0.5" />
-                <p className="text-base sm:text-xl font-bold">{marketsByStatus.cancelled}</p>
-                <p className="text-[8px] sm:text-[10px] text-muted-foreground">Cancelled</p>
-              </div>
+              
+              {/* Sort Dropdown */}
+              <Select value={marketSort} onValueChange={(v) => setMarketSort(v as "newest" | "volume")}>
+                <SelectTrigger className="w-24 sm:w-28 h-7 text-[10px] sm:text-xs">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="newest">Newest</SelectItem>
+                  <SelectItem value="volume">Volume</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
-
+          </CardHeader>
+          
+          <CardContent className="p-3 sm:p-4 pt-3">
             {/* Markets List */}
-            <div className="space-y-1.5 sm:space-y-2">
-              {recentMarkets.map((market) => (
+            <div className="space-y-2">
+              {recentMarkets
+                .filter(market => {
+                  if (marketFilter === "all") return true;
+                  if (marketFilter === "open") return market.status === "Open";
+                  if (marketFilter === "closed") return market.status === "Resolved" || market.status === "Disputing";
+                  if (marketFilter === "cancelled") return market.status === "Cancelled";
+                  return true;
+                })
+                .sort((a, b) => {
+                  if (marketSort === "volume") return b.volume - a.volume;
+                  return new Date(b.created).getTime() - new Date(a.created).getTime();
+                })
+                .map((market) => (
                 <div 
                   key={market.id} 
-                  className="flex items-start justify-between gap-2 p-2 sm:p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors cursor-pointer"
+                  className="group flex items-center gap-3 p-2.5 sm:p-3 rounded-lg border border-border/40 hover:border-border/60 bg-background hover:bg-muted/20 transition-all cursor-pointer"
                 >
+                  {/* Status Indicator */}
+                  <div className={`w-1 sm:w-1.5 h-10 sm:h-12 rounded-full shrink-0 ${
+                    market.status === "Open" ? "bg-primary" :
+                    market.status === "Resolved" ? "bg-success" :
+                    market.status === "Disputing" ? "bg-amber-500" :
+                    "bg-muted-foreground/30"
+                  }`} />
+                  
+                  {/* Market Info */}
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-start gap-1.5 sm:gap-2 mb-0.5 sm:mb-1">
-                      <p className="font-medium text-xs sm:text-sm line-clamp-2 leading-tight">{market.title}</p>
+                    <p className="font-medium text-xs sm:text-sm line-clamp-1 leading-tight mb-1">{market.title}</p>
+                    <div className="flex items-center gap-2 sm:gap-3 text-[9px] sm:text-[11px] text-muted-foreground">
+                      <span>{market.created}</span>
+                      <span className="hidden sm:inline">•</span>
+                      <span>{market.traders.toLocaleString()} traders</span>
                       <Badge 
                         variant="outline"
-                        className={`text-[7px] sm:text-[10px] shrink-0 px-1 sm:px-1.5 py-0 h-4 sm:h-5 ${
-                          market.status === "Open" ? "border-primary/40 text-primary bg-primary/10" :
-                          market.status === "Resolved" ? "border-success/40 text-success bg-success/10" :
-                          market.status === "Disputing" ? "border-amber-500/40 text-amber-500 bg-amber-500/10" :
+                        className={`text-[7px] sm:text-[9px] px-1 py-0 h-3.5 sm:h-4 ${
+                          market.status === "Open" ? "border-primary/30 text-primary" :
+                          market.status === "Resolved" ? "border-success/30 text-success" :
+                          market.status === "Disputing" ? "border-amber-500/30 text-amber-500" :
                           "border-muted text-muted-foreground"
                         }`}
                       >
                         {market.status === "Resolved" && market.resolution ? `✓ ${market.resolution}` : market.status}
                       </Badge>
                     </div>
-                    <div className="flex items-center gap-2 sm:gap-3 text-[9px] sm:text-xs text-muted-foreground">
-                      <span className="flex items-center gap-0.5">
-                        <Calendar className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
-                        {market.created}
-                      </span>
-                      <span>{market.traders.toLocaleString()} traders</span>
-                    </div>
                   </div>
-                  <div className="text-right shrink-0">
-                    <p className="font-semibold text-xs sm:text-sm">${(market.volume / 1000).toFixed(0)}K</p>
-                    <p className="text-[8px] sm:text-[10px] text-muted-foreground">vol</p>
+                  
+                  {/* Volume & Earnings */}
+                  <div className="flex items-center gap-3 sm:gap-4 shrink-0">
+                    <div className="text-right">
+                      <p className="font-semibold text-xs sm:text-sm">${(market.volume / 1000).toFixed(0)}K</p>
+                      <p className="text-[8px] sm:text-[10px] text-muted-foreground">volume</p>
+                    </div>
+                    <div className="text-right min-w-[40px] sm:min-w-[50px]">
+                      <p className={`font-semibold text-xs sm:text-sm ${market.earnings > 0 ? 'text-success' : 'text-muted-foreground'}`}>
+                        {market.earnings > 0 ? `+$${market.earnings}` : '$0'}
+                      </p>
+                      <p className="text-[8px] sm:text-[10px] text-muted-foreground">earned</p>
+                    </div>
                   </div>
                 </div>
               ))}
+              
+              {/* Empty State */}
+              {recentMarkets.filter(market => {
+                if (marketFilter === "all") return true;
+                if (marketFilter === "open") return market.status === "Open";
+                if (marketFilter === "closed") return market.status === "Resolved" || market.status === "Disputing";
+                if (marketFilter === "cancelled") return market.status === "Cancelled";
+                return true;
+              }).length === 0 && (
+                <div className="text-center py-8 text-muted-foreground text-sm">
+                  No markets found
+                </div>
+              )}
             </div>
-
-            {/* View All Link */}
-            <Button variant="ghost" className="w-full h-8 text-xs text-muted-foreground hover:text-foreground">
-              View all markets →
-            </Button>
           </CardContent>
         </Card>
       </div>
