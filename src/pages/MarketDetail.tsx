@@ -499,40 +499,47 @@ export default function MarketDetail() {
 
           {/* Outcome Selection */}
           {isBinary ? (
-            <div className="grid grid-cols-2 gap-2">
-              {market.outcomes.map((outcome: any, index: number) => {
-                const isYes = outcome.label.toLowerCase() === "yes";
-                const isSelected = selectedOutcome?.label === outcome.label;
-                
-                return (
-                  <button
-                    key={index}
-                    onClick={() => setSelectedOutcome(outcome)}
-                    className={`p-2.5 rounded-xl transition-all active:scale-[0.98] border-2 flex items-center justify-between ${
-                      isSelected
-                        ? isYes 
-                          ? 'border-success bg-success/15' 
-                          : 'border-muted-foreground bg-muted'
-                        : isYes
-                          ? 'border-success/30 bg-success/5'
-                          : 'border-border bg-muted/30'
-                    }`}
-                  >
-                    <div className="flex items-center gap-2">
-                      <div className={`w-6 h-6 rounded-full flex items-center justify-center ${
-                        isYes ? 'bg-success/20 text-success' : 'bg-muted text-muted-foreground'
-                      }`}>
-                        {isYes ? <Check className="h-3.5 w-3.5" /> : <X className="h-3.5 w-3.5" />}
-                      </div>
-                      <span className="font-semibold text-sm">{outcome.label}</span>
-                    </div>
-                    <span className="text-lg font-bold">{outcome.price}¢</span>
-                  </button>
-                );
-              })}
+            <div className="space-y-2">
+              {/* Probability bar */}
+              <div className="flex items-center gap-2 text-xs font-bold">
+                <span className="text-success w-10">{market.outcomes[0].price}%</span>
+                <div className="flex-1 h-2 rounded-full bg-muted overflow-hidden">
+                  <div 
+                    className="h-full rounded-full bg-gradient-to-r from-success to-success/80"
+                    style={{ width: `${market.outcomes[0].price}%` }}
+                  />
+                </div>
+                <span className="text-muted-foreground w-10 text-right">{market.outcomes[1].price}%</span>
+              </div>
+              
+              {/* Outcome buttons */}
+              <div className="grid grid-cols-2 gap-2">
+                {market.outcomes.map((outcome: any, index: number) => {
+                  const isYes = outcome.label.toLowerCase() === "yes";
+                  const isSelected = selectedOutcome?.label === outcome.label;
+                  
+                  return (
+                    <button
+                      key={index}
+                      onClick={() => setSelectedOutcome(outcome)}
+                      className={`rounded-lg py-2.5 text-center transition-all active:scale-[0.98] border ${
+                        isSelected
+                          ? isYes 
+                            ? 'border-success bg-success/20 text-success' 
+                            : 'border-destructive bg-destructive/20 text-destructive'
+                          : isYes
+                            ? 'border-success/30 bg-success/10 text-success hover:bg-success/15'
+                            : 'border-destructive/30 bg-destructive/10 text-destructive hover:bg-destructive/15'
+                      }`}
+                    >
+                      <span className="text-sm font-bold uppercase">{outcome.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           ) : (
-            <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1">
+            <div className="space-y-1.5">
               {visibleOutcomes.map((outcome: any, index: number) => {
                 const isSelected = selectedOutcome?.label === outcome.label;
                 
@@ -540,30 +547,30 @@ export default function MarketDetail() {
                   <button
                     key={index}
                     onClick={() => setSelectedOutcome(outcome)}
-                    className={`flex-shrink-0 flex items-center gap-2 p-2 rounded-xl transition-all border ${
+                    className={`w-full flex items-center gap-2 rounded-lg px-3 py-2.5 transition-all active:scale-[0.98] border text-left ${
                       isSelected
                         ? 'border-primary bg-primary/10'
-                        : 'border-border bg-muted/30'
+                        : 'border-border/40 bg-secondary/60 hover:bg-secondary hover:border-border/60'
                     }`}
                   >
                     {outcome.logo ? (
-                      <img src={outcome.logo} alt={outcome.label} className="h-6 w-6 object-contain" />
+                      <img src={outcome.logo} alt={outcome.label} className="h-5 w-5 object-contain rounded-sm" />
                     ) : (
-                      <div className="h-6 w-6 rounded-full bg-muted flex items-center justify-center text-xs font-bold">
+                      <div className="h-5 w-5 rounded-sm bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary">
                         {outcome.label.charAt(0)}
                       </div>
                     )}
-                    <span className="font-medium text-sm">{outcome.label}</span>
-                    <span className="text-sm font-bold">{outcome.price}%</span>
+                    <span className="flex-1 text-sm font-medium">{outcome.label}</span>
+                    <span className="text-sm font-bold text-primary">{outcome.price}%</span>
                   </button>
                 );
               })}
               {market.outcomes.length > 3 && !showAllOutcomes && (
                 <button
                   onClick={() => setShowAllOutcomes(true)}
-                  className="flex-shrink-0 px-3 py-2 rounded-xl border border-dashed border-border text-xs font-medium text-muted-foreground"
+                  className="w-full py-2 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  +{market.outcomes.length - 3} more
+                  +{market.outcomes.length - 3} more outcomes
                 </button>
               )}
             </div>
