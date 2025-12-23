@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { PageHeader } from "@/components/PageHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -15,7 +15,8 @@ import {
   Plus,
   Settings,
   Wallet,
-  Clock
+  Clock,
+  Sparkles
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -25,6 +26,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 // Mock data
 const creatorStats = {
@@ -59,6 +66,38 @@ const followerActivity = [
 const CreatorDashboard = () => {
   const navigate = useNavigate();
   const [timeframe, setTimeframe] = useState("30d");
+  const [marketTokens, setMarketTokens] = useState(1);
+  const [timeUntilRefresh, setTimeUntilRefresh] = useState("");
+
+  // Calculate time until midnight GMT+1
+  useEffect(() => {
+    const calculateTimeUntilMidnight = () => {
+      const now = new Date();
+      
+      // Get current time in GMT+1 (CET)
+      const gmt1Offset = 1 * 60; // GMT+1 in minutes
+      const localOffset = now.getTimezoneOffset();
+      const gmt1Time = new Date(now.getTime() + (localOffset + gmt1Offset) * 60 * 1000);
+      
+      // Calculate midnight GMT+1
+      const midnightGMT1 = new Date(gmt1Time);
+      midnightGMT1.setHours(24, 0, 0, 0);
+      
+      // Time difference in milliseconds
+      const diff = midnightGMT1.getTime() - gmt1Time.getTime();
+      
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+      
+      setTimeUntilRefresh(`${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`);
+    };
+
+    calculateTimeUntilMidnight();
+    const interval = setInterval(calculateTimeUntilMidnight, 1000);
+    
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div className="min-h-screen bg-background">
@@ -80,10 +119,11 @@ const CreatorDashboard = () => {
           }
         />
 
-        {/* Earnings Balance Card */}
+        {/* Earnings Balance & Market Tokens Card */}
         <Card className="mb-6 border-primary/20 bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5">
           <CardContent className="p-4 sm:p-6">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+              {/* Current Balance */}
               <div className="flex items-center gap-4">
                 <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
                   <Wallet className="h-6 w-6 text-primary" />
@@ -93,9 +133,41 @@ const CreatorDashboard = () => {
                   <p className="text-3xl font-bold text-primary">${creatorStats.currentBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
                 </div>
               </div>
+
+              {/* Divider for larger screens */}
+              <div className="hidden lg:block h-16 w-px bg-border/40" />
+
+              {/* Market Creation Tokens */}
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div className="flex items-center gap-4 bg-background/60 px-4 py-3 rounded-xl border border-border/40 cursor-help">
+                      <div className="h-10 w-10 rounded-full bg-amber-500/10 flex items-center justify-center">
+                        <Sparkles className="h-5 w-5 text-amber-500" />
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground font-medium">Market Tokens</p>
+                        <div className="flex items-center gap-2">
+                          <span className="text-2xl font-bold text-amber-500">{marketTokens}</span>
+                          <span className="text-sm text-muted-foreground">/ 1</span>
+                        </div>
+                      </div>
+                      <div className="ml-2 pl-3 border-l border-border/40">
+                        <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Refreshes in</p>
+                        <p className="text-sm font-mono font-semibold text-foreground">{timeUntilRefresh}</p>
+                      </div>
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom" className="max-w-xs">
+                    <p className="text-sm">You can create 1 market per day. Tokens refresh at midnight GMT+1.</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
+              {/* Payout Info */}
               <div className="flex items-center gap-2 text-xs text-muted-foreground bg-background/60 px-3 py-2 rounded-lg border border-border/40">
                 <Clock className="h-3.5 w-3.5" />
-                <span>Payouts every Friday at 12:00 AM EST</span>
+                <span>Payouts every Friday</span>
               </div>
             </div>
           </CardContent>
