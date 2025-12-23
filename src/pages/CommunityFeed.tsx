@@ -277,12 +277,12 @@ export default function CommunityFeed() {
                         <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-muted-foreground hover:text-primary">
                           <Image className="h-4 w-4" />
                         </Button>
-                        <Select value={selectedMarket || ""} onValueChange={(v) => setSelectedMarket(v || null)}>
+                        <Select value={selectedMarket || "none"} onValueChange={(v) => setSelectedMarket(v === "none" ? null : v)}>
                           <SelectTrigger className="h-8 w-8 p-0 border-0 bg-transparent hover:bg-muted/60 [&>svg]:hidden">
                             <ChartBar className={`h-4 w-4 ${selectedMarket ? 'text-primary' : 'text-muted-foreground'}`} />
                           </SelectTrigger>
-                          <SelectContent align="start">
-                            <SelectItem value="">No market</SelectItem>
+                          <SelectContent align="start" className="bg-popover">
+                            <SelectItem value="none">No market</SelectItem>
                             {mockMarkets.map((market) => (
                               <SelectItem key={market.id} value={market.id}>
                                 <span className="truncate max-w-[200px] block">{market.title}</span>
