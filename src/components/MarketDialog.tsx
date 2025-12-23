@@ -382,38 +382,47 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
 
               {/* Outcome Selection */}
               {isBinary ? (
-                <div className="grid grid-cols-2 gap-2">
-                  {market.outcomes.map((outcome, index) => {
-                    const isYes = outcome.label.toLowerCase() === "yes";
-                    const isSelected = selectedOutcome?.label === outcome.label;
-                    
-                    return (
-                      <button
-                        key={index}
-                        onClick={() => setSelectedOutcome(outcome)}
-                        className={`p-3 rounded-xl transition-all active:scale-[0.98] border-2 ${
-                          isSelected
-                            ? isYes 
-                              ? 'border-success bg-success/15' 
-                              : 'border-muted-foreground bg-muted'
-                            : isYes
-                              ? 'border-success/30 hover:border-success/50 bg-success/5'
-                              : 'border-border hover:border-muted-foreground/50 bg-background'
-                        }`}
-                      >
-                        <div className={`mx-auto w-7 h-7 rounded-full flex items-center justify-center mb-1.5 ${
-                          isYes ? 'bg-success/20 text-success' : 'bg-muted text-muted-foreground'
-                        }`}>
-                          {isYes ? <Check className="h-4 w-4" /> : <X className="h-4 w-4" />}
-                        </div>
-                        <p className="font-semibold text-xs">{outcome.label}</p>
-                        <p className="text-lg font-bold">{outcome.price}¢</p>
-                      </button>
-                    );
-                  })}
+                <div className="space-y-2">
+                  {/* Probability bar */}
+                  <div className="flex items-center gap-2 text-xs font-bold">
+                    <span className="text-success w-10">{market.outcomes.find(o => o.label.toLowerCase() === "yes")?.price || 50}%</span>
+                    <div className="flex-1 h-2 rounded-full bg-muted overflow-hidden">
+                      <div 
+                        className="h-full rounded-full bg-gradient-to-r from-success to-success/80"
+                        style={{ width: `${market.outcomes.find(o => o.label.toLowerCase() === "yes")?.price || 50}%` }}
+                      />
+                    </div>
+                    <span className="text-muted-foreground w-10 text-right">{market.outcomes.find(o => o.label.toLowerCase() === "no")?.price || 50}%</span>
+                  </div>
+                  
+                  {/* Outcome buttons */}
+                  <div className="grid grid-cols-2 gap-2">
+                    {market.outcomes.map((outcome, index) => {
+                      const isYes = outcome.label.toLowerCase() === "yes";
+                      const isSelected = selectedOutcome?.label === outcome.label;
+                      
+                      return (
+                        <button
+                          key={index}
+                          onClick={() => setSelectedOutcome(outcome)}
+                          className={`rounded-lg py-2.5 text-center transition-all active:scale-[0.98] border ${
+                            isSelected
+                              ? isYes 
+                                ? 'border-success bg-success/20 text-success' 
+                                : 'border-destructive bg-destructive/20 text-destructive'
+                              : isYes
+                                ? 'border-success/30 bg-success/10 text-success hover:bg-success/15'
+                                : 'border-destructive/30 bg-destructive/10 text-destructive hover:bg-destructive/15'
+                          }`}
+                        >
+                          <span className="text-sm font-bold uppercase">{outcome.label}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
               ) : (
-                <div className="space-y-1.5 max-h-[140px] overflow-y-auto">
+                <div className="space-y-1.5 max-h-[160px] overflow-y-auto">
                   {market.outcomes.map((outcome, index) => {
                     const isSelected = selectedOutcome?.label === outcome.label;
                     
@@ -421,24 +430,21 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
                       <button
                         key={index}
                         onClick={() => setSelectedOutcome(outcome)}
-                        className={`w-full flex items-center gap-2 p-2 rounded-lg transition-all border ${
+                        className={`w-full flex items-center gap-2 rounded-lg px-3 py-2.5 transition-all active:scale-[0.98] border text-left ${
                           isSelected
                             ? 'border-primary bg-primary/10'
-                            : 'border-transparent hover:bg-muted/50 bg-background'
+                            : 'border-border/40 bg-secondary/60 hover:bg-secondary hover:border-border/60'
                         }`}
                       >
                         {outcome.logo ? (
-                          <img src={outcome.logo} alt={outcome.label} className="h-6 w-6 object-contain" />
+                          <img src={outcome.logo} alt={outcome.label} className="h-5 w-5 object-contain rounded-sm" />
                         ) : (
-                          <div className="h-6 w-6 rounded-full bg-muted flex items-center justify-center text-xs font-bold">
+                          <div className="h-5 w-5 rounded-sm bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary">
                             {outcome.label.charAt(0)}
                           </div>
                         )}
-                        <span className="flex-1 text-left font-medium text-xs truncate">{outcome.label}</span>
-                        <span className="text-sm font-bold">{outcome.price}%</span>
-                        {isSelected && (
-                          <Check className="h-3.5 w-3.5 text-primary" />
-                        )}
+                        <span className="flex-1 text-sm font-medium truncate">{outcome.label}</span>
+                        <span className="text-sm font-bold text-primary">{outcome.price}%</span>
                       </button>
                     );
                   })}
