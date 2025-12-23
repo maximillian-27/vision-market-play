@@ -462,22 +462,23 @@ export function MarketGridCard({
                   </div>
                 </div>
               ) : (
-                <div className="flex gap-1.5 overflow-x-auto scrollbar-hide mt-auto">
-                  {displayOutcomes.slice(0, 3).map((outcome, index) => (
+                <div className="flex gap-2 overflow-x-auto scrollbar-hide mt-auto -mr-3 pr-3">
+                  {displayOutcomes.slice(0, 2).map((outcome, index) => (
                     <button 
                       key={index}
-                      className="flex items-center gap-1.5 rounded-md px-2.5 py-1.5 bg-secondary/80 border border-border/40 text-[11px] active:scale-95 transition-transform"
+                      className="flex items-center gap-1.5 rounded-md px-2.5 py-1.5 bg-secondary/80 border border-border/40 text-[11px] active:scale-95 transition-transform flex-shrink-0"
+                      style={{ maxWidth: index === 0 ? '55%' : '45%' }}
                       onClick={handleOutcomeClick}
                     >
                       {outcome.logo && (
-                        <img src={outcome.logo} alt={outcome.label} className="h-4 w-4 object-contain rounded-sm" />
+                        <img src={outcome.logo} alt={outcome.label} className="h-4 w-4 object-contain rounded-sm flex-shrink-0" />
                       )}
-                      <span className="font-medium truncate max-w-20">{outcome.label}</span>
-                      <span className="font-bold text-primary">{outcome.price}%</span>
+                      <span className="font-medium truncate">{outcome.label}</span>
+                      <span className="font-bold text-primary flex-shrink-0">{outcome.price}%</span>
                     </button>
                   ))}
-                  {displayOutcomes.length > 3 && (
-                    <span className="text-[10px] text-muted-foreground self-center">+{displayOutcomes.length - 3}</span>
+                  {displayOutcomes.length > 2 && (
+                    <span className="text-[10px] text-muted-foreground self-center flex-shrink-0">+{displayOutcomes.length - 2}</span>
                   )}
                 </div>
               )}
