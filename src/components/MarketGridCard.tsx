@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Clock, TrendingUp, BadgeCheck, Check, X, AlertTriangle, CheckCircle2, Timer } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { BuyDialog } from "@/components/BuyDialog";
+import { MarketDialog } from "@/components/MarketDialog";
 import {
   Dialog,
   DialogContent,
@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 type MarketStatus = "open" | "closing" | "closed" | "resolved";
 
@@ -64,8 +65,8 @@ export function MarketGridCard({
 }: MarketGridCardProps) {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [showBuyDialog, setShowBuyDialog] = useState(false);
-  const [selectedOutcome, setSelectedOutcome] = useState<Outcome | null>(null);
+  const isMobile = useIsMobile();
+  const [showMarketDialog, setShowMarketDialog] = useState(false);
   const [showDisputeDialog, setShowDisputeDialog] = useState(false);
   const [disputeReason, setDisputeReason] = useState("");
   
@@ -77,11 +78,23 @@ export function MarketGridCard({
   const isClosedOrResolved = status === "closed" || status === "resolved";
   const isBinary = displayOutcomes.length === 2 && !outcomes;
 
-  const handleOutcomeClick = (e: React.MouseEvent, outcome: Outcome) => {
+  const handleCardClick = () => {
+    if (isClosedOrResolved) return;
+    if (isMobile) {
+      navigate(`/market/${id}`);
+    } else {
+      setShowMarketDialog(true);
+    }
+  };
+
+  const handleOutcomeClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (isClosedOrResolved) return;
-    setSelectedOutcome(outcome);
-    setShowBuyDialog(true);
+    if (isMobile) {
+      navigate(`/market/${id}`);
+    } else {
+      setShowMarketDialog(true);
+    }
   };
 
   const handleDispute = () => {
@@ -148,14 +161,22 @@ export function MarketGridCard({
     );
   };
 
+  const marketDialogData = {
+    id,
+    title,
+    image,
+    creator,
+    outcomes: displayOutcomes,
+    volume,
+    endsIn,
+  };
+
   return (
     <>
-      <BuyDialog
-        open={showBuyDialog}
-        onOpenChange={setShowBuyDialog}
-        outcome={selectedOutcome || displayOutcomes[0]}
-        marketTitle={title}
-        marketId={id}
+      <MarketDialog
+        open={showMarketDialog}
+        onOpenChange={setShowMarketDialog}
+        market={marketDialogData}
       />
       
       <Dialog open={showDisputeDialog} onOpenChange={setShowDisputeDialog}>
@@ -204,7 +225,7 @@ export function MarketGridCard({
             {/* Market Image */}
             <div 
               className={`relative aspect-square sm:aspect-[4/3] w-24 sm:w-full overflow-hidden bg-secondary flex-shrink-0 ${isClosedOrResolved ? 'grayscale-[30%]' : ''}`}
-              onClick={() => navigate(`/market/${id}`)}
+              onClick={handleCardClick}
             >
               <img 
                 src={image} 
@@ -243,7 +264,7 @@ export function MarketGridCard({
               {/* Title */}
               <h3 
                 className="text-[13px] font-semibold leading-tight line-clamp-2 group-hover:text-primary transition-colors cursor-pointer"
-                onClick={() => navigate(`/market/${id}`)}
+                onClick={handleCardClick}
               >
                 {title}
               </h3>
@@ -278,7 +299,7 @@ export function MarketGridCard({
                           ? 'bg-success/10 hover:bg-success/15 text-success border border-success/20'
                           : 'bg-secondary hover:bg-secondary/80 text-muted-foreground border border-border/50'
                       }`}
-                      onClick={(e) => handleOutcomeClick(e, outcome)}
+                      onClick={(e) => handleOutcomeClick(e)}
                     >
                       <div className="text-lg font-bold">{outcome.price}¢</div>
                       <div className="text-[10px] font-medium">{outcome.label}</div>
@@ -292,7 +313,7 @@ export function MarketGridCard({
                     <button 
                       key={index}
                       className="w-full flex items-center gap-2 rounded-lg px-2.5 py-2 bg-secondary/50 hover:bg-secondary transition-colors text-left"
-                      onClick={(e) => handleOutcomeClick(e, outcome)}
+                      onClick={(e) => handleOutcomeClick(e)}
                     >
                       {outcome.logo ? (
                         <img src={outcome.logo} alt={outcome.label} className="h-5 w-5 object-contain" />
