@@ -23,6 +23,7 @@ import {
 import { useIsMobile } from "@/hooks/use-mobile";
 import { BecomeCreatorDialog } from "@/components/BecomeCreatorDialog";
 import { CreateMarketButton } from "@/components/CreateMarketButton";
+import { HowItWorksDialog } from "@/components/HowItWorksDialog";
 
 export function Header() {
   const isMobile = useIsMobile();
@@ -32,6 +33,7 @@ export function Header() {
   const [isAdmin] = useState(true);
   const [showDepositDialog, setShowDepositDialog] = useState(false);
   const [showCreatorDialog, setShowCreatorDialog] = useState(false);
+  const [showHowItWorks, setShowHowItWorks] = useState(false);
   const [portfolioValue] = useState(12450);
   const [cashBalance] = useState(5230);
 
@@ -148,6 +150,7 @@ export function Header() {
                 <Button 
                   variant="ghost" 
                   size="sm"
+                  onClick={() => setShowHowItWorks(true)}
                   className="hidden md:flex text-muted-foreground hover:text-foreground rounded-xl"
                 >
                   How it works?
@@ -232,6 +235,12 @@ export function Header() {
         open={showCreatorDialog} 
         onOpenChange={setShowCreatorDialog}
         onSuccess={handleBecomeCreator}
+      />
+
+      {/* How It Works Dialog */}
+      <HowItWorksDialog 
+        open={showHowItWorks} 
+        onOpenChange={setShowHowItWorks}
       />
 
       {/* Deposit Dialog */}
