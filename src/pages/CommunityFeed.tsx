@@ -7,8 +7,15 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Heart, MessageCircle, Share2 } from "lucide-react";
+import { Heart, MessageCircle, Share2, Image, ChartBar, X } from "lucide-react";
 import { PageHeader } from "@/components/PageHeader";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import bitcoinImage from "@/assets/bitcoin-market.jpg";
 import nbaImage from "@/assets/nba-championship.jpg";
 import iphoneImage from "@/assets/foldable-iphone.jpg";
@@ -194,6 +201,32 @@ export default function CommunityFeed() {
   const [commentInputs, setCommentInputs] = useState<{ [key: string]: string }>({});
   const [expandedComments, setExpandedComments] = useState<{ [key: string]: boolean }>({});
   const [selectedFilter, setSelectedFilter] = useState("Hot");
+  
+  // Creator post composer state
+  const [postContent, setPostContent] = useState("");
+  const [selectedMarket, setSelectedMarket] = useState<string | null>(null);
+  const [isPosting, setIsPosting] = useState(false);
+  
+  // Mock creator status - in real app this would come from auth context
+  const isCreator = true;
+  const currentUser = {
+    name: "Sarah Chen",
+    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah",
+    username: "@sarahchen"
+  };
+
+  const handlePost = () => {
+    if (!postContent.trim()) return;
+    setIsPosting(true);
+    // Simulate posting
+    setTimeout(() => {
+      setPostContent("");
+      setSelectedMarket(null);
+      setIsPosting(false);
+    }, 500);
+  };
+
+  const selectedMarketData = selectedMarket ? mockMarkets.find(m => m.id === selectedMarket) : null;
 
   return (
     <div className="w-full max-w-7xl mx-auto py-4 lg:py-6">
@@ -205,6 +238,78 @@ export default function CommunityFeed() {
             title="Community"
             subtitle="See what others are saying about markets"
           />
+          
+          {/* Creator Post Composer */}
+          {isCreator && (
+            <Card className="border-border/50">
+              <CardContent className="p-4">
+                <div className="flex gap-3">
+                  <Avatar className="h-10 w-10">
+                    <AvatarImage src={currentUser.avatar} alt={currentUser.name} />
+                    <AvatarFallback>{currentUser.name.slice(0, 2)}</AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 space-y-3">
+                    <Textarea
+                      placeholder="What's happening in the markets?"
+                      value={postContent}
+                      onChange={(e) => setPostContent(e.target.value)}
+                      className="min-h-[80px] text-sm bg-transparent border-0 resize-none focus-visible:ring-0 p-0 placeholder:text-muted-foreground/60"
+                      maxLength={280}
+                    />
+                    
+                    {/* Selected Market Preview */}
+                    {selectedMarketData && (
+                      <div className="relative border rounded-lg overflow-hidden">
+                        <button
+                          onClick={() => setSelectedMarket(null)}
+                          className="absolute top-2 right-2 z-10 p-1 bg-background/80 rounded-full hover:bg-background transition-colors"
+                        >
+                          <X className="h-4 w-4" />
+                        </button>
+                        <div className="pointer-events-none opacity-90 scale-[0.98]">
+                          <MarketGridCard {...selectedMarketData} />
+                        </div>
+                      </div>
+                    )}
+                    
+                    <div className="flex items-center justify-between pt-2 border-t">
+                      <div className="flex items-center gap-1">
+                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-muted-foreground hover:text-primary">
+                          <Image className="h-4 w-4" />
+                        </Button>
+                        <Select value={selectedMarket || ""} onValueChange={(v) => setSelectedMarket(v || null)}>
+                          <SelectTrigger className="h-8 w-8 p-0 border-0 bg-transparent hover:bg-muted/60 [&>svg]:hidden">
+                            <ChartBar className={`h-4 w-4 ${selectedMarket ? 'text-primary' : 'text-muted-foreground'}`} />
+                          </SelectTrigger>
+                          <SelectContent align="start">
+                            <SelectItem value="">No market</SelectItem>
+                            {mockMarkets.map((market) => (
+                              <SelectItem key={market.id} value={market.id}>
+                                <span className="truncate max-w-[200px] block">{market.title}</span>
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <span className={`text-xs ${postContent.length > 250 ? 'text-destructive' : 'text-muted-foreground'}`}>
+                          {postContent.length}/280
+                        </span>
+                        <Button 
+                          size="sm" 
+                          onClick={handlePost}
+                          disabled={!postContent.trim() || isPosting}
+                          className="rounded-full px-4"
+                        >
+                          {isPosting ? "Posting..." : "Post"}
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
           
           {/* Category Filters */}
           <div className="flex gap-1 overflow-x-auto pb-2 scrollbar-hide -mx-1 px-1">
