@@ -552,40 +552,32 @@ export default function MarketDetail() {
               </div>
             </div>
           ) : (
-            <div className="space-y-1.5">
-              {visibleOutcomes.map((outcome: any, index: number) => {
+            <div className="flex gap-2 overflow-x-auto scrollbar-hide -mx-3 px-3 pb-1">
+              {market.outcomes.map((outcome: any, index: number) => {
                 const isSelected = selectedOutcome?.label === outcome.label;
                 
                 return (
                   <button
                     key={index}
                     onClick={() => setSelectedOutcome(outcome)}
-                    className={`w-full flex items-center gap-2 rounded-lg px-3 py-2.5 transition-all active:scale-[0.98] border text-left ${
+                    className={`flex-shrink-0 flex items-center gap-2 rounded-xl px-4 py-2.5 transition-all active:scale-[0.98] border ${
                       isSelected
                         ? 'border-primary bg-primary/10'
-                        : 'border-border/40 bg-secondary/60 hover:bg-secondary hover:border-border/60'
+                        : 'border-border/40 bg-secondary/60 hover:bg-secondary'
                     }`}
                   >
                     {outcome.logo ? (
                       <img src={outcome.logo} alt={outcome.label} className="h-5 w-5 object-contain rounded-sm" />
                     ) : (
-                      <div className="h-5 w-5 rounded-sm bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary">
+                      <div className="h-5 w-5 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary">
                         {outcome.label.charAt(0)}
                       </div>
                     )}
-                    <span className="flex-1 text-sm font-medium">{outcome.label}</span>
+                    <span className="text-sm font-semibold whitespace-nowrap">{outcome.label}</span>
                     <span className="text-sm font-bold text-primary">{outcome.price}%</span>
                   </button>
                 );
               })}
-              {market.outcomes.length > 3 && !showAllOutcomes && (
-                <button
-                  onClick={() => setShowAllOutcomes(true)}
-                  className="w-full py-2 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  +{market.outcomes.length - 3} more outcomes
-                </button>
-              )}
             </div>
           )}
 
