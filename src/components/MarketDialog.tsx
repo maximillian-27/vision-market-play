@@ -27,7 +27,8 @@ import {
   Heart,
   MessageCircle,
   ExternalLink,
-  Zap
+  Zap,
+  Repeat2
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -218,12 +219,19 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
               <BadgeCheck className="h-4 w-4 text-primary fill-primary/20" />
             )}
           </div>
-          <div className="flex items-center gap-2">
-            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={handleShare}>
+          <div className="flex items-center gap-1">
+            <Button variant="outline" size="icon" className="h-8 w-8" onClick={handleShare}>
               <Share2 className="h-4 w-4" />
             </Button>
-            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={handleViewFullPage}>
-              <ExternalLink className="h-4 w-4" />
+            <Button 
+              variant="outline" 
+              size="icon" 
+              className="h-8 w-8" 
+              onClick={() => {
+                toast({ title: "Reposted to your feed!" });
+              }}
+            >
+              <Repeat2 className="h-4 w-4" />
             </Button>
           </div>
         </div>
