@@ -100,81 +100,79 @@ const CreatorDashboard = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background pb-20 md:pb-6">
-      <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-6">
+    <div className="min-h-screen bg-background pb-24 md:pb-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
         {/* Mobile-optimized header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5">
-          <div>
-            <h1 className="text-xl sm:text-2xl font-bold">Creator Dashboard</h1>
-            <p className="text-sm text-muted-foreground">Track your performance</p>
+        <div className="flex items-center justify-between gap-3 mb-4 sm:mb-5">
+          <div className="min-w-0">
+            <h1 className="text-lg sm:text-2xl font-bold truncate">Creator Dashboard</h1>
+            <p className="text-xs sm:text-sm text-muted-foreground">Track your performance</p>
           </div>
-          <div className="flex gap-2">
-            <Button variant="outline" size="sm" onClick={() => navigate("/settings")} className="gap-1.5 h-9 flex-1 sm:flex-none">
+          <div className="flex gap-2 shrink-0">
+            <Button variant="outline" size="sm" onClick={() => navigate("/settings")} className="gap-1.5 h-8 sm:h-9 px-2.5 sm:px-3">
               <Settings className="h-4 w-4" />
-              <span className="sm:inline">Settings</span>
+              <span className="hidden sm:inline">Settings</span>
             </Button>
-            <Button size="sm" className="gap-1.5 h-9 flex-1 sm:flex-none">
+            <Button size="sm" className="gap-1.5 h-8 sm:h-9 px-2.5 sm:px-3">
               <Plus className="h-4 w-4" />
-              <span>Create</span>
+              <span className="hidden xs:inline">Create</span>
             </Button>
           </div>
         </div>
 
-        {/* Balance & Tokens - Stacked on mobile */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-5">
+        {/* Balance & Tokens - Side by side on mobile too */}
+        <div className="grid grid-cols-2 gap-2 sm:gap-3 mb-4 sm:mb-5">
           {/* Current Balance Card */}
           <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-primary/10">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between gap-3">
-                <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-                    <Wallet className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
-                  </div>
-                  <div>
-                    <p className="text-xs sm:text-sm text-muted-foreground font-medium">Current Balance</p>
-                    <p className="text-2xl sm:text-3xl font-bold text-primary">${creatorStats.currentBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
-                  </div>
+            <CardContent className="p-3 sm:p-4">
+              <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
+                <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-lg sm:rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                  <Wallet className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
                 </div>
-                <Button variant="outline" size="sm" className="text-xs h-8 shrink-0">
+                <p className="text-[10px] sm:text-xs text-muted-foreground font-medium leading-tight">Current Balance</p>
+              </div>
+              <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-primary mb-2 sm:mb-3">
+                ${creatorStats.currentBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              </p>
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2 pt-2 sm:pt-3 border-t border-border/30">
+                <div className="flex items-center gap-1.5 text-[9px] sm:text-[11px] text-muted-foreground">
+                  <Clock className="h-2.5 w-2.5 sm:h-3 sm:w-3 shrink-0" />
+                  <span className="leading-tight">Fridays 12AM EST</span>
+                </div>
+                <Button variant="outline" size="sm" className="text-[10px] sm:text-xs h-6 sm:h-7 px-2 sm:px-3 w-full sm:w-auto sm:ml-auto">
                   Withdraw
                 </Button>
-              </div>
-              <div className="flex items-center gap-2 mt-3 pt-3 border-t border-border/30 text-[11px] sm:text-xs text-muted-foreground">
-                <Clock className="h-3 w-3 sm:h-3.5 sm:w-3.5 shrink-0" />
-                <span>Payouts every Friday at 12:00 AM EST</span>
               </div>
             </CardContent>
           </Card>
 
           {/* Market Tokens Card */}
           <Card className="border-amber-500/20 bg-gradient-to-br from-amber-500/5 to-amber-500/10">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between gap-3">
-                <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-xl bg-amber-500/10 flex items-center justify-center shrink-0">
-                    <Sparkles className="h-5 w-5 sm:h-6 sm:w-6 text-amber-500" />
+            <CardContent className="p-3 sm:p-4">
+              <div className="flex items-center justify-between gap-1 mb-2 sm:mb-3">
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-lg sm:rounded-xl bg-amber-500/10 flex items-center justify-center shrink-0">
+                    <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 text-amber-500" />
                   </div>
-                  <div>
-                    <p className="text-xs sm:text-sm text-muted-foreground font-medium">Market Tokens</p>
-                    <div className="flex items-baseline gap-1">
-                      <span className="text-2xl sm:text-3xl font-bold text-amber-500">{marketTokens}</span>
-                      <span className="text-base sm:text-lg text-muted-foreground font-medium">/ 1</span>
-                    </div>
-                  </div>
+                  <p className="text-[10px] sm:text-xs text-muted-foreground font-medium leading-tight">Market Tokens</p>
                 </div>
-                <Badge variant="outline" className={`text-[10px] sm:text-xs shrink-0 ${marketTokens > 0 ? 'border-success/40 text-success bg-success/10' : 'border-muted text-muted-foreground'}`}>
-                  {marketTokens > 0 ? 'Available' : 'Used'}
+                <Badge variant="outline" className={`text-[8px] sm:text-[10px] px-1.5 sm:px-2 shrink-0 ${marketTokens > 0 ? 'border-success/40 text-success bg-success/10' : 'border-muted text-muted-foreground'}`}>
+                  {marketTokens > 0 ? 'Ready' : 'Used'}
                 </Badge>
               </div>
-              <div className="flex items-center justify-between mt-3 pt-3 border-t border-border/30 gap-2">
-                <div className="flex items-center gap-1.5 text-[11px] sm:text-xs text-muted-foreground">
-                  <Clock className="h-3 w-3 sm:h-3.5 sm:w-3.5 shrink-0" />
-                  <span className="hidden sm:inline">Refreshes at midnight GMT+1</span>
-                  <span className="sm:hidden">Midnight GMT+1</span>
+              <div className="flex items-baseline gap-1 mb-2 sm:mb-3">
+                <span className="text-xl sm:text-2xl lg:text-3xl font-bold text-amber-500">{marketTokens}</span>
+                <span className="text-sm sm:text-base text-muted-foreground font-medium">/ 1</span>
+              </div>
+              <div className="flex items-center justify-between pt-2 sm:pt-3 border-t border-border/30 gap-1">
+                <div className="flex items-center gap-1 text-[9px] sm:text-[11px] text-muted-foreground">
+                  <Clock className="h-2.5 w-2.5 sm:h-3 sm:w-3 shrink-0" />
+                  <span className="hidden sm:inline">Midnight GMT+1</span>
+                  <span className="sm:hidden">Reset</span>
                 </div>
-                <div className="flex items-center gap-1 bg-background/60 px-2 py-0.5 rounded-md border border-border/40">
-                  <span className="text-[9px] sm:text-[10px] text-muted-foreground uppercase">In</span>
-                  <span className="text-xs sm:text-sm font-mono font-bold text-foreground">{timeUntilRefresh}</span>
+                <div className="flex items-center gap-0.5 sm:gap-1 bg-background/60 px-1.5 sm:px-2 py-0.5 rounded border border-border/40">
+                  <span className="text-[8px] sm:text-[9px] text-muted-foreground uppercase">In</span>
+                  <span className="text-[10px] sm:text-xs font-mono font-bold text-foreground">{timeUntilRefresh}</span>
                 </div>
               </div>
             </CardContent>
@@ -182,9 +180,9 @@ const CreatorDashboard = () => {
         </div>
 
         {/* Time Range Selector */}
-        <div className="flex justify-end mb-4">
+        <div className="flex justify-end mb-3 sm:mb-4">
           <Select value={timeframe} onValueChange={setTimeframe}>
-            <SelectTrigger className="w-28 sm:w-32 h-8 text-xs sm:text-sm">
+            <SelectTrigger className="w-24 sm:w-32 h-7 sm:h-8 text-[10px] sm:text-sm">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -196,18 +194,18 @@ const CreatorDashboard = () => {
           </Select>
         </div>
 
-        {/* Stats Overview - Scrollable on mobile */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4 mb-4">
+        {/* Stats Overview - 2x2 grid on mobile */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 mb-3 sm:mb-4">
           <Card className="border-border/40">
-            <CardContent className="p-3 sm:p-4">
-              <div className="flex items-center gap-1.5 sm:gap-2 text-muted-foreground text-xs sm:text-sm mb-1">
-                <Users className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                <span className="truncate">Followers</span>
+            <CardContent className="p-2.5 sm:p-4">
+              <div className="flex items-center gap-1 sm:gap-2 text-muted-foreground text-[10px] sm:text-sm mb-0.5 sm:mb-1">
+                <Users className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span>Followers</span>
               </div>
-              <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-                <p className="text-lg sm:text-2xl font-bold">{creatorStats.totalFollowers.toLocaleString()}</p>
-                <Badge className="text-[10px] sm:text-xs bg-success/10 text-success border-0 w-fit">
-                  <ArrowUpRight className="h-2.5 w-2.5 sm:h-3 sm:w-3 mr-0.5" />
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <p className="text-base sm:text-2xl font-bold">{creatorStats.totalFollowers.toLocaleString()}</p>
+                <Badge className="text-[8px] sm:text-xs bg-success/10 text-success border-0 px-1 sm:px-1.5">
+                  <ArrowUpRight className="h-2 w-2 sm:h-3 sm:w-3" />
                   {creatorStats.followersGrowth}%
                 </Badge>
               </div>
@@ -215,15 +213,15 @@ const CreatorDashboard = () => {
           </Card>
           
           <Card className="border-border/40">
-            <CardContent className="p-3 sm:p-4">
-              <div className="flex items-center gap-1.5 sm:gap-2 text-muted-foreground text-xs sm:text-sm mb-1">
-                <Eye className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                <span className="truncate">Views</span>
+            <CardContent className="p-2.5 sm:p-4">
+              <div className="flex items-center gap-1 sm:gap-2 text-muted-foreground text-[10px] sm:text-sm mb-0.5 sm:mb-1">
+                <Eye className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span>Views</span>
               </div>
-              <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-                <p className="text-lg sm:text-2xl font-bold">{(creatorStats.totalViews / 1000).toFixed(0)}K</p>
-                <Badge className="text-[10px] sm:text-xs bg-success/10 text-success border-0 w-fit">
-                  <ArrowUpRight className="h-2.5 w-2.5 sm:h-3 sm:w-3 mr-0.5" />
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <p className="text-base sm:text-2xl font-bold">{(creatorStats.totalViews / 1000).toFixed(0)}K</p>
+                <Badge className="text-[8px] sm:text-xs bg-success/10 text-success border-0 px-1 sm:px-1.5">
+                  <ArrowUpRight className="h-2 w-2 sm:h-3 sm:w-3" />
                   {creatorStats.viewsGrowth}%
                 </Badge>
               </div>
@@ -231,107 +229,104 @@ const CreatorDashboard = () => {
           </Card>
           
           <Card className="border-border/40">
-            <CardContent className="p-3 sm:p-4">
-              <div className="flex items-center gap-1.5 sm:gap-2 text-muted-foreground text-xs sm:text-sm mb-1">
-                <BarChart3 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                <span className="truncate">Markets</span>
+            <CardContent className="p-2.5 sm:p-4">
+              <div className="flex items-center gap-1 sm:gap-2 text-muted-foreground text-[10px] sm:text-sm mb-0.5 sm:mb-1">
+                <BarChart3 className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span>Markets</span>
               </div>
-              <p className="text-lg sm:text-2xl font-bold">{creatorStats.marketsCreated}</p>
+              <p className="text-base sm:text-2xl font-bold">{creatorStats.marketsCreated}</p>
             </CardContent>
           </Card>
           
           <Card className="border-border/40">
-            <CardContent className="p-3 sm:p-4">
-              <div className="flex items-center gap-1.5 sm:gap-2 text-muted-foreground text-xs sm:text-sm mb-1">
-                <DollarSign className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                <span className="truncate">Volume</span>
+            <CardContent className="p-2.5 sm:p-4">
+              <div className="flex items-center gap-1 sm:gap-2 text-muted-foreground text-[10px] sm:text-sm mb-0.5 sm:mb-1">
+                <DollarSign className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span>Volume</span>
               </div>
-              <p className="text-lg sm:text-2xl font-bold">${(creatorStats.totalVolume / 1000000).toFixed(2)}M</p>
+              <p className="text-base sm:text-2xl font-bold">${(creatorStats.totalVolume / 1000000).toFixed(1)}M</p>
             </CardContent>
           </Card>
         </div>
 
-        {/* Secondary Stats - Horizontal scroll on mobile */}
-        <div className="flex gap-2 sm:grid sm:grid-cols-2 lg:grid-cols-4 sm:gap-4 mb-5 overflow-x-auto pb-2 sm:pb-0 -mx-3 px-3 sm:mx-0 sm:px-0">
-          <Card className="border-border/40 bg-muted/20 min-w-[140px] sm:min-w-0 shrink-0 sm:shrink">
-            <CardContent className="p-3 sm:p-4">
-              <p className="text-[11px] sm:text-sm text-muted-foreground mb-0.5 sm:mb-1 truncate">Avg Vol/Market</p>
-              <p className="text-base sm:text-xl font-semibold">${(creatorStats.avgMarketVolume / 1000).toFixed(0)}K</p>
+        {/* Secondary Stats - 2x2 grid on mobile */}
+        <div className="grid grid-cols-4 gap-1.5 sm:gap-3 mb-4 sm:mb-5">
+          <Card className="border-border/40 bg-muted/20">
+            <CardContent className="p-2 sm:p-4">
+              <p className="text-[9px] sm:text-sm text-muted-foreground mb-0.5 truncate">Avg/Market</p>
+              <p className="text-sm sm:text-xl font-semibold">${(creatorStats.avgMarketVolume / 1000).toFixed(0)}K</p>
             </CardContent>
           </Card>
-          <Card className="border-border/40 bg-muted/20 min-w-[140px] sm:min-w-0 shrink-0 sm:shrink">
-            <CardContent className="p-3 sm:p-4">
-              <p className="text-[11px] sm:text-sm text-muted-foreground mb-0.5 sm:mb-1 truncate">Resolved</p>
-              <p className="text-base sm:text-xl font-semibold">{creatorStats.resolvedMarkets}</p>
+          <Card className="border-border/40 bg-muted/20">
+            <CardContent className="p-2 sm:p-4">
+              <p className="text-[9px] sm:text-sm text-muted-foreground mb-0.5 truncate">Resolved</p>
+              <p className="text-sm sm:text-xl font-semibold">{creatorStats.resolvedMarkets}</p>
             </CardContent>
           </Card>
-          <Card className="border-border/40 bg-muted/20 min-w-[140px] sm:min-w-0 shrink-0 sm:shrink">
-            <CardContent className="p-3 sm:p-4">
-              <p className="text-[11px] sm:text-sm text-muted-foreground mb-0.5 sm:mb-1 truncate">Accuracy</p>
-              <p className="text-base sm:text-xl font-semibold text-success">{creatorStats.accuracy}%</p>
+          <Card className="border-border/40 bg-muted/20">
+            <CardContent className="p-2 sm:p-4">
+              <p className="text-[9px] sm:text-sm text-muted-foreground mb-0.5 truncate">Accuracy</p>
+              <p className="text-sm sm:text-xl font-semibold text-success">{creatorStats.accuracy}%</p>
             </CardContent>
           </Card>
-          <Card className="border-border/40 bg-muted/20 min-w-[140px] sm:min-w-0 shrink-0 sm:shrink">
-            <CardContent className="p-3 sm:p-4">
-              <p className="text-[11px] sm:text-sm text-muted-foreground mb-0.5 sm:mb-1 truncate">Earnings</p>
-              <p className="text-base sm:text-xl font-semibold text-success">${creatorStats.earnings.toLocaleString()}</p>
+          <Card className="border-border/40 bg-muted/20">
+            <CardContent className="p-2 sm:p-4">
+              <p className="text-[9px] sm:text-sm text-muted-foreground mb-0.5 truncate">Earnings</p>
+              <p className="text-sm sm:text-xl font-semibold text-success">${(creatorStats.earnings / 1000).toFixed(1)}K</p>
             </CardContent>
           </Card>
         </div>
 
         {/* Main Content Tabs */}
-        <Tabs defaultValue="markets" className="space-y-4">
-          <TabsList className="bg-muted/50 p-1 w-full sm:w-auto grid grid-cols-3 sm:inline-flex">
-            <TabsTrigger value="markets" className="data-[state=active]:bg-background text-xs sm:text-sm">
+        <Tabs defaultValue="markets" className="space-y-3 sm:space-y-4">
+          <TabsList className="bg-muted/50 p-0.5 sm:p-1 w-full grid grid-cols-3 h-8 sm:h-10">
+            <TabsTrigger value="markets" className="data-[state=active]:bg-background text-[11px] sm:text-sm h-7 sm:h-8">
               Markets
             </TabsTrigger>
-            <TabsTrigger value="audience" className="data-[state=active]:bg-background text-xs sm:text-sm">
+            <TabsTrigger value="audience" className="data-[state=active]:bg-background text-[11px] sm:text-sm h-7 sm:h-8">
               Audience
             </TabsTrigger>
-            <TabsTrigger value="earnings" className="data-[state=active]:bg-background text-xs sm:text-sm">
+            <TabsTrigger value="earnings" className="data-[state=active]:bg-background text-[11px] sm:text-sm h-7 sm:h-8">
               Earnings
             </TabsTrigger>
           </TabsList>
 
           {/* Markets Tab */}
-          <TabsContent value="markets" className="space-y-3">
+          <TabsContent value="markets" className="space-y-2 sm:space-y-3">
             <div className="flex items-center justify-between">
-              <h3 className="text-base sm:text-lg font-semibold">Your Markets</h3>
-              <Button size="sm" className="gap-1.5 h-8 text-xs sm:text-sm">
-                <Plus className="h-3.5 w-3.5" />
-                <span className="hidden sm:inline">Create New</span>
-                <span className="sm:hidden">New</span>
+              <h3 className="text-sm sm:text-lg font-semibold">Your Markets</h3>
+              <Button size="sm" className="gap-1 h-7 sm:h-8 text-[10px] sm:text-sm px-2 sm:px-3">
+                <Plus className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+                <span>New</span>
               </Button>
             </div>
 
-            <div className="space-y-2 sm:space-y-3">
+            <div className="space-y-1.5 sm:space-y-3">
               {recentMarkets.map((market) => (
                 <Card key={market.id} className="border-border/40 hover:border-border/60 transition-colors cursor-pointer">
-                  <CardContent className="p-3 sm:p-4">
-                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+                  <CardContent className="p-2.5 sm:p-4">
+                    <div className="flex items-start justify-between gap-2">
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-start sm:items-center gap-2 mb-1 flex-wrap">
-                          <p className="font-medium text-sm sm:text-base line-clamp-2 sm:line-clamp-1">{market.title}</p>
+                        <div className="flex items-start gap-1.5 sm:gap-2 mb-1">
+                          <p className="font-medium text-xs sm:text-base line-clamp-2 leading-tight">{market.title}</p>
                           <Badge 
                             variant={market.status === "Active" ? "default" : "secondary"}
-                            className="text-[10px] sm:text-xs shrink-0"
+                            className="text-[8px] sm:text-xs shrink-0 px-1 sm:px-2"
                           >
-                            {market.status}
-                            {market.resolution && `: ${market.resolution}`}
+                            {market.status === "Resolved" && market.resolution ? `✓ ${market.resolution}` : market.status}
                           </Badge>
                         </div>
-                        <div className="flex items-center gap-3 text-xs sm:text-sm text-muted-foreground">
-                          <span className="flex items-center gap-1">
-                            <Calendar className="h-3 w-3" />
+                        <div className="flex items-center gap-2 sm:gap-3 text-[10px] sm:text-sm text-muted-foreground">
+                          <span className="flex items-center gap-0.5 sm:gap-1">
+                            <Calendar className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
                             {market.created}
                           </span>
                           <span>{market.traders.toLocaleString()} traders</span>
                         </div>
                       </div>
-                      <div className="flex items-center justify-between sm:text-right sm:block border-t sm:border-0 pt-2 sm:pt-0 mt-1 sm:mt-0">
-                        <span className="text-xs text-muted-foreground sm:hidden">Volume</span>
-                        <p className="font-semibold text-sm sm:text-base">${(market.volume / 1000).toFixed(0)}K</p>
-                        <p className="text-xs text-muted-foreground hidden sm:block">volume</p>
+                      <div className="text-right shrink-0">
+                        <p className="font-semibold text-xs sm:text-base">${(market.volume / 1000).toFixed(0)}K</p>
+                        <p className="text-[9px] sm:text-xs text-muted-foreground">vol</p>
                       </div>
                     </div>
                   </CardContent>
@@ -341,22 +336,22 @@ const CreatorDashboard = () => {
           </TabsContent>
 
           {/* Audience Tab */}
-          <TabsContent value="audience" className="space-y-3">
-            <h3 className="text-base sm:text-lg font-semibold">Follower Activity</h3>
+          <TabsContent value="audience" className="space-y-2 sm:space-y-3">
+            <h3 className="text-sm sm:text-lg font-semibold">Follower Activity</h3>
 
             <Card className="border-border/40">
-              <CardHeader className="pb-2 p-3 sm:p-6">
-                <CardTitle className="text-sm sm:text-base">Recent Changes</CardTitle>
+              <CardHeader className="pb-1 sm:pb-2 p-2.5 sm:p-6">
+                <CardTitle className="text-xs sm:text-base">Recent Changes</CardTitle>
               </CardHeader>
-              <CardContent className="p-3 sm:p-6 pt-0 sm:pt-0">
-                <div className="space-y-2">
+              <CardContent className="p-2.5 sm:p-6 pt-0 sm:pt-0">
+                <div className="space-y-0">
                   {followerActivity.map((day, index) => (
-                    <div key={index} className="flex items-center justify-between py-2 border-b border-border/20 last:border-0">
-                      <span className="text-xs sm:text-sm text-muted-foreground">{day.date}</span>
-                      <div className="flex items-center gap-2 sm:gap-4 text-xs sm:text-sm">
+                    <div key={index} className="flex items-center justify-between py-1.5 sm:py-2 border-b border-border/20 last:border-0">
+                      <span className="text-[10px] sm:text-sm text-muted-foreground">{day.date}</span>
+                      <div className="flex items-center gap-3 sm:gap-4 text-[10px] sm:text-sm font-medium">
                         <span className="text-success">+{day.new}</span>
                         <span className="text-destructive">-{day.lost}</span>
-                        <span className="font-medium">+{day.new - day.lost}</span>
+                        <span className="text-foreground">= +{day.new - day.lost}</span>
                       </div>
                     </div>
                   ))}
@@ -366,37 +361,31 @@ const CreatorDashboard = () => {
           </TabsContent>
 
           {/* Earnings Tab */}
-          <TabsContent value="earnings" className="space-y-3">
-            <h3 className="text-base sm:text-lg font-semibold">Earnings Overview</h3>
+          <TabsContent value="earnings" className="space-y-2 sm:space-y-3">
+            <h3 className="text-sm sm:text-lg font-semibold">Earnings Overview</h3>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="grid grid-cols-3 gap-1.5 sm:gap-3">
               <Card className="border-border/40">
-                <CardHeader className="pb-1 p-3 sm:p-6 sm:pb-2">
-                  <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground">Total Earnings</CardTitle>
-                </CardHeader>
-                <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0">
-                  <p className="text-2xl sm:text-3xl font-bold text-success">${creatorStats.earnings.toLocaleString()}</p>
-                  <p className="text-xs sm:text-sm text-muted-foreground">All time</p>
+                <CardContent className="p-2.5 sm:p-4">
+                  <p className="text-[9px] sm:text-sm text-muted-foreground mb-0.5 sm:mb-1">Total</p>
+                  <p className="text-lg sm:text-2xl font-bold text-success">${(creatorStats.earnings / 1000).toFixed(1)}K</p>
+                  <p className="text-[8px] sm:text-xs text-muted-foreground">All time</p>
                 </CardContent>
               </Card>
 
               <Card className="border-border/40">
-                <CardHeader className="pb-1 p-3 sm:p-6 sm:pb-2">
-                  <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground">This Month</CardTitle>
-                </CardHeader>
-                <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0">
-                  <p className="text-2xl sm:text-3xl font-bold">$847</p>
-                  <p className="text-xs sm:text-sm text-muted-foreground">January 2024</p>
+                <CardContent className="p-2.5 sm:p-4">
+                  <p className="text-[9px] sm:text-sm text-muted-foreground mb-0.5 sm:mb-1">This Month</p>
+                  <p className="text-lg sm:text-2xl font-bold">$847</p>
+                  <p className="text-[8px] sm:text-xs text-muted-foreground">Jan 2024</p>
                 </CardContent>
               </Card>
 
               <Card className="border-border/40">
-                <CardHeader className="pb-1 p-3 sm:p-6 sm:pb-2">
-                  <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground">Pending Payout</CardTitle>
-                </CardHeader>
-                <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0">
-                  <p className="text-2xl sm:text-3xl font-bold">$234</p>
-                  <Button variant="outline" size="sm" className="mt-2 h-8 text-xs">
+                <CardContent className="p-2.5 sm:p-4">
+                  <p className="text-[9px] sm:text-sm text-muted-foreground mb-0.5 sm:mb-1">Pending</p>
+                  <p className="text-lg sm:text-2xl font-bold">$234</p>
+                  <Button variant="outline" size="sm" className="mt-1.5 sm:mt-2 h-6 sm:h-7 text-[9px] sm:text-xs w-full">
                     Withdraw
                   </Button>
                 </CardContent>
