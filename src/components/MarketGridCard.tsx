@@ -18,6 +18,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { QuoteRepostDialog } from "@/components/QuoteRepostDialog";
 
 type MarketStatus = "open" | "closing" | "closed" | "resolved";
 
@@ -71,6 +72,7 @@ export function MarketGridCard({
   const [showQuickTrade, setShowQuickTrade] = useState(false);
   const [showDisputeDialog, setShowDisputeDialog] = useState(false);
   const [disputeReason, setDisputeReason] = useState("");
+  const [showRepostDialog, setShowRepostDialog] = useState(false);
   
   const displayOutcomes = outcomes || [
     { label: "Yes", price: yesPrice || 0, color: "success" },
@@ -242,7 +244,7 @@ export function MarketGridCard({
                   className="p-1.5 rounded-full bg-black/40 backdrop-blur-sm hover:bg-black/60 transition-colors"
                   onClick={(e) => {
                     e.stopPropagation();
-                    toast({ title: "Reposted to your feed!" });
+                    setShowRepostDialog(true);
                   }}
                 >
                   <Repeat2 className="h-3 w-3 text-white" />
@@ -498,6 +500,13 @@ export function MarketGridCard({
           </div>
         </div>
       </Card>
+
+      <QuoteRepostDialog
+        open={showRepostDialog}
+        onOpenChange={setShowRepostDialog}
+        marketTitle={title}
+        marketImage={image}
+      />
     </>
   );
 }

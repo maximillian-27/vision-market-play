@@ -31,6 +31,7 @@ import {
   Repeat2
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { QuoteRepostDialog } from "@/components/QuoteRepostDialog";
 
 interface Outcome {
   label: string;
@@ -122,6 +123,7 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
   const [showResolution, setShowResolution] = useState(false);
   const [showComments, setShowComments] = useState(false);
   const [commentText, setCommentText] = useState("");
+  const [showRepostDialog, setShowRepostDialog] = useState(false);
 
   const mockDetails = getMockMarketDetails(market.id);
   const description = market.description || mockDetails.description;
@@ -227,9 +229,7 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
               variant="outline" 
               size="icon" 
               className="h-8 w-8" 
-              onClick={() => {
-                toast({ title: "Reposted to your feed!" });
-              }}
+              onClick={() => setShowRepostDialog(true)}
             >
               <Repeat2 className="h-4 w-4" />
             </Button>
@@ -555,6 +555,13 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
           </div>
         </div>
       </DialogContent>
+
+      <QuoteRepostDialog
+        open={showRepostDialog}
+        onOpenChange={setShowRepostDialog}
+        marketTitle={market.title}
+        marketImage={market.image}
+      />
     </Dialog>
   );
 }

@@ -30,6 +30,7 @@ import {
 import { ResponsiveContainer, AreaChart, Area, XAxis, Tooltip } from "recharts";
 import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
+import { QuoteRepostDialog } from "@/components/QuoteRepostDialog";
 
 interface Comment {
   id: string;
@@ -152,6 +153,7 @@ export default function MarketDetail() {
   const [showAllOutcomes, setShowAllOutcomes] = useState(false);
   const [showResolution, setShowResolution] = useState(false);
   const [showComments, setShowComments] = useState(false);
+  const [showRepostDialog, setShowRepostDialog] = useState(false);
 
   if (!market) {
     return (
@@ -266,9 +268,7 @@ export default function MarketDetail() {
               variant="ghost" 
               size="icon" 
               className="h-8 w-8"
-              onClick={() => {
-                toast({ title: "Reposted to your feed!" });
-              }}
+              onClick={() => setShowRepostDialog(true)}
             >
               <Repeat2 className="h-5 w-5" />
             </Button>
@@ -643,6 +643,13 @@ export default function MarketDetail() {
           </div>
         </div>
       </div>
+
+      <QuoteRepostDialog
+        open={showRepostDialog}
+        onOpenChange={setShowRepostDialog}
+        marketTitle={market.title}
+        marketImage={undefined}
+      />
     </div>
   );
 }
