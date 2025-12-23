@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Clock, TrendingUp, Heart, MessageCircle, Share2, Repeat2, BadgeCheck, Check, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
@@ -48,41 +48,15 @@ export function MarketCard({ id, creator, title, subtitle, image, outcomes, yesP
   const [showRepostDialog, setShowRepostDialog] = useState(false);
   const [repostThoughts, setRepostThoughts] = useState("");
   
-  // Use outcomes if provided, otherwise fallback to binary yes/no
   const displayOutcomes = outcomes || [
     { label: "Yes", price: yesPrice || 0, color: "success" },
     { label: "No", price: noPrice || 0, color: "destructive" }
   ];
 
-  const getOutcomeColor = (color?: string) => {
-    switch (color) {
-      case "success": return "bg-success/10 border-success/20 hover:bg-success/15";
-      case "destructive": return "bg-muted/30 border-border/30 hover:bg-muted/40";
-      default: return "bg-primary/10 border-primary/20 hover:bg-primary/15";
-    }
-  };
-
-  const getOutcomeIcon = (color?: string) => {
-    switch (color) {
-      case "success": return <Check className="h-4 w-4" />;
-      case "destructive": return <X className="h-4 w-4" />;
-      default: return <Check className="h-4 w-4" />;
-    }
-  };
-
-  const getIconBgColor = (color?: string) => {
-    switch (color) {
-      case "success": return "bg-pollgy-green text-pollgy-green-foreground";
-      case "destructive": return "bg-pollgy-blue text-pollgy-blue-foreground";
-      default: return "bg-primary text-primary-foreground";
-    }
-  };
-
-  const hasMultipleOutcomes = displayOutcomes.length > 2;
+  const isBinary = displayOutcomes.length === 2 && !outcomes;
 
   const handleRepost = () => {
     if (repostThoughts.trim()) {
-      // In a real app, this would save to the backend
       toast({
         title: "Market reposted!",
         description: "Your thoughts have been shared to the Community Feed.",
@@ -95,177 +69,187 @@ export function MarketCard({ id, creator, title, subtitle, image, outcomes, yesP
   return (
     <>
       <Card 
-        className="overflow-hidden transition-all hover:bg-accent/30 md:rounded-xl rounded-none border-x-0 md:border-x border-t-0 md:border-t first:border-t cursor-pointer border-border/40"
+        className="overflow-hidden transition-all hover:bg-accent/30 cursor-pointer border-border/40"
         onClick={() => navigate(`/market/${id}`)}
       >
-      <CardContent className="p-0">
-        {/* Creator Info */}
-        <div 
-          className="flex items-center gap-3 p-4 md:p-5 pb-3 cursor-pointer"
-          onClick={(e) => {
-            e.stopPropagation();
-            const profilePath = creator.isCreator !== false 
-              ? `/creator/${creator.id || creator.name.toLowerCase().replace(/\s+/g, '-')}`
-              : `/profile/${creator.id || creator.name.toLowerCase().replace(/\s+/g, '-')}`;
-            navigate(profilePath);
-          }}
-        >
-          <Avatar className="h-9 w-9">
-            <AvatarImage src={creator.avatar} alt={creator.name} />
-            <AvatarFallback>{creator.name.slice(0, 2).toUpperCase()}</AvatarFallback>
-          </Avatar>
-          <div className="flex-1">
-            <div className="flex items-center gap-1.5">
-              <p className="font-medium text-sm">{creator.name}</p>
+        <div className="flex gap-3 p-3">
+          {/* Thumbnail */}
+          <div className="relative w-24 h-24 md:w-28 md:h-28 rounded-lg overflow-hidden bg-secondary flex-shrink-0">
+            <img 
+              src={image} 
+              alt={title}
+              className="h-full w-full object-cover"
+            />
+            {/* Creator badge on image */}
+            <button 
+              className="absolute bottom-1 left-1 flex items-center gap-1 bg-black/70 backdrop-blur-sm rounded-full px-1.5 py-0.5"
+              onClick={(e) => {
+                e.stopPropagation();
+                const profilePath = creator.isCreator !== false 
+                  ? `/creator/${creator.id || creator.name.toLowerCase().replace(/\s+/g, '-')}`
+                  : `/profile/${creator.id || creator.name.toLowerCase().replace(/\s+/g, '-')}`;
+                navigate(profilePath);
+              }}
+            >
+              <Avatar className="h-3.5 w-3.5">
+                <AvatarImage src={creator.avatar} alt={creator.name} />
+                <AvatarFallback className="text-[6px]">{creator.name.slice(0, 2)}</AvatarFallback>
+              </Avatar>
+              <span className="text-white text-[9px] font-medium max-w-[50px] truncate">{creator.name.split(' ')[0]}</span>
               {creator.isCreator !== false && (
-                <BadgeCheck className="h-3.5 w-3.5 text-primary fill-primary/20" />
+                <BadgeCheck className="h-2.5 w-2.5 text-white fill-white/30" />
+              )}
+            </button>
+          </div>
+
+          {/* Content */}
+          <div className="flex-1 min-w-0 flex flex-col">
+            {/* Title & Stats */}
+            <div className="flex-1">
+              <h3 className="text-sm font-semibold leading-tight line-clamp-2 group-hover:text-primary transition-colors">
+                {title}
+              </h3>
+              <div className="flex items-center gap-2 mt-1.5 text-[10px] text-muted-foreground">
+                <span className="flex items-center gap-0.5">
+                  <TrendingUp className="h-2.5 w-2.5" />
+                  {volume}
+                </span>
+                <span className="flex items-center gap-0.5">
+                  <Clock className="h-2.5 w-2.5" />
+                  {endsIn}
+                </span>
+              </div>
+            </div>
+
+            {/* Outcomes */}
+            <div className="mt-2">
+              {isBinary ? (
+                <div className="flex gap-1.5">
+                  {displayOutcomes.map((outcome, index) => (
+                    <button 
+                      key={index}
+                      className={`flex-1 rounded-md py-1.5 text-center transition-all active:scale-95 ${
+                        outcome.color === 'success'
+                          ? 'bg-success/10 hover:bg-success/20 text-success border border-success/20'
+                          : 'bg-secondary hover:bg-secondary/80 text-muted-foreground border border-border/40'
+                      }`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                      }}
+                    >
+                      <div className="text-base font-bold leading-none">{outcome.price}¢</div>
+                      <div className="text-[9px] font-medium mt-0.5">{outcome.label}</div>
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <div className="flex gap-1 flex-wrap">
+                  {displayOutcomes.slice(0, 3).map((outcome, index) => (
+                    <button 
+                      key={index}
+                      className="flex items-center gap-1 rounded-md px-2 py-1 bg-secondary/50 hover:bg-secondary transition-colors text-left"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      {outcome.logo ? (
+                        <img src={outcome.logo} alt={outcome.label} className="h-4 w-4 object-contain" />
+                      ) : (
+                        <div className="h-4 w-4 rounded-full bg-primary/10 flex items-center justify-center text-[8px] font-bold text-primary">
+                          {outcome.label.charAt(0)}
+                        </div>
+                      )}
+                      <span className="text-[10px] font-medium">{outcome.label}</span>
+                      <span className="text-[11px] font-bold ml-0.5">{outcome.price}%</span>
+                    </button>
+                  ))}
+                  {displayOutcomes.length > 3 && (
+                    <span className="text-[9px] text-muted-foreground self-center ml-1">+{displayOutcomes.length - 3}</span>
+                  )}
+                </div>
               )}
             </div>
-          </div>
-        </div>
 
-        {/* Title */}
-        <div className="px-4 md:px-5 pb-3">
-          <h3 className="text-base md:text-lg font-semibold leading-snug">{title}</h3>
-          {subtitle && (
-            <p className="text-sm text-muted-foreground mt-1.5 leading-relaxed">{subtitle}</p>
-          )}
-        </div>
-
-        {/* Market Image */}
-        <div className="relative aspect-video w-full overflow-hidden bg-muted/50">
-          <img 
-            src={image} 
-            alt={title}
-            className="h-full w-full object-cover"
-          />
-        </div>
-
-        {/* Market Stats */}
-        <div className="p-4 md:p-5 space-y-3">
-          <div className="flex items-center gap-3 text-xs text-muted-foreground">
-            <div className="flex items-center gap-1.5">
-              <TrendingUp className="h-3.5 w-3.5" />
-              <span>{volume}</span>
-            </div>
-            <div className="flex items-center gap-1.5 ml-auto">
-              <Clock className="h-3.5 w-3.5" />
-              <span>{endsIn}</span>
-            </div>
-          </div>
-
-          {/* Outcome Buttons */}
-          <div className={`space-y-2 ${hasMultipleOutcomes ? 'max-h-[200px] overflow-y-auto scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent hover:scrollbar-thumb-border/60 pr-1' : ''}`}>
-            {displayOutcomes.map((outcome, index) => {
-              const payout = outcome.price > 0 ? (10000 / outcome.price).toFixed(0) : 0;
-              return (
+            {/* Engagement */}
+            {!hideEngagement && (
+              <div className="flex items-center gap-0.5 mt-2 -ml-1">
                 <button 
-                  key={index}
-                  className={`w-full text-left rounded-lg px-3 py-2.5 border transition-all ${getOutcomeColor(outcome.color)} flex items-center gap-2.5`}
+                  className="flex items-center gap-1 px-1.5 py-1 rounded-md hover:bg-muted/60 text-muted-foreground hover:text-foreground transition-all text-[10px]"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <Heart className="h-3 w-3" />
+                  {likes > 0 && <span>{likes}</span>}
+                </button>
+                <button 
+                  className="flex items-center gap-1 px-1.5 py-1 rounded-md hover:bg-muted/60 text-muted-foreground hover:text-foreground transition-all text-[10px]"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <MessageCircle className="h-3 w-3" />
+                  {comments > 0 && <span>{comments}</span>}
+                </button>
+                <button 
+                  className="flex items-center gap-1 px-1.5 py-1 rounded-md hover:bg-muted/60 text-muted-foreground hover:text-foreground transition-all"
                   onClick={(e) => {
                     e.stopPropagation();
-                    // Handle bet action
+                    setShowRepostDialog(true);
                   }}
                 >
-                  <div className={`rounded-full flex-shrink-0 ${outcome.logo ? 'p-0.5 bg-white border-2 border-white' : `p-1.5 ${getIconBgColor(outcome.color)}`}`}>
-                    {outcome.logo ? (
-                      <img src={outcome.logo} alt={outcome.label} className="h-6 w-6 rounded-full object-contain" />
-                    ) : (
-                      getOutcomeIcon(outcome.color)
-                    )}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="text-sm font-bold text-foreground">{outcome.label}</div>
-                    <div className="text-xs text-muted-foreground font-medium">
-                      $100 → ${payout}
-                    </div>
-                  </div>
-                  <span className="text-lg font-bold text-foreground ml-auto">{outcome.price}¢</span>
+                  <Repeat2 className="h-3 w-3" />
                 </button>
-              );
-            })}
-          </div>
-
-          {/* Engagement Indicators */}
-          {!hideEngagement && (
-            <div className="flex items-center gap-1 pt-1">
-              <button 
-                className="flex items-center gap-1.5 px-2 py-1.5 rounded-md hover:bg-muted/60 text-muted-foreground hover:text-foreground transition-all text-xs"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <Heart className="h-3.5 w-3.5" />
-                {likes > 0 && <span>{likes}</span>}
-              </button>
-              <button 
-                className="flex items-center gap-1.5 px-2 py-1.5 rounded-md hover:bg-muted/60 text-muted-foreground hover:text-foreground transition-all text-xs"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <MessageCircle className="h-3.5 w-3.5" />
-                {comments > 0 && <span>{comments}</span>}
-              </button>
-              <button 
-                className="flex items-center gap-1.5 px-2 py-1.5 rounded-md hover:bg-muted/60 text-muted-foreground hover:text-foreground transition-all"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setShowRepostDialog(true);
-                }}
-              >
-                <Repeat2 className="h-3.5 w-3.5" />
-              </button>
-              <button 
-                className="flex items-center gap-1.5 px-2 py-1.5 rounded-md hover:bg-muted/60 text-muted-foreground hover:text-foreground transition-all ml-auto"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <Share2 className="h-3.5 w-3.5" />
-              </button>
-            </div>
-          )}
-        </div>
-      </CardContent>
-    </Card>
-
-    {/* Repost Dialog */}
-    <Dialog open={showRepostDialog} onOpenChange={setShowRepostDialog}>
-      <DialogContent onClick={(e) => e.stopPropagation()}>
-        <DialogHeader>
-          <DialogTitle>Repost to Community Feed</DialogTitle>
-          <DialogDescription>
-            Share your thoughts on this market with the community
-          </DialogDescription>
-        </DialogHeader>
-        <div className="space-y-4 pt-4">
-          <Textarea
-            placeholder="What do you think about this market?"
-            value={repostThoughts}
-            onChange={(e) => setRepostThoughts(e.target.value)}
-            className="min-h-[120px]"
-            maxLength={500}
-          />
-          <div className="flex items-center justify-between">
-            <span className="text-xs text-muted-foreground">
-              {repostThoughts.length}/500
-            </span>
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setShowRepostDialog(false);
-                  setRepostThoughts("");
-                }}
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={handleRepost}
-                disabled={!repostThoughts.trim()}
-              >
-                Repost
-              </Button>
-            </div>
+                <button 
+                  className="flex items-center gap-1 px-1.5 py-1 rounded-md hover:bg-muted/60 text-muted-foreground hover:text-foreground transition-all ml-auto"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <Share2 className="h-3 w-3" />
+                </button>
+              </div>
+            )}
           </div>
         </div>
-      </DialogContent>
-    </Dialog>
-  </>
+      </Card>
+
+      {/* Repost Dialog */}
+      <Dialog open={showRepostDialog} onOpenChange={setShowRepostDialog}>
+        <DialogContent onClick={(e) => e.stopPropagation()}>
+          <DialogHeader>
+            <DialogTitle>Repost to Community Feed</DialogTitle>
+            <DialogDescription>
+              Share your thoughts on this market with the community
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 pt-4">
+            <Textarea
+              placeholder="What do you think about this market?"
+              value={repostThoughts}
+              onChange={(e) => setRepostThoughts(e.target.value)}
+              className="min-h-[100px]"
+              maxLength={500}
+            />
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-muted-foreground">
+                {repostThoughts.length}/500
+              </span>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setShowRepostDialog(false);
+                    setRepostThoughts("");
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={handleRepost}
+                  disabled={!repostThoughts.trim()}
+                >
+                  Repost
+                </Button>
+              </div>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
