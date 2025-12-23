@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Globe, LogOut, Settings, User, Wallet, Search, Home, Newspaper, Users, MessageSquare, Briefcase, Sparkles, Shield } from "lucide-react";
+import { Globe, LogOut, Settings, Wallet, Search, Home, Newspaper, Users, MessageSquare, Briefcase, Sparkles, Shield, Bell, Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import pollgyLogo from "@/assets/pollgy-logo-new.png";
 import { useNavigate } from "react-router-dom";
@@ -29,7 +29,7 @@ export function Header() {
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isCreator, setIsCreator] = useState(false);
-  const [isAdmin] = useState(true); // For demo purposes
+  const [isAdmin] = useState(true);
   const [showDepositDialog, setShowDepositDialog] = useState(false);
   const [showCreatorDialog, setShowCreatorDialog] = useState(false);
   const [portfolioValue] = useState(12450);
@@ -57,39 +57,27 @@ export function Header() {
 
   return (
     <>
-      <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 fixed top-0 z-50 w-full">
-        <div className="flex h-14 items-center px-4 lg:px-8 gap-4 max-w-[1800px] mx-auto">
-          <div className="flex items-center gap-2">
+      <header className="border-b border-border/40 bg-background/95 backdrop-blur-xl supports-[backdrop-filter]:bg-background/80 fixed top-0 z-50 w-full">
+        <div className="flex h-14 items-center px-4 lg:px-6 gap-3 max-w-[1600px] mx-auto">
+          {/* Logo */}
+          <div className="flex items-center">
             <img 
               src={pollgyLogo} 
               alt="Pollgy" 
-              className="h-8 md:h-10 cursor-pointer"
+              className="h-8 cursor-pointer hover:opacity-80 transition-opacity"
               onClick={() => navigate("/")}
             />
-            
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-9 w-9 md:hidden">
-                  <Globe className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="z-50 bg-popover">
-                <DropdownMenuItem>English</DropdownMenuItem>
-                <DropdownMenuItem>Español</DropdownMenuItem>
-                <DropdownMenuItem>Français</DropdownMenuItem>
-                <DropdownMenuItem>Deutsch</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
           </div>
 
+          {/* Desktop Navigation */}
           {!isMobile && (
-            <nav className="flex items-center gap-4 lg:gap-6 ml-4 lg:ml-8">
+            <nav className="flex items-center gap-1 ml-6">
               {navItems.map((item) => (
                 <NavLink
                   key={item.title}
                   to={item.url}
-                  className="px-3 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
-                  activeClassName="font-bold text-foreground"
+                  className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-xl transition-all duration-200"
+                  activeClassName="font-semibold text-foreground bg-muted"
                 >
                   {item.title}
                 </NavLink>
@@ -97,107 +85,124 @@ export function Header() {
             </nav>
           )}
 
-          <div className="flex items-center gap-3 ml-auto">
-            <div className="hidden md:flex relative w-64 lg:w-80">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input 
-                placeholder="Search markets..." 
-                className="pl-9 h-9 bg-muted/40 border-border/40 w-full"
-              />
-            </div>
+          {/* Search - Desktop */}
+          <div className="hidden md:flex relative flex-1 max-w-sm ml-auto mr-2">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/60" />
+            <Input 
+              placeholder="Search markets..." 
+              className="pl-10 h-10 bg-muted/40 border-transparent hover:bg-muted/60 focus-visible:bg-background"
+            />
+          </div>
 
+          {/* Right Actions */}
+          <div className="flex items-center gap-2 ml-auto md:ml-0">
+            {/* Language Selector */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-9 w-9 hidden md:flex">
+                <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl text-muted-foreground hover:text-foreground">
                   <Globe className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="z-50 bg-popover">
-                <DropdownMenuItem>English</DropdownMenuItem>
-                <DropdownMenuItem>Español</DropdownMenuItem>
-                <DropdownMenuItem>Français</DropdownMenuItem>
-                <DropdownMenuItem>Deutsch</DropdownMenuItem>
+              <DropdownMenuContent align="end" className="z-50 bg-popover rounded-xl border-border/60 shadow-elevated">
+                <DropdownMenuItem className="rounded-lg">English</DropdownMenuItem>
+                <DropdownMenuItem className="rounded-lg">Español</DropdownMenuItem>
+                <DropdownMenuItem className="rounded-lg">Français</DropdownMenuItem>
+                <DropdownMenuItem className="rounded-lg">Deutsch</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           
             {isLoggedIn && (
-              <Button 
-                size="sm" 
-                variant="outline"
-                onClick={() => setShowDepositDialog(true)}
-                className="h-8 md:h-9 text-xs md:text-sm"
-              >
-                Deposit
-              </Button>
+              <>
+                {/* Notifications */}
+                <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl text-muted-foreground hover:text-foreground relative">
+                  <Bell className="h-4 w-4" />
+                  <span className="absolute top-1 right-1 h-2 w-2 bg-accent rounded-full" />
+                </Button>
+                
+                {/* Deposit Button */}
+                <Button 
+                  size="sm" 
+                  variant="outline"
+                  onClick={() => setShowDepositDialog(true)}
+                  className="h-9 text-xs font-semibold gap-1.5 rounded-xl border-primary/30 text-primary hover:bg-primary/5 hover:border-primary/50"
+                >
+                  <Plus className="h-3.5 w-3.5" />
+                  <span className="hidden sm:inline">Deposit</span>
+                </Button>
+              </>
             )}
 
             {!isLoggedIn ? (
               <>
                 <Button 
                   variant="ghost" 
-                  size="default"
-                  className="hidden md:flex text-muted-foreground opacity-60 hover:opacity-100 transition-opacity"
+                  size="sm"
+                  className="hidden md:flex text-muted-foreground hover:text-foreground rounded-xl"
                 >
                   How it works?
                 </Button>
-                <Button size={isMobile ? "sm" : "default"} variant="login" onClick={handleLogin}>
-                  Login / Sign up
+                <Button 
+                  size="sm" 
+                  variant="login"
+                  onClick={handleLogin}
+                  className="rounded-xl font-semibold"
+                >
+                  {isMobile ? "Login" : "Login / Sign up"}
                 </Button>
               </>
             ) : (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className="focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-full">
-                    <Avatar className="h-9 w-9 cursor-pointer">
+                  <button className="focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full transition-transform hover:scale-105">
+                    <Avatar className="h-9 w-9 ring-2 ring-border/60 ring-offset-2 ring-offset-background">
                       <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=User" alt="Profile" />
-                      <AvatarFallback>U</AvatarFallback>
+                      <AvatarFallback className="bg-primary/10 text-primary font-semibold text-sm">U</AvatarFallback>
                     </Avatar>
                   </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56 z-50 bg-popover">
+                <DropdownMenuContent align="end" className="w-64 z-50 bg-popover rounded-2xl border-border/60 shadow-elevated p-2">
                   {/* Balance Section */}
-                  <div className="px-2 py-3 space-y-2">
+                  <div className="px-3 py-3 space-y-2 bg-muted/50 rounded-xl mb-2">
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-muted-foreground">Portfolio</span>
-                      <span className="font-semibold text-success">${portfolioValue.toLocaleString()}</span>
+                      <span className="font-bold text-success">${portfolioValue.toLocaleString()}</span>
                     </div>
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-muted-foreground">Cash</span>
-                      <span className="font-semibold">${cashBalance.toLocaleString()}</span>
+                      <span className="font-bold">${cashBalance.toLocaleString()}</span>
                     </div>
                   </div>
-                  <DropdownMenuSeparator />
                   
-                  <DropdownMenuItem onClick={() => navigate("/portfolio")} className="gap-2">
-                    <Briefcase className="h-4 w-4" />
+                  <DropdownMenuItem onClick={() => navigate("/portfolio")} className="gap-3 rounded-xl py-2.5 cursor-pointer">
+                    <Briefcase className="h-4 w-4 text-muted-foreground" />
                     Portfolio
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate("/settings")} className="gap-2">
-                    <Settings className="h-4 w-4" />
+                  <DropdownMenuItem onClick={() => navigate("/settings")} className="gap-3 rounded-xl py-2.5 cursor-pointer">
+                    <Settings className="h-4 w-4 text-muted-foreground" />
                     Settings
                   </DropdownMenuItem>
                   
                   {isCreator ? (
-                    <DropdownMenuItem onClick={() => navigate("/creator-dashboard")} className="gap-2">
-                      <Sparkles className="h-4 w-4" />
-                      Creator Dashboard
+                    <DropdownMenuItem onClick={() => navigate("/creator-dashboard")} className="gap-3 rounded-xl py-2.5 cursor-pointer">
+                      <Sparkles className="h-4 w-4 text-primary" />
+                      <span className="text-primary font-medium">Creator Dashboard</span>
                     </DropdownMenuItem>
                   ) : (
-                    <DropdownMenuItem onClick={() => setShowCreatorDialog(true)} className="gap-2">
-                      <Sparkles className="h-4 w-4" />
+                    <DropdownMenuItem onClick={() => setShowCreatorDialog(true)} className="gap-3 rounded-xl py-2.5 cursor-pointer">
+                      <Sparkles className="h-4 w-4 text-muted-foreground" />
                       Become a Creator
                     </DropdownMenuItem>
                   )}
                   
                   {isAdmin && (
-                    <DropdownMenuItem onClick={() => navigate("/admin")} className="gap-2">
-                      <Shield className="h-4 w-4" />
+                    <DropdownMenuItem onClick={() => navigate("/admin")} className="gap-3 rounded-xl py-2.5 cursor-pointer">
+                      <Shield className="h-4 w-4 text-muted-foreground" />
                       Admin
                     </DropdownMenuItem>
                   )}
                   
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleLogout} className="gap-2">
+                  <DropdownMenuSeparator className="my-2" />
+                  <DropdownMenuItem onClick={handleLogout} className="gap-3 rounded-xl py-2.5 cursor-pointer text-destructive focus:text-destructive">
                     <LogOut className="h-4 w-4" />
                     Logout
                   </DropdownMenuItem>
@@ -220,33 +225,27 @@ export function Header() {
 
       {/* Deposit Dialog */}
       <Dialog open={showDepositDialog} onOpenChange={setShowDepositDialog}>
-        <DialogContent className="z-50">
+        <DialogContent className="z-50 rounded-2xl border-border/60 shadow-elevated max-w-sm">
           <DialogHeader>
-            <DialogTitle>Deposit Funds</DialogTitle>
+            <DialogTitle className="text-xl">Deposit Funds</DialogTitle>
             <DialogDescription>
               Add funds to your account to start trading
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-4 pt-4">
-            <div className="grid grid-cols-2 gap-3">
-              <Button variant="outline" className="h-20 flex-col">
-                <span className="text-2xl font-bold">$50</span>
-                <span className="text-xs text-muted-foreground">Quick Deposit</span>
-              </Button>
-              <Button variant="outline" className="h-20 flex-col">
-                <span className="text-2xl font-bold">$100</span>
-                <span className="text-xs text-muted-foreground">Quick Deposit</span>
-              </Button>
-              <Button variant="outline" className="h-20 flex-col">
-                <span className="text-2xl font-bold">$250</span>
-                <span className="text-xs text-muted-foreground">Quick Deposit</span>
-              </Button>
-              <Button variant="outline" className="h-20 flex-col">
-                <span className="text-2xl font-bold">$500</span>
-                <span className="text-xs text-muted-foreground">Quick Deposit</span>
-              </Button>
+          <div className="space-y-3 pt-4">
+            <div className="grid grid-cols-2 gap-2">
+              {[50, 100, 250, 500].map((amount) => (
+                <Button 
+                  key={amount}
+                  variant="outline" 
+                  className="h-20 flex-col rounded-xl border-border/60 hover:border-primary/50 hover:bg-primary/5"
+                >
+                  <span className="text-2xl font-bold">${amount}</span>
+                  <span className="text-[10px] text-muted-foreground">Quick Deposit</span>
+                </Button>
+              ))}
             </div>
-            <Button className="w-full" size="lg">
+            <Button className="w-full rounded-xl" size="lg">
               Custom Amount
             </Button>
           </div>

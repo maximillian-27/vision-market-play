@@ -19,30 +19,30 @@ export function MobileNav() {
   return (
     <>
       <Dialog open={showSearch} onOpenChange={setShowSearch}>
-        <DialogContent className="top-2 translate-y-0">
+        <DialogContent className="top-4 translate-y-0 rounded-2xl border-border/60 shadow-elevated">
           <DialogHeader>
             <DialogTitle>Search Markets</DialogTitle>
           </DialogHeader>
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/60" />
             <Input 
               placeholder="Search markets..." 
-              className="pl-10 h-12 text-base"
+              className="pl-11 h-12 text-base rounded-xl"
               autoFocus
             />
           </div>
         </DialogContent>
       </Dialog>
 
-      <div className="fixed bottom-0 left-0 right-0 z-20">
-      {/* How it works button - thin bar above nav */}
-      <button className="w-full py-1.5 border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 text-xs text-muted-foreground opacity-50 hover:opacity-70 transition-opacity">
-        How it works?
-      </button>
-      
+      <div className="fixed bottom-0 left-0 right-0 z-50">
+        {/* How it works - subtle link */}
+        <button className="w-full py-2 border-t border-border/40 bg-background/95 backdrop-blur-xl text-xs text-muted-foreground/60 hover:text-muted-foreground transition-colors">
+          How it works?
+        </button>
+        
         {/* Main navigation */}
-        <nav className="border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-          <div className="flex items-center justify-around h-16">
+        <nav className="border-t border-border/40 bg-background/95 backdrop-blur-xl supports-[backdrop-filter]:bg-background/80">
+          <div className="flex items-center justify-around h-14 max-w-lg mx-auto px-2">
             {items.map((item) => {
               const isActive = location.pathname === item.url;
               return (
@@ -50,12 +50,15 @@ export function MobileNav() {
                   key={item.url}
                   to={item.url}
                   end
-                  className="flex flex-col items-center justify-center flex-1 h-full gap-1 transition-colors"
+                  className="flex flex-col items-center justify-center flex-1 h-full gap-0.5 transition-all duration-200 active:scale-95"
                 >
-                  <item.icon 
-                    className={`h-5 w-5 ${isActive ? 'text-primary' : 'text-muted-foreground'}`} 
-                  />
-                  <span className={`text-xs ${isActive ? 'text-primary font-medium' : 'text-muted-foreground'}`}>
+                  <div className={`p-1.5 rounded-xl transition-colors ${isActive ? 'bg-primary/10' : ''}`}>
+                    <item.icon 
+                      className={`h-5 w-5 transition-colors ${isActive ? 'text-primary' : 'text-muted-foreground'}`} 
+                      strokeWidth={isActive ? 2.5 : 2}
+                    />
+                  </div>
+                  <span className={`text-[10px] transition-colors ${isActive ? 'text-primary font-semibold' : 'text-muted-foreground'}`}>
                     {item.title}
                   </span>
                 </NavLink>
@@ -65,10 +68,12 @@ export function MobileNav() {
             {/* Search Button */}
             <button
               onClick={() => setShowSearch(true)}
-              className="flex flex-col items-center justify-center flex-1 h-full gap-1 transition-colors"
+              className="flex flex-col items-center justify-center flex-1 h-full gap-0.5 transition-all duration-200 active:scale-95"
             >
-              <Search className="h-5 w-5 text-muted-foreground" />
-              <span className="text-xs text-muted-foreground">Search</span>
+              <div className="p-1.5 rounded-xl">
+                <Search className="h-5 w-5 text-muted-foreground" />
+              </div>
+              <span className="text-[10px] text-muted-foreground">Search</span>
             </button>
           </div>
         </nav>
