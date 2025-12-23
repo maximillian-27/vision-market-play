@@ -14,6 +14,10 @@ import Profile from "./pages/Profile";
 import CreatorProfile from "./pages/CreatorProfile";
 import MarketDetail from "./pages/MarketDetail";
 import NotFound from "./pages/NotFound";
+import Portfolio from "./pages/Portfolio";
+import Settings from "./pages/Settings";
+import CreatorDashboard from "./pages/CreatorDashboard";
+import Admin from "./pages/Admin";
 
 const queryClient = new QueryClient();
 
@@ -33,6 +37,10 @@ function AppContent() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/profile/:userId" element={<Profile />} />
           <Route path="/creator/:userId" element={<CreatorProfile />} />
+          <Route path="/portfolio" element={<Portfolio />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/creator-dashboard" element={<CreatorDashboard />} />
+          <Route path="/admin" element={<Admin />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
