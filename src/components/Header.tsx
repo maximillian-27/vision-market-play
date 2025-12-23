@@ -75,8 +75,8 @@ export function Header() {
                 <NavLink
                   key={item.title}
                   to={item.url}
-                  className="px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground rounded-md transition-colors"
-                  activeClassName="font-medium text-foreground bg-secondary"
+                  className="px-3 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors border-b-2 border-transparent"
+                  activeClassName="font-medium text-foreground border-b-2 border-foreground"
                 >
                   {item.title}
                 </NavLink>
