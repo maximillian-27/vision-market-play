@@ -13,17 +13,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { BecomeCreatorDialog } from "@/components/BecomeCreatorDialog";
 import { CreateMarketButton } from "@/components/CreateMarketButton";
 import { HowItWorksDialog } from "@/components/HowItWorksDialog";
+import { DepositDialog } from "@/components/DepositDialog";
 
 export function Header() {
   const isMobile = useIsMobile();
@@ -244,33 +238,7 @@ export function Header() {
       />
 
       {/* Deposit Dialog */}
-      <Dialog open={showDepositDialog} onOpenChange={setShowDepositDialog}>
-        <DialogContent className="z-50 rounded-lg border-border/60 max-w-sm">
-          <DialogHeader>
-            <DialogTitle>Deposit Funds</DialogTitle>
-            <DialogDescription>
-              Add funds to your account to start trading
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-3 pt-2">
-            <div className="grid grid-cols-2 gap-2">
-              {[50, 100, 250, 500].map((amount) => (
-                <Button 
-                  key={amount}
-                  variant="outline" 
-                  className="h-16 flex-col rounded-lg"
-                >
-                  <span className="text-xl font-bold">${amount}</span>
-                  <span className="text-[10px] text-muted-foreground">Quick Deposit</span>
-                </Button>
-              ))}
-            </div>
-            <Button className="w-full" size="lg">
-              Custom Amount
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <DepositDialog open={showDepositDialog} onOpenChange={setShowDepositDialog} />
     </>
   );
 }
