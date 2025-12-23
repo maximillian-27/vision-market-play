@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Clock, TrendingUp, AlertTriangle, CheckCircle2, Timer, Users, Bookmark } from "lucide-react";
+import { Clock, TrendingUp, AlertTriangle, CheckCircle2, Timer, Users, Bookmark, Share2, Repeat2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { MarketDialog } from "@/components/MarketDialog";
@@ -225,15 +225,43 @@ export function MarketGridCard({
               </div>
             )}
             
-            <button 
-              className="absolute top-1.5 right-1.5 p-1 rounded-full bg-black/40 backdrop-blur-sm hover:bg-black/60 transition-colors"
-              onClick={(e) => {
-                e.stopPropagation();
-                toast({ title: "Saved to watchlist" });
-              }}
-            >
-              <Bookmark className="h-3 w-3 text-white" />
-            </button>
+            {/* Action buttons - only show when open */}
+            {!isClosedOrResolved && (
+              <div className="absolute top-1.5 right-1.5 flex items-center gap-1">
+                <button 
+                  className="p-1.5 rounded-full bg-black/40 backdrop-blur-sm hover:bg-black/60 transition-colors"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigator.clipboard.writeText(`${window.location.origin}/market/${id}`);
+                    toast({ title: "Link copied!" });
+                  }}
+                >
+                  <Share2 className="h-3 w-3 text-white" />
+                </button>
+                <button 
+                  className="p-1.5 rounded-full bg-black/40 backdrop-blur-sm hover:bg-black/60 transition-colors"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toast({ title: "Reposted to your feed!" });
+                  }}
+                >
+                  <Repeat2 className="h-3 w-3 text-white" />
+                </button>
+              </div>
+            )}
+            
+            {/* Bookmark for closed/resolved */}
+            {isClosedOrResolved && (
+              <button 
+                className="absolute top-1.5 right-1.5 p-1 rounded-full bg-black/40 backdrop-blur-sm hover:bg-black/60 transition-colors"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toast({ title: "Saved to watchlist" });
+                }}
+              >
+                <Bookmark className="h-3 w-3 text-white" />
+              </button>
+            )}
           </div>
 
           <div className="p-2 space-y-2">
@@ -356,9 +384,35 @@ export function MarketGridCard({
 
           {/* Content */}
           <div className="flex-1 min-w-0 flex flex-col gap-1.5">
-            <h3 className="text-[13px] font-semibold leading-tight line-clamp-2 group-hover:text-primary transition-colors">
-              {title}
-            </h3>
+            <div className="flex items-start justify-between gap-2">
+              <h3 className="text-[13px] font-semibold leading-tight line-clamp-2 group-hover:text-primary transition-colors flex-1">
+                {title}
+              </h3>
+              {/* Action buttons for open markets */}
+              {!isClosedOrResolved && (
+                <div className="flex items-center gap-1 flex-shrink-0">
+                  <button 
+                    className="p-1 rounded-full hover:bg-muted transition-colors"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigator.clipboard.writeText(`${window.location.origin}/market/${id}`);
+                      toast({ title: "Link copied!" });
+                    }}
+                  >
+                    <Share2 className="h-3.5 w-3.5 text-muted-foreground" />
+                  </button>
+                  <button 
+                    className="p-1 rounded-full hover:bg-muted transition-colors"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toast({ title: "Reposted to your feed!" });
+                    }}
+                  >
+                    <Repeat2 className="h-3.5 w-3.5 text-muted-foreground" />
+                  </button>
+                </div>
+              )}
+            </div>
 
             {isClosedOrResolved ? (
               <div className={`inline-flex items-center gap-1 px-2 py-1 rounded-md w-fit ${
