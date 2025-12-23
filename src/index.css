@@ -236,4 +236,14 @@ All colors MUST be HSL. Consistent hover states throughout.
       opacity: 0.85;
     }
   }
+  
+  /* Hide scrollbar but keep functionality */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
 }
