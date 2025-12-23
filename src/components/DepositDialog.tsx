@@ -150,18 +150,18 @@ export function DepositDialog({ open, onOpenChange }: DepositDialogProps) {
 
         {step === "crypto" && (
           <>
-            <DialogHeader className="px-5 pt-5 pb-0">
-              <div className="flex items-center gap-3">
+            <DialogHeader className="px-4 pt-4 pb-0">
+              <div className="flex items-center gap-2">
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8 -ml-1 rounded-full"
+                  className="h-7 w-7 -ml-1 rounded-full"
                   onClick={handleBack}
                 >
-                  <ArrowLeft className="h-4 w-4" />
+                  <ArrowLeft className="h-3.5 w-3.5" />
                 </Button>
                 <div>
-                  <DialogTitle className="text-base font-semibold">Deposit {cryptoWalletData.token}</DialogTitle>
+                  <DialogTitle className="text-sm font-semibold">Deposit {cryptoWalletData.token}</DialogTitle>
                   <DialogDescription className="text-xs">
                     Send to your wallet on {cryptoWalletData.network}
                   </DialogDescription>
@@ -169,85 +169,79 @@ export function DepositDialog({ open, onOpenChange }: DepositDialogProps) {
               </div>
             </DialogHeader>
             
-            <div className="px-5 pb-5 pt-4 space-y-5">
+            <div className="px-4 pb-4 pt-3 space-y-3">
               {/* QR Code Section */}
               <div className="flex flex-col items-center">
-                <div className="relative">
-                  <div className="absolute -inset-3 bg-gradient-to-br from-primary/20 via-primary/5 to-transparent rounded-2xl blur-xl" />
-                  <div className="relative p-5 bg-white rounded-2xl shadow-lg border border-border/20">
-                    <QRCodeSVG 
-                      value={cryptoWalletData.address} 
-                      size={160}
-                      level="M"
-                      includeMargin={false}
-                      fgColor="#000000"
-                      bgColor="#FFFFFF"
-                    />
-                  </div>
+                <div className="p-3 bg-white rounded-xl shadow-sm border border-border/30">
+                  <QRCodeSVG 
+                    value={cryptoWalletData.address} 
+                    size={120}
+                    level="M"
+                    includeMargin={false}
+                    fgColor="#000000"
+                    bgColor="#FFFFFF"
+                  />
                 </div>
-                <p className="text-xs text-muted-foreground mt-3 flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                <p className="text-[10px] text-muted-foreground mt-2 flex items-center gap-1">
+                  <span className="w-1 h-1 rounded-full bg-primary animate-pulse" />
                   Scan to deposit
                 </p>
               </div>
 
               {/* Wallet Address */}
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Wallet Address</p>
-                </div>
+              <div className="space-y-1.5">
+                <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide">Wallet Address</p>
                 <button
                   onClick={handleCopyAddress}
-                  className="w-full flex items-center gap-3 p-3 bg-secondary/40 hover:bg-secondary/60 rounded-xl border border-border/40 transition-all group"
+                  className="w-full flex items-center gap-2 p-2.5 bg-secondary/40 hover:bg-secondary/60 rounded-lg border border-border/40 transition-all group"
                 >
-                  <div className="flex-1 font-mono text-sm truncate text-left">
+                  <div className="flex-1 font-mono text-xs truncate text-left">
                     {cryptoWalletData.address}
                   </div>
-                  <div className="shrink-0 h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                    <Copy className="h-3.5 w-3.5 text-primary" />
+                  <div className="shrink-0 h-6 w-6 rounded-md bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                    <Copy className="h-3 w-3 text-primary" />
                   </div>
                 </button>
               </div>
 
               {/* Network & Token Pills */}
               <div className="flex gap-2">
-                <div className="flex-1 flex items-center gap-2.5 px-3 py-2.5 bg-secondary/40 rounded-xl border border-border/30">
-                  <div className="w-8 h-8 rounded-full bg-violet-500/10 flex items-center justify-center">
-                    <div className="w-4 h-4 rounded-full bg-violet-500" />
+                <div className="flex-1 flex items-center gap-2 px-2.5 py-2 bg-secondary/40 rounded-lg border border-border/30">
+                  <div className="w-6 h-6 rounded-full bg-violet-500/10 flex items-center justify-center">
+                    <div className="w-3 h-3 rounded-full bg-violet-500" />
                   </div>
                   <div>
-                    <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Network</p>
-                    <p className="text-sm font-semibold -mt-0.5">{cryptoWalletData.network}</p>
+                    <p className="text-[9px] text-muted-foreground uppercase tracking-wide">Network</p>
+                    <p className="text-xs font-semibold -mt-0.5">{cryptoWalletData.network}</p>
                   </div>
                 </div>
-                <div className="flex-1 flex items-center gap-2.5 px-3 py-2.5 bg-secondary/40 rounded-xl border border-border/30">
-                  <div className="w-8 h-8 rounded-full bg-emerald-500/10 flex items-center justify-center">
-                    <span className="text-sm font-bold text-emerald-600">$</span>
+                <div className="flex-1 flex items-center gap-2 px-2.5 py-2 bg-secondary/40 rounded-lg border border-border/30">
+                  <div className="w-6 h-6 rounded-full bg-emerald-500/10 flex items-center justify-center">
+                    <span className="text-xs font-bold text-emerald-600">$</span>
                   </div>
                   <div>
-                    <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Token</p>
-                    <p className="text-sm font-semibold -mt-0.5">{cryptoWalletData.token}</p>
+                    <p className="text-[9px] text-muted-foreground uppercase tracking-wide">Token</p>
+                    <p className="text-xs font-semibold -mt-0.5">{cryptoWalletData.token}</p>
                   </div>
                 </div>
               </div>
 
               {/* Warning */}
-              <div className="flex gap-3 p-3.5 bg-amber-500/5 border border-amber-500/15 rounded-xl">
-                <div className="shrink-0 w-8 h-8 rounded-full bg-amber-500/10 flex items-center justify-center">
-                  <AlertTriangle className="h-4 w-4 text-amber-500" />
+              <div className="flex gap-2 p-2.5 bg-amber-500/5 border border-amber-500/15 rounded-lg">
+                <div className="shrink-0 w-6 h-6 rounded-full bg-amber-500/10 flex items-center justify-center">
+                  <AlertTriangle className="h-3 w-3 text-amber-500" />
                 </div>
-                <p className="text-xs text-muted-foreground leading-relaxed">
-                  Only send <span className="font-semibold text-foreground">{cryptoWalletData.token}</span> on <span className="font-semibold text-foreground">{cryptoWalletData.network}</span>. Wrong tokens or networks may cause permanent loss.
+                <p className="text-[10px] text-muted-foreground leading-relaxed">
+                  Only send <span className="font-semibold text-foreground">{cryptoWalletData.token}</span> on <span className="font-semibold text-foreground">{cryptoWalletData.network}</span>. Wrong tokens may cause permanent loss.
                 </p>
               </div>
 
               {/* Done Button */}
               <Button 
-                className="w-full h-11 text-sm font-semibold rounded-xl" 
-                size="lg"
+                className="w-full h-9 text-sm font-semibold rounded-lg" 
                 onClick={() => handleClose(false)}
               >
-                <Check className="h-4 w-4 mr-2" />
+                <Check className="h-3.5 w-3.5 mr-1.5" />
                 Done
               </Button>
             </div>
