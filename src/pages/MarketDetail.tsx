@@ -2,19 +2,14 @@ import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, TrendingUp, Clock, Users, Heart, MessageCircle, Share2, Check, X, BadgeCheck, Info, Bookmark, MoreHorizontal } from "lucide-react";
-import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip } from "recharts";
+import { ArrowLeft, Heart, MessageCircle, Share2, Check, X, BadgeCheck, ChevronDown, ChevronUp, Send } from "lucide-react";
+import { ResponsiveContainer, AreaChart, Area, XAxis, Tooltip } from "recharts";
 import { useToast } from "@/hooks/use-toast";
-import { z } from "zod";
 import { BuyDialog } from "@/components/BuyDialog";
-
-const commentSchema = z.object({
-  text: z.string().trim().min(1).max(500)
-});
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 interface Comment {
   id: string;
@@ -35,14 +30,15 @@ const mockMarketData: Record<string, any> = {
       verified: true,
     },
     title: "Will Bitcoin reach $100,000 by end of 2025?",
-    description: "This market resolves to YES if Bitcoin reaches or exceeds $100,000 USD on any major exchange before December 31, 2025.",
+    description: "This market resolves to YES if Bitcoin reaches or exceeds $100,000 USD on any major exchange before December 31, 2025. The price must be sustained for at least 5 minutes on Coinbase, Binance, or Kraken.",
     outcomes: [
       { label: "Yes", price: 68, color: "success" },
       { label: "No", price: 32, color: "destructive" }
     ],
     volume: "$2.4M",
     endDate: "Dec 31, 2025",
-    traders: "12.4K",
+    traders: 12400,
+    likesCount: 342,
     priceHistory: [
       { date: "Jan", price: 45 },
       { date: "Feb", price: 52 },
@@ -59,7 +55,7 @@ const mockMarketData: Record<string, any> = {
       verified: true,
     },
     title: "Who will win the NBA Championship this season?",
-    description: "This market resolves based on the winner of the 2024-2025 NBA Finals.",
+    description: "This market resolves based on the winner of the 2024-2025 NBA Finals, as officially announced by the NBA.",
     isMultiOutcome: true,
     outcomes: [
       { label: "Celtics", price: 32, logo: "https://cdn.nba.com/logos/nba/1610612738/primary/L/logo.svg" },
@@ -70,7 +66,8 @@ const mockMarketData: Record<string, any> = {
     ],
     volume: "$890K",
     endDate: "Jun 30, 2025",
-    traders: "8.2K",
+    traders: 8200,
+    likesCount: 189,
     priceHistory: [
       { date: "Jan", price: 28 },
       { date: "Feb", price: 30 },
@@ -83,7 +80,7 @@ const mockMarketData: Record<string, any> = {
 const mockComments: Comment[] = [
   {
     id: "1",
-    author: { name: "Alex Chen", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Alex", username: "@alexchen" },
+    author: { name: "Alex Chen", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Alex", username: "alexchen" },
     text: "Strong institutional adoption signals make this very likely. MicroStrategy and others continue to accumulate.",
     timestamp: "2h",
     likes: 24,
@@ -91,11 +88,19 @@ const mockComments: Comment[] = [
   },
   {
     id: "2",
-    author: { name: "Jordan Smith", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Jordan", username: "@jsmith" },
-    text: "Regulatory clarity will be key here.",
+    author: { name: "Jordan Smith", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Jordan", username: "jsmith" },
+    text: "Regulatory clarity will be key here. ETF momentum helps.",
     timestamp: "4h",
     likes: 18,
     isLiked: true,
+  },
+  {
+    id: "3",
+    author: { name: "Emily Davis", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Emily", username: "emilyd" },
+    text: "I'm not so sure about this timeline. Seems aggressive.",
+    timestamp: "6h",
+    likes: 8,
+    isLiked: false,
   },
 ];
 
@@ -108,9 +113,11 @@ export default function MarketDetail() {
   const [commentText, setCommentText] = useState("");
   const [comments, setComments] = useState<Comment[]>(mockComments);
   const [isLiked, setIsLiked] = useState(false);
-  const [isSaved, setIsSaved] = useState(false);
+  const [likesCount, setLikesCount] = useState(market?.likesCount || 0);
   const [showBuyDialog, setShowBuyDialog] = useState(false);
   const [selectedOutcome, setSelectedOutcome] = useState<any>(null);
+  const [showAllOutcomes, setShowAllOutcomes] = useState(false);
+  const [showDescription, setShowDescription] = useState(false);
 
   if (!market) {
     return (
@@ -124,22 +131,22 @@ export default function MarketDetail() {
   }
 
   const handleComment = () => {
-    try {
-      commentSchema.parse({ text: commentText });
-      const newComment: Comment = {
-        id: Date.now().toString(),
-        author: { name: "You", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=User", username: "@you" },
-        text: commentText,
-        timestamp: "now",
-        likes: 0,
-        isLiked: false,
-      };
-      setComments([newComment, ...comments]);
-      setCommentText("");
-      toast({ title: "Comment posted" });
-    } catch {
-      toast({ title: "Comment required", variant: "destructive" });
-    }
+    if (!commentText.trim()) return;
+    const newComment: Comment = {
+      id: Date.now().toString(),
+      author: { name: "You", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=User", username: "you" },
+      text: commentText,
+      timestamp: "now",
+      likes: 0,
+      isLiked: false,
+    };
+    setComments([newComment, ...comments]);
+    setCommentText("");
+  };
+
+  const handleLike = () => {
+    setIsLiked(!isLiked);
+    setLikesCount(isLiked ? likesCount - 1 : likesCount + 1);
   };
 
   const handleOutcomeClick = (outcome: any) => {
@@ -147,12 +154,22 @@ export default function MarketDetail() {
     setShowBuyDialog(true);
   };
 
-  const topOutcome = market.isMultiOutcome 
-    ? market.outcomes.reduce((a: any, b: any) => a.price > b.price ? a : b)
-    : market.outcomes[0];
+  const formatNumber = (num: number) => {
+    if (num >= 1000) return `${(num / 1000).toFixed(1)}K`;
+    return num.toString();
+  };
+
+  // Sort outcomes by price for multi-outcome
+  const sortedOutcomes = market.isMultiOutcome 
+    ? [...market.outcomes].sort((a: any, b: any) => b.price - a.price)
+    : market.outcomes;
+  
+  const visibleOutcomes = market.isMultiOutcome && !showAllOutcomes 
+    ? sortedOutcomes.slice(0, 3) 
+    : sortedOutcomes;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pb-20 lg:pb-6">
       <BuyDialog
         open={showBuyDialog}
         onOpenChange={setShowBuyDialog}
@@ -161,310 +178,264 @@ export default function MarketDetail() {
         marketId={id || "1"}
       />
 
-      <div className="max-w-6xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-0 lg:gap-8">
-          {/* Main Content - Left Side */}
-          <div className="lg:col-span-7 border-r-0 lg:border-r border-border/40">
-            {/* Mobile Back Button */}
-            <div className="lg:hidden sticky top-14 z-20 bg-background border-b border-border/40">
-              <div className="flex items-center justify-between px-4 py-3">
-                <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="-ml-2">
-                  <ArrowLeft className="h-4 w-4" />
-                </Button>
-                <span className="font-semibold text-sm">Market</span>
-                <Button variant="ghost" size="icon" className="h-8 w-8">
-                  <MoreHorizontal className="h-4 w-4" />
-                </Button>
+      {/* Header */}
+      <div className="sticky top-14 z-20 bg-background/95 backdrop-blur-sm border-b border-border/40">
+        <div className="max-w-2xl mx-auto flex items-center justify-between px-4 h-12">
+          <Button variant="ghost" size="icon" onClick={() => navigate(-1)} className="h-8 w-8 -ml-2">
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
+          <span className="font-semibold text-sm">Market</span>
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="h-8 w-8"
+            onClick={() => {
+              navigator.clipboard.writeText(window.location.href);
+              toast({ title: "Link copied" });
+            }}
+          >
+            <Share2 className="h-5 w-5" />
+          </Button>
+        </div>
+      </div>
+
+      {/* Main Content - Single Column */}
+      <div className="max-w-2xl mx-auto">
+        {/* Creator Row */}
+        <div className="flex items-center justify-between px-4 py-3">
+          <button 
+            onClick={() => navigate(`/creator/${market.creator.id}`)}
+            className="flex items-center gap-3"
+          >
+            <Avatar className="h-9 w-9 ring-2 ring-border">
+              <AvatarImage src={market.creator.avatar} alt={market.creator.name} />
+              <AvatarFallback>{market.creator.name.slice(0, 2)}</AvatarFallback>
+            </Avatar>
+            <div className="text-left">
+              <div className="flex items-center gap-1">
+                <span className="font-semibold text-sm">{market.creator.name}</span>
+                {market.creator.verified && (
+                  <BadgeCheck className="h-4 w-4 text-primary fill-primary/20" />
+                )}
               </div>
             </div>
+          </button>
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <span>{market.endDate}</span>
+            <Badge variant="secondary" className="text-[10px] px-1.5 py-0">Live</Badge>
+          </div>
+        </div>
 
-            {/* Chart Section - Instagram Story-like */}
-            <div className="relative bg-gradient-to-b from-muted/30 to-background">
-              <div className="hidden lg:flex items-center gap-2 px-6 pt-6">
-                <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="-ml-2 gap-2">
-                  <ArrowLeft className="h-4 w-4" />
-                  Back
-                </Button>
-              </div>
+        {/* Title */}
+        <div className="px-4 pb-4">
+          <h1 className="text-lg font-bold leading-snug">{market.title}</h1>
+        </div>
+
+        {/* Trade Section - THE MAIN ACTION */}
+        <div className="px-4 pb-4">
+          {market.isMultiOutcome ? (
+            /* Multi-outcome layout */
+            <div className="space-y-2">
+              {visibleOutcomes.map((outcome: any, index: number) => (
+                <button
+                  key={index}
+                  onClick={() => handleOutcomeClick(outcome)}
+                  className="w-full flex items-center gap-3 p-3 rounded-2xl bg-muted/40 hover:bg-muted/70 active:scale-[0.98] transition-all"
+                >
+                  {outcome.logo ? (
+                    <img src={outcome.logo} alt={outcome.label} className="h-10 w-10 object-contain" />
+                  ) : (
+                    <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center text-base font-bold">
+                      {outcome.label.charAt(0)}
+                    </div>
+                  )}
+                  <span className="flex-1 text-left font-medium">{outcome.label}</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xl font-bold">{outcome.price}%</span>
+                    <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center">
+                      <ChevronDown className="h-4 w-4 text-primary rotate-[-90deg]" />
+                    </div>
+                  </div>
+                </button>
+              ))}
               
-              <div className="px-4 lg:px-6 py-4">
-                <div className="h-48 lg:h-56">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={market.priceHistory}>
-                      <defs>
-                        <linearGradient id="priceGradient" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3}/>
-                          <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
-                        </linearGradient>
-                      </defs>
-                      <XAxis dataKey="date" stroke="hsl(var(--muted-foreground))" fontSize={11} axisLine={false} tickLine={false} />
-                      <YAxis domain={[0, 100]} hide />
-                      <Tooltip 
-                        contentStyle={{
-                          backgroundColor: "hsl(var(--popover))",
-                          border: "1px solid hsl(var(--border))",
-                          borderRadius: "12px",
-                          fontSize: "12px"
-                        }}
-                        formatter={(value: any) => [`${value}%`, "Price"]}
-                      />
-                      <Area type="monotone" dataKey="price" stroke="hsl(var(--primary))" fill="url(#priceGradient)" strokeWidth={2} />
-                    </AreaChart>
-                  </ResponsiveContainer>
-                </div>
-              </div>
-            </div>
-
-            {/* Post Content */}
-            <div className="px-4 lg:px-6">
-              {/* Creator Header */}
-              <div className="flex items-center justify-between py-3">
-                <button 
-                  onClick={() => navigate(`/creator/${market.creator.id}`)}
-                  className="flex items-center gap-3 hover:opacity-80 transition-opacity"
+              {market.outcomes.length > 3 && (
+                <button
+                  onClick={() => setShowAllOutcomes(!showAllOutcomes)}
+                  className="w-full py-2 text-sm text-primary font-medium"
                 >
-                  <Avatar className="h-10 w-10 ring-2 ring-primary/20">
-                    <AvatarImage src={market.creator.avatar} alt={market.creator.name} />
-                    <AvatarFallback>{market.creator.name.slice(0, 2)}</AvatarFallback>
-                  </Avatar>
-                  <div className="text-left">
-                    <div className="flex items-center gap-1.5">
-                      <span className="font-semibold text-sm">{market.creator.name}</span>
-                      {market.creator.verified && (
-                        <BadgeCheck className="h-4 w-4 text-primary fill-primary/20" />
-                      )}
-                    </div>
-                    <span className="text-xs text-muted-foreground">Creator</span>
-                  </div>
+                  {showAllOutcomes ? "Show less" : `Show ${market.outcomes.length - 3} more`}
                 </button>
-                <Button variant="outline" size="sm" className="rounded-full text-xs">
-                  Follow
-                </Button>
-              </div>
-
-              {/* Title */}
-              <h1 className="text-xl lg:text-2xl font-bold leading-tight mb-3">{market.title}</h1>
-
-              {/* Stats Row */}
-              <div className="flex items-center gap-4 text-xs text-muted-foreground mb-4">
-                <div className="flex items-center gap-1">
-                  <TrendingUp className="h-3.5 w-3.5" />
-                  <span className="font-medium text-foreground">{market.volume}</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <Users className="h-3.5 w-3.5" />
-                  <span>{market.traders}</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <Clock className="h-3.5 w-3.5" />
-                  <span>{market.endDate}</span>
-                </div>
-              </div>
-
-              {/* Engagement Actions - Instagram Style */}
-              <div className="flex items-center justify-between py-3 border-y border-border/40">
-                <div className="flex items-center gap-4">
-                  <button 
-                    onClick={() => setIsLiked(!isLiked)}
-                    className="hover:scale-110 transition-transform"
-                  >
-                    <Heart className={`h-6 w-6 ${isLiked ? 'fill-destructive text-destructive' : ''}`} />
-                  </button>
-                  <button className="hover:scale-110 transition-transform">
-                    <MessageCircle className="h-6 w-6" />
-                  </button>
-                  <button 
-                    onClick={() => {
-                      navigator.clipboard.writeText(window.location.href);
-                      toast({ title: "Link copied" });
-                    }}
-                    className="hover:scale-110 transition-transform"
-                  >
-                    <Share2 className="h-6 w-6" />
-                  </button>
-                </div>
-                <button 
-                  onClick={() => setIsSaved(!isSaved)}
-                  className="hover:scale-110 transition-transform"
-                >
-                  <Bookmark className={`h-6 w-6 ${isSaved ? 'fill-foreground' : ''}`} />
-                </button>
-              </div>
-
-              {/* Description */}
-              <div className="py-4">
-                <div className="flex items-start gap-2 text-sm">
-                  <Info className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
-                  <p className="text-muted-foreground leading-relaxed">{market.description}</p>
-                </div>
-              </div>
-
-              <Separator />
-
-              {/* Comments Section */}
-              <div className="py-4 space-y-4">
-                <p className="text-sm text-muted-foreground">{comments.length} comments</p>
-                
-                {/* Comment Input */}
-                <div className="flex items-start gap-3">
-                  <Avatar className="h-8 w-8 flex-shrink-0">
-                    <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=User" />
-                    <AvatarFallback>U</AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1 flex gap-2">
-                    <Textarea
-                      placeholder="Add a comment..."
-                      value={commentText}
-                      onChange={(e) => setCommentText(e.target.value)}
-                      className="min-h-[40px] h-10 resize-none text-sm py-2"
-                      maxLength={500}
-                    />
-                    <Button 
-                      size="sm" 
-                      onClick={handleComment}
-                      disabled={!commentText.trim()}
-                      className="h-10"
-                    >
-                      Post
-                    </Button>
-                  </div>
-                </div>
-
-                {/* Comments List */}
-                <div className="space-y-4">
-                  {comments.map((comment) => (
-                    <div key={comment.id} className="flex gap-3">
-                      <Avatar className="h-8 w-8 flex-shrink-0">
-                        <AvatarImage src={comment.author.avatar} />
-                        <AvatarFallback>{comment.author.name.slice(0, 2)}</AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1 space-y-1">
-                        <p className="text-sm">
-                          <span className="font-semibold">{comment.author.username} </span>
-                          <span className="text-foreground/90">{comment.text}</span>
-                        </p>
-                        <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                          <span>{comment.timestamp}</span>
-                          <span>{comment.likes} likes</span>
-                          <button className="font-medium hover:text-foreground">Reply</button>
-                        </div>
-                      </div>
-                      <button className="self-start">
-                        <Heart className={`h-3.5 w-3.5 ${comment.isLiked ? 'fill-destructive text-destructive' : 'text-muted-foreground'}`} />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
+              )}
             </div>
+          ) : (
+            /* Binary outcome - Side by side */
+            <div className="grid grid-cols-2 gap-3">
+              {market.outcomes.map((outcome: any, index: number) => (
+                <button
+                  key={index}
+                  onClick={() => handleOutcomeClick(outcome)}
+                  className={`p-4 rounded-2xl active:scale-[0.98] transition-all ${
+                    outcome.color === 'success'
+                      ? 'bg-success/10 hover:bg-success/20 border-2 border-success/30'
+                      : 'bg-muted/50 hover:bg-muted/80 border-2 border-border/50'
+                  }`}
+                >
+                  <div className={`mx-auto w-12 h-12 rounded-full flex items-center justify-center mb-3 ${
+                    outcome.color === 'success' ? 'bg-success/20 text-success' : 'bg-muted text-muted-foreground'
+                  }`}>
+                    {outcome.color === 'success' ? <Check className="h-6 w-6" /> : <X className="h-6 w-6" />}
+                  </div>
+                  <p className="font-bold text-lg">{outcome.label}</p>
+                  <p className="text-2xl font-bold mt-1">{outcome.price}¢</p>
+                  <p className="text-xs text-muted-foreground mt-1">Buy to win $1</p>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Stats Row */}
+        <div className="flex items-center gap-6 px-4 py-3 text-sm">
+          <div>
+            <span className="font-bold">{market.volume}</span>
+            <span className="text-muted-foreground ml-1">volume</span>
+          </div>
+          <div>
+            <span className="font-bold">{formatNumber(market.traders)}</span>
+            <span className="text-muted-foreground ml-1">traders</span>
+          </div>
+        </div>
+
+        {/* Chart */}
+        <div className="px-4 py-2">
+          <div className="h-32 rounded-xl overflow-hidden bg-muted/20">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={market.priceHistory} margin={{ top: 10, right: 10, left: 10, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.4}/>
+                    <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <XAxis dataKey="date" hide />
+                <Tooltip 
+                  contentStyle={{
+                    backgroundColor: "hsl(var(--popover))",
+                    border: "1px solid hsl(var(--border))",
+                    borderRadius: "8px",
+                    fontSize: "12px"
+                  }}
+                  formatter={(value: any) => [`${value}%`, ""]}
+                />
+                <Area type="monotone" dataKey="price" stroke="hsl(var(--primary))" fill="url(#chartGradient)" strokeWidth={2} />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* Engagement Row */}
+        <div className="flex items-center px-4 py-3">
+          <div className="flex items-center gap-4">
+            <button 
+              onClick={handleLike}
+              className="flex items-center gap-1.5 active:scale-95 transition-transform"
+            >
+              <Heart className={`h-6 w-6 ${isLiked ? 'fill-destructive text-destructive' : ''}`} />
+            </button>
+            <button className="active:scale-95 transition-transform">
+              <MessageCircle className="h-6 w-6" />
+            </button>
+            <button 
+              className="active:scale-95 transition-transform"
+              onClick={() => {
+                navigator.clipboard.writeText(window.location.href);
+                toast({ title: "Link copied" });
+              }}
+            >
+              <Share2 className="h-6 w-6" />
+            </button>
+          </div>
+        </div>
+
+        {/* Likes Count */}
+        <div className="px-4">
+          <p className="text-sm font-semibold">{formatNumber(likesCount)} likes</p>
+        </div>
+
+        {/* Description - Collapsible */}
+        <div className="px-4 py-2">
+          <Collapsible open={showDescription} onOpenChange={setShowDescription}>
+            <p className="text-sm">
+              <span className="font-semibold">{market.creator.name.toLowerCase().replace(' ', '')} </span>
+              <span className="text-foreground/90">
+                {showDescription ? market.description : `${market.description.slice(0, 100)}...`}
+              </span>
+            </p>
+            <CollapsibleTrigger asChild>
+              <button className="text-sm text-muted-foreground mt-1">
+                {showDescription ? "less" : "more"}
+              </button>
+            </CollapsibleTrigger>
+          </Collapsible>
+        </div>
+
+        <Separator className="my-3" />
+
+        {/* Comments */}
+        <div className="px-4">
+          <button className="text-sm text-muted-foreground mb-3">
+            View all {comments.length} comments
+          </button>
+          
+          <div className="space-y-3">
+            {comments.slice(0, 3).map((comment) => (
+              <div key={comment.id} className="flex items-start gap-3">
+                <Avatar className="h-8 w-8 flex-shrink-0">
+                  <AvatarImage src={comment.author.avatar} />
+                  <AvatarFallback>{comment.author.name.slice(0, 2)}</AvatarFallback>
+                </Avatar>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm">
+                    <span className="font-semibold">{comment.author.username} </span>
+                    <span className="text-foreground/90">{comment.text}</span>
+                  </p>
+                  <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground">
+                    <span>{comment.timestamp}</span>
+                    <button className="font-medium">Reply</button>
+                  </div>
+                </div>
+                <button className="pt-1">
+                  <Heart className={`h-3 w-3 ${comment.isLiked ? 'fill-destructive text-destructive' : 'text-muted-foreground'}`} />
+                </button>
+              </div>
+            ))}
           </div>
 
-          {/* Sidebar - Right Side (Trade Panel) */}
-          <div className="lg:col-span-5 lg:py-6">
-            <div className="sticky top-20 space-y-4 px-4 lg:px-0 pb-6 lg:pb-0">
-              {/* Trade Card */}
-              <Card className="border-border/40 overflow-hidden">
-                <CardContent className="p-0">
-                  {/* Current Price Header */}
-                  <div className="p-4 bg-muted/30 border-b border-border/40">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-xs text-muted-foreground mb-1">
-                          {market.isMultiOutcome ? "Leading" : "Yes probability"}
-                        </p>
-                        <div className="flex items-baseline gap-2">
-                          <span className="text-3xl font-bold">{topOutcome.price}%</span>
-                          {market.isMultiOutcome && (
-                            <span className="text-sm font-medium text-muted-foreground">{topOutcome.label}</span>
-                          )}
-                        </div>
-                      </div>
-                      <Badge variant="outline" className="text-xs font-medium">
-                        Live
-                      </Badge>
-                    </div>
-                  </div>
-
-                  {/* Outcomes */}
-                  <div className="p-4 space-y-2">
-                    {market.isMultiOutcome ? (
-                      /* Multi-outcome: Sorted by probability */
-                      [...market.outcomes]
-                        .sort((a: any, b: any) => b.price - a.price)
-                        .map((outcome: any, index: number) => (
-                          <button
-                            key={index}
-                            onClick={() => handleOutcomeClick(outcome)}
-                            className="w-full flex items-center gap-3 p-3 rounded-xl border border-border/50 hover:border-primary/50 hover:bg-muted/30 transition-all group"
-                          >
-                            {outcome.logo ? (
-                              <img src={outcome.logo} alt={outcome.label} className="h-8 w-8 object-contain" />
-                            ) : (
-                              <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center text-sm font-bold">
-                                {outcome.label.charAt(0)}
-                              </div>
-                            )}
-                            <div className="flex-1 text-left">
-                              <p className="font-medium text-sm">{outcome.label}</p>
-                            </div>
-                            <div className="flex items-center gap-3">
-                              <span className="text-lg font-bold">{outcome.price}%</span>
-                              <span className="text-xs text-primary font-medium opacity-0 group-hover:opacity-100 transition-opacity">
-                                Buy →
-                              </span>
-                            </div>
-                          </button>
-                        ))
-                    ) : (
-                      /* Binary outcome: Yes/No buttons */
-                      <div className="grid grid-cols-2 gap-3">
-                        {market.outcomes.map((outcome: any, index: number) => (
-                          <button
-                            key={index}
-                            onClick={() => handleOutcomeClick(outcome)}
-                            className={`p-4 rounded-xl border-2 transition-all ${
-                              outcome.color === 'success'
-                                ? 'border-success/30 bg-success/5 hover:border-success hover:bg-success/10'
-                                : 'border-muted hover:border-foreground/30 hover:bg-muted/50'
-                            }`}
-                          >
-                            <div className={`mx-auto w-10 h-10 rounded-full flex items-center justify-center mb-2 ${
-                              outcome.color === 'success' ? 'bg-success/20 text-success' : 'bg-muted text-muted-foreground'
-                            }`}>
-                              {outcome.color === 'success' ? <Check className="h-5 w-5" /> : <X className="h-5 w-5" />}
-                            </div>
-                            <p className="font-semibold text-lg">{outcome.label}</p>
-                            <p className="text-2xl font-bold mt-1">{outcome.price}¢</p>
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Info Footer */}
-                  <div className="px-4 pb-4">
-                    <p className="text-xs text-center text-muted-foreground">
-                      Tap an outcome to place your trade
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Quick Stats */}
-              <div className="grid grid-cols-3 gap-3">
-                <div className="text-center p-3 rounded-xl bg-muted/30">
-                  <p className="text-lg font-bold">{market.volume}</p>
-                  <p className="text-xs text-muted-foreground">Volume</p>
-                </div>
-                <div className="text-center p-3 rounded-xl bg-muted/30">
-                  <p className="text-lg font-bold">{market.traders}</p>
-                  <p className="text-xs text-muted-foreground">Traders</p>
-                </div>
-                <div className="text-center p-3 rounded-xl bg-muted/30">
-                  <p className="text-lg font-bold">{market.endDate.split(' ')[0]}</p>
-                  <p className="text-xs text-muted-foreground">Ends</p>
-                </div>
-              </div>
+          {/* Comment Input */}
+          <div className="flex items-center gap-3 py-4 mt-2">
+            <Avatar className="h-8 w-8 flex-shrink-0">
+              <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=User" />
+              <AvatarFallback>U</AvatarFallback>
+            </Avatar>
+            <div className="flex-1 relative">
+              <input
+                type="text"
+                placeholder="Add a comment..."
+                value={commentText}
+                onChange={(e) => setCommentText(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleComment()}
+                className="w-full bg-transparent text-sm placeholder:text-muted-foreground outline-none pr-10"
+                maxLength={500}
+              />
+              {commentText.trim() && (
+                <button 
+                  onClick={handleComment}
+                  className="absolute right-0 top-1/2 -translate-y-1/2 text-primary font-semibold text-sm"
+                >
+                  Post
+                </button>
+              )}
             </div>
           </div>
         </div>
