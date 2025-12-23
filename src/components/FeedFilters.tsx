@@ -43,15 +43,15 @@ export function FeedFilters({ filters, onFiltersChange }: FeedFiltersProps) {
           {hasActiveFilters && <span className="h-1.5 w-1.5 rounded-full bg-primary-foreground" />}
         </Button>
         
-        <div className="flex gap-1 overflow-x-auto pb-1 scrollbar-hide">
+        <div className="flex gap-4 overflow-x-auto pb-1 scrollbar-hide">
           {categories.map((category) => (
             <button
               key={category}
               onClick={() => updateFilter('category', category)}
-              className={`whitespace-nowrap font-medium px-3 py-1.5 text-sm rounded-full transition-colors ${
+              className={`whitespace-nowrap font-medium px-1 py-1.5 text-sm transition-colors border-b-2 ${
                 category === filters.category 
-                  ? "bg-foreground text-background" 
-                  : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+                  ? "text-foreground border-foreground" 
+                  : "text-muted-foreground hover:text-foreground border-transparent"
               }`}
             >
               {category}
