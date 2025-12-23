@@ -1,0 +1,373 @@
+import { useState } from "react";
+import { PageHeader } from "@/components/PageHeader";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
+import { 
+  TrendingUp, 
+  TrendingDown, 
+  DollarSign, 
+  ArrowUpRight, 
+  ArrowDownRight,
+  Clock,
+  Wallet,
+  PieChart,
+  BarChart3,
+  Download,
+  Upload,
+  Filter
+} from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+// Mock data
+const portfolioStats = {
+  totalValue: 12450,
+  cashBalance: 5230,
+  investedAmount: 7220,
+  totalPnL: 1847,
+  totalPnLPercent: 17.4,
+  todayPnL: 234,
+  todayPnLPercent: 1.9,
+};
+
+const positions = [
+  { id: 1, market: "Will Bitcoin reach $100k by 2025?", position: "Yes", shares: 150, avgPrice: 0.45, currentPrice: 0.62, pnl: 25.5, pnlPercent: 37.8 },
+  { id: 2, market: "Fed rate cut in March 2025?", position: "No", shares: 200, avgPrice: 0.38, currentPrice: 0.41, pnl: 6, pnlPercent: 7.9 },
+  { id: 3, market: "Tesla Q4 earnings beat?", position: "Yes", shares: 100, avgPrice: 0.55, currentPrice: 0.48, pnl: -7, pnlPercent: -12.7 },
+  { id: 4, market: "NBA Championship - Lakers?", position: "Yes", shares: 75, avgPrice: 0.22, currentPrice: 0.28, pnl: 4.5, pnlPercent: 27.3 },
+];
+
+const tradeHistory = [
+  { id: 1, date: "2024-01-15", market: "Bitcoin $100k", type: "Buy", position: "Yes", shares: 50, price: 0.42, total: 21 },
+  { id: 2, date: "2024-01-14", market: "Fed rate cut", type: "Sell", position: "Yes", shares: 100, price: 0.58, total: 58 },
+  { id: 3, date: "2024-01-13", market: "Tesla earnings", type: "Buy", position: "Yes", shares: 100, price: 0.55, total: 55 },
+  { id: 4, date: "2024-01-12", market: "Bitcoin $100k", type: "Buy", position: "Yes", shares: 100, price: 0.47, total: 47 },
+  { id: 5, date: "2024-01-10", market: "NBA Championship", type: "Buy", position: "Yes", shares: 75, price: 0.22, total: 16.5 },
+];
+
+const transactions = [
+  { id: 1, date: "2024-01-15", type: "Deposit", method: "Bank Transfer", amount: 500, status: "Completed" },
+  { id: 2, date: "2024-01-10", type: "Deposit", method: "Credit Card", amount: 250, status: "Completed" },
+  { id: 3, date: "2024-01-05", type: "Withdrawal", method: "Bank Transfer", amount: 100, status: "Completed" },
+  { id: 4, date: "2023-12-28", type: "Deposit", method: "Crypto", amount: 1000, status: "Completed" },
+];
+
+const Portfolio = () => {
+  const [timeframe, setTimeframe] = useState("all");
+
+  return (
+    <div className="min-h-screen bg-background">
+      <div className="max-w-7xl mx-auto px-4 lg:px-8 py-6">
+        <PageHeader 
+          title="Portfolio" 
+          subtitle="Track your trading performance and manage your funds"
+        />
+
+        {/* Stats Overview */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          <Card className="border-border/40">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-2 text-muted-foreground text-sm mb-1">
+                <Wallet className="h-4 w-4" />
+                Total Value
+              </div>
+              <p className="text-2xl font-bold">${portfolioStats.totalValue.toLocaleString()}</p>
+            </CardContent>
+          </Card>
+          
+          <Card className="border-border/40">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-2 text-muted-foreground text-sm mb-1">
+                <DollarSign className="h-4 w-4" />
+                Cash Balance
+              </div>
+              <p className="text-2xl font-bold">${portfolioStats.cashBalance.toLocaleString()}</p>
+            </CardContent>
+          </Card>
+          
+          <Card className="border-border/40">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-2 text-muted-foreground text-sm mb-1">
+                <PieChart className="h-4 w-4" />
+                Invested
+              </div>
+              <p className="text-2xl font-bold">${portfolioStats.investedAmount.toLocaleString()}</p>
+            </CardContent>
+          </Card>
+          
+          <Card className="border-border/40">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-2 text-muted-foreground text-sm mb-1">
+                <BarChart3 className="h-4 w-4" />
+                Total P&L
+              </div>
+              <div className="flex items-center gap-2">
+                <p className={`text-2xl font-bold ${portfolioStats.totalPnL >= 0 ? 'text-success' : 'text-destructive'}`}>
+                  {portfolioStats.totalPnL >= 0 ? '+' : ''}${portfolioStats.totalPnL.toLocaleString()}
+                </p>
+                <Badge variant={portfolioStats.totalPnLPercent >= 0 ? "default" : "destructive"} className="text-xs">
+                  {portfolioStats.totalPnLPercent >= 0 ? '+' : ''}{portfolioStats.totalPnLPercent}%
+                </Badge>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Quick Actions */}
+        <div className="flex gap-3 mb-6">
+          <Button className="gap-2">
+            <Upload className="h-4 w-4" />
+            Deposit
+          </Button>
+          <Button variant="outline" className="gap-2">
+            <Download className="h-4 w-4" />
+            Withdraw
+          </Button>
+        </div>
+
+        {/* Main Content Tabs */}
+        <Tabs defaultValue="positions" className="space-y-6">
+          <TabsList className="bg-muted/50 p-1">
+            <TabsTrigger value="positions" className="data-[state=active]:bg-background">
+              Active Positions
+            </TabsTrigger>
+            <TabsTrigger value="history" className="data-[state=active]:bg-background">
+              Trade History
+            </TabsTrigger>
+            <TabsTrigger value="transactions" className="data-[state=active]:bg-background">
+              Deposits & Withdrawals
+            </TabsTrigger>
+            <TabsTrigger value="analytics" className="data-[state=active]:bg-background">
+              Analytics
+            </TabsTrigger>
+          </TabsList>
+
+          {/* Active Positions */}
+          <TabsContent value="positions" className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-semibold">Active Positions ({positions.length})</h3>
+              <Select value={timeframe} onValueChange={setTimeframe}>
+                <SelectTrigger className="w-32 h-9">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Time</SelectItem>
+                  <SelectItem value="month">This Month</SelectItem>
+                  <SelectItem value="week">This Week</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-3">
+              {positions.map((position) => (
+                <Card key={position.id} className="border-border/40 hover:border-border/60 transition-colors">
+                  <CardContent className="p-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex-1">
+                        <p className="font-medium mb-1">{position.market}</p>
+                        <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                          <Badge variant={position.position === "Yes" ? "default" : "secondary"} className="text-xs">
+                            {position.position}
+                          </Badge>
+                          <span>{position.shares} shares @ ${position.avgPrice}</span>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-sm text-muted-foreground">Current: ${position.currentPrice}</p>
+                        <div className={`flex items-center gap-1 ${position.pnl >= 0 ? 'text-success' : 'text-destructive'}`}>
+                          {position.pnl >= 0 ? <ArrowUpRight className="h-4 w-4" /> : <ArrowDownRight className="h-4 w-4" />}
+                          <span className="font-semibold">
+                            {position.pnl >= 0 ? '+' : ''}${position.pnl} ({position.pnlPercent >= 0 ? '+' : ''}{position.pnlPercent}%)
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
+
+          {/* Trade History */}
+          <TabsContent value="history" className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-semibold">Trade History</h3>
+              <Button variant="outline" size="sm" className="gap-2">
+                <Filter className="h-4 w-4" />
+                Filter
+              </Button>
+            </div>
+
+            <Card className="border-border/40">
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b border-border/40 text-left text-sm text-muted-foreground">
+                      <th className="p-4 font-medium">Date</th>
+                      <th className="p-4 font-medium">Market</th>
+                      <th className="p-4 font-medium">Type</th>
+                      <th className="p-4 font-medium">Position</th>
+                      <th className="p-4 font-medium">Shares</th>
+                      <th className="p-4 font-medium">Price</th>
+                      <th className="p-4 font-medium text-right">Total</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {tradeHistory.map((trade) => (
+                      <tr key={trade.id} className="border-b border-border/20 hover:bg-muted/30 transition-colors">
+                        <td className="p-4 text-sm">{trade.date}</td>
+                        <td className="p-4 text-sm font-medium">{trade.market}</td>
+                        <td className="p-4">
+                          <Badge variant={trade.type === "Buy" ? "default" : "secondary"} className="text-xs">
+                            {trade.type}
+                          </Badge>
+                        </td>
+                        <td className="p-4 text-sm">{trade.position}</td>
+                        <td className="p-4 text-sm">{trade.shares}</td>
+                        <td className="p-4 text-sm">${trade.price}</td>
+                        <td className="p-4 text-sm text-right font-medium">${trade.total}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </Card>
+          </TabsContent>
+
+          {/* Transactions */}
+          <TabsContent value="transactions" className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-semibold">Deposits & Withdrawals</h3>
+              <div className="flex gap-2">
+                <Button size="sm" className="gap-2">
+                  <Upload className="h-4 w-4" />
+                  Deposit
+                </Button>
+                <Button variant="outline" size="sm" className="gap-2">
+                  <Download className="h-4 w-4" />
+                  Withdraw
+                </Button>
+              </div>
+            </div>
+
+            <Card className="border-border/40">
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b border-border/40 text-left text-sm text-muted-foreground">
+                      <th className="p-4 font-medium">Date</th>
+                      <th className="p-4 font-medium">Type</th>
+                      <th className="p-4 font-medium">Method</th>
+                      <th className="p-4 font-medium">Amount</th>
+                      <th className="p-4 font-medium">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {transactions.map((tx) => (
+                      <tr key={tx.id} className="border-b border-border/20 hover:bg-muted/30 transition-colors">
+                        <td className="p-4 text-sm">{tx.date}</td>
+                        <td className="p-4">
+                          <div className="flex items-center gap-2">
+                            {tx.type === "Deposit" ? (
+                              <ArrowDownRight className="h-4 w-4 text-success" />
+                            ) : (
+                              <ArrowUpRight className="h-4 w-4 text-destructive" />
+                            )}
+                            <span className="text-sm">{tx.type}</span>
+                          </div>
+                        </td>
+                        <td className="p-4 text-sm">{tx.method}</td>
+                        <td className={`p-4 text-sm font-medium ${tx.type === "Deposit" ? 'text-success' : 'text-destructive'}`}>
+                          {tx.type === "Deposit" ? '+' : '-'}${tx.amount}
+                        </td>
+                        <td className="p-4">
+                          <Badge variant="secondary" className="text-xs">
+                            {tx.status}
+                          </Badge>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </Card>
+          </TabsContent>
+
+          {/* Analytics */}
+          <TabsContent value="analytics" className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <Card className="border-border/40">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">Win Rate</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-3xl font-bold text-success">68%</p>
+                  <p className="text-sm text-muted-foreground">Based on 47 resolved markets</p>
+                </CardContent>
+              </Card>
+
+              <Card className="border-border/40">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">Average Return</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-3xl font-bold text-success">+24.3%</p>
+                  <p className="text-sm text-muted-foreground">Per winning trade</p>
+                </CardContent>
+              </Card>
+
+              <Card className="border-border/40">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">Total Trades</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-3xl font-bold">127</p>
+                  <p className="text-sm text-muted-foreground">Since joining</p>
+                </CardContent>
+              </Card>
+
+              <Card className="border-border/40">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">Best Trade</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-3xl font-bold text-success">+$847</p>
+                  <p className="text-sm text-muted-foreground">Bitcoin $100k market</p>
+                </CardContent>
+              </Card>
+
+              <Card className="border-border/40">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">Worst Trade</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-3xl font-bold text-destructive">-$156</p>
+                  <p className="text-sm text-muted-foreground">Fed rate hike market</p>
+                </CardContent>
+              </Card>
+
+              <Card className="border-border/40">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">Favorite Category</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-3xl font-bold">Crypto</p>
+                  <p className="text-sm text-muted-foreground">42% of your trades</p>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+        </Tabs>
+      </div>
+    </div>
+  );
+};
+
+export default Portfolio;

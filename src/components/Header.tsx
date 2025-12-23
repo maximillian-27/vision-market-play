@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Globe, LogOut, Settings, User, Wallet, TrendingUp, Search, Home, Newspaper, Users, MessageSquare } from "lucide-react";
+import { Globe, LogOut, Settings, User, Wallet, Search, Home, Newspaper, Users, MessageSquare, Briefcase, Sparkles, Shield } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import pollgyLogo from "@/assets/pollgy-logo-new.png";
 import { useNavigate } from "react-router-dom";
@@ -21,12 +21,17 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { BecomeCreatorDialog } from "@/components/BecomeCreatorDialog";
+import { CreateMarketButton } from "@/components/CreateMarketButton";
 
 export function Header() {
   const isMobile = useIsMobile();
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isCreator, setIsCreator] = useState(false);
+  const [isAdmin] = useState(true); // For demo purposes
   const [showDepositDialog, setShowDepositDialog] = useState(false);
+  const [showCreatorDialog, setShowCreatorDialog] = useState(false);
   const [portfolioValue] = useState(12450);
   const [cashBalance] = useState(5230);
 
@@ -38,12 +43,16 @@ export function Header() {
   ];
 
   const handleLogin = () => {
-    // In a real app, this would trigger actual authentication
     setIsLoggedIn(true);
   };
 
   const handleLogout = () => {
     setIsLoggedIn(false);
+    setIsCreator(false);
+  };
+
+  const handleBecomeCreator = () => {
+    setIsCreator(true);
   };
 
   return (
@@ -58,7 +67,6 @@ export function Header() {
               onClick={() => navigate("/")}
             />
             
-            {/* Language Toggle - Next to logo on mobile */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="h-9 w-9 md:hidden">
@@ -74,7 +82,6 @@ export function Header() {
             </DropdownMenu>
           </div>
 
-          {/* Desktop Navigation Items */}
           {!isMobile && (
             <nav className="flex items-center gap-4 lg:gap-6 ml-4 lg:ml-8">
               {navItems.map((item) => (
@@ -90,9 +97,7 @@ export function Header() {
             </nav>
           )}
 
-          {/* Search Bar and Right Side Items */}
           <div className="flex items-center gap-3 ml-auto">
-            {/* Search Bar - Hidden on mobile */}
             <div className="hidden md:flex relative w-64 lg:w-80">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input 
@@ -101,7 +106,6 @@ export function Header() {
               />
             </div>
 
-            {/* Language Toggle - Desktop only */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="h-9 w-9 hidden md:flex">
@@ -117,20 +121,16 @@ export function Header() {
             </DropdownMenu>
           
             {isLoggedIn && (
-              <>
-                {/* Deposit Button - Always shows text */}
-                <Button 
-                  size="sm" 
-                  variant="outline"
-                  onClick={() => setShowDepositDialog(true)}
-                  className="h-8 md:h-9 text-xs md:text-sm"
-                >
-                  Deposit
-                </Button>
-              </>
+              <Button 
+                size="sm" 
+                variant="outline"
+                onClick={() => setShowDepositDialog(true)}
+                className="h-8 md:h-9 text-xs md:text-sm"
+              >
+                Deposit
+              </Button>
             )}
 
-            {/* Login Button or Profile Menu */}
             {!isLoggedIn ? (
               <>
                 <Button 
@@ -155,7 +155,7 @@ export function Header() {
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56 z-50 bg-popover">
-                  {/* Portfolio & Cash */}
+                  {/* Balance Section */}
                   <div className="px-2 py-3 space-y-2">
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-muted-foreground">Portfolio</span>
@@ -168,17 +168,37 @@ export function Header() {
                   </div>
                   <DropdownMenuSeparator />
                   
-                  <DropdownMenuItem onClick={() => navigate("/profile")}>
-                    <User className="mr-2 h-4 w-4" />
-                    Profile
+                  <DropdownMenuItem onClick={() => navigate("/portfolio")} className="gap-2">
+                    <Briefcase className="h-4 w-4" />
+                    Portfolio
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate("/profile")}>
-                    <Settings className="mr-2 h-4 w-4" />
+                  <DropdownMenuItem onClick={() => navigate("/settings")} className="gap-2">
+                    <Settings className="h-4 w-4" />
                     Settings
                   </DropdownMenuItem>
+                  
+                  {isCreator ? (
+                    <DropdownMenuItem onClick={() => navigate("/creator-dashboard")} className="gap-2">
+                      <Sparkles className="h-4 w-4" />
+                      Creator Dashboard
+                    </DropdownMenuItem>
+                  ) : (
+                    <DropdownMenuItem onClick={() => setShowCreatorDialog(true)} className="gap-2">
+                      <Sparkles className="h-4 w-4" />
+                      Become a Creator
+                    </DropdownMenuItem>
+                  )}
+                  
+                  {isAdmin && (
+                    <DropdownMenuItem onClick={() => navigate("/admin")} className="gap-2">
+                      <Shield className="h-4 w-4" />
+                      Admin
+                    </DropdownMenuItem>
+                  )}
+                  
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleLogout}>
-                    <LogOut className="mr-2 h-4 w-4" />
+                  <DropdownMenuItem onClick={handleLogout} className="gap-2">
+                    <LogOut className="h-4 w-4" />
                     Logout
                   </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -187,6 +207,16 @@ export function Header() {
           </div>
         </div>
       </header>
+
+      {/* Show create market button for creators */}
+      {isLoggedIn && isCreator && <CreateMarketButton />}
+
+      {/* Become Creator Dialog */}
+      <BecomeCreatorDialog 
+        open={showCreatorDialog} 
+        onOpenChange={setShowCreatorDialog}
+        onSuccess={handleBecomeCreator}
+      />
 
       {/* Deposit Dialog */}
       <Dialog open={showDepositDialog} onOpenChange={setShowDepositDialog}>
