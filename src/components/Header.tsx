@@ -86,13 +86,24 @@ export function Header() {
           )}
 
           {/* Search - Desktop */}
-          <div className="hidden md:flex relative flex-1 max-w-sm ml-auto mr-2">
+          <form 
+            className="hidden md:flex relative flex-1 max-w-sm ml-auto mr-2"
+            onSubmit={(e) => {
+              e.preventDefault();
+              const formData = new FormData(e.currentTarget);
+              const query = formData.get("search") as string;
+              if (query.trim()) {
+                navigate(`/search?q=${encodeURIComponent(query.trim())}`);
+              }
+            }}
+          >
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/60" />
             <Input 
+              name="search"
               placeholder="Search markets..." 
               className="pl-10 h-10 bg-muted/40 border-transparent hover:bg-muted/60 focus-visible:bg-background"
             />
-          </div>
+          </form>
 
           {/* Right Actions */}
           <div className="flex items-center gap-2 ml-auto md:ml-0">
