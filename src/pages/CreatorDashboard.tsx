@@ -13,7 +13,9 @@ import {
   Calendar,
   ArrowUpRight,
   Plus,
-  Settings
+  Settings,
+  Wallet,
+  Clock
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -36,6 +38,7 @@ const creatorStats = {
   resolvedMarkets: 38,
   accuracy: 84,
   earnings: 4250,
+  currentBalance: 1847.32,
 };
 
 const recentMarkets = [
@@ -76,6 +79,27 @@ const CreatorDashboard = () => {
             </div>
           }
         />
+
+        {/* Earnings Balance Card */}
+        <Card className="mb-6 border-primary/20 bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5">
+          <CardContent className="p-4 sm:p-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+                  <Wallet className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground font-medium">Current Balance</p>
+                  <p className="text-3xl font-bold text-primary">${creatorStats.currentBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2 text-xs text-muted-foreground bg-background/60 px-3 py-2 rounded-lg border border-border/40">
+                <Clock className="h-3.5 w-3.5" />
+                <span>Payouts every Friday at 12:00 AM EST</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Time Range Selector */}
         <div className="flex justify-end mb-6">
