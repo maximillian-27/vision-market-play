@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Clock, TrendingUp, BadgeCheck, Check, X, AlertTriangle, CheckCircle2, Timer } from "lucide-react";
+import { Clock, TrendingUp, AlertTriangle, CheckCircle2, Timer, Users, Bookmark } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { MarketDialog } from "@/components/MarketDialog";
@@ -110,21 +110,21 @@ export function MarketGridCard({
     switch (status) {
       case "closing":
         return (
-          <Badge className="bg-amber-500/90 text-white border-0 text-[10px] font-medium">
+          <Badge className="bg-amber-500 text-white border-0 text-[10px] font-semibold px-2 py-0.5">
             <Timer className="h-3 w-3 mr-1" />
-            Closing
+            Closing Soon
           </Badge>
         );
       case "closed":
         return (
-          <Badge className="bg-orange-500/90 text-white border-0 text-[10px] font-medium">
+          <Badge className="bg-orange-500 text-white border-0 text-[10px] font-semibold px-2 py-0.5">
             <AlertTriangle className="h-3 w-3 mr-1" />
-            Dispute
+            Dispute Period
           </Badge>
         );
       case "resolved":
         return (
-          <Badge className="bg-success/90 text-white border-0 text-[10px] font-medium">
+          <Badge className="bg-success text-white border-0 text-[10px] font-semibold px-2 py-0.5">
             <CheckCircle2 className="h-3 w-3 mr-1" />
             Resolved
           </Badge>
@@ -132,33 +132,6 @@ export function MarketGridCard({
       default:
         return null;
     }
-  };
-
-  const getResolutionDisplay = () => {
-    if (!resolution) return null;
-    
-    const isYes = resolution.toLowerCase() === "yes";
-    const isNo = resolution.toLowerCase() === "no";
-    
-    return (
-      <div className={`text-center py-2.5 rounded-lg ${isYes ? 'bg-success/10' : isNo ? 'bg-secondary' : 'bg-success/10'}`}>
-        <div className="flex items-center justify-center gap-2">
-          {isYes ? (
-            <Check className="h-4 w-4 text-success" />
-          ) : isNo ? (
-            <X className="h-4 w-4 text-muted-foreground" />
-          ) : (
-            <CheckCircle2 className="h-4 w-4 text-success" />
-          )}
-          <span className={`font-semibold ${isYes ? 'text-success' : isNo ? 'text-foreground' : 'text-success'}`}>
-            {resolution}
-          </span>
-        </div>
-        <p className="text-[10px] text-muted-foreground mt-0.5">
-          {status === "closed" ? `Dispute: ${disputeEndsIn}` : resolvedAt}
-        </p>
-      </div>
-    );
   };
 
   const marketDialogData = {
@@ -171,6 +144,9 @@ export function MarketGridCard({
     endsIn,
   };
 
+  // Calculate percentage for progress bar (binary markets)
+  const yesPercent = isBinary ? displayOutcomes[0].price : 50;
+
   return (
     <>
       <MarketDialog
@@ -180,7 +156,7 @@ export function MarketGridCard({
       />
       
       <Dialog open={showDisputeDialog} onOpenChange={setShowDisputeDialog}>
-        <DialogContent onClick={(e) => e.stopPropagation()} className="rounded-lg border-border/60">
+        <DialogContent onClick={(e) => e.stopPropagation()} className="rounded-xl border-border/60">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <AlertTriangle className="h-5 w-5 text-orange-500" />
@@ -218,124 +194,148 @@ export function MarketGridCard({
       </Dialog>
       
       <Card 
-        className={`group overflow-hidden hover:shadow-md cursor-pointer border-border/40 transition-all ${isClosedOrResolved ? 'opacity-75' : ''}`}
+        className={`group overflow-hidden cursor-pointer border-border/40 bg-card hover:border-border/60 transition-all ${isClosedOrResolved ? 'opacity-70' : ''}`}
         onClick={handleCardClick}
       >
-        <div className="flex gap-3 p-3">
-          {/* Thumbnail */}
-          <div 
-            className={`relative w-28 h-28 sm:w-32 sm:h-32 rounded-xl overflow-hidden bg-secondary flex-shrink-0 ${isClosedOrResolved ? 'grayscale-[30%]' : ''}`}
+        {/* Image */}
+        <div className={`relative aspect-[16/10] w-full overflow-hidden bg-secondary ${isClosedOrResolved ? 'grayscale-[30%]' : ''}`}>
+          <img 
+            src={image} 
+            alt={title}
+            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+          />
+          
+          {/* Status Badge */}
+          {getStatusBadge() && (
+            <div className="absolute top-2 left-2">
+              {getStatusBadge()}
+            </div>
+          )}
+          
+          {/* Bookmark button */}
+          <button 
+            className="absolute top-2 right-2 p-1.5 rounded-full bg-black/40 backdrop-blur-sm hover:bg-black/60 transition-colors"
+            onClick={(e) => {
+              e.stopPropagation();
+              toast({ title: "Saved to watchlist" });
+            }}
           >
-            <img 
-              src={image} 
-              alt={title}
-              className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-            />
-            {getStatusBadge() && (
-              <div className="absolute top-2 left-2">
-                {getStatusBadge()}
+            <Bookmark className="h-3.5 w-3.5 text-white" />
+          </button>
+        </div>
+
+        {/* Content */}
+        <div className="p-3 space-y-3">
+          {/* Title */}
+          <h3 className="text-sm font-semibold leading-snug line-clamp-2 min-h-[2.5rem] group-hover:text-primary transition-colors">
+            {title}
+          </h3>
+
+          {/* Resolved state */}
+          {isClosedOrResolved ? (
+            <div className="space-y-2">
+              <div className={`text-center py-2 rounded-lg ${
+                resolution?.toLowerCase() === "yes" ? 'bg-success/10' : 
+                resolution?.toLowerCase() === "no" ? 'bg-secondary' : 'bg-primary/10'
+              }`}>
+                <span className={`font-bold text-sm ${
+                  resolution?.toLowerCase() === "yes" ? 'text-success' : 
+                  resolution?.toLowerCase() === "no" ? 'text-muted-foreground' : 'text-primary'
+                }`}>
+                  {resolution}
+                </span>
+                <p className="text-[10px] text-muted-foreground mt-0.5">
+                  {status === "closed" ? `Dispute ends: ${disputeEndsIn}` : resolvedAt}
+                </p>
               </div>
-            )}
-            {/* Creator badge */}
-            <button 
-              className="absolute bottom-1.5 left-1.5 flex items-center gap-1 bg-black/70 backdrop-blur-sm rounded-full px-1.5 py-0.5 hover:bg-black/80 transition-colors"
-              onClick={(e) => {
-                e.stopPropagation();
-                navigate(`/creator/${creator.id || creator.name.toLowerCase().replace(/\s+/g, '-')}`);
-              }}
-            >
-              <Avatar className="h-4 w-4">
-                <AvatarImage src={creator.avatar} alt={creator.name} />
-                <AvatarFallback className="text-[7px]">{creator.name.slice(0, 2)}</AvatarFallback>
-              </Avatar>
-              <span className="text-white text-[10px] font-medium max-w-[60px] truncate">{creator.name.split(' ')[0]}</span>
-              {creator.isCreator !== false && (
-                <BadgeCheck className="h-3 w-3 text-white fill-white/30" />
+              {status === "closed" && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full text-orange-600 border-orange-500/30 hover:bg-orange-500/10 text-xs h-8"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowDisputeDialog(true);
+                  }}
+                >
+                  <AlertTriangle className="h-3 w-3 mr-1" />
+                  Dispute
+                </Button>
               )}
-            </button>
-          </div>
-
-          {/* Content */}
-          <div className="flex-1 min-w-0 flex flex-col">
-            {/* Title */}
-            <h3 className="text-sm sm:text-base font-semibold leading-snug line-clamp-2 group-hover:text-primary transition-colors mb-2">
-              {title}
-            </h3>
-
-            {/* Stats */}
-            <div className="flex items-center gap-3 text-xs text-muted-foreground mb-3">
-              <span className="flex items-center gap-1">
-                <TrendingUp className="h-3.5 w-3.5" />
+            </div>
+          ) : isBinary ? (
+            /* Binary Market */
+            <div className="space-y-2">
+              {/* Probability bar */}
+              <div className="flex items-center gap-2 text-xs font-bold">
+                <span className="text-success">{yesPercent}%</span>
+                <div className="flex-1 h-1.5 rounded-full bg-muted overflow-hidden">
+                  <div 
+                    className="h-full rounded-full bg-gradient-to-r from-success to-success/80"
+                    style={{ width: `${yesPercent}%` }}
+                  />
+                </div>
+                <span className="text-muted-foreground">{100 - yesPercent}%</span>
+              </div>
+              
+              {/* Outcome buttons */}
+              <div className="grid grid-cols-2 gap-2">
+                <button 
+                  className="rounded-lg py-2 text-center bg-success/10 hover:bg-success/20 text-success border border-success/20 transition-all active:scale-[0.98]"
+                  onClick={handleOutcomeClick}
+                >
+                  <span className="text-xs font-bold uppercase">Yes</span>
+                </button>
+                <button 
+                  className="rounded-lg py-2 text-center bg-destructive/10 hover:bg-destructive/20 text-destructive border border-destructive/20 transition-all active:scale-[0.98]"
+                  onClick={handleOutcomeClick}
+                >
+                  <span className="text-xs font-bold uppercase">No</span>
+                </button>
+              </div>
+            </div>
+          ) : (
+            /* Multi-outcome Market */
+            <div className="space-y-1.5">
+              {displayOutcomes.slice(0, 2).map((outcome, index) => (
+                <button 
+                  key={index}
+                  className="w-full flex items-center gap-2 rounded-lg px-2 py-1.5 bg-secondary/60 hover:bg-secondary transition-colors text-left"
+                  onClick={handleOutcomeClick}
+                >
+                  {outcome.logo ? (
+                    <img src={outcome.logo} alt={outcome.label} className="h-4 w-4 object-contain rounded-sm" />
+                  ) : (
+                    <div className="h-4 w-4 rounded-sm bg-primary/10 flex items-center justify-center text-[8px] font-bold text-primary">
+                      {outcome.label.charAt(0)}
+                    </div>
+                  )}
+                  <span className="flex-1 text-xs font-medium truncate">{outcome.label}</span>
+                  <span className="text-xs font-bold">{outcome.price}%</span>
+                  <div className="flex gap-0.5">
+                    <span className="text-[9px] px-1.5 py-0.5 rounded bg-success/10 text-success font-medium">Yes</span>
+                    <span className="text-[9px] px-1.5 py-0.5 rounded bg-destructive/10 text-destructive font-medium">No</span>
+                  </div>
+                </button>
+              ))}
+              {displayOutcomes.length > 2 && (
+                <p className="text-[10px] text-muted-foreground text-center">+{displayOutcomes.length - 2} more outcomes</p>
+              )}
+            </div>
+          )}
+          
+          {/* Footer stats */}
+          <div className="flex items-center justify-between text-[10px] text-muted-foreground pt-2 border-t border-border/40">
+            <div className="flex items-center gap-3">
+              <span className="flex items-center gap-1 font-medium">
+                <TrendingUp className="h-3 w-3" />
                 {volume}
               </span>
-              <span className="flex items-center gap-1">
-                <Clock className="h-3.5 w-3.5" />
-                {endsIn}
-              </span>
             </div>
-
-            {/* Outcomes */}
-            <div className="mt-auto">
-              {isClosedOrResolved ? (
-                <div className="space-y-2">
-                  {getResolutionDisplay()}
-                  {status === "closed" && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="w-full text-orange-600 border-orange-500/30 hover:bg-orange-500/10 text-xs"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setShowDisputeDialog(true);
-                      }}
-                    >
-                      <AlertTriangle className="h-3.5 w-3.5 mr-1" />
-                      Dispute
-                    </Button>
-                  )}
-                </div>
-              ) : isBinary ? (
-                <div className="flex gap-2">
-                  {displayOutcomes.map((outcome, index) => (
-                    <button 
-                      key={index}
-                      className={`flex-1 rounded-lg py-2 text-center transition-all active:scale-[0.98] ${
-                        outcome.color === 'success'
-                          ? 'bg-success/10 hover:bg-success/15 text-success border border-success/20'
-                          : 'bg-secondary hover:bg-secondary/80 text-muted-foreground border border-border/50'
-                      }`}
-                      onClick={handleOutcomeClick}
-                    >
-                      <div className="text-lg font-bold">{outcome.price}¢</div>
-                      <div className="text-[10px] font-medium">{outcome.label}</div>
-                    </button>
-                  ))}
-                </div>
-              ) : (
-                <div className="flex flex-wrap gap-1.5">
-                  {displayOutcomes.slice(0, 3).map((outcome, index) => (
-                    <button 
-                      key={index}
-                      className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 bg-secondary/60 hover:bg-secondary transition-colors"
-                      onClick={handleOutcomeClick}
-                    >
-                      {outcome.logo ? (
-                        <img src={outcome.logo} alt={outcome.label} className="h-4 w-4 object-contain" />
-                      ) : (
-                        <div className="h-4 w-4 rounded-full bg-primary/10 flex items-center justify-center text-[9px] font-bold text-primary">
-                          {outcome.label.charAt(0)}
-                        </div>
-                      )}
-                      <span className="text-xs font-medium">{outcome.label}</span>
-                      <span className="text-xs font-bold text-primary">{outcome.price}%</span>
-                    </button>
-                  ))}
-                  {displayOutcomes.length > 3 && (
-                    <span className="text-[10px] text-muted-foreground self-center">+{displayOutcomes.length - 3} more</span>
-                  )}
-                </div>
-              )}
-            </div>
+            <span className="flex items-center gap-1">
+              <Clock className="h-3 w-3" />
+              {endsIn}
+            </span>
           </div>
         </div>
       </Card>
