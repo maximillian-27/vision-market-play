@@ -336,19 +336,19 @@ export function MarketGridCard({
                   </div>
                 </div>
                 
-                {/* Yes/No buttons - Polymarket style */}
+                {/* Yes/No buttons - Bold standout style */}
                 <div className="grid grid-cols-2 gap-2">
                   <button 
-                    className="rounded-lg py-2 text-center bg-yes-muted hover:bg-yes text-yes hover:text-yes-foreground border border-yes/20 hover:border-yes transition-all active:scale-[0.98]"
+                    className="rounded-lg py-2.5 text-center bg-yes text-yes-foreground hover:bg-yes/90 shadow-md hover:shadow-lg transition-all active:scale-[0.97] font-semibold"
                     onClick={handleOutcomeClick}
                   >
-                    <span className="text-xs font-bold">Yes {yesPercent}¢</span>
+                    <span className="text-sm font-bold">Yes {yesPercent}¢</span>
                   </button>
                   <button 
-                    className="rounded-lg py-2 text-center bg-no-muted hover:bg-no text-no hover:text-no-foreground border border-no/20 hover:border-no transition-all active:scale-[0.98]"
+                    className="rounded-lg py-2.5 text-center bg-no text-no-foreground hover:bg-no/90 shadow-md hover:shadow-lg transition-all active:scale-[0.97] font-semibold"
                     onClick={handleOutcomeClick}
                   >
-                    <span className="text-xs font-bold">No {noPercent}¢</span>
+                    <span className="text-sm font-bold">No {noPercent}¢</span>
                   </button>
                 </div>
               </div>
@@ -445,28 +445,19 @@ export function MarketGridCard({
                   </span>
                 </div>
               ) : isBinary ? (
-                <div className="flex items-center gap-2 mt-auto">
-                  <span className="text-xs font-bold text-yes">{yesPercent}%</span>
-                  <div className="flex-1 h-1.5 rounded-full bg-no-muted overflow-hidden">
-                    <div 
-                      className="h-full rounded-full bg-yes"
-                      style={{ width: `${yesPercent}%` }}
-                    />
-                  </div>
-                  <div className="flex gap-1.5">
-                    <button 
-                      className="px-2.5 py-1 rounded-md bg-yes-muted text-yes border border-yes/20 text-[11px] font-bold active:scale-95 transition-transform"
-                      onClick={handleOutcomeClick}
-                    >
-                      Yes
-                    </button>
-                    <button 
-                      className="px-2.5 py-1 rounded-md bg-no-muted text-no border border-no/20 text-[11px] font-bold active:scale-95 transition-transform"
-                      onClick={handleOutcomeClick}
-                    >
-                      No
-                    </button>
-                  </div>
+                <div className="flex items-center gap-1.5 mt-auto">
+                  <button 
+                    className="flex-1 py-1.5 rounded-md bg-yes text-yes-foreground text-[11px] font-bold shadow-sm active:scale-[0.97] transition-all"
+                    onClick={handleOutcomeClick}
+                  >
+                    Yes {yesPercent}¢
+                  </button>
+                  <button 
+                    className="flex-1 py-1.5 rounded-md bg-no text-no-foreground text-[11px] font-bold shadow-sm active:scale-[0.97] transition-all"
+                    onClick={handleOutcomeClick}
+                  >
+                    No {noPercent}¢
+                  </button>
                 </div>
               ) : (
                 <div className="flex gap-2 overflow-x-auto scrollbar-hide mt-auto -mr-3 pr-3">
