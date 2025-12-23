@@ -54,12 +54,12 @@ export function Header() {
 
   return (
     <>
-      <header className="border-b border-border/30 bg-background/60 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60 fixed top-0 z-50 w-full">
+      <header className="border-b border-border bg-background/95 backdrop-blur-xl supports-[backdrop-filter]:bg-background/80 fixed top-0 z-50 w-full">
         <div className="flex h-14 items-center px-4 lg:px-6 gap-4 max-w-[1600px] mx-auto">
           {/* Logo */}
           <button 
             onClick={() => navigate("/")}
-            className="flex items-center hover:opacity-80 transition-opacity"
+            className="flex items-center hover:opacity-80 transition-opacity flex-shrink-0"
           >
             <img 
               src={pollgyLogo} 
@@ -70,13 +70,13 @@ export function Header() {
 
           {/* Desktop Navigation */}
           {!isMobile && (
-            <nav className="flex items-center gap-5 ml-6">
+            <nav className="flex items-center gap-1 ml-8">
               {navItems.map((item) => (
                 <NavLink
                   key={item.title}
                   to={item.url}
-                  className="px-1 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors border-b-2 border-transparent"
-                  activeClassName="font-medium text-primary border-primary"
+                  className="px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors rounded-md hover:bg-secondary"
+                  activeClassName="text-primary bg-primary-muted"
                 >
                   {item.title}
                 </NavLink>
@@ -86,7 +86,7 @@ export function Header() {
 
           {/* Search - Desktop */}
           <form 
-            className="hidden md:flex relative flex-1 max-w-xs ml-auto"
+            className="hidden md:flex relative flex-1 max-w-sm ml-auto"
             onSubmit={(e) => {
               e.preventDefault();
               const formData = new FormData(e.currentTarget);
@@ -96,11 +96,11 @@ export function Header() {
               }
             }}
           >
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/50" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input 
               name="search"
-              placeholder="Search markets..." 
-              className="pl-9 h-9 bg-secondary/50 border-transparent hover:bg-secondary focus-visible:bg-background text-sm"
+              placeholder="Search markets or profiles" 
+              className="pl-9 h-9 bg-secondary border-transparent hover:bg-secondary-hover focus-visible:bg-background focus-visible:border-border text-sm rounded-lg"
             />
           </form>
 
@@ -109,15 +109,15 @@ export function Header() {
             {/* Language Selector */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground">
+                <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
                   <Globe className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="z-50 bg-popover rounded-lg border-border/60">
-                <DropdownMenuItem>English</DropdownMenuItem>
-                <DropdownMenuItem>Español</DropdownMenuItem>
-                <DropdownMenuItem>Français</DropdownMenuItem>
-                <DropdownMenuItem>Deutsch</DropdownMenuItem>
+              <DropdownMenuContent align="end" className="z-50 bg-popover rounded-lg border-border">
+                <DropdownMenuItem className="cursor-pointer">English</DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer">Español</DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer">Français</DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer">Deutsch</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           
@@ -130,7 +130,7 @@ export function Header() {
                 <Button 
                   size="sm" 
                   onClick={() => setShowDepositDialog(true)}
-                  className="h-8 text-xs gap-1.5"
+                  className="h-8 text-xs gap-1.5 font-semibold"
                 >
                   <Plus className="h-3.5 w-3.5" />
                   <span className="hidden sm:inline">Deposit</span>
@@ -139,39 +139,47 @@ export function Header() {
             )}
 
             {!isLoggedIn ? (
-              <>
+              <div className="flex items-center gap-2">
                 <Button 
                   variant="ghost" 
                   size="sm"
                   onClick={() => setShowHowItWorks(true)}
-                  className="hidden md:flex text-muted-foreground text-xs"
+                  className="hidden md:flex text-muted-foreground text-xs font-medium hover:text-foreground"
                 >
                   How it works?
                 </Button>
                 <Button 
+                  variant="outline"
                   size="sm" 
                   onClick={handleLogin}
-                  className="h-8 text-xs"
+                  className="h-8 text-xs font-medium"
                 >
-                  {isMobile ? "Login" : "Login / Sign up"}
+                  Log in
                 </Button>
-              </>
+                <Button 
+                  size="sm" 
+                  onClick={handleLogin}
+                  className="h-8 text-xs font-semibold"
+                >
+                  Sign up
+                </Button>
+              </div>
             ) : (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button className="focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full transition-transform hover:scale-105">
-                    <Avatar className="h-8 w-8 ring-2 ring-border/60">
+                    <Avatar className="h-8 w-8 ring-2 ring-border">
                       <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=User" alt="Profile" />
-                      <AvatarFallback className="bg-primary/10 text-primary font-medium text-xs">U</AvatarFallback>
+                      <AvatarFallback className="bg-primary-muted text-primary font-medium text-xs">U</AvatarFallback>
                     </Avatar>
                   </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56 z-50 bg-popover rounded-lg border-border/60 p-1.5">
+                <DropdownMenuContent align="end" className="w-56 z-50 bg-popover rounded-lg border-border p-1.5">
                   {/* Balance Section */}
-                  <div className="px-2 py-2 space-y-1.5 bg-secondary/50 rounded-md mb-1.5">
+                  <div className="px-2 py-2.5 space-y-2 bg-secondary rounded-lg mb-1.5">
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-muted-foreground">Portfolio</span>
-                      <span className="font-semibold text-success">${portfolioValue.toLocaleString()}</span>
+                      <span className="font-semibold text-primary">${portfolioValue.toLocaleString()}</span>
                     </div>
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-muted-foreground">Cash</span>
@@ -179,36 +187,36 @@ export function Header() {
                     </div>
                   </div>
                   
-                  <DropdownMenuItem onClick={() => navigate("/portfolio")} className="gap-2.5 py-2 cursor-pointer">
+                  <DropdownMenuItem onClick={() => navigate("/portfolio")} className="gap-2.5 py-2 cursor-pointer rounded-md">
                     <Briefcase className="h-4 w-4 text-muted-foreground" />
                     Portfolio
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate("/settings")} className="gap-2.5 py-2 cursor-pointer">
+                  <DropdownMenuItem onClick={() => navigate("/settings")} className="gap-2.5 py-2 cursor-pointer rounded-md">
                     <Settings className="h-4 w-4 text-muted-foreground" />
                     Settings
                   </DropdownMenuItem>
                   
                   {isCreator ? (
-                    <DropdownMenuItem onClick={() => navigate("/creator-dashboard")} className="gap-2.5 py-2 cursor-pointer">
+                    <DropdownMenuItem onClick={() => navigate("/creator-dashboard")} className="gap-2.5 py-2 cursor-pointer rounded-md">
                       <Sparkles className="h-4 w-4 text-primary" />
                       <span className="text-primary font-medium">Creator Dashboard</span>
                     </DropdownMenuItem>
                   ) : (
-                    <DropdownMenuItem onClick={() => setShowCreatorDialog(true)} className="gap-2.5 py-2 cursor-pointer">
+                    <DropdownMenuItem onClick={() => setShowCreatorDialog(true)} className="gap-2.5 py-2 cursor-pointer rounded-md">
                       <Sparkles className="h-4 w-4 text-muted-foreground" />
                       Become a Creator
                     </DropdownMenuItem>
                   )}
                   
                   {isAdmin && (
-                    <DropdownMenuItem onClick={() => navigate("/admin")} className="gap-2.5 py-2 cursor-pointer">
+                    <DropdownMenuItem onClick={() => navigate("/admin")} className="gap-2.5 py-2 cursor-pointer rounded-md">
                       <Shield className="h-4 w-4 text-muted-foreground" />
                       Admin
                     </DropdownMenuItem>
                   )}
                   
                   <DropdownMenuSeparator className="my-1" />
-                  <DropdownMenuItem onClick={handleLogout} className="gap-2.5 py-2 cursor-pointer text-destructive focus:text-destructive">
+                  <DropdownMenuItem onClick={handleLogout} className="gap-2.5 py-2 cursor-pointer text-destructive focus:text-destructive rounded-md">
                     <LogOut className="h-4 w-4" />
                     Logout
                   </DropdownMenuItem>

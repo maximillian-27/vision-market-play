@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { SlidersHorizontal, X } from "lucide-react";
+import { SlidersHorizontal, X, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -29,29 +29,33 @@ export function FeedFilters({ filters, onFiltersChange }: FeedFiltersProps) {
   const hasActiveFilters = filters.sortBy !== "trending" || filters.region !== "global" || filters.status !== "all" || filters.timeframe !== "all";
 
   return (
-    <div className="space-y-3 sticky top-14 z-10 bg-background/60 backdrop-blur-xl border-b border-border/30 py-3 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+    <div className="space-y-3 sticky top-14 z-10 bg-background/95 backdrop-blur-xl border-b border-border py-3 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
       {/* Category Tabs + Filter */}
-      <div className="flex gap-2 items-center">
+      <div className="flex gap-3 items-center">
+        {/* Filter Button */}
         <Button 
           variant={showFilters ? "default" : "outline"} 
           size="sm"
-          className="h-8 px-3 flex-shrink-0 gap-1.5"
+          className="h-8 px-3 flex-shrink-0 gap-1.5 font-medium"
           onClick={() => setShowFilters(!showFilters)}
         >
           <SlidersHorizontal className="h-3.5 w-3.5" />
           <span className="hidden sm:inline">Filters</span>
-          {hasActiveFilters && <span className="h-1.5 w-1.5 rounded-full bg-primary-foreground" />}
+          {hasActiveFilters && (
+            <span className="h-1.5 w-1.5 rounded-full bg-primary-foreground ml-0.5" />
+          )}
         </Button>
-        
-        <div className="flex gap-5 overflow-x-auto pb-1 scrollbar-hide">
+
+        {/* Category pills */}
+        <div className="flex gap-1 overflow-x-auto pb-0.5 scrollbar-hide">
           {categories.map((category) => (
             <button
               key={category}
               onClick={() => updateFilter('category', category)}
-              className={`whitespace-nowrap font-medium px-1 py-1.5 text-sm transition-colors border-b-2 ${
+              className={`whitespace-nowrap font-medium px-3 py-1.5 text-sm rounded-full transition-all ${
                 category === filters.category 
-                  ? "text-primary border-primary" 
-                  : "text-muted-foreground hover:text-foreground border-transparent"
+                  ? "bg-primary text-primary-foreground" 
+                  : "text-muted-foreground hover:text-foreground hover:bg-secondary"
               }`}
             >
               {category}
@@ -62,18 +66,18 @@ export function FeedFilters({ filters, onFiltersChange }: FeedFiltersProps) {
 
       {/* Expanded Filter Panel */}
       {showFilters && (
-        <div className="rounded-lg border border-border/60 bg-card p-4 animate-in fade-in-0 slide-in-from-top-2 duration-200">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-sm font-medium">Filter Markets</span>
-            <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setShowFilters(false)}>
+        <div className="rounded-xl border border-border bg-card p-4 animate-in fade-in-0 slide-in-from-top-2 duration-200 shadow-sm">
+          <div className="flex items-center justify-between mb-4">
+            <span className="text-sm font-semibold">Filter Markets</span>
+            <Button variant="ghost" size="icon" className="h-7 w-7 -mr-1" onClick={() => setShowFilters(false)}>
               <X className="h-4 w-4" />
             </Button>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="space-y-1.5">
-              <Label className="text-xs text-muted-foreground">Sort By</Label>
+              <Label className="text-xs text-muted-foreground font-medium">Sort By</Label>
               <Select value={filters.sortBy} onValueChange={(v) => updateFilter('sortBy', v)}>
-                <SelectTrigger className="h-9 text-sm">
+                <SelectTrigger className="h-9 text-sm rounded-lg">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -87,9 +91,9 @@ export function FeedFilters({ filters, onFiltersChange }: FeedFiltersProps) {
             </div>
 
             <div className="space-y-1.5">
-              <Label className="text-xs text-muted-foreground">Region</Label>
+              <Label className="text-xs text-muted-foreground font-medium">Region</Label>
               <Select value={filters.region} onValueChange={(v) => updateFilter('region', v)}>
-                <SelectTrigger className="h-9 text-sm">
+                <SelectTrigger className="h-9 text-sm rounded-lg">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -102,9 +106,9 @@ export function FeedFilters({ filters, onFiltersChange }: FeedFiltersProps) {
             </div>
 
             <div className="space-y-1.5">
-              <Label className="text-xs text-muted-foreground">Status</Label>
+              <Label className="text-xs text-muted-foreground font-medium">Status</Label>
               <Select value={filters.status} onValueChange={(v) => updateFilter('status', v)}>
-                <SelectTrigger className="h-9 text-sm">
+                <SelectTrigger className="h-9 text-sm rounded-lg">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -118,9 +122,9 @@ export function FeedFilters({ filters, onFiltersChange }: FeedFiltersProps) {
             </div>
 
             <div className="space-y-1.5">
-              <Label className="text-xs text-muted-foreground">Timeframe</Label>
+              <Label className="text-xs text-muted-foreground font-medium">Timeframe</Label>
               <Select value={filters.timeframe} onValueChange={(v) => updateFilter('timeframe', v)}>
-                <SelectTrigger className="h-9 text-sm">
+                <SelectTrigger className="h-9 text-sm rounded-lg">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -137,10 +141,10 @@ export function FeedFilters({ filters, onFiltersChange }: FeedFiltersProps) {
             <Button 
               variant="ghost" 
               size="sm" 
-              className="mt-3 text-xs text-muted-foreground"
+              className="mt-4 text-xs text-muted-foreground hover:text-foreground"
               onClick={() => onFiltersChange({ ...filters, sortBy: "trending", region: "global", status: "all", timeframe: "all" })}
             >
-              Clear filters
+              Clear all filters
             </Button>
           )}
         </div>
