@@ -384,24 +384,32 @@ export function MarketGridCard({
           </div>
         </div>
 
-        {/* Mobile Layout - Compact horizontal */}
-        <div className="sm:hidden flex gap-3 p-2.5">
-          {/* Thumbnail */}
-          <div className={`relative w-16 h-16 rounded-lg overflow-hidden bg-secondary flex-shrink-0 ${isClosedOrResolved ? 'grayscale-[30%]' : ''}`}>
+        {/* Mobile Layout - Vertical card with taller image */}
+        <div className="sm:hidden flex flex-col">
+          {/* Image - taller aspect ratio */}
+          <div className={`relative aspect-[4/3] w-full overflow-hidden bg-secondary ${isClosedOrResolved ? 'grayscale-[30%]' : ''}`}>
             <img 
               src={image} 
               alt={title}
               className="h-full w-full object-cover"
             />
+            
+            {/* Status badge top left */}
             {getStatusBadge() && (
-              <div className="absolute top-0.5 left-0.5 scale-[0.6] origin-top-left">
+              <div className="absolute top-2 left-2">
                 {getStatusBadge()}
               </div>
             )}
+            
+            {/* Timer top right */}
+            <div className="absolute top-2 right-2 flex items-center gap-1 bg-black/60 backdrop-blur-sm rounded-full px-2 py-1">
+              <Clock className="h-3 w-3 text-white/80" />
+              <span className="text-[10px] text-white font-medium">{endsIn}</span>
+            </div>
           </div>
 
           {/* Content */}
-          <div className="flex-1 min-w-0 flex flex-col gap-1.5">
+          <div className="p-3 space-y-2.5">
             {/* Creator */}
             <button 
               className="flex items-center gap-1.5 hover:opacity-80 transition-opacity w-fit"
@@ -413,23 +421,23 @@ export function MarketGridCard({
                 navigate(profilePath);
               }}
             >
-              <Avatar className="h-4 w-4">
+              <Avatar className="h-5 w-5">
                 <AvatarImage src={creator.avatar} alt={creator.name} />
-                <AvatarFallback className="text-[6px]">{creator.name.slice(0, 2)}</AvatarFallback>
+                <AvatarFallback className="text-[8px]">{creator.name.slice(0, 2)}</AvatarFallback>
               </Avatar>
-              <span className="text-[10px] text-muted-foreground font-medium truncate max-w-[100px]">{creator.name}</span>
+              <span className="text-xs text-muted-foreground font-medium truncate max-w-[120px]">{creator.name}</span>
             </button>
             
-            <h3 className="text-[13px] font-semibold leading-tight line-clamp-2 group-hover:text-primary transition-colors">
+            <h3 className="text-sm font-semibold leading-snug line-clamp-2 group-hover:text-primary transition-colors">
               {title}
             </h3>
 
             {isClosedOrResolved ? (
-              <div className={`inline-flex items-center gap-1 px-2 py-1 rounded-md w-fit ${
+              <div className={`inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md w-fit ${
                 resolution?.toLowerCase() === "yes" ? 'bg-success/10' : 
                 resolution?.toLowerCase() === "no" ? 'bg-secondary' : 'bg-primary/10'
               }`}>
-                <span className={`font-bold text-xs ${
+                <span className={`font-bold text-sm ${
                   resolution?.toLowerCase() === "yes" ? 'text-success' : 
                   resolution?.toLowerCase() === "no" ? 'text-muted-foreground' : 'text-primary'
                 }`}>
@@ -437,9 +445,9 @@ export function MarketGridCard({
                 </span>
               </div>
             ) : isBinary ? (
-              <div className="space-y-1.5">
+              <div className="space-y-2">
                 {/* Probability bar */}
-                <div className="flex items-center gap-2 text-[11px] font-bold">
+                <div className="flex items-center gap-2 text-xs font-bold">
                   <span className="text-success w-8">{yesPercent}%</span>
                   <div className="flex-1 h-1.5 rounded-full bg-muted overflow-hidden">
                     <div 
@@ -453,13 +461,13 @@ export function MarketGridCard({
                 {/* Outcome buttons */}
                 <div className="flex gap-2">
                   <button 
-                    className="flex-1 rounded-md py-1.5 text-center bg-success/10 hover:bg-success/20 text-success border border-success/20 text-[11px] font-bold uppercase active:scale-[0.97] transition-all"
+                    className="flex-1 rounded-lg py-2 text-center bg-success/10 hover:bg-success/20 text-success border border-success/20 text-xs font-bold uppercase active:scale-[0.97] transition-all"
                     onClick={handleOutcomeClick}
                   >
                     Yes
                   </button>
                   <button 
-                    className="flex-1 rounded-md py-1.5 text-center bg-destructive/10 hover:bg-destructive/20 text-destructive border border-destructive/20 text-[11px] font-bold uppercase active:scale-[0.97] transition-all"
+                    className="flex-1 rounded-lg py-2 text-center bg-destructive/10 hover:bg-destructive/20 text-destructive border border-destructive/20 text-xs font-bold uppercase active:scale-[0.97] transition-all"
                     onClick={handleOutcomeClick}
                   >
                     No
@@ -467,17 +475,17 @@ export function MarketGridCard({
                 </div>
               </div>
             ) : (
-              <div className="flex gap-1.5 overflow-x-auto scrollbar-hide -mr-2 pr-2 pb-0.5">
+              <div className="flex gap-1.5 overflow-x-auto scrollbar-hide -mr-3 pr-3 pb-0.5">
                 {displayOutcomes.map((outcome, index) => (
                   <button 
                     key={index}
-                    className="flex-shrink-0 flex items-center gap-1 rounded-md px-2 py-1.5 bg-secondary/80 hover:bg-secondary border border-border/40 text-[11px] active:scale-[0.97] transition-all"
+                    className="flex-shrink-0 flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 bg-secondary/80 hover:bg-secondary border border-border/40 text-xs active:scale-[0.97] transition-all"
                     onClick={handleOutcomeClick}
                   >
                     {outcome.logo ? (
-                      <img src={outcome.logo} alt={outcome.label} className="h-3.5 w-3.5 object-contain rounded-sm" />
+                      <img src={outcome.logo} alt={outcome.label} className="h-4 w-4 object-contain rounded-sm" />
                     ) : (
-                      <div className="h-3.5 w-3.5 rounded-sm bg-primary/10 flex items-center justify-center text-[7px] font-bold text-primary">
+                      <div className="h-4 w-4 rounded-sm bg-primary/10 flex items-center justify-center text-[8px] font-bold text-primary">
                         {outcome.label.charAt(0)}
                       </div>
                     )}
@@ -488,14 +496,11 @@ export function MarketGridCard({
               </div>
             )}
 
-            <div className="flex items-center gap-3 text-[10px] text-muted-foreground mt-auto">
-              <span className="flex items-center gap-0.5 font-medium">
-                <TrendingUp className="h-3 w-3" />
+            {/* Volume only - timer is now in image */}
+            <div className="flex items-center text-xs text-muted-foreground pt-1 border-t border-border/30">
+              <span className="flex items-center gap-1 font-medium">
+                <TrendingUp className="h-3.5 w-3.5" />
                 {volume}
-              </span>
-              <span className="flex items-center gap-0.5">
-                <Clock className="h-3 w-3" />
-                {endsIn}
               </span>
             </div>
           </div>
