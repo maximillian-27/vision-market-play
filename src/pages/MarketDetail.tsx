@@ -503,12 +503,14 @@ export default function MarketDetail() {
               {market.outcomes.map((outcome: any, index: number) => {
                 const isYes = outcome.label.toLowerCase() === "yes";
                 const isSelected = selectedOutcome?.label === outcome.label;
+                // Mock 24h change
+                const priceChange = isYes ? +3 : -3;
                 
                 return (
                   <button
                     key={index}
                     onClick={() => setSelectedOutcome(outcome)}
-                    className={`p-2.5 rounded-xl transition-all active:scale-[0.98] border-2 flex items-center justify-between ${
+                    className={`p-2.5 rounded-xl transition-all active:scale-[0.98] border-2 ${
                       isSelected
                         ? isYes 
                           ? 'border-success bg-success/15' 
@@ -518,15 +520,22 @@ export default function MarketDetail() {
                           : 'border-border bg-muted/30'
                     }`}
                   >
-                    <div className="flex items-center gap-2">
-                      <div className={`w-6 h-6 rounded-full flex items-center justify-center ${
-                        isYes ? 'bg-success/20 text-success' : 'bg-muted text-muted-foreground'
-                      }`}>
-                        {isYes ? <Check className="h-3.5 w-3.5" /> : <X className="h-3.5 w-3.5" />}
+                    <div className="flex items-center justify-between w-full">
+                      <div className="flex items-center gap-2">
+                        <div className={`w-6 h-6 rounded-full flex items-center justify-center ${
+                          isYes ? 'bg-success/20 text-success' : 'bg-muted text-muted-foreground'
+                        }`}>
+                          {isYes ? <Check className="h-3.5 w-3.5" /> : <X className="h-3.5 w-3.5" />}
+                        </div>
+                        <div className="text-left">
+                          <span className="font-semibold text-sm block">{outcome.label}</span>
+                          <span className={`text-[10px] ${priceChange > 0 ? 'text-success' : 'text-destructive'}`}>
+                            {priceChange > 0 ? '↑' : '↓'} {Math.abs(priceChange)}¢
+                          </span>
+                        </div>
                       </div>
-                      <span className="font-semibold text-sm">{outcome.label}</span>
+                      <span className="text-lg font-bold">{outcome.price}¢</span>
                     </div>
-                    <span className="text-lg font-bold">{outcome.price}¢</span>
                   </button>
                 );
               })}
@@ -535,6 +544,8 @@ export default function MarketDetail() {
             <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1">
               {visibleOutcomes.map((outcome: any, index: number) => {
                 const isSelected = selectedOutcome?.label === outcome.label;
+                // Mock 24h change
+                const priceChange = index === 0 ? +2 : index === 1 ? -1 : 0;
                 
                 return (
                   <button
@@ -553,7 +564,12 @@ export default function MarketDetail() {
                         {outcome.label.charAt(0)}
                       </div>
                     )}
-                    <span className="font-medium text-sm">{outcome.label}</span>
+                    <div className="text-left">
+                      <span className="font-medium text-sm block">{outcome.label}</span>
+                      <span className={`text-[10px] ${priceChange > 0 ? 'text-success' : priceChange < 0 ? 'text-destructive' : 'text-muted-foreground'}`}>
+                        {priceChange !== 0 ? (priceChange > 0 ? `↑${priceChange}%` : `↓${Math.abs(priceChange)}%`) : '—'}
+                      </span>
+                    </div>
                     <span className="text-sm font-bold">{outcome.price}%</span>
                   </button>
                 );
@@ -598,15 +614,37 @@ export default function MarketDetail() {
             </Button>
           </div>
 
-          {/* Order Summary - compact */}
+          {/* Order Summary - detailed for traders */}
           {selectedOutcome && (
-            <div className="flex items-center justify-between text-xs bg-muted/30 rounded-lg px-3 py-2">
-              <span className="text-muted-foreground">
-                {shares} shares @ {selectedOutcome.price}¢
-              </span>
-              <span className={`font-semibold ${potentialProfit > 0 ? 'text-success' : ''}`}>
-                Profit: +${potentialProfit.toFixed(2)}
-              </span>
+            <div className="space-y-2">
+              {/* Main stats row */}
+              <div className="grid grid-cols-4 gap-2 text-center">
+                <div className="bg-muted/30 rounded-lg py-1.5 px-1">
+                  <p className="text-[10px] text-muted-foreground">Shares</p>
+                  <p className="text-xs font-bold">{shares}</p>
+                </div>
+                <div className="bg-muted/30 rounded-lg py-1.5 px-1">
+                  <p className="text-[10px] text-muted-foreground">Price</p>
+                  <p className="text-xs font-bold">{selectedOutcome.price}¢</p>
+                </div>
+                <div className="bg-muted/30 rounded-lg py-1.5 px-1">
+                  <p className="text-[10px] text-muted-foreground">Payout</p>
+                  <p className="text-xs font-bold">${potentialPayout.toFixed(2)}</p>
+                </div>
+                <div className="bg-success/10 rounded-lg py-1.5 px-1">
+                  <p className="text-[10px] text-muted-foreground">Profit</p>
+                  <p className="text-xs font-bold text-success">+${potentialProfit.toFixed(2)}</p>
+                </div>
+              </div>
+              {/* ROI and risk */}
+              <div className="flex items-center justify-between text-xs px-1">
+                <span className="text-muted-foreground">
+                  ROI: <span className="font-semibold text-success">+{amountNum > 0 ? ((potentialProfit / amountNum) * 100).toFixed(0) : 0}%</span>
+                </span>
+                <span className="text-muted-foreground">
+                  Max loss: <span className="font-semibold text-destructive/80">-${amountNum.toFixed(2)}</span>
+                </span>
+              </div>
             </div>
           )}
         </div>
