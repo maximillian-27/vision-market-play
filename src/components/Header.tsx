@@ -70,7 +70,7 @@ export function Header() {
             <img 
               src={pollgyLogo} 
               alt="Pollgy" 
-              className="h-7"
+              className="h-7 dark:brightness-0 dark:invert"
             />
           </button>
 
