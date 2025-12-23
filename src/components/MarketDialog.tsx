@@ -386,6 +386,8 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
                   {market.outcomes.map((outcome, index) => {
                     const isYes = outcome.label.toLowerCase() === "yes";
                     const isSelected = selectedOutcome?.label === outcome.label;
+                    // Mock 24h change
+                    const priceChange = isYes ? +3 : -3;
                     
                     return (
                       <button
@@ -408,6 +410,9 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
                         </div>
                         <p className="font-semibold text-xs">{outcome.label}</p>
                         <p className="text-lg font-bold">{outcome.price}¢</p>
+                        <p className={`text-[10px] ${priceChange > 0 ? 'text-success' : 'text-destructive'}`}>
+                          {priceChange > 0 ? '↑' : '↓'} {Math.abs(priceChange)}¢ 24h
+                        </p>
                       </button>
                     );
                   })}
@@ -416,6 +421,8 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
                 <div className="space-y-1.5 max-h-[140px] overflow-y-auto">
                   {market.outcomes.map((outcome, index) => {
                     const isSelected = selectedOutcome?.label === outcome.label;
+                    // Mock 24h change
+                    const priceChange = index === 0 ? +2 : index === 1 ? -1 : 0;
                     
                     return (
                       <button
@@ -435,6 +442,9 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
                           </div>
                         )}
                         <span className="flex-1 text-left font-medium text-xs truncate">{outcome.label}</span>
+                        <span className={`text-[10px] ${priceChange > 0 ? 'text-success' : priceChange < 0 ? 'text-destructive' : 'text-muted-foreground'}`}>
+                          {priceChange !== 0 ? (priceChange > 0 ? `↑${priceChange}` : `↓${Math.abs(priceChange)}`) : '—'}
+                        </span>
                         <span className="text-sm font-bold">{outcome.price}%</span>
                         {isSelected && (
                           <Check className="h-3.5 w-3.5 text-primary" />
@@ -483,22 +493,41 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
                 </div>
               </div>
 
-              {/* Order Summary - Always visible */}
+              {/* Order Summary - Always visible with detailed info */}
               <div className="p-2.5 rounded-lg bg-background border border-border/50 space-y-1.5">
                 <div className="flex justify-between text-xs">
-                  <span className="text-muted-foreground">Shares</span>
+                  <span className="text-muted-foreground">Shares to receive</span>
                   <span className="font-semibold">{selectedOutcome ? shares.toLocaleString() : "—"}</span>
                 </div>
                 <div className="flex justify-between text-xs">
-                  <span className="text-muted-foreground">Avg price</span>
+                  <span className="text-muted-foreground">Avg price per share</span>
                   <span className="font-semibold">{selectedOutcome ? `${selectedOutcome.price}¢` : "—"}</span>
                 </div>
+                <div className="flex justify-between text-xs">
+                  <span className="text-muted-foreground">Implied probability</span>
+                  <span className="font-semibold">{selectedOutcome ? `${selectedOutcome.price}%` : "—"}</span>
+                </div>
                 <Separator className="my-1.5" />
+                <div className="flex justify-between text-xs">
+                  <span className="text-muted-foreground">Payout if correct</span>
+                  <span className="font-semibold">{selectedOutcome ? `$${potentialPayout.toFixed(2)}` : "—"}</span>
+                </div>
                 <div className="flex justify-between text-xs">
                   <span className="text-muted-foreground">Potential profit</span>
                   <span className={`font-bold ${selectedOutcome && potentialProfit > 0 ? 'text-success' : ''}`}>
                     {selectedOutcome ? `+$${potentialProfit.toFixed(2)}` : "—"}
                   </span>
+                </div>
+                <div className="flex justify-between text-xs">
+                  <span className="text-muted-foreground">Return (ROI)</span>
+                  <span className={`font-bold ${selectedOutcome && potentialProfit > 0 ? 'text-success' : ''}`}>
+                    {selectedOutcome && amountNum > 0 ? `+${((potentialProfit / amountNum) * 100).toFixed(0)}%` : "—"}
+                  </span>
+                </div>
+                <Separator className="my-1.5" />
+                <div className="flex justify-between text-xs">
+                  <span className="text-muted-foreground">Max loss</span>
+                  <span className="font-semibold text-destructive/80">{amountNum > 0 ? `-$${amountNum.toFixed(2)}` : "—"}</span>
                 </div>
               </div>
             </div>
