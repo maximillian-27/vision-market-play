@@ -6,8 +6,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, TrendingUp, Clock, Users, DollarSign, Heart, MessageCircle, Share2, Check, X } from "lucide-react";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { Badge } from "@/components/ui/badge";
+import { ArrowLeft, TrendingUp, Clock, Users, DollarSign, Heart, MessageCircle, Share2, Check, X, BadgeCheck, Info, BarChart3, Zap } from "lucide-react";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, AreaChart } from "recharts";
 import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
 import { BuyDialog } from "@/components/BuyDialog";
@@ -33,23 +34,26 @@ interface Comment {
   replies: number;
 }
 
-// Mock data - in a real app this would come from an API
+// Mock data
 const mockMarketData: Record<string, any> = {
   "1": {
     creator: {
       name: "Sarah Chen",
       avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah",
+      id: "sarah-chen",
+      verified: true,
     },
     title: "Will Bitcoin reach $100,000 by end of 2025?",
     subtitle: "The ultimate crypto milestone - will BTC finally break six figures?",
     description: "This market resolves to YES if Bitcoin (BTC) reaches or exceeds $100,000 USD on any major exchange (Coinbase, Binance, or Kraken) before 11:59 PM ET on December 31, 2025. The price must be sustained for at least 5 minutes.",
-    resolutionCriteria: "The market will resolve based on data from CoinGecko's Bitcoin price index. A screenshot of the price exceeding $100,000 for at least 5 consecutive minutes will be required. If there are disputes, the median price across the three exchanges (Coinbase, Binance, Kraken) will be used.",
+    resolutionCriteria: "The market will resolve based on data from CoinGecko's Bitcoin price index. A screenshot of the price exceeding $100,000 for at least 5 consecutive minutes will be required.",
     outcomes: [
       { label: "Yes", price: 68, color: "success" },
       { label: "No", price: 32, color: "destructive" }
     ],
     volume: "$2.4M",
     endsIn: "3 months",
+    endDate: "Dec 31, 2025",
     traders: "12.4K",
     liquidity: "$450K",
     priceHistory: [
@@ -60,17 +64,12 @@ const mockMarketData: Record<string, any> = {
       { date: "May", yes: 68, no: 32 },
     ]
   },
-  // Add more markets as needed
 };
 
 const mockComments: Comment[] = [
   {
     id: "1",
-    author: {
-      name: "Alex Chen",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Alex",
-      username: "@alexchen"
-    },
+    author: { name: "Alex Chen", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Alex", username: "@alexchen" },
     text: "Strong institutional adoption signals make this very likely. MicroStrategy and other corporations continue to accumulate.",
     timestamp: "2h ago",
     likes: 24,
@@ -79,30 +78,13 @@ const mockComments: Comment[] = [
   },
   {
     id: "2",
-    author: {
-      name: "Jordan Smith",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Jordan",
-      username: "@jsmith"
-    },
+    author: { name: "Jordan Smith", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Jordan", username: "@jsmith" },
     text: "Regulatory clarity will be key. If we get ETF approval momentum continues, this could easily happen.",
     timestamp: "4h ago",
     likes: 18,
     isLiked: true,
     replies: 1
   },
-  {
-    id: "3",
-    author: {
-      name: "Taylor Brown",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Taylor",
-      username: "@tbrown"
-    },
-    text: "The halvening in 2024 historically leads to major price action. Could be a catalyst.",
-    timestamp: "5h ago",
-    likes: 12,
-    isLiked: false,
-    replies: 0
-  }
 ];
 
 export default function MarketDetail() {
@@ -120,45 +102,35 @@ export default function MarketDetail() {
   const [selectedOutcome, setSelectedOutcome] = useState<any>(null);
 
   if (!market) {
-    return <div className="p-4">Market not found</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <p className="text-muted-foreground">Market not found</p>
+          <Button onClick={() => navigate('/')}>Back to Markets</Button>
+        </div>
+      </div>
+    );
   }
 
   const handleCommentSubmit = () => {
     try {
-      // Validate comment
       commentSchema.parse({ text: commentText });
-      
       setIsSubmitting(true);
-      
-      // Create new comment
       const newComment: Comment = {
         id: Date.now().toString(),
-        author: {
-          name: "You",
-          avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=User",
-          username: "@you"
-        },
+        author: { name: "You", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=User", username: "@you" },
         text: commentText,
         timestamp: "Just now",
         likes: 0,
         isLiked: false,
         replies: 0
       };
-      
       setComments([newComment, ...comments]);
       setCommentText("");
-      
-      toast({
-        title: "Comment posted",
-        description: "Your comment has been added successfully.",
-      });
+      toast({ title: "Comment posted", description: "Your comment has been added." });
     } catch (error) {
       if (error instanceof z.ZodError) {
-        toast({
-          title: "Invalid comment",
-          description: error.errors[0].message,
-          variant: "destructive"
-        });
+        toast({ title: "Invalid comment", description: error.errors[0].message, variant: "destructive" });
       }
     } finally {
       setIsSubmitting(false);
@@ -168,11 +140,7 @@ export default function MarketDetail() {
   const handleLikeComment = (commentId: string) => {
     setComments(comments.map(comment => 
       comment.id === commentId 
-        ? { 
-            ...comment, 
-            isLiked: !comment.isLiked,
-            likes: comment.isLiked ? comment.likes - 1 : comment.likes + 1
-          }
+        ? { ...comment, isLiked: !comment.isLiked, likes: comment.isLiked ? comment.likes - 1 : comment.likes + 1 }
         : comment
     ));
   };
@@ -184,30 +152,7 @@ export default function MarketDetail() {
 
   const handleShareMarket = () => {
     navigator.clipboard.writeText(window.location.href);
-    toast({
-      title: "Link copied",
-      description: "Market link has been copied to clipboard.",
-    });
-  };
-
-  const getOutcomeColor = (color?: string) => {
-    return "bg-background border-border hover:bg-muted/20";
-  };
-
-  const getOutcomeIcon = (color?: string) => {
-    switch (color) {
-      case "success": return <Check className="h-4 w-4" />;
-      case "destructive": return <X className="h-4 w-4" />;
-      default: return <Check className="h-4 w-4" />;
-    }
-  };
-
-  const getIconBgColor = (color?: string) => {
-    switch (color) {
-      case "success": return "bg-success text-success-foreground";
-      case "destructive": return "bg-destructive text-destructive-foreground";
-      default: return "bg-primary text-primary-foreground";
-    }
+    toast({ title: "Link copied", description: "Market link has been copied to clipboard." });
   };
 
   const handleOutcomeClick = (e: React.MouseEvent, outcome: any) => {
@@ -217,7 +162,7 @@ export default function MarketDetail() {
   };
 
   return (
-    <div className="w-full md:container md:max-w-4xl md:py-6 pb-4">
+    <div className="min-h-screen bg-background">
       <BuyDialog
         open={showBuyDialog}
         onOpenChange={setShowBuyDialog}
@@ -225,189 +170,139 @@ export default function MarketDetail() {
         marketTitle={market.title}
         marketId={id || "1"}
       />
-      {/* Back Button */}
-      <div className="sticky top-0 md:top-0 z-20 bg-background/95 backdrop-blur-sm border-b md:border-0 px-4 py-2 md:py-4 md:px-0">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => navigate(-1)}
-          className="gap-2 -ml-2"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          <span className="text-sm">Back</span>
-        </Button>
-      </div>
-
-      <div className="space-y-3 md:space-y-4 px-4 md:px-0 pt-2 md:pt-0">
-        {/* Market Header - Clean & Minimal */}
-        <div className="space-y-4 md:space-y-5">
-          {/* Creator Info - Subtle */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Avatar className="h-6 w-6 md:h-8 md:w-8">
-                <AvatarImage src={market.creator.avatar} alt={market.creator.name} />
-                <AvatarFallback className="text-[10px] md:text-xs">{market.creator.name.slice(0, 2).toUpperCase()}</AvatarFallback>
-              </Avatar>
-              <span className="text-xs md:text-sm text-muted-foreground">{market.creator.name}</span>
-            </div>
-            
-            {/* Desktop Engagement Actions */}
-            <div className="hidden md:flex items-center gap-1">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-8 w-8 p-0"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleLikeMarket();
-                }}
-              >
-                <Heart className={`h-3.5 w-3.5 ${isLiked ? 'fill-destructive text-destructive' : 'text-muted-foreground hover:text-destructive'}`} />
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-8 w-8 p-0"
-                onClick={(e) => {
-                  e.stopPropagation();
-                }}
-              >
-                <MessageCircle className="h-3.5 w-3.5 text-muted-foreground hover:text-primary" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-8 w-8 p-0"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleShareMarket();
-                }}
-              >
-                <Share2 className="h-3.5 w-3.5 text-muted-foreground hover:text-primary" />
-              </Button>
-            </div>
-          </div>
-
-          {/* Title - Prominent */}
-          <h1 className="text-xl md:text-3xl font-bold leading-tight">{market.title}</h1>
-          
-          {/* Subtitle */}
-          {market.subtitle && (
-            <p className="text-sm md:text-base text-muted-foreground leading-relaxed">{market.subtitle}</p>
-          )}
-
-          {/* Stats - Clean, no backgrounds */}
-          <div className="flex items-center gap-4 md:gap-6 text-xs md:text-sm">
-            <div className="flex items-center gap-1.5 text-muted-foreground">
-              <TrendingUp className="h-3.5 w-3.5 md:h-4 md:w-4" />
-              <span className="font-medium text-foreground">{market.volume}</span>
-            </div>
-            <div className="flex items-center gap-1.5 text-muted-foreground">
-              <Clock className="h-3.5 w-3.5 md:h-4 md:w-4" />
-              <span className="font-medium text-foreground">{market.endsIn}</span>
-            </div>
-          </div>
-
-          {/* Outcomes - Clean & Prominent */}
-          <div className="space-y-2 md:space-y-2.5 pt-2">
-              {market.outcomes.map((outcome: any, index: number) => {
-                const payout = outcome.price > 0 ? (100 / (outcome.price / 100)).toFixed(2) : 0;
-                const percentage = outcome.price;
-                const priceChange = index === 0 ? "+5.2%" : "-5.2%";
-                const volume = index === 0 ? "$1.6M" : "$780K";
-                
-                return (
-                  <button
-                    key={index}
-                    className={`w-full text-left rounded-lg px-3 py-3 md:px-4 md:py-4 border transition-all hover:scale-[1.01] active:scale-[0.99] ${getOutcomeColor(outcome.color)}`}
-                    onClick={(e) => handleOutcomeClick(e, outcome)}
-                  >
-                    {/* Mobile & Desktop: Clean unified layout */}
-                    <div className="flex items-center justify-between gap-4">
-                      <div className="flex-1 min-w-0">
-                        <div className="text-sm md:text-lg font-bold text-foreground mb-1">{outcome.label}</div>
-                        <div className="text-xs md:text-sm text-muted-foreground">{outcome.price}¢ per share</div>
-                      </div>
-                      <div className="hidden md:flex flex-1 items-center justify-center">
-                        <div className="text-xs text-muted-foreground/60">
-                          $100 → <span className="text-foreground/70">${payout}</span>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-2xl md:text-4xl font-bold text-foreground">{percentage}%</div>
-                        <div className="text-[10px] md:text-xs text-muted-foreground">probability</div>
-                      </div>
-                    </div>
-                  </button>
-                );
-              })}
-          </div>
-
-          {/* Mobile Engagement Actions */}
-          <div className="flex md:hidden items-center justify-center gap-6 pt-2 pb-1">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-8 gap-1.5"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleLikeMarket();
-              }}
-            >
-              <Heart className={`h-3.5 w-3.5 ${isLiked ? 'fill-destructive text-destructive' : 'text-muted-foreground'}`} />
-              <span className="text-xs">Like</span>
+      
+      {/* Sticky Header */}
+      <div className="sticky top-14 z-20 bg-background/95 backdrop-blur-sm border-b">
+        <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+          <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="gap-2 -ml-2">
+            <ArrowLeft className="h-4 w-4" />
+            Back
+          </Button>
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="sm" onClick={handleLikeMarket} className="gap-1.5">
+              <Heart className={`h-4 w-4 ${isLiked ? 'fill-destructive text-destructive' : ''}`} />
+              {likes}
             </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-8 gap-1.5"
-              onClick={(e) => {
-                e.stopPropagation();
-              }}
-            >
-              <MessageCircle className="h-3.5 w-3.5 text-muted-foreground" />
-              <span className="text-xs">Comment</span>
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-8 gap-1.5"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleShareMarket();
-              }}
-            >
-              <Share2 className="h-3.5 w-3.5 text-muted-foreground" />
-              <span className="text-xs">Share</span>
+            <Button variant="ghost" size="sm" onClick={handleShareMarket}>
+              <Share2 className="h-4 w-4" />
             </Button>
           </div>
         </div>
+      </div>
 
-        {/* Price Chart & Analytics */}
-        <Card className="border-0 md:border shadow-none md:shadow-sm">
-          <Tabs defaultValue="price" className="w-full">
-            <CardHeader className="p-4 md:p-6 pb-0">
-              <TabsList className="w-full grid grid-cols-2">
-                <TabsTrigger value="price">Price History</TabsTrigger>
-                <TabsTrigger value="analytics">Analytics</TabsTrigger>
-              </TabsList>
-            </CardHeader>
-            
-            <TabsContent value="price" className="mt-0">
-              <CardContent className="p-4 pt-4 md:p-6 md:pt-6">
-                <ResponsiveContainer width="100%" height={200}>
-                  <LineChart data={market.priceHistory}>
+      <div className="max-w-5xl mx-auto px-4 py-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Main Content */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Market Header */}
+            <div className="space-y-4">
+              {/* Creator */}
+              <button 
+                onClick={() => navigate(`/creator/${market.creator.id}`)}
+                className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+              >
+                <Avatar className="h-10 w-10">
+                  <AvatarImage src={market.creator.avatar} alt={market.creator.name} />
+                  <AvatarFallback>{market.creator.name.slice(0, 2)}</AvatarFallback>
+                </Avatar>
+                <div className="text-left">
+                  <div className="flex items-center gap-1.5">
+                    <span className="font-medium">{market.creator.name}</span>
+                    {market.creator.verified && (
+                      <BadgeCheck className="h-4 w-4 text-primary fill-primary/20" />
+                    )}
+                  </div>
+                  <span className="text-xs text-muted-foreground">Market Creator</span>
+                </div>
+              </button>
+
+              {/* Title */}
+              <h1 className="text-2xl md:text-3xl font-bold leading-tight">{market.title}</h1>
+              
+              {/* Subtitle */}
+              <p className="text-muted-foreground">{market.subtitle}</p>
+
+              {/* Key Stats */}
+              <div className="flex flex-wrap items-center gap-4 text-sm">
+                <div className="flex items-center gap-1.5 text-muted-foreground">
+                  <TrendingUp className="h-4 w-4" />
+                  <span className="font-medium text-foreground">{market.volume}</span>
+                  <span>volume</span>
+                </div>
+                <div className="flex items-center gap-1.5 text-muted-foreground">
+                  <Users className="h-4 w-4" />
+                  <span className="font-medium text-foreground">{market.traders}</span>
+                  <span>traders</span>
+                </div>
+                <div className="flex items-center gap-1.5 text-muted-foreground">
+                  <Clock className="h-4 w-4" />
+                  <span>Ends {market.endDate}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Outcomes - Main Trading Section */}
+            <Card className="border-border/40 overflow-hidden">
+              <CardHeader className="bg-muted/30 pb-3">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-lg">Trade this market</CardTitle>
+                  <Badge variant="outline" className="text-xs">
+                    <Zap className="h-3 w-3 mr-1" />
+                    Live
+                  </Badge>
+                </div>
+                <p className="text-sm text-muted-foreground">Click an outcome to place your trade</p>
+              </CardHeader>
+              <CardContent className="p-4 space-y-3">
+                {market.outcomes.map((outcome: any, index: number) => {
+                  const payout = outcome.price > 0 ? (100 / (outcome.price / 100)).toFixed(0) : 0;
+                  return (
+                    <button
+                      key={index}
+                      onClick={(e) => handleOutcomeClick(e, outcome)}
+                      className="w-full p-4 rounded-xl border-2 border-border/50 hover:border-primary/50 bg-background hover:bg-muted/30 transition-all group"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className={`p-2 rounded-full ${outcome.color === 'success' ? 'bg-success/10 text-success' : 'bg-muted text-muted-foreground'}`}>
+                            {outcome.color === 'success' ? <Check className="h-5 w-5" /> : <X className="h-5 w-5" />}
+                          </div>
+                          <div className="text-left">
+                            <p className="font-semibold text-lg">{outcome.label}</p>
+                            <p className="text-sm text-muted-foreground">{outcome.price}¢ per share · ${payout} payout</p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-3xl font-bold">{outcome.price}%</p>
+                          <p className="text-xs text-muted-foreground">probability</p>
+                        </div>
+                      </div>
+                    </button>
+                  );
+                })}
+              </CardContent>
+            </Card>
+
+            {/* Price Chart */}
+            <Card className="border-border/40">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <BarChart3 className="h-5 w-5" />
+                  Price History
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={250}>
+                  <AreaChart data={market.priceHistory}>
+                    <defs>
+                      <linearGradient id="yesGradient" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="hsl(var(--success))" stopOpacity={0.3}/>
+                        <stop offset="95%" stopColor="hsl(var(--success))" stopOpacity={0}/>
+                      </linearGradient>
+                    </defs>
                     <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                    <XAxis 
-                      dataKey="date" 
-                      stroke="hsl(var(--muted-foreground))"
-                      fontSize={12}
-                    />
-                    <YAxis 
-                      stroke="hsl(var(--muted-foreground))"
-                      fontSize={12}
-                      domain={[0, 100]}
-                    />
+                    <XAxis dataKey="date" stroke="hsl(var(--muted-foreground))" fontSize={12} />
+                    <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} domain={[0, 100]} />
                     <Tooltip 
                       contentStyle={{
                         backgroundColor: "hsl(var(--background))",
@@ -415,235 +310,156 @@ export default function MarketDetail() {
                         borderRadius: "8px"
                       }}
                     />
-                    <Line 
-                      type="monotone" 
-                      dataKey="yes" 
-                      stroke="hsl(var(--success))" 
-                      strokeWidth={2}
-                      name="Yes"
-                      dot={{ fill: "hsl(var(--success))" }}
-                    />
-                    <Line 
-                      type="monotone" 
-                      dataKey="no" 
-                      stroke="hsl(var(--destructive))" 
-                      strokeWidth={2}
-                      name="No"
-                      dot={{ fill: "hsl(var(--destructive))" }}
-                    />
-                  </LineChart>
+                    <Area type="monotone" dataKey="yes" stroke="hsl(var(--success))" fill="url(#yesGradient)" strokeWidth={2} name="Yes %" />
+                  </AreaChart>
                 </ResponsiveContainer>
               </CardContent>
-            </TabsContent>
-            
-            <TabsContent value="analytics" className="mt-0">
-              <CardContent className="p-4 pt-4 md:p-6 md:pt-6 space-y-6">
-                {/* Trading Volume Breakdown */}
-                <div className="space-y-3">
-                  <h4 className="text-sm font-semibold text-muted-foreground">Volume Breakdown</h4>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-1">
-                      <div className="text-xs text-muted-foreground">Yes Volume</div>
-                      <div className="text-lg font-bold text-success">$1.6M</div>
-                      <div className="text-xs text-muted-foreground">67% of total</div>
+            </Card>
+
+            {/* Description & Resolution */}
+            <Card className="border-border/40">
+              <Tabs defaultValue="description">
+                <CardHeader className="pb-0">
+                  <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="description">Description</TabsTrigger>
+                    <TabsTrigger value="resolution">Resolution Criteria</TabsTrigger>
+                  </TabsList>
+                </CardHeader>
+                <CardContent className="pt-4">
+                  <TabsContent value="description" className="mt-0">
+                    <p className="text-foreground/90 leading-relaxed">{market.description}</p>
+                  </TabsContent>
+                  <TabsContent value="resolution" className="mt-0">
+                    <div className="flex gap-3 p-4 bg-muted/30 rounded-lg border border-border/40">
+                      <Info className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+                      <p className="text-foreground/90 leading-relaxed">{market.resolutionCriteria}</p>
                     </div>
-                    <div className="space-y-1">
-                      <div className="text-xs text-muted-foreground">No Volume</div>
-                      <div className="text-lg font-bold text-destructive">$780K</div>
-                      <div className="text-xs text-muted-foreground">33% of total</div>
+                  </TabsContent>
+                </CardContent>
+              </Tabs>
+            </Card>
+
+            {/* Comments */}
+            <Card className="border-border/40">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <MessageCircle className="h-5 w-5" />
+                  Comments ({comments.length})
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {/* Comment Input */}
+                <div className="flex gap-3">
+                  <Avatar className="h-10 w-10 flex-shrink-0">
+                    <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=User" />
+                    <AvatarFallback>U</AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 space-y-2">
+                    <Textarea
+                      placeholder="Share your thoughts on this market..."
+                      value={commentText}
+                      onChange={(e) => setCommentText(e.target.value)}
+                      className="min-h-[80px] resize-none"
+                      maxLength={500}
+                    />
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-muted-foreground">{commentText.length}/500</span>
+                      <Button onClick={handleCommentSubmit} disabled={!commentText.trim() || isSubmitting} size="sm">
+                        Post Comment
+                      </Button>
                     </div>
                   </div>
                 </div>
 
                 <Separator />
 
-                {/* Market Depth */}
-                <div className="space-y-3">
-                  <h4 className="text-sm font-semibold text-muted-foreground">Market Depth</h4>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-1">
-                      <div className="text-xs text-muted-foreground">Total Liquidity</div>
-                      <div className="text-lg font-bold">$450K</div>
+                {/* Comments List */}
+                <div className="space-y-4">
+                  {comments.map((comment) => (
+                    <div key={comment.id} className="flex gap-3">
+                      <Avatar className="h-10 w-10 flex-shrink-0">
+                        <AvatarImage src={comment.author.avatar} />
+                        <AvatarFallback>{comment.author.name.slice(0, 2)}</AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 space-y-2">
+                        <div className="flex items-center gap-2">
+                          <span className="font-semibold text-sm">{comment.author.name}</span>
+                          <span className="text-xs text-muted-foreground">{comment.author.username}</span>
+                          <span className="text-xs text-muted-foreground">·</span>
+                          <span className="text-xs text-muted-foreground">{comment.timestamp}</span>
+                        </div>
+                        <p className="text-foreground/90">{comment.text}</p>
+                        <div className="flex items-center gap-4">
+                          <Button variant="ghost" size="sm" onClick={() => handleLikeComment(comment.id)} className="h-8 px-2 gap-1.5">
+                            <Heart className={`h-4 w-4 ${comment.isLiked ? 'fill-destructive text-destructive' : ''}`} />
+                            {comment.likes > 0 && <span className="text-xs">{comment.likes}</span>}
+                          </Button>
+                          <Button variant="ghost" size="sm" className="h-8 px-2 gap-1.5">
+                            <MessageCircle className="h-4 w-4" />
+                            {comment.replies > 0 && <span className="text-xs">{comment.replies}</span>}
+                          </Button>
+                        </div>
+                      </div>
                     </div>
-                    <div className="space-y-1">
-                      <div className="text-xs text-muted-foreground">Active Traders</div>
-                      <div className="text-lg font-bold">12.4K</div>
-                    </div>
-                  </div>
-                  <div className="space-y-1">
-                    <div className="text-xs text-muted-foreground">Avg Position Size</div>
-                    <div className="text-base font-semibold">$193</div>
-                  </div>
-                </div>
-
-                <Separator />
-
-                {/* Market Momentum */}
-                <div className="space-y-3">
-                  <h4 className="text-sm font-semibold text-muted-foreground">Market Momentum</h4>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-1">
-                      <div className="text-xs text-muted-foreground">24h Price Change</div>
-                      <div className="text-base font-semibold text-success">+5.2%</div>
-                    </div>
-                    <div className="space-y-1">
-                      <div className="text-xs text-muted-foreground">24h Volume</div>
-                      <div className="text-base font-semibold">$340K</div>
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-1">
-                      <div className="text-xs text-muted-foreground">7d Volatility</div>
-                      <div className="text-base font-semibold">12.4%</div>
-                    </div>
-                    <div className="space-y-1">
-                      <div className="text-xs text-muted-foreground">Spread</div>
-                      <div className="text-base font-semibold">1.2¢</div>
-                    </div>
-                  </div>
-                </div>
-
-                <Separator />
-
-                {/* Risk Metrics */}
-                <div className="space-y-3">
-                  <h4 className="text-sm font-semibold text-muted-foreground">Risk Metrics</h4>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-1">
-                      <div className="text-xs text-muted-foreground">Implied Probability</div>
-                      <div className="text-base font-semibold">68%</div>
-                    </div>
-                    <div className="space-y-1">
-                      <div className="text-xs text-muted-foreground">Kelly Criterion</div>
-                      <div className="text-base font-semibold">15%</div>
-                    </div>
-                  </div>
-                  <div className="space-y-1">
-                    <div className="text-xs text-muted-foreground">Expected Value (Yes @ 68¢)</div>
-                    <div className="text-base font-semibold text-success">+$0.47 per $1</div>
-                  </div>
+                  ))}
                 </div>
               </CardContent>
-            </TabsContent>
-          </Tabs>
-        </Card>
+            </Card>
+          </div>
 
-        {/* Details Tabs */}
-        <Card className="border-0 md:border shadow-none md:shadow-sm">
-          <Tabs defaultValue="description" className="w-full">
-            <TabsList className="w-full grid grid-cols-2 mx-4 md:mx-6 mt-4 md:mt-6 md:w-auto md:inline-grid">
-              <TabsTrigger value="description" className="text-sm">Description</TabsTrigger>
-              <TabsTrigger value="resolution" className="text-sm">Resolution</TabsTrigger>
-            </TabsList>
-            
-            <Separator className="my-3 md:my-4" />
-            
-            <TabsContent value="description" className="px-4 md:px-6 pb-4 md:pb-6 space-y-2 mt-0">
-              <h3 className="font-semibold text-xs md:text-sm text-muted-foreground uppercase tracking-wide">Market Description</h3>
-              <p className="text-sm md:text-base leading-relaxed text-foreground/90">{market.description}</p>
-            </TabsContent>
-            
-            <TabsContent value="resolution" className="px-4 md:px-6 pb-4 md:pb-6 space-y-2 mt-0">
-              <h3 className="font-semibold text-xs md:text-sm text-muted-foreground uppercase tracking-wide">Resolution Criteria</h3>
-              <p className="text-sm md:text-base leading-relaxed text-foreground/90">{market.resolutionCriteria}</p>
-            </TabsContent>
-          </Tabs>
-        </Card>
+          {/* Sidebar */}
+          <div className="space-y-6">
+            {/* Market Stats */}
+            <Card className="border-border/40 sticky top-32">
+              <CardHeader>
+                <CardTitle className="text-base">Market Stats</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center justify-between py-2 border-b border-border/40">
+                  <span className="text-sm text-muted-foreground">Volume</span>
+                  <span className="font-semibold">{market.volume}</span>
+                </div>
+                <div className="flex items-center justify-between py-2 border-b border-border/40">
+                  <span className="text-sm text-muted-foreground">Liquidity</span>
+                  <span className="font-semibold">{market.liquidity}</span>
+                </div>
+                <div className="flex items-center justify-between py-2 border-b border-border/40">
+                  <span className="text-sm text-muted-foreground">Traders</span>
+                  <span className="font-semibold">{market.traders}</span>
+                </div>
+                <div className="flex items-center justify-between py-2 border-b border-border/40">
+                  <span className="text-sm text-muted-foreground">End Date</span>
+                  <span className="font-semibold">{market.endDate}</span>
+                </div>
+                <div className="flex items-center justify-between py-2">
+                  <span className="text-sm text-muted-foreground">Time Left</span>
+                  <Badge variant="outline">{market.endsIn}</Badge>
+                </div>
 
-        {/* Comments Section */}
-        <Card className="border-0 md:border shadow-none md:shadow-sm">
-          <CardHeader className="p-4 md:p-6 pb-3 md:pb-4">
-            <CardTitle className="text-base md:text-lg">Comments ({comments.length})</CardTitle>
-          </CardHeader>
-          <CardContent className="px-0">
-            {/* Comment Input */}
-            <div className="px-4 md:px-6 pb-4 border-b">
-              <div className="flex gap-2 md:gap-3">
-                <Avatar className="h-8 w-8 md:h-10 md:w-10 mt-1 flex-shrink-0">
-                  <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=User" />
-                  <AvatarFallback>U</AvatarFallback>
-                </Avatar>
-                <div className="flex-1 space-y-2 md:space-y-3">
-                  <Textarea
-                    placeholder="Share your thoughts..."
-                    value={commentText}
-                    onChange={(e) => setCommentText(e.target.value)}
-                    className="min-h-[70px] md:min-h-[80px] resize-none border-0 focus-visible:ring-0 p-0 text-sm md:text-base"
-                    maxLength={500}
-                  />
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs text-muted-foreground">
-                      {commentText.length}/500
-                    </span>
-                    <Button
-                      onClick={handleCommentSubmit}
-                      disabled={!commentText.trim() || isSubmitting}
-                      size="sm"
-                      className="h-8 md:h-9"
+                <Separator />
+
+                {/* Quick Trade Buttons */}
+                <div className="space-y-2">
+                  <p className="text-sm font-medium">Quick Trade</p>
+                  <div className="grid grid-cols-2 gap-2">
+                    <Button 
+                      className="bg-success hover:bg-success/90" 
+                      onClick={(e) => handleOutcomeClick(e, market.outcomes[0])}
                     >
-                      Post
+                      Buy Yes {market.outcomes[0].price}¢
+                    </Button>
+                    <Button 
+                      variant="outline"
+                      onClick={(e) => handleOutcomeClick(e, market.outcomes[1])}
+                    >
+                      Buy No {market.outcomes[1].price}¢
                     </Button>
                   </div>
                 </div>
-              </div>
-            </div>
-
-            {/* Comments List */}
-            <div className="divide-y">
-              {comments.map((comment) => (
-                <div key={comment.id} className="px-4 md:px-6 py-3 md:py-4 hover:bg-muted/30 transition-colors">
-                  <div className="flex gap-2 md:gap-3">
-                    <Avatar className="h-8 w-8 md:h-10 md:w-10 flex-shrink-0">
-                      <AvatarImage src={comment.author.avatar} />
-                      <AvatarFallback>{comment.author.name.slice(0, 2)}</AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1 space-y-1.5 md:space-y-2 min-w-0">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-semibold text-xs md:text-sm">{comment.author.name}</span>
-                        <span className="text-xs text-muted-foreground truncate">{comment.author.username}</span>
-                        <span className="text-xs text-muted-foreground">·</span>
-                        <span className="text-xs text-muted-foreground">{comment.timestamp}</span>
-                      </div>
-                      <p className="text-sm md:text-base leading-relaxed break-words">{comment.text}</p>
-                      <div className="flex items-center gap-3 md:gap-4 pt-1">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-auto p-0 hover:bg-transparent group -ml-1"
-                          onClick={() => handleLikeComment(comment.id)}
-                        >
-                          <div className="flex items-center gap-1.5 text-muted-foreground group-hover:text-destructive transition-colors">
-                            <Heart className={`h-3.5 w-3.5 md:h-4 md:w-4 ${comment.isLiked ? 'fill-destructive text-destructive' : ''}`} />
-                            <span className="text-xs">{comment.likes > 0 ? comment.likes : ''}</span>
-                          </div>
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-auto p-0 hover:bg-transparent group"
-                        >
-                          <div className="flex items-center gap-1.5 text-muted-foreground group-hover:text-primary transition-colors">
-                            <MessageCircle className="h-3.5 w-3.5 md:h-4 md:w-4" />
-                            <span className="text-xs">{comment.replies > 0 ? comment.replies : ''}</span>
-                          </div>
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-auto p-0 hover:bg-transparent group"
-                        >
-                          <div className="flex items-center gap-1.5 text-muted-foreground group-hover:text-primary transition-colors">
-                            <Share2 className="h-3.5 w-3.5 md:h-4 md:w-4" />
-                          </div>
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
       </div>
     </div>
   );
