@@ -323,14 +323,14 @@ export function MarketGridCard({
             ) : isBinary ? (
               <div className="space-y-1.5">
                 <div className="flex items-center gap-1.5 text-[10px] font-bold">
-                  <span className={yesPercent >= 50 ? "text-success" : "text-destructive"}>{yesPercent}%</span>
+                  <span className="text-success">{yesPercent}%</span>
                   <div className="flex-1 h-1 rounded-full bg-muted overflow-hidden">
                     <div 
-                      className={`h-full rounded-full ${yesPercent >= 50 ? "bg-gradient-to-r from-success to-success/80" : "bg-gradient-to-r from-destructive to-destructive/80"}`}
+                      className="h-full rounded-full bg-gradient-to-r from-success to-success/80"
                       style={{ width: `${yesPercent}%` }}
                     />
                   </div>
-                  <span className={(100 - yesPercent) >= 50 ? "text-success" : "text-destructive"}>{100 - yesPercent}%</span>
+                  <span className="text-muted-foreground">{100 - yesPercent}%</span>
                 </div>
                 
                 <div className="grid grid-cols-2 gap-1.5">
@@ -364,7 +364,7 @@ export function MarketGridCard({
                       </div>
                     )}
                     <span className="flex-1 text-[10px] font-medium truncate">{outcome.label}</span>
-                    <span className={`text-[10px] font-bold ${outcome.price >= 50 ? "text-success" : "text-destructive"}`}>{outcome.price}%</span>
+                    <span className="text-[10px] font-bold text-primary">{outcome.price}%</span>
                   </button>
                 ))}
                 {displayOutcomes.length > 2 && (
@@ -441,10 +441,10 @@ export function MarketGridCard({
                 </div>
               ) : isBinary ? (
                 <div className="flex items-center gap-2 mt-auto">
-                  <span className={`text-xs font-bold ${yesPercent >= 50 ? "text-success" : "text-destructive"}`}>{yesPercent}%</span>
+                  <span className="text-xs font-bold text-success">{yesPercent}%</span>
                   <div className="flex-1 h-1.5 rounded-full bg-muted overflow-hidden">
                     <div 
-                      className={`h-full rounded-full ${yesPercent >= 50 ? "bg-success" : "bg-destructive"}`}
+                      className="h-full rounded-full bg-success"
                       style={{ width: `${yesPercent}%` }}
                     />
                   </div>
@@ -476,7 +476,7 @@ export function MarketGridCard({
                         <img src={outcome.logo} alt={outcome.label} className="h-4 w-4 object-contain rounded-sm flex-shrink-0" />
                       )}
                       <span className="font-medium truncate">{outcome.label}</span>
-                      <span className={`font-bold flex-shrink-0 ${outcome.price >= 50 ? "text-success" : "text-destructive"}`}>{outcome.price}%</span>
+                      <span className="font-bold text-primary flex-shrink-0">{outcome.price}%</span>
                     </button>
                   ))}
                   {displayOutcomes.length > 2 && (
