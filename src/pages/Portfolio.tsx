@@ -263,8 +263,7 @@ const Portfolio = () => {
                   </thead>
                   <tbody>
                     {tradeHistory.map((trade) => {
-                      const isProfit = trade.pnl !== null && trade.pnl > 0;
-                      const isLoss = trade.pnl !== null && trade.pnl < 0;
+                      const isSell = trade.type === "Sell";
                       
                       return (
                         <tr key={trade.id} className="border-b border-border/20 hover:bg-muted/30 transition-colors">
@@ -279,18 +278,9 @@ const Portfolio = () => {
                           <td className="p-4 text-sm">{trade.shares}</td>
                           <td className="p-4 text-sm">${trade.price}</td>
                           <td className="p-4 text-right">
-                            <div className="flex flex-col items-end">
-                              <span className={`text-sm font-semibold ${
-                                isProfit ? 'text-success' : isLoss ? 'text-destructive' : ''
-                              }`}>
-                                ${trade.total}
-                              </span>
-                              {trade.pnl !== null && (
-                                <span className={`text-xs ${isProfit ? 'text-success' : 'text-destructive'}`}>
-                                  {isProfit ? '+' : ''}${trade.pnl}
-                                </span>
-                              )}
-                            </div>
+                            <span className={`text-sm font-semibold ${isSell ? 'text-success' : 'text-destructive'}`}>
+                              {isSell ? '+' : '-'}${trade.total}
+                            </span>
                           </td>
                         </tr>
                       );
@@ -365,11 +355,11 @@ const Portfolio = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <Card className="border-border/40">
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">Win Rate</CardTitle>
+                  <CardTitle className="text-sm font-medium text-muted-foreground">Invested</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-3xl font-bold text-success">68%</p>
-                  <p className="text-sm text-muted-foreground">Based on 47 resolved markets</p>
+                  <p className="text-3xl font-bold">${portfolioStats.investedAmount.toLocaleString()}</p>
+                  <p className="text-sm text-muted-foreground">Currently in markets</p>
                 </CardContent>
               </Card>
 
