@@ -3,50 +3,82 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, UserPlus, UserCheck, BadgeCheck } from "lucide-react";
+import { ArrowLeft, UserPlus, UserCheck, BadgeCheck, MapPin, Calendar, Link as LinkIcon, Share2 } from "lucide-react";
 import { MarketCard } from "@/components/MarketCard";
+import { SocialStats } from "@/components/SocialStats";
+import { ProfileStats } from "@/components/ProfileStats";
+import { useToast } from "@/hooks/use-toast";
 
 // Mock creator data
-const creatorData = {
+const creatorData: Record<string, {
+  name: string;
+  username: string;
+  markets: number;
+  volume: string;
+  followers: number;
+  following: number;
+  successRate: number;
+  avgVolume: string;
+  categories: string[];
+  description: string;
+  joinedDate: string;
+  totalResolved: number;
+  avatar: string;
+  location?: string;
+  website?: string;
+  verified: boolean;
+}> = {
   'sarah-chen': { 
     name: 'Sarah Chen',
+    username: '@sarahchen',
     markets: 47, 
     volume: '$2.8M', 
-    followers: '12.3K',
+    followers: 12340,
+    following: 234,
     successRate: 89,
     avgVolume: '$59.6K',
     categories: ['Crypto', 'Tech', 'Finance'],
-    description: 'Professional market analyst specializing in crypto and tech predictions. Creating high-quality markets since 2023.',
+    description: 'Professional market analyst specializing in crypto and tech predictions. Creating high-quality markets since 2023. Former analyst at Goldman Sachs.',
     joinedDate: 'Jan 2023',
     totalResolved: 35,
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah'
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah',
+    location: 'San Francisco, CA',
+    website: 'sarahchen.io',
+    verified: true,
   },
   'marketmaven': { 
     name: 'MarketMaven',
+    username: '@marketmaven',
     markets: 47, 
     volume: '$2.8M', 
-    followers: '12.3K',
+    followers: 12340,
+    following: 156,
     successRate: 89,
     avgVolume: '$59.6K',
     categories: ['Crypto', 'Tech', 'Finance'],
     description: 'Professional market analyst specializing in crypto and tech predictions. Creating high-quality markets since 2023.',
     joinedDate: 'Jan 2023',
     totalResolved: 35,
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Maven'
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Maven',
+    verified: true,
   },
   'predictpro': { 
     name: 'PredictPro',
+    username: '@predictpro',
     markets: 38, 
     volume: '$2.1M', 
-    followers: '9.8K',
+    followers: 9800,
+    following: 89,
     successRate: 85,
     avgVolume: '$55.3K',
     categories: ['Sports', 'Politics', 'Finance'],
     description: 'Data-driven predictions across finance, sports, and politics. Building the future of forecasting.',
     joinedDate: 'Mar 2023',
     totalResolved: 28,
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Predict'
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Predict',
+    verified: true,
   },
 };
 
@@ -107,6 +139,7 @@ const mockCreatorMarkets = [
 export default function CreatorProfile() {
   const { userId } = useParams();
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [isFollowing, setIsFollowing] = useState(false);
   
   const creator = userId ? creatorData[userId as keyof typeof creatorData] : null;
@@ -122,108 +155,188 @@ export default function CreatorProfile() {
     );
   }
 
+  const handleShare = () => {
+    navigator.clipboard.writeText(window.location.href);
+    toast({
+      title: "Link copied",
+      description: "Profile link has been copied to clipboard.",
+    });
+  };
+
   return (
-    <div className="w-full md:container md:max-w-3xl py-4 md:py-6 space-y-6 px-4 md:px-4">
-      <Button 
-        variant="ghost" 
-        size="sm" 
-        onClick={() => navigate(-1)}
-        className="mb-2"
-      >
-        <ArrowLeft className="h-4 w-4 mr-2" />
-        Back
-      </Button>
-      
-      {/* Creator Header - Simplified */}
-      <div className="space-y-6">
-        <div className="flex flex-col md:flex-row gap-6 items-start">
-          <Avatar className="h-24 w-24 border-2 border-border">
-            <AvatarImage src={creator.avatar} alt={creator.name} />
-            <AvatarFallback>{creator.name.slice(0, 2).toUpperCase()}</AvatarFallback>
-          </Avatar>
+    <div className="min-h-screen bg-background">
+      <div className="max-w-4xl mx-auto px-4 py-6 space-y-6">
+        {/* Back Button */}
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          onClick={() => navigate(-1)}
+          className="-ml-2"
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Back
+        </Button>
+        
+        {/* Profile Header Card */}
+        <Card className="border-border/40 overflow-hidden">
+          {/* Cover gradient */}
+          <div className="h-24 md:h-32 bg-gradient-to-br from-primary/20 via-primary/10 to-accent/20" />
           
-          <div className="flex-1 space-y-4">
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <h1 className="text-2xl font-bold">{creator.name}</h1>
-                <BadgeCheck className="h-5 w-5 text-primary fill-primary/20" />
-              </div>
-              <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                <span>{creator.followers} followers</span>
-                <span>•</span>
-                <span>Joined {creator.joinedDate}</span>
+          <CardContent className="pt-0 pb-6">
+            {/* Avatar overlapping cover */}
+            <div className="flex flex-col md:flex-row md:items-end gap-4 -mt-12 md:-mt-16">
+              <Avatar className="h-24 w-24 md:h-32 md:w-32 border-4 border-background ring-2 ring-border/20">
+                <AvatarImage src={creator.avatar} alt={creator.name} />
+                <AvatarFallback className="text-2xl">{creator.name.slice(0, 2).toUpperCase()}</AvatarFallback>
+              </Avatar>
+              
+              <div className="flex-1 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <h1 className="text-2xl md:text-3xl font-bold">{creator.name}</h1>
+                    {creator.verified && (
+                      <BadgeCheck className="h-6 w-6 text-primary fill-primary/20" />
+                    )}
+                  </div>
+                  <p className="text-muted-foreground">{creator.username}</p>
+                </div>
+                
+                <div className="flex items-center gap-2">
+                  <Button 
+                    variant={isFollowing ? "outline" : "default"}
+                    onClick={() => setIsFollowing(!isFollowing)}
+                    className="gap-1.5"
+                  >
+                    {isFollowing ? (
+                      <>
+                        <UserCheck className="h-4 w-4" />
+                        Following
+                      </>
+                    ) : (
+                      <>
+                        <UserPlus className="h-4 w-4" />
+                        Follow
+                      </>
+                    )}
+                  </Button>
+                  <Button variant="outline" size="icon" onClick={handleShare}>
+                    <Share2 className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
             </div>
             
-            <p className="text-muted-foreground leading-relaxed">{creator.description}</p>
+            {/* Bio & Meta Info */}
+            <div className="mt-6 space-y-4">
+              <p className="text-foreground/90 leading-relaxed max-w-2xl">{creator.description}</p>
+              
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted-foreground">
+                {creator.location && (
+                  <div className="flex items-center gap-1.5">
+                    <MapPin className="h-4 w-4" />
+                    {creator.location}
+                  </div>
+                )}
+                {creator.website && (
+                  <a 
+                    href={`https://${creator.website}`} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1.5 text-primary hover:underline"
+                  >
+                    <LinkIcon className="h-4 w-4" />
+                    {creator.website}
+                  </a>
+                )}
+                <div className="flex items-center gap-1.5">
+                  <Calendar className="h-4 w-4" />
+                  Joined {creator.joinedDate}
+                </div>
+              </div>
+              
+              {/* Categories */}
+              <div className="flex flex-wrap gap-2">
+                {creator.categories.map((category) => (
+                  <Badge key={category} variant="secondary" className="px-3 py-1">
+                    {category}
+                  </Badge>
+                ))}
+              </div>
+              
+              {/* Social Stats */}
+              <SocialStats 
+                followers={creator.followers} 
+                following={creator.following}
+                userId={userId}
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Stats Grid */}
+        <ProfileStats 
+          type="creator"
+          stats={{
+            marketsCreated: creator.markets,
+            totalVolume: creator.volume,
+            followers: creator.followers,
+            successRate: creator.successRate,
+          }}
+        />
+
+        {/* Markets Tabs */}
+        <Card className="border-border/40">
+          <Tabs defaultValue="active" className="w-full">
+            <CardHeader className="pb-0">
+              <TabsList className="grid w-full grid-cols-3">
+                <TabsTrigger value="active">Active ({mockCreatorMarkets.length})</TabsTrigger>
+                <TabsTrigger value="resolved">Resolved ({creator.totalResolved})</TabsTrigger>
+                <TabsTrigger value="about">About</TabsTrigger>
+              </TabsList>
+            </CardHeader>
             
-            <div className="flex flex-wrap gap-2">
-              {creator.categories.map((category) => (
-                <Badge key={category} variant="secondary">{category}</Badge>
+            <TabsContent value="active" className="p-4 space-y-4">
+              {mockCreatorMarkets.map((market) => (
+                <MarketCard key={market.id} {...market} />
               ))}
-            </div>
+            </TabsContent>
             
-            <Button 
-              variant={isFollowing ? "outline" : "default"}
-              onClick={() => setIsFollowing(!isFollowing)}
-              className="w-full md:w-auto"
-            >
-              {isFollowing ? (
-                <>
-                  <UserCheck className="h-4 w-4 mr-2" />
-                  Following
-                </>
-              ) : (
-                <>
-                  <UserPlus className="h-4 w-4 mr-2" />
-                  Follow
-                </>
-              )}
-            </Button>
-          </div>
-        </div>
-
-        {/* Creator Stats - Simplified */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 py-4 border-y">
-          <div className="text-center space-y-1">
-            <div className="text-2xl font-bold">{creator.markets}</div>
-            <p className="text-xs text-muted-foreground">Markets</p>
-          </div>
-          <div className="text-center space-y-1">
-            <div className="text-2xl font-bold text-success">{creator.volume}</div>
-            <p className="text-xs text-muted-foreground">Volume</p>
-          </div>
-          <div className="text-center space-y-1">
-            <div className="text-2xl font-bold">{creator.totalResolved}</div>
-            <p className="text-xs text-muted-foreground">Resolved</p>
-          </div>
-          <div className="text-center space-y-1">
-            <div className="text-2xl font-bold">{creator.avgVolume}</div>
-            <p className="text-xs text-muted-foreground">Avg Volume</p>
-          </div>
-        </div>
-      </div>
-
-      {/* Created Markets */}
-      <div className="space-y-4">
-        <Tabs defaultValue="active" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="active">Active</TabsTrigger>
-            <TabsTrigger value="resolved">Resolved</TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="active" className="space-y-4 mt-4">
-            {mockCreatorMarkets.map((market) => (
-              <MarketCard key={market.id} {...market} />
-            ))}
-          </TabsContent>
-          
-          <TabsContent value="resolved" className="mt-4">
-            <div className="text-center py-12 text-muted-foreground">
-              <p>No resolved markets yet</p>
-            </div>
-          </TabsContent>
-        </Tabs>
+            <TabsContent value="resolved" className="p-4">
+              <div className="text-center py-12 text-muted-foreground">
+                <p>No resolved markets to display</p>
+                <p className="text-sm mt-1">Resolved markets will appear here</p>
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="about" className="p-4 space-y-6">
+              <div className="space-y-4">
+                <div>
+                  <h4 className="font-semibold mb-2">About {creator.name}</h4>
+                  <p className="text-muted-foreground leading-relaxed">{creator.description}</p>
+                </div>
+                
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t">
+                  <div className="text-center">
+                    <p className="text-2xl font-bold">{creator.markets}</p>
+                    <p className="text-sm text-muted-foreground">Markets Created</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-2xl font-bold text-success">{creator.volume}</p>
+                    <p className="text-sm text-muted-foreground">Total Volume</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-2xl font-bold">{creator.totalResolved}</p>
+                    <p className="text-sm text-muted-foreground">Resolved</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-2xl font-bold text-success">{creator.successRate}%</p>
+                    <p className="text-sm text-muted-foreground">Success Rate</p>
+                  </div>
+                </div>
+              </div>
+            </TabsContent>
+          </Tabs>
+        </Card>
       </div>
     </div>
   );
