@@ -1,7 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Clock, TrendingUp, Heart, MessageCircle, Share2, Repeat2, BadgeCheck, Check, X } from "lucide-react";
+import { Clock, TrendingUp, Heart, MessageCircle, Share2, Repeat2, BadgeCheck } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import {
@@ -74,15 +74,15 @@ export function MarketCard({ id, creator, title, subtitle, image, outcomes, yesP
       >
         <div className="flex gap-3 p-3">
           {/* Thumbnail */}
-          <div className="relative w-24 h-24 md:w-28 md:h-28 rounded-lg overflow-hidden bg-secondary flex-shrink-0">
+          <div className="relative w-28 h-28 sm:w-32 sm:h-32 rounded-xl overflow-hidden bg-secondary flex-shrink-0">
             <img 
               src={image} 
               alt={title}
-              className="h-full w-full object-cover"
+              className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
             />
-            {/* Creator badge on image */}
+            {/* Creator badge */}
             <button 
-              className="absolute bottom-1 left-1 flex items-center gap-1 bg-black/70 backdrop-blur-sm rounded-full px-1.5 py-0.5"
+              className="absolute bottom-1.5 left-1.5 flex items-center gap-1 bg-black/70 backdrop-blur-sm rounded-full px-1.5 py-0.5 hover:bg-black/80 transition-colors"
               onClick={(e) => {
                 e.stopPropagation();
                 const profilePath = creator.isCreator !== false 
@@ -91,78 +91,76 @@ export function MarketCard({ id, creator, title, subtitle, image, outcomes, yesP
                 navigate(profilePath);
               }}
             >
-              <Avatar className="h-3.5 w-3.5">
+              <Avatar className="h-4 w-4">
                 <AvatarImage src={creator.avatar} alt={creator.name} />
-                <AvatarFallback className="text-[6px]">{creator.name.slice(0, 2)}</AvatarFallback>
+                <AvatarFallback className="text-[7px]">{creator.name.slice(0, 2)}</AvatarFallback>
               </Avatar>
-              <span className="text-white text-[9px] font-medium max-w-[50px] truncate">{creator.name.split(' ')[0]}</span>
+              <span className="text-white text-[10px] font-medium max-w-[60px] truncate">{creator.name.split(' ')[0]}</span>
               {creator.isCreator !== false && (
-                <BadgeCheck className="h-2.5 w-2.5 text-white fill-white/30" />
+                <BadgeCheck className="h-3 w-3 text-white fill-white/30" />
               )}
             </button>
           </div>
 
           {/* Content */}
           <div className="flex-1 min-w-0 flex flex-col">
-            {/* Title & Stats */}
-            <div className="flex-1">
-              <h3 className="text-sm font-semibold leading-tight line-clamp-2 group-hover:text-primary transition-colors">
-                {title}
-              </h3>
-              <div className="flex items-center gap-2 mt-1.5 text-[10px] text-muted-foreground">
-                <span className="flex items-center gap-0.5">
-                  <TrendingUp className="h-2.5 w-2.5" />
-                  {volume}
-                </span>
-                <span className="flex items-center gap-0.5">
-                  <Clock className="h-2.5 w-2.5" />
-                  {endsIn}
-                </span>
-              </div>
+            {/* Title */}
+            <h3 className="text-sm sm:text-base font-semibold leading-snug line-clamp-2 group-hover:text-primary transition-colors">
+              {title}
+            </h3>
+            
+            {/* Stats */}
+            <div className="flex items-center gap-3 text-xs text-muted-foreground mt-1.5 mb-2">
+              <span className="flex items-center gap-1">
+                <TrendingUp className="h-3.5 w-3.5" />
+                {volume}
+              </span>
+              <span className="flex items-center gap-1">
+                <Clock className="h-3.5 w-3.5" />
+                {endsIn}
+              </span>
             </div>
 
             {/* Outcomes */}
-            <div className="mt-2">
+            <div className="mt-auto">
               {isBinary ? (
-                <div className="flex gap-1.5">
+                <div className="flex gap-2">
                   {displayOutcomes.map((outcome, index) => (
                     <button 
                       key={index}
-                      className={`flex-1 rounded-md py-1.5 text-center transition-all active:scale-95 ${
+                      className={`flex-1 rounded-lg py-2 text-center transition-all active:scale-[0.98] ${
                         outcome.color === 'success'
-                          ? 'bg-success/10 hover:bg-success/20 text-success border border-success/20'
-                          : 'bg-secondary hover:bg-secondary/80 text-muted-foreground border border-border/40'
+                          ? 'bg-success/10 hover:bg-success/15 text-success border border-success/20'
+                          : 'bg-secondary hover:bg-secondary/80 text-muted-foreground border border-border/50'
                       }`}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                      }}
+                      onClick={(e) => e.stopPropagation()}
                     >
-                      <div className="text-base font-bold leading-none">{outcome.price}¢</div>
-                      <div className="text-[9px] font-medium mt-0.5">{outcome.label}</div>
+                      <div className="text-lg font-bold">{outcome.price}¢</div>
+                      <div className="text-[10px] font-medium">{outcome.label}</div>
                     </button>
                   ))}
                 </div>
               ) : (
-                <div className="flex gap-1 flex-wrap">
+                <div className="flex flex-wrap gap-1.5">
                   {displayOutcomes.slice(0, 3).map((outcome, index) => (
                     <button 
                       key={index}
-                      className="flex items-center gap-1 rounded-md px-2 py-1 bg-secondary/50 hover:bg-secondary transition-colors text-left"
+                      className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 bg-secondary/60 hover:bg-secondary transition-colors"
                       onClick={(e) => e.stopPropagation()}
                     >
                       {outcome.logo ? (
                         <img src={outcome.logo} alt={outcome.label} className="h-4 w-4 object-contain" />
                       ) : (
-                        <div className="h-4 w-4 rounded-full bg-primary/10 flex items-center justify-center text-[8px] font-bold text-primary">
+                        <div className="h-4 w-4 rounded-full bg-primary/10 flex items-center justify-center text-[9px] font-bold text-primary">
                           {outcome.label.charAt(0)}
                         </div>
                       )}
-                      <span className="text-[10px] font-medium">{outcome.label}</span>
-                      <span className="text-[11px] font-bold ml-0.5">{outcome.price}%</span>
+                      <span className="text-xs font-medium">{outcome.label}</span>
+                      <span className="text-xs font-bold text-primary">{outcome.price}%</span>
                     </button>
                   ))}
                   {displayOutcomes.length > 3 && (
-                    <span className="text-[9px] text-muted-foreground self-center ml-1">+{displayOutcomes.length - 3}</span>
+                    <span className="text-[10px] text-muted-foreground self-center">+{displayOutcomes.length - 3}</span>
                   )}
                 </div>
               )}
@@ -170,19 +168,19 @@ export function MarketCard({ id, creator, title, subtitle, image, outcomes, yesP
 
             {/* Engagement */}
             {!hideEngagement && (
-              <div className="flex items-center gap-0.5 mt-2 -ml-1">
+              <div className="flex items-center gap-1 mt-2 -ml-1.5">
                 <button 
-                  className="flex items-center gap-1 px-1.5 py-1 rounded-md hover:bg-muted/60 text-muted-foreground hover:text-foreground transition-all text-[10px]"
+                  className="flex items-center gap-1 px-1.5 py-1 rounded-md hover:bg-muted/60 text-muted-foreground hover:text-foreground transition-all text-xs"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  <Heart className="h-3 w-3" />
+                  <Heart className="h-3.5 w-3.5" />
                   {likes > 0 && <span>{likes}</span>}
                 </button>
                 <button 
-                  className="flex items-center gap-1 px-1.5 py-1 rounded-md hover:bg-muted/60 text-muted-foreground hover:text-foreground transition-all text-[10px]"
+                  className="flex items-center gap-1 px-1.5 py-1 rounded-md hover:bg-muted/60 text-muted-foreground hover:text-foreground transition-all text-xs"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  <MessageCircle className="h-3 w-3" />
+                  <MessageCircle className="h-3.5 w-3.5" />
                   {comments > 0 && <span>{comments}</span>}
                 </button>
                 <button 
@@ -192,13 +190,13 @@ export function MarketCard({ id, creator, title, subtitle, image, outcomes, yesP
                     setShowRepostDialog(true);
                   }}
                 >
-                  <Repeat2 className="h-3 w-3" />
+                  <Repeat2 className="h-3.5 w-3.5" />
                 </button>
                 <button 
                   className="flex items-center gap-1 px-1.5 py-1 rounded-md hover:bg-muted/60 text-muted-foreground hover:text-foreground transition-all ml-auto"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  <Share2 className="h-3 w-3" />
+                  <Share2 className="h-3.5 w-3.5" />
                 </button>
               </div>
             )}
