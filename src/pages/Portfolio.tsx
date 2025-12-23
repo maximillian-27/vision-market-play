@@ -47,11 +47,11 @@ const positions = [
 ];
 
 const tradeHistory = [
-  { id: 1, date: "2024-01-15", market: "Bitcoin $100k", type: "Buy", position: "Yes", shares: 50, price: 0.42, total: 21 },
-  { id: 2, date: "2024-01-14", market: "Fed rate cut", type: "Sell", position: "Yes", shares: 100, price: 0.58, total: 58 },
-  { id: 3, date: "2024-01-13", market: "Tesla earnings", type: "Buy", position: "Yes", shares: 100, price: 0.55, total: 55 },
-  { id: 4, date: "2024-01-12", market: "Bitcoin $100k", type: "Buy", position: "Yes", shares: 100, price: 0.47, total: 47 },
-  { id: 5, date: "2024-01-10", market: "NBA Championship", type: "Buy", position: "Yes", shares: 75, price: 0.22, total: 16.5 },
+  { id: 1, date: "2024-01-15", market: "Bitcoin $100k", type: "Buy", position: "Yes", shares: 50, price: 0.42, total: 21, pnl: null },
+  { id: 2, date: "2024-01-14", market: "Fed rate cut", type: "Sell", position: "Yes", shares: 100, price: 0.58, total: 58, pnl: 12 },
+  { id: 3, date: "2024-01-13", market: "Tesla earnings", type: "Buy", position: "Yes", shares: 100, price: 0.55, total: 55, pnl: null },
+  { id: 4, date: "2024-01-12", market: "Bitcoin $100k", type: "Sell", position: "No", shares: 80, price: 0.35, total: 28, pnl: -8 },
+  { id: 5, date: "2024-01-10", market: "NBA Championship", type: "Buy", position: "Yes", shares: 75, price: 0.22, total: 16.5, pnl: null },
 ];
 
 const transactions = [
@@ -194,9 +194,13 @@ const Portfolio = () => {
                           </Badge>
                           <span className="text-[11px] text-muted-foreground">{position.shares} @ ${position.avgPrice}</span>
                         </div>
-                        <div className={`flex items-center gap-0.5 text-xs font-semibold ${position.pnl >= 0 ? 'text-success' : 'text-destructive'}`}>
-                          {position.pnl >= 0 ? <ArrowUpRight className="h-3 w-3" /> : <ArrowDownRight className="h-3 w-3" />}
-                          {position.pnl >= 0 ? '+' : ''}{position.pnlPercent}%
+                        <div className={`flex items-center gap-1 ${position.pnl >= 0 ? 'text-success' : 'text-destructive'}`}>
+                          <span className="text-sm font-bold">
+                            {position.pnl >= 0 ? '+' : ''}${Math.abs(position.pnl).toFixed(0)}
+                          </span>
+                          <span className="text-[10px] font-medium opacity-80">
+                            {position.pnlPercent >= 0 ? '+' : ''}{position.pnlPercent}%
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -210,17 +214,19 @@ const Portfolio = () => {
                             {position.position}
                           </Badge>
                           <span>{position.shares} shares @ ${position.avgPrice}</span>
+                          <span className="text-muted-foreground/60">→</span>
+                          <span>Now ${position.currentPrice}</span>
                         </div>
                       </div>
                       <div className="text-right flex items-center gap-4">
-                        <div>
-                          <p className="text-sm text-muted-foreground">Current: ${position.currentPrice}</p>
-                          <div className={`flex items-center justify-end gap-1 ${position.pnl >= 0 ? 'text-success' : 'text-destructive'}`}>
-                            {position.pnl >= 0 ? <ArrowUpRight className="h-4 w-4" /> : <ArrowDownRight className="h-4 w-4" />}
-                            <span className="font-semibold">
-                              {position.pnl >= 0 ? '+' : ''}${position.pnl} ({position.pnlPercent >= 0 ? '+' : ''}{position.pnlPercent}%)
-                            </span>
-                          </div>
+                        <div className={`flex items-center gap-1.5 ${position.pnl >= 0 ? 'text-success' : 'text-destructive'}`}>
+                          {position.pnl >= 0 ? <ArrowUpRight className="h-4 w-4" /> : <ArrowDownRight className="h-4 w-4" />}
+                          <span className="text-lg font-bold">
+                            {position.pnl >= 0 ? '+' : ''}${Math.abs(position.pnl).toFixed(0)}
+                          </span>
+                          <span className="text-sm font-medium opacity-75">
+                            {position.pnlPercent >= 0 ? '+' : ''}{position.pnlPercent}%
+                          </span>
                         </div>
                         <ChevronRight className="h-4 w-4 text-muted-foreground" />
                       </div>
@@ -256,21 +262,39 @@ const Portfolio = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {tradeHistory.map((trade) => (
-                      <tr key={trade.id} className="border-b border-border/20 hover:bg-muted/30 transition-colors">
-                        <td className="p-4 text-sm">{trade.date}</td>
-                        <td className="p-4 text-sm font-medium">{trade.market}</td>
-                        <td className="p-4">
-                          <Badge variant={trade.type === "Buy" ? "default" : "secondary"} className="text-xs">
-                            {trade.type}
-                          </Badge>
-                        </td>
-                        <td className="p-4 text-sm">{trade.position}</td>
-                        <td className="p-4 text-sm">{trade.shares}</td>
-                        <td className="p-4 text-sm">${trade.price}</td>
-                        <td className="p-4 text-sm text-right font-medium">${trade.total}</td>
-                      </tr>
-                    ))}
+                    {tradeHistory.map((trade) => {
+                      const isProfit = trade.pnl !== null && trade.pnl > 0;
+                      const isLoss = trade.pnl !== null && trade.pnl < 0;
+                      
+                      return (
+                        <tr key={trade.id} className="border-b border-border/20 hover:bg-muted/30 transition-colors">
+                          <td className="p-4 text-sm">{trade.date}</td>
+                          <td className="p-4 text-sm font-medium">{trade.market}</td>
+                          <td className="p-4">
+                            <Badge variant={trade.type === "Buy" ? "default" : "secondary"} className="text-xs">
+                              {trade.type}
+                            </Badge>
+                          </td>
+                          <td className="p-4 text-sm">{trade.position}</td>
+                          <td className="p-4 text-sm">{trade.shares}</td>
+                          <td className="p-4 text-sm">${trade.price}</td>
+                          <td className="p-4 text-right">
+                            <div className="flex flex-col items-end">
+                              <span className={`text-sm font-semibold ${
+                                isProfit ? 'text-success' : isLoss ? 'text-destructive' : ''
+                              }`}>
+                                ${trade.total}
+                              </span>
+                              {trade.pnl !== null && (
+                                <span className={`text-xs ${isProfit ? 'text-success' : 'text-destructive'}`}>
+                                  {isProfit ? '+' : ''}${trade.pnl}
+                                </span>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
