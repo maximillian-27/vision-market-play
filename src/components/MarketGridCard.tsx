@@ -385,58 +385,56 @@ export function MarketGridCard({
         </div>
 
         {/* Mobile Layout - Compact horizontal */}
-        <div className="sm:hidden flex gap-2.5 p-2">
+        <div className="sm:hidden flex gap-3 p-3">
           {/* Thumbnail with timer overlay */}
-          <div className={`relative w-20 h-20 rounded-lg overflow-hidden bg-secondary flex-shrink-0 ${isClosedOrResolved ? 'grayscale-[30%]' : ''}`}>
+          <div className={`relative w-24 h-24 rounded-xl overflow-hidden bg-secondary flex-shrink-0 ${isClosedOrResolved ? 'grayscale-[30%]' : ''}`}>
             <img 
               src={image} 
               alt={title}
               className="h-full w-full object-cover"
             />
             {/* Timer badge */}
-            <div className="absolute bottom-1 right-1 flex items-center gap-0.5 bg-black/70 backdrop-blur-sm rounded px-1 py-0.5">
-              <Clock className="h-2.5 w-2.5 text-white/80" />
-              <span className="text-[9px] text-white font-medium">{endsIn}</span>
+            <div className="absolute bottom-1.5 right-1.5 flex items-center gap-1 bg-black/70 backdrop-blur-sm rounded-md px-1.5 py-0.5">
+              <Clock className="h-3 w-3 text-white/80" />
+              <span className="text-[10px] text-white font-medium">{endsIn}</span>
             </div>
             {getStatusBadge() && (
-              <div className="absolute top-1 left-1 scale-75 origin-top-left">
+              <div className="absolute top-1.5 left-1.5 scale-[0.8] origin-top-left">
                 {getStatusBadge()}
               </div>
             )}
           </div>
 
           {/* Content */}
-          <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
-            <div className="space-y-1">
-              {/* Creator */}
-              <button 
-                className="flex items-center gap-1 hover:opacity-80 transition-opacity w-fit"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  const profilePath = creator.isCreator !== false 
-                    ? `/creator/${creator.id || creator.name.toLowerCase().replace(/\s+/g, '-')}`
-                    : `/profile/${creator.id || creator.name.toLowerCase().replace(/\s+/g, '-')}`;
-                  navigate(profilePath);
-                }}
-              >
-                <Avatar className="h-4 w-4">
-                  <AvatarImage src={creator.avatar} alt={creator.name} />
-                  <AvatarFallback className="text-[6px]">{creator.name.slice(0, 2)}</AvatarFallback>
-                </Avatar>
-                <span className="text-[10px] text-muted-foreground font-medium truncate max-w-[100px]">{creator.name}</span>
-              </button>
-              
-              <h3 className="text-xs font-semibold leading-tight line-clamp-2 group-hover:text-primary transition-colors">
-                {title}
-              </h3>
-            </div>
+          <div className="flex-1 min-w-0 flex flex-col gap-2">
+            {/* Creator */}
+            <button 
+              className="flex items-center gap-1.5 hover:opacity-80 transition-opacity w-fit"
+              onClick={(e) => {
+                e.stopPropagation();
+                const profilePath = creator.isCreator !== false 
+                  ? `/creator/${creator.id || creator.name.toLowerCase().replace(/\s+/g, '-')}`
+                  : `/profile/${creator.id || creator.name.toLowerCase().replace(/\s+/g, '-')}`;
+                navigate(profilePath);
+              }}
+            >
+              <Avatar className="h-5 w-5">
+                <AvatarImage src={creator.avatar} alt={creator.name} />
+                <AvatarFallback className="text-[7px]">{creator.name.slice(0, 2)}</AvatarFallback>
+              </Avatar>
+              <span className="text-[11px] text-muted-foreground font-medium truncate max-w-[120px]">{creator.name}</span>
+            </button>
+            
+            <h3 className="text-[13px] font-semibold leading-snug line-clamp-2 group-hover:text-primary transition-colors">
+              {title}
+            </h3>
 
             {isClosedOrResolved ? (
-              <div className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded w-fit ${
+              <div className={`inline-flex items-center gap-1 px-2 py-1 rounded-md w-fit ${
                 resolution?.toLowerCase() === "yes" ? 'bg-success/10' : 
                 resolution?.toLowerCase() === "no" ? 'bg-secondary' : 'bg-primary/10'
               }`}>
-                <span className={`font-bold text-[10px] ${
+                <span className={`font-bold text-xs ${
                   resolution?.toLowerCase() === "yes" ? 'text-success' : 
                   resolution?.toLowerCase() === "no" ? 'text-muted-foreground' : 'text-primary'
                 }`}>
@@ -444,23 +442,23 @@ export function MarketGridCard({
                 </span>
               </div>
             ) : isBinary ? (
-              <div className="flex items-center gap-1.5">
-                <span className="text-[10px] font-bold text-success">{yesPercent}%</span>
-                <div className="flex-1 h-1 rounded-full bg-muted overflow-hidden max-w-16">
+              <div className="flex items-center gap-2 mt-auto">
+                <span className="text-xs font-bold text-success">{yesPercent}%</span>
+                <div className="flex-1 h-1.5 rounded-full bg-muted overflow-hidden max-w-20">
                   <div 
                     className="h-full rounded-full bg-success"
                     style={{ width: `${yesPercent}%` }}
                   />
                 </div>
-                <div className="flex gap-1">
+                <div className="flex gap-1.5">
                   <button 
-                    className="px-2 py-0.5 rounded bg-success/10 text-success border border-success/20 text-[9px] font-bold active:scale-95"
+                    className="px-3 py-1.5 rounded-md bg-success/10 text-success border border-success/20 text-[11px] font-bold active:scale-95 transition-transform"
                     onClick={handleOutcomeClick}
                   >
                     YES
                   </button>
                   <button 
-                    className="px-2 py-0.5 rounded bg-destructive/10 text-destructive border border-destructive/20 text-[9px] font-bold active:scale-95"
+                    className="px-3 py-1.5 rounded-md bg-destructive/10 text-destructive border border-destructive/20 text-[11px] font-bold active:scale-95 transition-transform"
                     onClick={handleOutcomeClick}
                   >
                     NO
@@ -468,27 +466,30 @@ export function MarketGridCard({
                 </div>
               </div>
             ) : (
-              <div className="flex gap-1 overflow-x-auto scrollbar-hide">
+              <div className="flex gap-1.5 overflow-x-auto scrollbar-hide mt-auto">
                 {displayOutcomes.slice(0, 2).map((outcome, index) => (
                   <button 
                     key={index}
-                    className="flex items-center gap-1 rounded px-1.5 py-0.5 bg-secondary/80 border border-border/40 text-[9px] active:scale-95"
+                    className="flex items-center gap-1.5 rounded-md px-2 py-1 bg-secondary/80 border border-border/40 text-[11px] active:scale-95 transition-transform"
                     onClick={handleOutcomeClick}
                   >
-                    <span className="font-medium truncate max-w-12">{outcome.label}</span>
+                    {outcome.logo && (
+                      <img src={outcome.logo} alt={outcome.label} className="h-4 w-4 object-contain rounded-sm" />
+                    )}
+                    <span className="font-medium truncate max-w-16">{outcome.label}</span>
                     <span className="font-bold text-primary">{outcome.price}%</span>
                   </button>
                 ))}
                 {displayOutcomes.length > 2 && (
-                  <span className="text-[9px] text-muted-foreground self-center">+{displayOutcomes.length - 2}</span>
+                  <span className="text-[10px] text-muted-foreground self-center">+{displayOutcomes.length - 2}</span>
                 )}
               </div>
             )}
           </div>
 
-          {/* Volume */}
-          <div className="flex flex-col items-end justify-center text-[9px] text-muted-foreground">
-            <TrendingUp className="h-3 w-3 mb-0.5" />
+          {/* Volume on right */}
+          <div className="flex flex-col items-end justify-center gap-0.5 text-[10px] text-muted-foreground pl-1">
+            <TrendingUp className="h-3.5 w-3.5" />
             <span className="font-medium">{volume}</span>
           </div>
         </div>
