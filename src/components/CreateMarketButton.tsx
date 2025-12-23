@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Plus, Sparkles, Check, AlertCircle, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
+import { Plus, Sparkles, Check, AlertCircle, ChevronLeft, ChevronRight, Loader2, X } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -42,17 +42,34 @@ export function CreateMarketButton() {
   const [aiChecked, setAiChecked] = useState(false);
   const [recommendations, setRecommendations] = useState<AIRecommendation[]>([]);
   const [submitted, setSubmitted] = useState(false);
+  const [outcomes, setOutcomes] = useState<string[]>(["Yes", "No"]);
 
   const [formData, setFormData] = useState({
     title: "",
     description: "",
     category: "",
     endDate: "",
-    outcomeYes: "Yes",
-    outcomeNo: "No",
     resolutionCriteria: "",
     resolutionSource: "",
   });
+
+  const addOutcome = () => {
+    if (outcomes.length < 10) {
+      setOutcomes([...outcomes, ""]);
+    }
+  };
+
+  const removeOutcome = (index: number) => {
+    if (outcomes.length > 2) {
+      setOutcomes(outcomes.filter((_, i) => i !== index));
+    }
+  };
+
+  const updateOutcome = (index: number, value: string) => {
+    const newOutcomes = [...outcomes];
+    newOutcomes[index] = value;
+    setOutcomes(newOutcomes);
+  };
 
   const handleAICheck = async () => {
     setIsChecking(true);
@@ -109,13 +126,12 @@ export function CreateMarketButton() {
       setAiChecked(false);
       setSubmitted(false);
       setRecommendations([]);
+      setOutcomes(["Yes", "No"]);
       setFormData({
         title: "",
         description: "",
         category: "",
         endDate: "",
-        outcomeYes: "Yes",
-        outcomeNo: "No",
         resolutionCriteria: "",
         resolutionSource: "",
       });
@@ -123,7 +139,7 @@ export function CreateMarketButton() {
   };
 
   const canProceedStep1 = formData.title && formData.description && formData.category;
-  const canProceedStep2 = formData.outcomeYes && formData.outcomeNo && formData.resolutionCriteria;
+  const canProceedStep2 = outcomes.filter(o => o.trim()).length >= 2 && formData.resolutionCriteria;
   const canProceedStep3 = formData.endDate;
 
   const renderStep = () => {
@@ -193,25 +209,47 @@ export function CreateMarketButton() {
       case 2:
         return (
           <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="outcomeYes">Outcome 1 *</Label>
-                <Input
-                  id="outcomeYes"
-                  placeholder="Yes"
-                  value={formData.outcomeYes}
-                  onChange={(e) => setFormData({...formData, outcomeYes: e.target.value})}
-                />
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <Label>Outcomes *</Label>
+                <span className="text-xs text-muted-foreground">{outcomes.length}/10</span>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="outcomeNo">Outcome 2 *</Label>
-                <Input
-                  id="outcomeNo"
-                  placeholder="No"
-                  value={formData.outcomeNo}
-                  onChange={(e) => setFormData({...formData, outcomeNo: e.target.value})}
-                />
-              </div>
+              
+              {outcomes.map((outcome, index) => (
+                <div key={index} className="flex items-center gap-2">
+                  <Input
+                    placeholder={`Outcome ${index + 1}`}
+                    value={outcome}
+                    onChange={(e) => updateOutcome(index, e.target.value)}
+                  />
+                  {outcomes.length > 2 && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="h-9 w-9 shrink-0 text-muted-foreground hover:text-destructive"
+                      onClick={() => removeOutcome(index)}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  )}
+                </div>
+              ))}
+              
+              {outcomes.length < 10 && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="w-full"
+                  onClick={addOutcome}
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Outcome
+                </Button>
+              )}
+              
+              <p className="text-xs text-muted-foreground">Minimum 2 outcomes required</p>
             </div>
 
             <div className="space-y-2">
@@ -258,7 +296,7 @@ export function CreateMarketButton() {
               <div className="space-y-2 text-sm">
                 <p><span className="text-muted-foreground">Question:</span> {formData.title}</p>
                 <p><span className="text-muted-foreground">Category:</span> {formData.category}</p>
-                <p><span className="text-muted-foreground">Outcomes:</span> {formData.outcomeYes} / {formData.outcomeNo}</p>
+                <p><span className="text-muted-foreground">Outcomes:</span> {outcomes.filter(o => o.trim()).join(" / ")}</p>
               </div>
             </div>
 
