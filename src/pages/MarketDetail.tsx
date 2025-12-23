@@ -483,168 +483,200 @@ export default function MarketDetail() {
       </div>
 
       {/* Sticky Trade Panel at Bottom */}
-      <div className="fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur-md border-t border-border/40 z-30">
-        <div className="max-w-2xl mx-auto p-4 space-y-3">
-          {/* Quick Trade Header */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Zap className="h-4 w-4 text-primary" />
-              <span className="text-sm font-semibold">Quick Trade</span>
-            </div>
-            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-              <Wallet className="h-3.5 w-3.5" />
-              <span>$5,230</span>
-            </div>
-          </div>
+      <div className="fixed bottom-0 left-0 right-0 bg-background border-t border-border z-30 shadow-lg">
+        <div className="max-w-2xl mx-auto px-4 py-3">
+          {/* Collapsed view when no outcome selected */}
+          {!selectedOutcome ? (
+            <div className="space-y-3">
+              {/* Header */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center">
+                    <Zap className="h-3.5 w-3.5 text-primary" />
+                  </div>
+                  <span className="text-sm font-semibold">Trade</span>
+                </div>
+                <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                  <Wallet className="h-3.5 w-3.5" />
+                  <span className="font-medium">$5,230</span>
+                </div>
+              </div>
 
-          {/* Outcome Selection */}
-          {isBinary ? (
-            <div className="grid grid-cols-2 gap-2">
-              {market.outcomes.map((outcome: any, index: number) => {
-                const isYes = outcome.label.toLowerCase() === "yes";
-                const isSelected = selectedOutcome?.label === outcome.label;
-                // Mock 24h change
-                const priceChange = isYes ? +3 : -3;
-                
-                return (
-                  <button
-                    key={index}
-                    onClick={() => setSelectedOutcome(outcome)}
-                    className={`p-2.5 rounded-xl transition-all active:scale-[0.98] border-2 ${
-                      isSelected
-                        ? isYes 
-                          ? 'border-success bg-success/15' 
-                          : 'border-muted-foreground bg-muted'
-                        : isYes
-                          ? 'border-success/30 bg-success/5'
-                          : 'border-border bg-muted/30'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between w-full">
-                      <div className="flex items-center gap-2">
-                        <div className={`w-6 h-6 rounded-full flex items-center justify-center ${
-                          isYes ? 'bg-success/20 text-success' : 'bg-muted text-muted-foreground'
-                        }`}>
-                          {isYes ? <Check className="h-3.5 w-3.5" /> : <X className="h-3.5 w-3.5" />}
+              {/* Outcome Selection */}
+              {isBinary ? (
+                <div className="grid grid-cols-2 gap-3">
+                  {market.outcomes.map((outcome: any, index: number) => {
+                    const isYes = outcome.label.toLowerCase() === "yes";
+                    const priceChange = isYes ? +3 : -3;
+                    
+                    return (
+                      <button
+                        key={index}
+                        onClick={() => setSelectedOutcome(outcome)}
+                        className={`p-3 rounded-xl transition-all active:scale-[0.98] border-2 ${
+                          isYes
+                            ? 'border-success/40 bg-success/5 hover:bg-success/10'
+                            : 'border-border bg-muted/30 hover:bg-muted/50'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2.5">
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                              isYes ? 'bg-success/20 text-success' : 'bg-muted text-muted-foreground'
+                            }`}>
+                              {isYes ? <Check className="h-4 w-4" /> : <X className="h-4 w-4" />}
+                            </div>
+                            <div className="text-left">
+                              <p className="font-semibold text-sm">{outcome.label}</p>
+                              <p className={`text-[11px] ${priceChange > 0 ? 'text-success' : 'text-destructive'}`}>
+                                {priceChange > 0 ? '↑' : '↓'}{Math.abs(priceChange)}¢ today
+                              </p>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-xl font-bold">{outcome.price}¢</p>
+                          </div>
                         </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1 scrollbar-none">
+                  {visibleOutcomes.map((outcome: any, index: number) => {
+                    const priceChange = index === 0 ? +2 : index === 1 ? -1 : 0;
+                    
+                    return (
+                      <button
+                        key={index}
+                        onClick={() => setSelectedOutcome(outcome)}
+                        className="flex-shrink-0 flex items-center gap-2.5 px-3 py-2.5 rounded-xl transition-all border border-border bg-muted/20 hover:bg-muted/40 active:scale-[0.98]"
+                      >
+                        {outcome.logo ? (
+                          <img src={outcome.logo} alt={outcome.label} className="h-7 w-7 object-contain" />
+                        ) : (
+                          <div className="h-7 w-7 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
+                            {outcome.label.charAt(0)}
+                          </div>
+                        )}
                         <div className="text-left">
-                          <span className="font-semibold text-sm block">{outcome.label}</span>
-                          <span className={`text-[10px] ${priceChange > 0 ? 'text-success' : 'text-destructive'}`}>
-                            {priceChange > 0 ? '↑' : '↓'} {Math.abs(priceChange)}¢
-                          </span>
+                          <p className="font-medium text-sm">{outcome.label}</p>
+                          <p className={`text-[10px] ${priceChange > 0 ? 'text-success' : priceChange < 0 ? 'text-destructive' : 'text-muted-foreground'}`}>
+                            {priceChange !== 0 ? (priceChange > 0 ? `↑${priceChange}%` : `↓${Math.abs(priceChange)}%`) : '—'}
+                          </p>
                         </div>
-                      </div>
-                      <span className="text-lg font-bold">{outcome.price}¢</span>
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-          ) : (
-            <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1">
-              {visibleOutcomes.map((outcome: any, index: number) => {
-                const isSelected = selectedOutcome?.label === outcome.label;
-                // Mock 24h change
-                const priceChange = index === 0 ? +2 : index === 1 ? -1 : 0;
-                
-                return (
-                  <button
-                    key={index}
-                    onClick={() => setSelectedOutcome(outcome)}
-                    className={`flex-shrink-0 flex items-center gap-2 p-2 rounded-xl transition-all border ${
-                      isSelected
-                        ? 'border-primary bg-primary/10'
-                        : 'border-border bg-muted/30'
-                    }`}
-                  >
-                    {outcome.logo ? (
-                      <img src={outcome.logo} alt={outcome.label} className="h-6 w-6 object-contain" />
-                    ) : (
-                      <div className="h-6 w-6 rounded-full bg-muted flex items-center justify-center text-xs font-bold">
-                        {outcome.label.charAt(0)}
-                      </div>
-                    )}
-                    <div className="text-left">
-                      <span className="font-medium text-sm block">{outcome.label}</span>
-                      <span className={`text-[10px] ${priceChange > 0 ? 'text-success' : priceChange < 0 ? 'text-destructive' : 'text-muted-foreground'}`}>
-                        {priceChange !== 0 ? (priceChange > 0 ? `↑${priceChange}%` : `↓${Math.abs(priceChange)}%`) : '—'}
-                      </span>
-                    </div>
-                    <span className="text-sm font-bold">{outcome.price}%</span>
-                  </button>
-                );
-              })}
-              {market.outcomes.length > 3 && !showAllOutcomes && (
-                <button
-                  onClick={() => setShowAllOutcomes(true)}
-                  className="flex-shrink-0 px-3 py-2 rounded-xl border border-dashed border-border text-xs font-medium text-muted-foreground"
-                >
-                  +{market.outcomes.length - 3} more
-                </button>
+                        <p className="text-base font-bold ml-1">{outcome.price}%</p>
+                      </button>
+                    );
+                  })}
+                  {market.outcomes.length > 3 && !showAllOutcomes && (
+                    <button
+                      onClick={() => setShowAllOutcomes(true)}
+                      className="flex-shrink-0 px-4 py-2.5 rounded-xl border border-dashed border-border text-xs font-medium text-muted-foreground hover:bg-muted/30"
+                    >
+                      +{market.outcomes.length - 3}
+                    </button>
+                  )}
+                </div>
               )}
             </div>
-          )}
-
-          {/* Amount & Buy */}
-          <div className="flex items-center gap-2">
-            <div className="flex-1 flex items-center gap-1">
-              {quickAmounts.map((quickAmount) => (
-                <Button
-                  key={quickAmount}
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setAmount(quickAmount.toString())}
-                  className={`flex-1 h-9 text-xs ${amount === quickAmount.toString() ? 'border-primary bg-primary/5' : ''}`}
+          ) : (
+            /* Expanded view when outcome is selected */
+            <div className="space-y-3">
+              {/* Selected outcome header */}
+              <div className="flex items-center justify-between">
+                <button 
+                  onClick={() => setSelectedOutcome(null)}
+                  className="flex items-center gap-2 text-sm"
                 >
-                  ${quickAmount}
-                </Button>
-              ))}
-            </div>
-            <Button
-              className="h-9 px-4 font-semibold text-sm min-w-[100px]"
-              onClick={handleBuy}
-              disabled={!selectedOutcome || isSubmitting || amountNum < 1}
-            >
-              {isSubmitting 
-                ? "..." 
-                : selectedOutcome 
-                  ? `Buy $${amountNum}`
-                  : "Select"
-              }
-            </Button>
-          </div>
+                  <ArrowLeft className="h-4 w-4" />
+                  <span className="font-medium">Back</span>
+                </button>
+                <div className="flex items-center gap-2">
+                  <div className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                    selectedOutcome.label.toLowerCase() === 'yes' 
+                      ? 'bg-success/10 text-success' 
+                      : 'bg-muted text-foreground'
+                  }`}>
+                    {selectedOutcome.label} @ {selectedOutcome.price}¢
+                  </div>
+                </div>
+              </div>
 
-          {/* Order Summary - detailed for traders */}
-          {selectedOutcome && (
-            <div className="space-y-2">
-              {/* Main stats row */}
-              <div className="grid grid-cols-4 gap-2 text-center">
-                <div className="bg-muted/30 rounded-lg py-1.5 px-1">
-                  <p className="text-[10px] text-muted-foreground">Shares</p>
-                  <p className="text-xs font-bold">{shares}</p>
+              {/* Amount selection */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <div className="relative flex-1">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground font-medium">$</span>
+                    <Input
+                      type="number"
+                      value={amount}
+                      onChange={(e) => setAmount(e.target.value)}
+                      className="pl-7 h-11 text-lg font-bold bg-muted/30 border-border"
+                      min="1"
+                      max="10000"
+                    />
+                  </div>
                 </div>
-                <div className="bg-muted/30 rounded-lg py-1.5 px-1">
-                  <p className="text-[10px] text-muted-foreground">Price</p>
-                  <p className="text-xs font-bold">{selectedOutcome.price}¢</p>
-                </div>
-                <div className="bg-muted/30 rounded-lg py-1.5 px-1">
-                  <p className="text-[10px] text-muted-foreground">Payout</p>
-                  <p className="text-xs font-bold">${potentialPayout.toFixed(2)}</p>
-                </div>
-                <div className="bg-success/10 rounded-lg py-1.5 px-1">
-                  <p className="text-[10px] text-muted-foreground">Profit</p>
-                  <p className="text-xs font-bold text-success">+${potentialProfit.toFixed(2)}</p>
+                <div className="grid grid-cols-4 gap-2">
+                  {quickAmounts.map((quickAmount) => (
+                    <Button
+                      key={quickAmount}
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setAmount(quickAmount.toString())}
+                      className={`h-8 text-xs font-medium ${
+                        amount === quickAmount.toString() 
+                          ? 'border-primary bg-primary/10 text-primary' 
+                          : 'bg-muted/30'
+                      }`}
+                    >
+                      ${quickAmount}
+                    </Button>
+                  ))}
                 </div>
               </div>
-              {/* ROI and risk */}
-              <div className="flex items-center justify-between text-xs px-1">
-                <span className="text-muted-foreground">
-                  ROI: <span className="font-semibold text-success">+{amountNum > 0 ? ((potentialProfit / amountNum) * 100).toFixed(0) : 0}%</span>
-                </span>
-                <span className="text-muted-foreground">
-                  Max loss: <span className="font-semibold text-destructive/80">-${amountNum.toFixed(2)}</span>
-                </span>
+
+              {/* Order summary */}
+              <div className="bg-muted/30 rounded-xl p-3 space-y-2">
+                <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Shares</span>
+                    <span className="font-semibold">{shares.toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Avg price</span>
+                    <span className="font-semibold">{selectedOutcome.price}¢</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">If correct</span>
+                    <span className="font-semibold">${potentialPayout.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Profit</span>
+                    <span className="font-semibold text-success">+${potentialProfit.toFixed(2)}</span>
+                  </div>
+                </div>
+                <Separator className="my-2" />
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Return on investment</span>
+                  <span className="font-bold text-success">
+                    +{amountNum > 0 ? ((potentialProfit / amountNum) * 100).toFixed(0) : 0}%
+                  </span>
+                </div>
               </div>
+
+              {/* Buy button */}
+              <Button
+                className="w-full h-12 text-base font-semibold"
+                onClick={handleBuy}
+                disabled={isSubmitting || amountNum < 1}
+              >
+                {isSubmitting 
+                  ? "Placing order..." 
+                  : `Buy ${selectedOutcome.label} for $${amountNum.toFixed(2)}`
+                }
+              </Button>
             </div>
           )}
         </div>
