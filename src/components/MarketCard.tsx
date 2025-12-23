@@ -1,18 +1,9 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Clock, TrendingUp, Heart, MessageCircle, Share2, Repeat2, BadgeCheck } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
-import { Textarea } from "@/components/ui/textarea";
-import { useToast } from "@/hooks/use-toast";
+import { QuoteRepostDialog } from "@/components/QuoteRepostDialog";
 
 interface Outcome {
   label: string;
@@ -44,9 +35,7 @@ interface MarketCardProps {
 
 export function MarketCard({ id, creator, title, subtitle, image, outcomes, yesPrice, noPrice, volume, endsIn, likes = 0, comments = 0, hideEngagement = false }: MarketCardProps) {
   const navigate = useNavigate();
-  const { toast } = useToast();
   const [showRepostDialog, setShowRepostDialog] = useState(false);
-  const [repostThoughts, setRepostThoughts] = useState("");
   
   const displayOutcomes = outcomes || [
     { label: "Yes", price: yesPrice || 0, color: "success" },
@@ -54,17 +43,6 @@ export function MarketCard({ id, creator, title, subtitle, image, outcomes, yesP
   ];
 
   const isBinary = displayOutcomes.length === 2 && !outcomes;
-
-  const handleRepost = () => {
-    if (repostThoughts.trim()) {
-      toast({
-        title: "Market reposted!",
-        description: "Your thoughts have been shared to the Community Feed.",
-      });
-      setRepostThoughts("");
-      setShowRepostDialog(false);
-    }
-  };
 
   return (
     <>
@@ -204,50 +182,12 @@ export function MarketCard({ id, creator, title, subtitle, image, outcomes, yesP
         </div>
       </Card>
 
-      {/* Repost Dialog */}
-      <Dialog open={showRepostDialog} onOpenChange={setShowRepostDialog}>
-        <DialogContent onClick={(e) => e.stopPropagation()}>
-          <DialogHeader>
-            <DialogTitle>Repost to Community Feed</DialogTitle>
-            <DialogDescription>
-              Share your thoughts on this market with the community
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 pt-4">
-            <Textarea
-              placeholder="What do you think about this market?"
-              value={repostThoughts}
-              onChange={(e) => setRepostThoughts(e.target.value)}
-              className="min-h-[100px]"
-              maxLength={500}
-            />
-            <div className="flex items-center justify-between">
-              <span className="text-xs text-muted-foreground">
-                {repostThoughts.length}/500
-              </span>
-              <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    setShowRepostDialog(false);
-                    setRepostThoughts("");
-                  }}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  size="sm"
-                  onClick={handleRepost}
-                  disabled={!repostThoughts.trim()}
-                >
-                  Repost
-                </Button>
-              </div>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <QuoteRepostDialog
+        open={showRepostDialog}
+        onOpenChange={setShowRepostDialog}
+        marketTitle={title}
+        marketImage={image}
+      />
     </>
   );
 }
