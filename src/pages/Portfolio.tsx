@@ -98,10 +98,10 @@ const Portfolio = () => {
           <Card className="border-border/40">
             <CardContent className="p-3 sm:p-4">
               <div className="flex items-center gap-1.5 text-muted-foreground text-[11px] sm:text-sm mb-0.5 sm:mb-1">
-                <PieChart className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                Invested
+                <TrendingUp className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                Win Rate
               </div>
-              <p className="text-lg sm:text-2xl font-bold">${portfolioStats.investedAmount.toLocaleString()}</p>
+              <p className="text-lg sm:text-2xl font-bold text-success">68%</p>
             </CardContent>
           </Card>
           
