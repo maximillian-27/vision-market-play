@@ -12,6 +12,7 @@ import {
   Heart, 
   MessageCircle, 
   Share2, 
+  Repeat2,
   Check, 
   X, 
   BadgeCheck, 
@@ -249,17 +250,29 @@ export default function MarketDetail() {
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <span className="font-semibold text-sm">Market</span>
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className="h-8 w-8"
-            onClick={() => {
-              navigator.clipboard.writeText(window.location.href);
-              toast({ title: "Link copied!" });
-            }}
-          >
-            <Share2 className="h-5 w-5" />
-          </Button>
+          <div className="flex items-center gap-1">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="h-8 w-8"
+              onClick={() => {
+                navigator.clipboard.writeText(window.location.href);
+                toast({ title: "Link copied!" });
+              }}
+            >
+              <Share2 className="h-5 w-5" />
+            </Button>
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="h-8 w-8"
+              onClick={() => {
+                toast({ title: "Reposted to your feed!" });
+              }}
+            >
+              <Repeat2 className="h-5 w-5" />
+            </Button>
+          </div>
         </div>
       </div>
 

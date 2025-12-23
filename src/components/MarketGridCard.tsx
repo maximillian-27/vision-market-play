@@ -420,35 +420,9 @@ export function MarketGridCard({
               <span className="text-[10px] text-muted-foreground font-medium truncate max-w-[100px]">{creator.name}</span>
             </button>
             
-            <div className="flex items-start justify-between gap-2">
-              <h3 className="text-[13px] font-semibold leading-tight line-clamp-2 group-hover:text-primary transition-colors flex-1">
-                {title}
-              </h3>
-              {/* Action buttons for open markets */}
-              {!isClosedOrResolved && (
-                <div className="flex items-center gap-1 flex-shrink-0">
-                  <button 
-                    className="p-1 rounded-full hover:bg-muted transition-colors"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      navigator.clipboard.writeText(`${window.location.origin}/market/${id}`);
-                      toast({ title: "Link copied!" });
-                    }}
-                  >
-                    <Share2 className="h-3.5 w-3.5 text-muted-foreground" />
-                  </button>
-                  <button 
-                    className="p-1 rounded-full hover:bg-muted transition-colors"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      toast({ title: "Reposted to your feed!" });
-                    }}
-                  >
-                    <Repeat2 className="h-3.5 w-3.5 text-muted-foreground" />
-                  </button>
-                </div>
-              )}
-            </div>
+            <h3 className="text-[13px] font-semibold leading-tight line-clamp-2 group-hover:text-primary transition-colors">
+              {title}
+            </h3>
 
             {isClosedOrResolved ? (
               <div className={`inline-flex items-center gap-1 px-2 py-1 rounded-md w-fit ${
