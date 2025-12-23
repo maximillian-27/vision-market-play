@@ -484,7 +484,7 @@ export default function MarketDetail() {
 
       {/* Sticky Trade Panel at Bottom */}
       <div className="fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur-md border-t border-border/40 z-30">
-        <div className="max-w-2xl mx-auto p-4 space-y-3">
+        <div className="max-w-2xl mx-auto p-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] space-y-2">
           {/* Quick Trade Header */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
