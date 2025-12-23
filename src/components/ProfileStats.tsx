@@ -36,14 +36,14 @@ export function ProfileStats({ type, stats }: ProfileStatsProps) {
           valueClassName="text-success"
         />
         <StatCard
-          icon={<BarChart3 className="h-4 w-4" />}
-          label="Markets Created"
-          value={stats.marketsCreated?.toString() || "0"}
-        />
-        <StatCard
           icon={<Award className="h-4 w-4" />}
           label="Rank"
           value={`#${stats.rank || "-"}`}
+        />
+        <StatCard
+          icon={<BarChart3 className="h-4 w-4" />}
+          label="Markets Created"
+          value={stats.marketsCreated?.toString() || "0"}
         />
         <StatCard
           icon={<TrendingUp className="h-4 w-4" />}
