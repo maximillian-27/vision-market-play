@@ -571,21 +571,19 @@ export default function MarketDetail() {
 
           {/* Amount & Buy */}
           <div className="flex items-center gap-2">
-            <div className="flex-1 flex items-center gap-1">
-              {quickAmounts.map((quickAmount) => (
-                <Button
-                  key={quickAmount}
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setAmount(quickAmount.toString())}
-                  className={`flex-1 h-9 text-xs ${amount === quickAmount.toString() ? 'border-primary bg-primary/5' : ''}`}
-                >
-                  ${quickAmount}
-                </Button>
-              ))}
+            <div className="relative flex-1">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground font-medium text-sm">$</span>
+              <Input
+                type="number"
+                inputMode="decimal"
+                placeholder="0.00"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+                className="pl-7 pr-3 h-10 text-base font-semibold bg-muted/30 border-border/50 focus:border-primary"
+              />
             </div>
             <Button
-              className="h-9 px-4 font-semibold text-sm min-w-[100px]"
+              className="h-10 px-5 font-semibold text-sm min-w-[110px]"
               onClick={handleBuy}
               disabled={!selectedOutcome || isSubmitting || amountNum < 1}
             >
