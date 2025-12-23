@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Clock, TrendingUp, ChevronRight, ExternalLink } from "lucide-react";
+import { Clock, TrendingUp, ChevronRight, ExternalLink, ArrowLeft } from "lucide-react";
+
 import { Badge } from "@/components/ui/badge";
 import { NewsFilters } from "@/components/NewsFilters";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
@@ -131,7 +132,15 @@ export default function News() {
             <div className="flex flex-col">
               {/* Header */}
               <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-xl border-b border-border/50 px-6 py-4">
-                <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-4">
+                  <button 
+                    onClick={() => setSelectedNews(null)}
+                    className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    <ArrowLeft className="h-4 w-4" />
+                    <span>Back</span>
+                  </button>
+                  <div className="flex-1" />
                   <div className="flex items-center gap-2 text-sm">
                     <span className="font-medium text-primary">{selectedNews.source}</span>
                     <span className="text-muted-foreground/40">•</span>
