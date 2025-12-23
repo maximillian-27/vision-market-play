@@ -120,58 +120,73 @@ const CreatorDashboard = () => {
         />
 
         {/* Earnings Balance & Market Tokens Card */}
-        <Card className="mb-6 border-primary/20 bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5">
-          <CardContent className="p-4 sm:p-6">
-            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-              {/* Current Balance */}
-              <div className="flex items-center gap-4">
-                <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
-                  <Wallet className="h-6 w-6 text-primary" />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          {/* Current Balance Card */}
+          <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-primary/10">
+            <CardContent className="p-5">
+              <div className="flex items-start justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                    <Wallet className="h-6 w-6 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground font-medium">Current Balance</p>
+                    <p className="text-3xl font-bold text-primary">${creatorStats.currentBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-sm text-muted-foreground font-medium">Current Balance</p>
-                  <p className="text-3xl font-bold text-primary">${creatorStats.currentBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
-                </div>
+                <Button variant="outline" size="sm" className="text-xs">
+                  Withdraw
+                </Button>
               </div>
+              <div className="flex items-center gap-2 mt-4 pt-4 border-t border-border/30 text-xs text-muted-foreground">
+                <Clock className="h-3.5 w-3.5" />
+                <span>Payouts every Friday at 12:00 AM EST</span>
+              </div>
+            </CardContent>
+          </Card>
 
-              {/* Divider for larger screens */}
-              <div className="hidden lg:block h-16 w-px bg-border/40" />
-
-              {/* Market Creation Tokens */}
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <div className="flex items-center gap-4 bg-background/60 px-4 py-3 rounded-xl border border-border/40 cursor-help">
-                      <div className="h-10 w-10 rounded-full bg-amber-500/10 flex items-center justify-center">
-                        <Sparkles className="h-5 w-5 text-amber-500" />
-                      </div>
-                      <div>
-                        <p className="text-xs text-muted-foreground font-medium">Market Tokens</p>
-                        <div className="flex items-center gap-2">
-                          <span className="text-2xl font-bold text-amber-500">{marketTokens}</span>
-                          <span className="text-sm text-muted-foreground">/ 1</span>
+          {/* Market Tokens Card */}
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Card className="border-amber-500/20 bg-gradient-to-br from-amber-500/5 to-amber-500/10 cursor-help">
+                  <CardContent className="p-5">
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-center gap-4">
+                        <div className="h-12 w-12 rounded-xl bg-amber-500/10 flex items-center justify-center">
+                          <Sparkles className="h-6 w-6 text-amber-500" />
+                        </div>
+                        <div>
+                          <p className="text-sm text-muted-foreground font-medium">Market Tokens</p>
+                          <div className="flex items-baseline gap-1.5">
+                            <span className="text-3xl font-bold text-amber-500">{marketTokens}</span>
+                            <span className="text-lg text-muted-foreground font-medium">/ 1</span>
+                          </div>
                         </div>
                       </div>
-                      <div className="ml-2 pl-3 border-l border-border/40">
-                        <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Refreshes in</p>
-                        <p className="text-sm font-mono font-semibold text-foreground">{timeUntilRefresh}</p>
+                      <Badge variant="outline" className={`${marketTokens > 0 ? 'border-success/40 text-success bg-success/10' : 'border-muted text-muted-foreground'}`}>
+                        {marketTokens > 0 ? 'Available' : 'Used'}
+                      </Badge>
+                    </div>
+                    <div className="flex items-center justify-between mt-4 pt-4 border-t border-border/30">
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <Clock className="h-3.5 w-3.5" />
+                        <span>Refreshes at midnight GMT+1</span>
+                      </div>
+                      <div className="flex items-center gap-1.5 bg-background/60 px-2.5 py-1 rounded-md border border-border/40">
+                        <span className="text-[10px] text-muted-foreground uppercase tracking-wide">In</span>
+                        <span className="text-sm font-mono font-bold text-foreground">{timeUntilRefresh}</span>
                       </div>
                     </div>
-                  </TooltipTrigger>
-                  <TooltipContent side="bottom" className="max-w-xs">
-                    <p className="text-sm">You can create 1 market per day. Tokens refresh at midnight GMT+1.</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-
-              {/* Payout Info */}
-              <div className="flex items-center gap-2 text-xs text-muted-foreground bg-background/60 px-3 py-2 rounded-lg border border-border/40">
-                <Clock className="h-3.5 w-3.5" />
-                <span>Payouts every Friday</span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+                  </CardContent>
+                </Card>
+              </TooltipTrigger>
+              <TooltipContent side="bottom" className="max-w-xs">
+                <p className="text-sm">You can create 1 market per day. Tokens refresh daily at midnight GMT+1.</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
 
         {/* Time Range Selector */}
         <div className="flex justify-end mb-6">
