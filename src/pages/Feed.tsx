@@ -1,5 +1,8 @@
 import { FeedFilters } from "@/components/FeedFilters";
 import { MarketGridCard } from "@/components/MarketGridCard";
+import { PageHeader } from "@/components/PageHeader";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
 import bitcoinImage from "@/assets/bitcoin-market.jpg";
 import nbaImage from "@/assets/nba-championship.jpg";
 import iphoneImage from "@/assets/foldable-iphone.jpg";
@@ -234,12 +237,22 @@ const mockMarkets = [
 
 export default function Feed() {
   return (
-    <div className="w-full px-2 md:px-4 lg:px-6 lg:py-4">
-      <div className="space-y-3 md:space-y-4">
-        <div className="py-2 lg:py-0">
-          <FeedFilters />
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3 md:gap-4 items-start">
+    <div className="w-full max-w-[1600px] mx-auto px-4 md:px-6 lg:px-8 py-4 lg:py-6">
+      <div className="space-y-4">
+        <PageHeader 
+          title="Markets"
+          subtitle="Trade on the outcome of real-world events"
+          action={
+            <Button size="sm" className="gap-1.5">
+              <Plus className="h-4 w-4" />
+              <span className="hidden sm:inline">Create Market</span>
+            </Button>
+          }
+        />
+        
+        <FeedFilters />
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-4">
           {mockMarkets.map((market, index) => (
             <MarketGridCard 
               key={index} 

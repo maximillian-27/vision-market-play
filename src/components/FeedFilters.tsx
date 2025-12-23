@@ -12,7 +12,7 @@ export function FeedFilters() {
   const [selectedCategory, setSelectedCategory] = useState("All");
 
   return (
-    <div className="space-y-3 sticky top-16 z-10 bg-background/98 backdrop-blur-md py-3 -mt-2">
+    <div className="space-y-3 sticky top-14 z-10 bg-background/95 backdrop-blur-sm py-2">
       {/* Filter Panel */}
       {showFilters && (
         <div className="rounded-xl border border-border/10 bg-background shadow-lg p-5 animate-in fade-in-0 slide-in-from-top-2 duration-200">
