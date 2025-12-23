@@ -143,55 +143,58 @@ export function ActivitySidebar() {
   };
 
   return (
-    <div className="w-64 lg:w-72 hidden lg:block sticky top-16 self-start max-h-[calc(100vh-5rem)]">
-      <Card className="border-border/40">
-        <CardHeader className="pb-3">
+    <div className="w-64 lg:w-72 hidden lg:block sticky top-20 self-start max-h-[calc(100vh-6rem)]">
+      <Card className="border-border/40 overflow-hidden">
+        <CardHeader className="pb-2 pt-4 px-4">
           <CardTitle className="text-sm font-semibold flex items-center gap-2">
-            <Activity className="h-4 w-4 text-primary" />
+            <div className="relative">
+              <Activity className="h-4 w-4 text-primary" />
+              <span className="absolute -top-0.5 -right-0.5 h-2 w-2 bg-success rounded-full animate-pulse" />
+            </div>
             Live Activity
           </CardTitle>
         </CardHeader>
         <CardContent className="p-0">
-          <ScrollArea className="h-[calc(100vh-12rem)]">
-            <div className="space-y-0.5 px-4 pb-4">
+          <ScrollArea className="h-[calc(100vh-14rem)]">
+            <div className="px-3 pb-3 space-y-0.5">
               {recentActivity.map((item) => {
                 const ActionIcon = getActionIcon(item.action);
                 return (
                   <div
                     key={item.id}
-                    className="flex items-start gap-2 p-2 rounded-lg hover:bg-muted/50 cursor-pointer transition-colors"
+                    className="flex items-start gap-2.5 p-2.5 rounded-lg hover:bg-muted/50 cursor-pointer transition-colors"
                     onClick={() => navigate(`/market/${item.id}`)}
                   >
-                    <Avatar className="h-8 w-8 flex-shrink-0">
+                    <Avatar className="h-8 w-8 flex-shrink-0 ring-1 ring-border/30">
                       <AvatarImage src={item.user.avatar} alt={item.user.name} />
-                      <AvatarFallback>{item.user.name.slice(0, 2)}</AvatarFallback>
+                      <AvatarFallback className="text-[10px]">{item.user.name.slice(0, 2)}</AvatarFallback>
                     </Avatar>
-                    <div className="flex-1 min-w-0 space-y-1">
+                    <div className="flex-1 min-w-0 space-y-0.5">
                       <div className="flex items-center gap-1.5">
                         <span 
-                          className="text-xs font-medium text-foreground hover:underline"
+                          className="text-xs font-medium text-foreground hover:underline truncate"
                           onClick={(e) => {
                             e.stopPropagation();
                             navigate(`/profile/${item.user.username.slice(1)}`);
                           }}
                         >
-                          {item.user.username}
+                          {item.user.name}
                         </span>
                         {item.action === "trade" && item.direction && (
                           item.direction === "up" ? (
-                            <TrendingUp className="h-3 w-3 text-success" />
+                            <TrendingUp className="h-3 w-3 text-success flex-shrink-0" />
                           ) : (
-                            <TrendingDown className="h-3 w-3 text-destructive" />
+                            <TrendingDown className="h-3 w-3 text-destructive flex-shrink-0" />
                           )
                         )}
                       </div>
-                      <p className="text-xs text-muted-foreground leading-tight">
+                      <p className="text-[11px] text-muted-foreground leading-relaxed">
                         {getActionText(item)}{" "}
-                        <span className="text-foreground font-medium line-clamp-1">
+                        <span className="text-foreground/80 font-medium">
                           {item.market}
                         </span>
                       </p>
-                      <span className="text-[10px] text-muted-foreground">
+                      <span className="text-[10px] text-muted-foreground/60">
                         {item.timestamp}
                       </span>
                     </div>
