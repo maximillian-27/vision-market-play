@@ -37,8 +37,6 @@ const recentActivity = [
 export const AdminDashboard = () => {
   return (
     <div className="space-y-6">
-      <h2 className="text-xl font-semibold">Dashboard Overview</h2>
-
       {/* Stats Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <Card className="border-border/40">

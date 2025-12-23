@@ -46,8 +46,6 @@ export const AdminCRM = () => {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-xl font-semibold">CRM & Customer Management</h2>
-
       <Tabs defaultValue="overview" className="space-y-4">
         <TabsList className="bg-muted/50 p-1">
           <TabsTrigger value="overview" className="data-[state=active]:bg-background gap-2">

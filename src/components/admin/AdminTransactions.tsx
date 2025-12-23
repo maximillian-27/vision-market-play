@@ -57,34 +57,31 @@ export const AdminTransactions = () => {
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <h2 className="text-xl font-semibold">Transaction History</h2>
-        <div className="flex items-center gap-3 w-full sm:w-auto flex-wrap">
-          <div className="relative flex-1 sm:w-64">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search transactions..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-9 h-9"
-            />
-          </div>
-          <Select value={typeFilter} onValueChange={setTypeFilter}>
-            <SelectTrigger className="w-32 h-9">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Types</SelectItem>
-              <SelectItem value="deposit">Deposits</SelectItem>
-              <SelectItem value="withdrawal">Withdrawals</SelectItem>
-              <SelectItem value="trade">Trades</SelectItem>
-            </SelectContent>
-          </Select>
-          <Button variant="outline" size="sm" className="gap-2">
-            <Download className="h-4 w-4" />
-            Export
-          </Button>
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-end gap-3 flex-wrap">
+        <div className="relative flex-1 sm:w-64">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search transactions..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-9 h-9"
+          />
         </div>
+        <Select value={typeFilter} onValueChange={setTypeFilter}>
+          <SelectTrigger className="w-32 h-9">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Types</SelectItem>
+            <SelectItem value="deposit">Deposits</SelectItem>
+            <SelectItem value="withdrawal">Withdrawals</SelectItem>
+            <SelectItem value="trade">Trades</SelectItem>
+          </SelectContent>
+        </Select>
+        <Button variant="outline" size="sm" className="gap-2">
+          <Download className="h-4 w-4" />
+          Export
+        </Button>
       </div>
 
       {/* Stats */}

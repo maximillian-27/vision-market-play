@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Settings, Users, UserPlus, Gift, BarChart3 } from "lucide-react";
+import { Settings } from "lucide-react";
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
 import { AdminDashboard } from "@/components/admin/AdminDashboard";
 import { AdminUsers } from "@/components/admin/AdminUsers";
@@ -16,10 +15,24 @@ import { AdminAffiliate } from "@/components/admin/AdminAffiliate";
 import { AdminLoyalty } from "@/components/admin/AdminLoyalty";
 import { AdminAnalytics } from "@/components/admin/AdminAnalytics";
 
+const sectionTitles: Record<string, { title: string; description: string }> = {
+  dashboard: { title: "Dashboard", description: "Platform overview and key metrics" },
+  users: { title: "Users", description: "Manage all platform users" },
+  markets: { title: "All Markets", description: "View and manage all markets" },
+  pending: { title: "Pending Markets", description: "Review and approve new markets" },
+  disputes: { title: "Disputes", description: "Handle user disputes and issues" },
+  resolutions: { title: "Resolutions", description: "Manage market resolutions" },
+  transactions: { title: "Transactions", description: "View all platform transactions" },
+  creators: { title: "Creators", description: "Manage market creators" },
+  crm: { title: "CRM", description: "Customer relationship management" },
+  affiliate: { title: "Affiliate Program", description: "Manage affiliate partners" },
+  loyalty: { title: "Loyalty & Bonuses", description: "Rewards and bonus programs" },
+  analytics: { title: "Analytics & BI", description: "Business intelligence and insights" },
+};
+
 const Admin = () => {
   const [activeSection, setActiveSection] = useState("dashboard");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [activeTab, setActiveTab] = useState("crm");
 
   const renderSectionContent = () => {
     switch (activeSection) {
@@ -39,14 +52,23 @@ const Admin = () => {
         return <AdminResolutions />;
       case "transactions":
         return <AdminTransactions />;
+      case "crm":
+        return <AdminCRM />;
+      case "affiliate":
+        return <AdminAffiliate />;
+      case "loyalty":
+        return <AdminLoyalty />;
+      case "analytics":
+        return <AdminAnalytics />;
       default:
         return <AdminDashboard />;
     }
   };
 
+  const currentSection = sectionTitles[activeSection] || sectionTitles.dashboard;
+
   return (
     <div className="min-h-screen bg-background flex">
-      {/* Sidebar */}
       <AdminSidebar
         activeSection={activeSection}
         onSectionChange={setActiveSection}
@@ -54,14 +76,12 @@ const Admin = () => {
         onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
       />
 
-      {/* Main Content */}
       <div className="flex-1 overflow-auto">
         <div className="p-6">
-          {/* Header */}
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h1 className="text-2xl font-bold">Admin Dashboard</h1>
-              <p className="text-sm text-muted-foreground">Manage your platform</p>
+              <h1 className="text-2xl font-bold">{currentSection.title}</h1>
+              <p className="text-sm text-muted-foreground">{currentSection.description}</p>
             </div>
             <Button variant="outline" size="sm" className="gap-2">
               <Settings className="h-4 w-4" />
@@ -69,45 +89,7 @@ const Admin = () => {
             </Button>
           </div>
 
-          {/* Main Tabs for CRM, Affiliate, Loyalty, Analytics */}
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-6">
-            <TabsList className="bg-muted/50 p-1 mb-6">
-              <TabsTrigger value="crm" className="data-[state=active]:bg-background gap-2">
-                <Users className="h-4 w-4" />
-                CRM
-              </TabsTrigger>
-              <TabsTrigger value="affiliate" className="data-[state=active]:bg-background gap-2">
-                <UserPlus className="h-4 w-4" />
-                Affiliate
-              </TabsTrigger>
-              <TabsTrigger value="loyalty" className="data-[state=active]:bg-background gap-2">
-                <Gift className="h-4 w-4" />
-                Loyalty & Bonuses
-              </TabsTrigger>
-              <TabsTrigger value="analytics" className="data-[state=active]:bg-background gap-2">
-                <BarChart3 className="h-4 w-4" />
-                Analytics & BI
-              </TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="crm">
-              <AdminCRM />
-            </TabsContent>
-            <TabsContent value="affiliate">
-              <AdminAffiliate />
-            </TabsContent>
-            <TabsContent value="loyalty">
-              <AdminLoyalty />
-            </TabsContent>
-            <TabsContent value="analytics">
-              <AdminAnalytics />
-            </TabsContent>
-          </Tabs>
-
-          {/* Section Content from Sidebar */}
-          <div className="mt-8 pt-6 border-t border-border/40">
-            {renderSectionContent()}
-          </div>
+          {renderSectionContent()}
         </div>
       </div>
     </div>
