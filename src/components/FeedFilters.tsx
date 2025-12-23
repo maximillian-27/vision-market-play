@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { SlidersHorizontal, X } from "lucide-react";
+import { SlidersHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -26,32 +26,98 @@ export function FeedFilters({ filters, onFiltersChange }: FeedFiltersProps) {
     onFiltersChange({ ...filters, [key]: value });
   };
 
-  const hasActiveFilters = filters.sortBy !== "trending" || filters.region !== "global" || filters.status !== "all" || filters.timeframe !== "all";
-
   return (
-    <div className="space-y-3 sticky top-14 z-10 bg-background py-2">
-      {/* Category Tabs + Filter */}
+    <div className="space-y-3 sticky top-14 z-10 bg-background/95 backdrop-blur-sm py-2">
+      {/* Filter Panel */}
+      {showFilters && (
+        <div className="rounded-xl border border-border/10 bg-background shadow-lg p-5 animate-in fade-in-0 slide-in-from-top-2 duration-200">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="space-y-2.5">
+              <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Sort By</Label>
+              <Select value={filters.sortBy} onValueChange={(v) => updateFilter('sortBy', v)}>
+                <SelectTrigger className="h-11 border-none bg-muted/50 hover:bg-muted transition-all text-sm font-medium rounded-lg shadow-sm">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="rounded-xl border-border/10 bg-background shadow-xl p-1">
+                  <SelectItem value="trending" className="rounded-lg py-2.5 cursor-pointer">Trending</SelectItem>
+                  <SelectItem value="volume" className="rounded-lg py-2.5 cursor-pointer">Highest Volume</SelectItem>
+                  <SelectItem value="newest" className="rounded-lg py-2.5 cursor-pointer">Newest</SelectItem>
+                  <SelectItem value="ending" className="rounded-lg py-2.5 cursor-pointer">Ending Soon</SelectItem>
+                  <SelectItem value="active" className="rounded-lg py-2.5 cursor-pointer">Most Active</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2.5">
+              <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Region</Label>
+              <Select value={filters.region} onValueChange={(v) => updateFilter('region', v)}>
+                <SelectTrigger className="h-11 border-none bg-muted/50 hover:bg-muted transition-all text-sm font-medium rounded-lg shadow-sm">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="rounded-xl border-border/10 bg-background shadow-xl p-1">
+                  <SelectItem value="global" className="rounded-lg py-2.5 cursor-pointer">Global</SelectItem>
+                  <SelectItem value="us" className="rounded-lg py-2.5 cursor-pointer">United States</SelectItem>
+                  <SelectItem value="europe" className="rounded-lg py-2.5 cursor-pointer">Europe</SelectItem>
+                  <SelectItem value="asia" className="rounded-lg py-2.5 cursor-pointer">Asia</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2.5">
+              <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Status</Label>
+              <Select value={filters.status} onValueChange={(v) => updateFilter('status', v)}>
+                <SelectTrigger className="h-11 border-none bg-muted/50 hover:bg-muted transition-all text-sm font-medium rounded-lg shadow-sm">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="rounded-xl border-border/10 bg-background shadow-xl p-1">
+                  <SelectItem value="all" className="rounded-lg py-2.5 cursor-pointer">All Markets</SelectItem>
+                  <SelectItem value="open" className="rounded-lg py-2.5 cursor-pointer">Open</SelectItem>
+                  <SelectItem value="closing" className="rounded-lg py-2.5 cursor-pointer">Closing Soon</SelectItem>
+                  <SelectItem value="closed" className="rounded-lg py-2.5 cursor-pointer">Closed (Dispute Period)</SelectItem>
+                  <SelectItem value="resolved" className="rounded-lg py-2.5 cursor-pointer">Resolved</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2.5">
+              <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Timeframe</Label>
+              <Select value={filters.timeframe} onValueChange={(v) => updateFilter('timeframe', v)}>
+                <SelectTrigger className="h-11 border-none bg-muted/50 hover:bg-muted transition-all text-sm font-medium rounded-lg shadow-sm">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="rounded-xl border-border/10 bg-background shadow-xl p-1">
+                  <SelectItem value="24h" className="rounded-lg py-2.5 cursor-pointer">Last 24 hours</SelectItem>
+                  <SelectItem value="7d" className="rounded-lg py-2.5 cursor-pointer">Last 7 days</SelectItem>
+                  <SelectItem value="30d" className="rounded-lg py-2.5 cursor-pointer">Last 30 days</SelectItem>
+                  <SelectItem value="all" className="rounded-lg py-2.5 cursor-pointer">All time</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Category Tags with Filter Button */}
       <div className="flex gap-2 items-center">
+        {/* Filter Button */}
         <Button 
-          variant={showFilters ? "default" : "outline"} 
-          size="sm"
-          className="h-8 px-3 flex-shrink-0 gap-1.5"
+          variant={showFilters ? "secondary" : "ghost"} 
+          size="icon"
+          className="h-9 w-9 flex-shrink-0 rounded-full"
           onClick={() => setShowFilters(!showFilters)}
         >
-          <SlidersHorizontal className="h-3.5 w-3.5" />
-          <span className="hidden sm:inline">Filters</span>
-          {hasActiveFilters && <span className="h-1.5 w-1.5 rounded-full bg-primary-foreground" />}
+          <SlidersHorizontal className="h-4 w-4" />
         </Button>
         
-        <div className="flex gap-1 overflow-x-auto pb-1 scrollbar-hide">
+        <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
           {categories.map((category) => (
             <button
               key={category}
               onClick={() => updateFilter('category', category)}
-              className={`whitespace-nowrap font-medium px-3 py-1.5 text-sm rounded-full transition-colors ${
+              className={`whitespace-nowrap font-medium px-4 py-2 text-sm transition-colors border-b-2 ${
                 category === filters.category 
-                  ? "bg-foreground text-background" 
-                  : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+                  ? "border-foreground text-foreground" 
+                  : "border-transparent text-muted-foreground hover:text-foreground"
               }`}
             >
               {category}
@@ -59,92 +125,6 @@ export function FeedFilters({ filters, onFiltersChange }: FeedFiltersProps) {
           ))}
         </div>
       </div>
-
-      {/* Expanded Filter Panel */}
-      {showFilters && (
-        <div className="rounded-lg border border-border/60 bg-card p-4 animate-in fade-in-0 slide-in-from-top-2 duration-200">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-sm font-medium">Filter Markets</span>
-            <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setShowFilters(false)}>
-              <X className="h-4 w-4" />
-            </Button>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <div className="space-y-1.5">
-              <Label className="text-xs text-muted-foreground">Sort By</Label>
-              <Select value={filters.sortBy} onValueChange={(v) => updateFilter('sortBy', v)}>
-                <SelectTrigger className="h-9 text-sm">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="trending">Trending</SelectItem>
-                  <SelectItem value="volume">Highest Volume</SelectItem>
-                  <SelectItem value="newest">Newest</SelectItem>
-                  <SelectItem value="ending">Ending Soon</SelectItem>
-                  <SelectItem value="active">Most Active</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-1.5">
-              <Label className="text-xs text-muted-foreground">Region</Label>
-              <Select value={filters.region} onValueChange={(v) => updateFilter('region', v)}>
-                <SelectTrigger className="h-9 text-sm">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="global">Global</SelectItem>
-                  <SelectItem value="us">United States</SelectItem>
-                  <SelectItem value="europe">Europe</SelectItem>
-                  <SelectItem value="asia">Asia</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-1.5">
-              <Label className="text-xs text-muted-foreground">Status</Label>
-              <Select value={filters.status} onValueChange={(v) => updateFilter('status', v)}>
-                <SelectTrigger className="h-9 text-sm">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Markets</SelectItem>
-                  <SelectItem value="open">Open</SelectItem>
-                  <SelectItem value="closing">Closing Soon</SelectItem>
-                  <SelectItem value="closed">Dispute Period</SelectItem>
-                  <SelectItem value="resolved">Resolved</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-1.5">
-              <Label className="text-xs text-muted-foreground">Timeframe</Label>
-              <Select value={filters.timeframe} onValueChange={(v) => updateFilter('timeframe', v)}>
-                <SelectTrigger className="h-9 text-sm">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="24h">Last 24h</SelectItem>
-                  <SelectItem value="7d">Last 7 days</SelectItem>
-                  <SelectItem value="30d">Last 30 days</SelectItem>
-                  <SelectItem value="all">All time</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-          
-          {hasActiveFilters && (
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              className="mt-3 text-xs text-muted-foreground"
-              onClick={() => onFiltersChange({ ...filters, sortBy: "trending", region: "global", status: "all", timeframe: "all" })}
-            >
-              Clear filters
-            </Button>
-          )}
-        </div>
-      )}
     </div>
   );
 }

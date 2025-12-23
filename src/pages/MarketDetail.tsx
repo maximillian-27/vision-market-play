@@ -2,33 +2,14 @@ import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { 
-  ArrowLeft, 
-  Heart, 
-  MessageCircle, 
-  Share2, 
-  Check, 
-  X, 
-  BadgeCheck, 
-  ChevronDown, 
-  ChevronUp, 
-  Send,
-  TrendingUp,
-  Users,
-  Clock,
-  FileText,
-  Scale,
-  Wallet,
-  Zap
-} from "lucide-react";
+import { ArrowLeft, Heart, MessageCircle, Share2, Check, X, BadgeCheck, ChevronDown, ChevronUp, Send } from "lucide-react";
 import { ResponsiveContainer, AreaChart, Area, XAxis, Tooltip } from "recharts";
 import { useToast } from "@/hooks/use-toast";
-import { z } from "zod";
+import { BuyDialog } from "@/components/BuyDialog";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 interface Comment {
   id: string;
@@ -50,16 +31,13 @@ const mockMarketData: Record<string, any> = {
     },
     title: "Will Bitcoin reach $100,000 by end of 2025?",
     description: "This market resolves to YES if Bitcoin reaches or exceeds $100,000 USD on any major exchange before December 31, 2025. The price must be sustained for at least 5 minutes on Coinbase, Binance, or Kraken.",
-    resolutionCriteria: "Resolution is based on official price data from Coinbase, Binance, or Kraken. The price must hit $100,000 USD and remain at or above this level for at least 5 consecutive minutes. In case of exchange discrepancies, Coinbase price will be the primary reference.",
     outcomes: [
       { label: "Yes", price: 68, color: "success" },
       { label: "No", price: 32, color: "destructive" }
     ],
     volume: "$2.4M",
     endDate: "Dec 31, 2025",
-    endsIn: "3 months",
     traders: 12400,
-    liquidity: "$156K",
     likesCount: 342,
     priceHistory: [
       { date: "Jan", price: 45 },
@@ -78,7 +56,6 @@ const mockMarketData: Record<string, any> = {
     },
     title: "Who will win the NBA Championship this season?",
     description: "This market resolves based on the winner of the 2024-2025 NBA Finals, as officially announced by the NBA.",
-    resolutionCriteria: "The market resolves to the team that wins the 2024-2025 NBA Finals, as officially announced by the NBA. If the season is cancelled, the market resolves to 'Other'.",
     isMultiOutcome: true,
     outcomes: [
       { label: "Celtics", price: 32, logo: "https://cdn.nba.com/logos/nba/1610612738/primary/L/logo.svg" },
@@ -89,9 +66,7 @@ const mockMarketData: Record<string, any> = {
     ],
     volume: "$890K",
     endDate: "Jun 30, 2025",
-    endsIn: "2 months",
     traders: 8200,
-    liquidity: "$89K",
     likesCount: 189,
     priceHistory: [
       { date: "Jan", price: 28 },
@@ -129,12 +104,6 @@ const mockComments: Comment[] = [
   },
 ];
 
-const buySchema = z.object({
-  amount: z.number()
-    .min(1, { message: "Minimum amount is $1" })
-    .max(10000, { message: "Maximum amount is $10,000" })
-});
-
 export default function MarketDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -145,12 +114,10 @@ export default function MarketDetail() {
   const [comments, setComments] = useState<Comment[]>(mockComments);
   const [isLiked, setIsLiked] = useState(false);
   const [likesCount, setLikesCount] = useState(market?.likesCount || 0);
+  const [showBuyDialog, setShowBuyDialog] = useState(false);
   const [selectedOutcome, setSelectedOutcome] = useState<any>(null);
-  const [amount, setAmount] = useState("10");
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [showAllOutcomes, setShowAllOutcomes] = useState(false);
-  const [showResolution, setShowResolution] = useState(false);
-  const [showComments, setShowComments] = useState(false);
+  const [showDescription, setShowDescription] = useState(false);
 
   if (!market) {
     return (
@@ -162,14 +129,6 @@ export default function MarketDetail() {
       </div>
     );
   }
-
-  const isBinary = !market.isMultiOutcome;
-  const amountNum = parseFloat(amount) || 0;
-  const shares = selectedOutcome && selectedOutcome.price > 0 
-    ? Math.floor((amountNum * 100) / selectedOutcome.price) 
-    : 0;
-  const potentialPayout = shares;
-  const potentialProfit = potentialPayout - amountNum;
 
   const handleComment = () => {
     if (!commentText.trim()) return;
@@ -190,39 +149,9 @@ export default function MarketDetail() {
     setLikesCount(isLiked ? likesCount - 1 : likesCount + 1);
   };
 
-  const handleBuy = () => {
-    if (!selectedOutcome) {
-      toast({
-        title: "Select an outcome",
-        description: "Please select an outcome before placing an order",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    try {
-      buySchema.parse({ amount: amountNum });
-      
-      setIsSubmitting(true);
-      
-      setTimeout(() => {
-        toast({
-          title: "Order placed!",
-          description: `You bought ${shares} shares of "${selectedOutcome.label}" for $${amountNum.toFixed(2)}`,
-        });
-        setIsSubmitting(false);
-        setAmount("10");
-        setSelectedOutcome(null);
-      }, 500);
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        toast({
-          title: "Invalid amount",
-          description: error.errors[0].message,
-          variant: "destructive"
-        });
-      }
-    }
+  const handleOutcomeClick = (outcome: any) => {
+    setSelectedOutcome(outcome);
+    setShowBuyDialog(true);
   };
 
   const formatNumber = (num: number) => {
@@ -230,6 +159,7 @@ export default function MarketDetail() {
     return num.toString();
   };
 
+  // Sort outcomes by price for multi-outcome
   const sortedOutcomes = market.isMultiOutcome 
     ? [...market.outcomes].sort((a: any, b: any) => b.price - a.price)
     : market.outcomes;
@@ -238,10 +168,16 @@ export default function MarketDetail() {
     ? sortedOutcomes.slice(0, 3) 
     : sortedOutcomes;
 
-  const quickAmounts = [5, 10, 25, 50];
-
   return (
-    <div className="min-h-screen bg-background pb-48">
+    <div className="min-h-screen bg-background pb-20 lg:pb-6">
+      <BuyDialog
+        open={showBuyDialog}
+        onOpenChange={setShowBuyDialog}
+        outcome={selectedOutcome || market.outcomes[0]}
+        marketTitle={market.title}
+        marketId={id || "1"}
+      />
+
       {/* Header */}
       <div className="sticky top-14 z-20 bg-background/95 backdrop-blur-sm border-b border-border/40">
         <div className="max-w-2xl mx-auto flex items-center justify-between px-4 h-12">
@@ -255,7 +191,7 @@ export default function MarketDetail() {
             className="h-8 w-8"
             onClick={() => {
               navigator.clipboard.writeText(window.location.href);
-              toast({ title: "Link copied!" });
+              toast({ title: "Link copied" });
             }}
           >
             <Share2 className="h-5 w-5" />
@@ -263,7 +199,7 @@ export default function MarketDetail() {
         </div>
       </div>
 
-      {/* Main Content */}
+      {/* Main Content - Single Column */}
       <div className="max-w-2xl mx-auto">
         {/* Creator Row */}
         <div className="flex items-center justify-between px-4 py-3">
@@ -284,34 +220,96 @@ export default function MarketDetail() {
               </div>
             </div>
           </button>
-          <Badge variant="secondary" className="text-[10px] px-2">Live</Badge>
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <span>{market.endDate}</span>
+            <Badge variant="secondary" className="text-[10px] px-1.5 py-0">Live</Badge>
+          </div>
         </div>
 
         {/* Title */}
-        <div className="px-4 pb-3">
+        <div className="px-4 pb-4">
           <h1 className="text-lg font-bold leading-snug">{market.title}</h1>
         </div>
 
+        {/* Trade Section - THE MAIN ACTION */}
+        <div className="px-4 pb-4">
+          {market.isMultiOutcome ? (
+            /* Multi-outcome layout */
+            <div className="space-y-2">
+              {visibleOutcomes.map((outcome: any, index: number) => (
+                <button
+                  key={index}
+                  onClick={() => handleOutcomeClick(outcome)}
+                  className="w-full flex items-center gap-3 p-3 rounded-2xl bg-muted/40 hover:bg-muted/70 active:scale-[0.98] transition-all"
+                >
+                  {outcome.logo ? (
+                    <img src={outcome.logo} alt={outcome.label} className="h-10 w-10 object-contain" />
+                  ) : (
+                    <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center text-base font-bold">
+                      {outcome.label.charAt(0)}
+                    </div>
+                  )}
+                  <span className="flex-1 text-left font-medium">{outcome.label}</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xl font-bold">{outcome.price}%</span>
+                    <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center">
+                      <ChevronDown className="h-4 w-4 text-primary rotate-[-90deg]" />
+                    </div>
+                  </div>
+                </button>
+              ))}
+              
+              {market.outcomes.length > 3 && (
+                <button
+                  onClick={() => setShowAllOutcomes(!showAllOutcomes)}
+                  className="w-full py-2 text-sm text-primary font-medium"
+                >
+                  {showAllOutcomes ? "Show less" : `Show ${market.outcomes.length - 3} more`}
+                </button>
+              )}
+            </div>
+          ) : (
+            /* Binary outcome - Side by side */
+            <div className="grid grid-cols-2 gap-3">
+              {market.outcomes.map((outcome: any, index: number) => (
+                <button
+                  key={index}
+                  onClick={() => handleOutcomeClick(outcome)}
+                  className={`p-4 rounded-2xl active:scale-[0.98] transition-all ${
+                    outcome.color === 'success'
+                      ? 'bg-success/10 hover:bg-success/20 border-2 border-success/30'
+                      : 'bg-muted/50 hover:bg-muted/80 border-2 border-border/50'
+                  }`}
+                >
+                  <div className={`mx-auto w-12 h-12 rounded-full flex items-center justify-center mb-3 ${
+                    outcome.color === 'success' ? 'bg-success/20 text-success' : 'bg-muted text-muted-foreground'
+                  }`}>
+                    {outcome.color === 'success' ? <Check className="h-6 w-6" /> : <X className="h-6 w-6" />}
+                  </div>
+                  <p className="font-bold text-lg">{outcome.label}</p>
+                  <p className="text-2xl font-bold mt-1">{outcome.price}¢</p>
+                  <p className="text-xs text-muted-foreground mt-1">Buy to win $1</p>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
         {/* Stats Row */}
-        <div className="flex flex-wrap items-center gap-4 px-4 pb-4 text-xs text-muted-foreground">
-          <div className="flex items-center gap-1">
-            <TrendingUp className="h-3.5 w-3.5 text-primary" />
-            <span className="font-semibold text-foreground">{market.volume}</span>
-            <span>volume</span>
+        <div className="flex items-center gap-6 px-4 py-3 text-sm">
+          <div>
+            <span className="font-bold">{market.volume}</span>
+            <span className="text-muted-foreground ml-1">volume</span>
           </div>
-          <div className="flex items-center gap-1">
-            <Users className="h-3.5 w-3.5" />
-            <span>{formatNumber(market.traders)} traders</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <Clock className="h-3.5 w-3.5" />
-            <span>{market.endDate}</span>
+          <div>
+            <span className="font-bold">{formatNumber(market.traders)}</span>
+            <span className="text-muted-foreground ml-1">traders</span>
           </div>
         </div>
 
         {/* Chart */}
-        <div className="px-4 pb-4">
-          <div className="h-28 rounded-xl overflow-hidden bg-muted/20">
+        <div className="px-4 py-2">
+          <div className="h-32 rounded-xl overflow-hidden bg-muted/20">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={market.priceHistory} margin={{ top: 10, right: 10, left: 10, bottom: 0 }}>
                 <defs>
@@ -320,12 +318,7 @@ export default function MarketDetail() {
                     <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
                   </linearGradient>
                 </defs>
-                <XAxis 
-                  dataKey="date" 
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
-                />
+                <XAxis dataKey="date" hide />
                 <Tooltip 
                   contentStyle={{
                     backgroundColor: "hsl(var(--popover))",
@@ -341,344 +334,110 @@ export default function MarketDetail() {
           </div>
         </div>
 
-        {/* Key Stats Grid */}
-        <div className="grid grid-cols-3 gap-2 px-4 pb-4">
-          <div className="p-2.5 rounded-lg bg-muted/30 text-center">
-            <p className="text-[10px] text-muted-foreground uppercase">Volume</p>
-            <p className="text-sm font-bold">{market.volume}</p>
-          </div>
-          <div className="p-2.5 rounded-lg bg-muted/30 text-center">
-            <p className="text-[10px] text-muted-foreground uppercase">Traders</p>
-            <p className="text-sm font-bold">{formatNumber(market.traders)}</p>
-          </div>
-          <div className="p-2.5 rounded-lg bg-muted/30 text-center">
-            <p className="text-[10px] text-muted-foreground uppercase">Liquidity</p>
-            <p className="text-sm font-bold">{market.liquidity || "$45K"}</p>
-          </div>
-        </div>
-
-        <Separator className="mx-4" />
-
-        {/* Description */}
-        <div className="px-4 py-4 space-y-2">
-          <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
-            <FileText className="h-3.5 w-3.5" />
-            <span>Description</span>
-          </div>
-          <p className="text-sm text-foreground/80 leading-relaxed">
-            {market.description}
-          </p>
-        </div>
-
-        {/* Resolution Criteria */}
-        <div className="px-4 pb-4">
-          <Collapsible open={showResolution} onOpenChange={setShowResolution}>
-            <CollapsibleTrigger className="flex items-center justify-between w-full py-2.5 px-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors">
-              <div className="flex items-center gap-1.5 text-xs font-medium">
-                <Scale className="h-3.5 w-3.5 text-muted-foreground" />
-                <span>Resolution Criteria</span>
-              </div>
-              {showResolution ? (
-                <ChevronUp className="h-4 w-4 text-muted-foreground" />
-              ) : (
-                <ChevronDown className="h-4 w-4 text-muted-foreground" />
-              )}
-            </CollapsibleTrigger>
-            <CollapsibleContent>
-              <p className="text-sm text-muted-foreground leading-relaxed mt-3 px-1">
-                {market.resolutionCriteria}
-              </p>
-            </CollapsibleContent>
-          </Collapsible>
-        </div>
-
         {/* Engagement Row */}
-        <div className="flex items-center justify-between px-4 py-3 border-t border-border/40">
+        <div className="flex items-center px-4 py-3">
           <div className="flex items-center gap-4">
             <button 
               onClick={handleLike}
               className="flex items-center gap-1.5 active:scale-95 transition-transform"
             >
-              <Heart className={`h-5 w-5 ${isLiked ? 'fill-destructive text-destructive' : ''}`} />
-              <span className="text-xs font-medium">{formatNumber(likesCount)}</span>
+              <Heart className={`h-6 w-6 ${isLiked ? 'fill-destructive text-destructive' : ''}`} />
             </button>
-            <button 
-              onClick={() => setShowComments(!showComments)}
-              className="flex items-center gap-1.5 active:scale-95 transition-transform"
-            >
-              <MessageCircle className="h-5 w-5" />
-              <span className="text-xs font-medium">{comments.length}</span>
+            <button className="active:scale-95 transition-transform">
+              <MessageCircle className="h-6 w-6" />
             </button>
             <button 
               className="active:scale-95 transition-transform"
               onClick={() => {
                 navigator.clipboard.writeText(window.location.href);
-                toast({ title: "Link copied!" });
+                toast({ title: "Link copied" });
               }}
             >
-              <Share2 className="h-5 w-5" />
+              <Share2 className="h-6 w-6" />
             </button>
           </div>
         </div>
 
-        {/* Comments Section */}
-        <Collapsible open={showComments} onOpenChange={setShowComments}>
-          <CollapsibleContent>
-            <div className="px-4 pb-4 space-y-4">
-              <Separator />
-              
-              {/* Comment Input */}
-              <div className="flex items-center gap-3">
+        {/* Likes Count */}
+        <div className="px-4">
+          <p className="text-sm font-semibold">{formatNumber(likesCount)} likes</p>
+        </div>
+
+        {/* Description - Collapsible */}
+        <div className="px-4 py-2">
+          <Collapsible open={showDescription} onOpenChange={setShowDescription}>
+            <p className="text-sm">
+              <span className="font-semibold">{market.creator.name.toLowerCase().replace(' ', '')} </span>
+              <span className="text-foreground/90">
+                {showDescription ? market.description : `${market.description.slice(0, 100)}...`}
+              </span>
+            </p>
+            <CollapsibleTrigger asChild>
+              <button className="text-sm text-muted-foreground mt-1">
+                {showDescription ? "less" : "more"}
+              </button>
+            </CollapsibleTrigger>
+          </Collapsible>
+        </div>
+
+        <Separator className="my-3" />
+
+        {/* Comments */}
+        <div className="px-4">
+          <button className="text-sm text-muted-foreground mb-3">
+            View all {comments.length} comments
+          </button>
+          
+          <div className="space-y-3">
+            {comments.slice(0, 3).map((comment) => (
+              <div key={comment.id} className="flex items-start gap-3">
                 <Avatar className="h-8 w-8 flex-shrink-0">
-                  <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=User" />
-                  <AvatarFallback>U</AvatarFallback>
+                  <AvatarImage src={comment.author.avatar} />
+                  <AvatarFallback>{comment.author.name.slice(0, 2)}</AvatarFallback>
                 </Avatar>
-                <div className="flex-1 relative">
-                  <Input
-                    placeholder="Add a comment..."
-                    value={commentText}
-                    onChange={(e) => setCommentText(e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && handleComment()}
-                    className="pr-10 h-9 text-sm"
-                  />
-                  {commentText.trim() && (
-                    <button 
-                      onClick={handleComment}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 text-primary"
-                    >
-                      <Send className="h-4 w-4" />
-                    </button>
-                  )}
-                </div>
-              </div>
-              
-              {/* Comments List */}
-              <div className="space-y-3">
-                {comments.map((comment) => (
-                  <div key={comment.id} className="flex items-start gap-3">
-                    <Avatar className="h-8 w-8 flex-shrink-0">
-                      <AvatarImage src={comment.author.avatar} />
-                      <AvatarFallback>{comment.author.name.slice(0, 2)}</AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm">
-                        <span className="font-semibold">{comment.author.username} </span>
-                        <span className="text-foreground/90">{comment.text}</span>
-                      </p>
-                      <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground">
-                        <span>{comment.timestamp}</span>
-                        <span>{comment.likes} likes</span>
-                        <button className="font-medium">Reply</button>
-                      </div>
-                    </div>
-                    <button className="pt-1">
-                      <Heart className={`h-3 w-3 ${comment.isLiked ? 'fill-destructive text-destructive' : 'text-muted-foreground'}`} />
-                    </button>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm">
+                    <span className="font-semibold">{comment.author.username} </span>
+                    <span className="text-foreground/90">{comment.text}</span>
+                  </p>
+                  <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground">
+                    <span>{comment.timestamp}</span>
+                    <button className="font-medium">Reply</button>
                   </div>
-                ))}
+                </div>
+                <button className="pt-1">
+                  <Heart className={`h-3 w-3 ${comment.isLiked ? 'fill-destructive text-destructive' : 'text-muted-foreground'}`} />
+                </button>
               </div>
-            </div>
-          </CollapsibleContent>
-        </Collapsible>
-      </div>
+            ))}
+          </div>
 
-      {/* Sticky Trade Panel at Bottom */}
-      <div className="fixed bottom-16 left-0 right-0 bg-background border-t border-border z-30 shadow-[0_-4px_20px_-4px_rgba(0,0,0,0.15)]">
-        <div className="max-w-2xl mx-auto px-4 py-3 pb-4">
-          {/* Collapsed view when no outcome selected */}
-          {!selectedOutcome ? (
-            <div className="space-y-3">
-              {/* Header */}
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center">
-                    <Zap className="h-3.5 w-3.5 text-primary" />
-                  </div>
-                  <span className="text-sm font-semibold">Trade</span>
-                </div>
-                <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                  <Wallet className="h-3.5 w-3.5" />
-                  <span className="font-medium">$5,230</span>
-                </div>
-              </div>
-
-              {/* Outcome Selection */}
-              {isBinary ? (
-                <div className="grid grid-cols-2 gap-3">
-                  {market.outcomes.map((outcome: any, index: number) => {
-                    const isYes = outcome.label.toLowerCase() === "yes";
-                    const priceChange = isYes ? +3 : -3;
-                    
-                    return (
-                      <button
-                        key={index}
-                        onClick={() => setSelectedOutcome(outcome)}
-                        className={`p-3 rounded-xl transition-all active:scale-[0.98] border-2 ${
-                          isYes
-                            ? 'border-success/40 bg-success/5 hover:bg-success/10'
-                            : 'border-border bg-muted/30 hover:bg-muted/50'
-                        }`}
-                      >
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2.5">
-                            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                              isYes ? 'bg-success/20 text-success' : 'bg-muted text-muted-foreground'
-                            }`}>
-                              {isYes ? <Check className="h-4 w-4" /> : <X className="h-4 w-4" />}
-                            </div>
-                            <div className="text-left">
-                              <p className="font-semibold text-sm">{outcome.label}</p>
-                              <p className={`text-[11px] ${priceChange > 0 ? 'text-success' : 'text-destructive'}`}>
-                                {priceChange > 0 ? '↑' : '↓'}{Math.abs(priceChange)}¢ today
-                              </p>
-                            </div>
-                          </div>
-                          <div className="text-right">
-                            <p className="text-xl font-bold">{outcome.price}¢</p>
-                          </div>
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
-              ) : (
-                <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1 scrollbar-none">
-                  {visibleOutcomes.map((outcome: any, index: number) => {
-                    const priceChange = index === 0 ? +2 : index === 1 ? -1 : 0;
-                    
-                    return (
-                      <button
-                        key={index}
-                        onClick={() => setSelectedOutcome(outcome)}
-                        className="flex-shrink-0 flex items-center gap-2.5 px-3 py-2.5 rounded-xl transition-all border border-border bg-muted/20 hover:bg-muted/40 active:scale-[0.98]"
-                      >
-                        {outcome.logo ? (
-                          <img src={outcome.logo} alt={outcome.label} className="h-7 w-7 object-contain" />
-                        ) : (
-                          <div className="h-7 w-7 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
-                            {outcome.label.charAt(0)}
-                          </div>
-                        )}
-                        <div className="text-left">
-                          <p className="font-medium text-sm">{outcome.label}</p>
-                          <p className={`text-[10px] ${priceChange > 0 ? 'text-success' : priceChange < 0 ? 'text-destructive' : 'text-muted-foreground'}`}>
-                            {priceChange !== 0 ? (priceChange > 0 ? `↑${priceChange}%` : `↓${Math.abs(priceChange)}%`) : '—'}
-                          </p>
-                        </div>
-                        <p className="text-base font-bold ml-1">{outcome.price}%</p>
-                      </button>
-                    );
-                  })}
-                  {market.outcomes.length > 3 && !showAllOutcomes && (
-                    <button
-                      onClick={() => setShowAllOutcomes(true)}
-                      className="flex-shrink-0 px-4 py-2.5 rounded-xl border border-dashed border-border text-xs font-medium text-muted-foreground hover:bg-muted/30"
-                    >
-                      +{market.outcomes.length - 3}
-                    </button>
-                  )}
-                </div>
+          {/* Comment Input */}
+          <div className="flex items-center gap-3 py-4 mt-2">
+            <Avatar className="h-8 w-8 flex-shrink-0">
+              <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=User" />
+              <AvatarFallback>U</AvatarFallback>
+            </Avatar>
+            <div className="flex-1 relative">
+              <input
+                type="text"
+                placeholder="Add a comment..."
+                value={commentText}
+                onChange={(e) => setCommentText(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleComment()}
+                className="w-full bg-transparent text-sm placeholder:text-muted-foreground outline-none pr-10"
+                maxLength={500}
+              />
+              {commentText.trim() && (
+                <button 
+                  onClick={handleComment}
+                  className="absolute right-0 top-1/2 -translate-y-1/2 text-primary font-semibold text-sm"
+                >
+                  Post
+                </button>
               )}
             </div>
-          ) : (
-            /* Expanded view when outcome is selected */
-            <div className="space-y-3">
-              {/* Selected outcome header */}
-              <div className="flex items-center justify-between">
-                <button 
-                  onClick={() => setSelectedOutcome(null)}
-                  className="flex items-center gap-2 text-sm"
-                >
-                  <ArrowLeft className="h-4 w-4" />
-                  <span className="font-medium">Back</span>
-                </button>
-                <div className="flex items-center gap-2">
-                  <div className={`px-3 py-1 rounded-full text-sm font-semibold ${
-                    selectedOutcome.label.toLowerCase() === 'yes' 
-                      ? 'bg-success/10 text-success' 
-                      : 'bg-muted text-foreground'
-                  }`}>
-                    {selectedOutcome.label} @ {selectedOutcome.price}¢
-                  </div>
-                </div>
-              </div>
-
-              {/* Amount selection */}
-              <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <div className="relative flex-1">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground font-medium">$</span>
-                    <Input
-                      type="number"
-                      value={amount}
-                      onChange={(e) => setAmount(e.target.value)}
-                      className="pl-7 h-11 text-lg font-bold bg-muted/30 border-border"
-                      min="1"
-                      max="10000"
-                    />
-                  </div>
-                </div>
-                <div className="grid grid-cols-4 gap-2">
-                  {quickAmounts.map((quickAmount) => (
-                    <Button
-                      key={quickAmount}
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setAmount(quickAmount.toString())}
-                      className={`h-8 text-xs font-medium ${
-                        amount === quickAmount.toString() 
-                          ? 'border-primary bg-primary/10 text-primary' 
-                          : 'bg-muted/30'
-                      }`}
-                    >
-                      ${quickAmount}
-                    </Button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Order summary */}
-              <div className="bg-muted/30 rounded-xl p-3 space-y-2">
-                <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Shares</span>
-                    <span className="font-semibold">{shares.toLocaleString()}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Avg price</span>
-                    <span className="font-semibold">{selectedOutcome.price}¢</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">If correct</span>
-                    <span className="font-semibold">${potentialPayout.toFixed(2)}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Profit</span>
-                    <span className="font-semibold text-success">+${potentialProfit.toFixed(2)}</span>
-                  </div>
-                </div>
-                <Separator className="my-2" />
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Return on investment</span>
-                  <span className="font-bold text-success">
-                    +{amountNum > 0 ? ((potentialProfit / amountNum) * 100).toFixed(0) : 0}%
-                  </span>
-                </div>
-              </div>
-
-              {/* Buy button */}
-              <Button
-                className="w-full h-12 text-base font-semibold"
-                onClick={handleBuy}
-                disabled={isSubmitting || amountNum < 1}
-              >
-                {isSubmitting 
-                  ? "Placing order..." 
-                  : `Buy ${selectedOutcome.label} for $${amountNum.toFixed(2)}`
-                }
-              </Button>
-            </div>
-          )}
+          </div>
         </div>
       </div>
     </div>
