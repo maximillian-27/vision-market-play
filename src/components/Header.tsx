@@ -70,13 +70,13 @@ export function Header() {
 
           {/* Desktop Navigation */}
           {!isMobile && (
-            <nav className="flex items-center gap-4 ml-6">
+            <nav className="flex items-center gap-5 ml-6">
               {navItems.map((item) => (
                 <NavLink
                   key={item.title}
                   to={item.url}
                   className="px-1 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors border-b-2 border-transparent"
-                  activeClassName="font-medium text-foreground border-foreground"
+                  activeClassName="font-medium text-foreground border-primary"
                 >
                   {item.title}
                 </NavLink>
