@@ -83,6 +83,7 @@ export function MarketGridCard({
   const isBinary = displayOutcomes.length === 2 && !outcomes;
 
   const handleCardClick = () => {
+    if (isClosedOrResolved) return;
     if (isMobile) {
       navigate(`/market/${id}`);
     } else {
@@ -432,32 +433,16 @@ export function MarketGridCard({
               </h3>
 
               {isClosedOrResolved ? (
-                <div className="flex flex-col gap-1.5 mt-auto">
-                  <div className={`inline-flex items-center gap-1 px-2 py-1 rounded-md w-fit ${
-                    resolution?.toLowerCase() === "yes" ? 'bg-yes-muted' : 
-                    resolution?.toLowerCase() === "no" ? 'bg-no-muted' : 'bg-primary-muted'
+                <div className={`inline-flex items-center gap-1 px-2 py-1 rounded-md w-fit mt-auto ${
+                  resolution?.toLowerCase() === "yes" ? 'bg-yes-muted' : 
+                  resolution?.toLowerCase() === "no" ? 'bg-no-muted' : 'bg-primary-muted'
+                }`}>
+                  <span className={`font-bold text-xs ${
+                    resolution?.toLowerCase() === "yes" ? 'text-yes' : 
+                    resolution?.toLowerCase() === "no" ? 'text-no' : 'text-primary'
                   }`}>
-                    <span className={`font-bold text-xs ${
-                      resolution?.toLowerCase() === "yes" ? 'text-yes' : 
-                      resolution?.toLowerCase() === "no" ? 'text-no' : 'text-primary'
-                    }`}>
-                      {resolution}
-                    </span>
-                  </div>
-                  {status === "closed" && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="h-7 text-orange-600 border-orange-500/30 hover:bg-orange-500/10 text-[11px] w-fit px-2"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setShowDisputeDialog(true);
-                      }}
-                    >
-                      <AlertTriangle className="h-3 w-3 mr-1" />
-                      Dispute
-                    </Button>
-                  )}
+                    {resolution}
+                  </span>
                 </div>
               ) : isBinary ? (
                 <div className="flex items-center gap-2 mt-auto">
