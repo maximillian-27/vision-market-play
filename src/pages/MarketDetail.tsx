@@ -483,8 +483,8 @@ export default function MarketDetail() {
       </div>
 
       {/* Sticky Trade Panel at Bottom */}
-      <div className="fixed bottom-0 left-0 right-0 bg-background border-t border-border z-30 shadow-lg">
-        <div className="max-w-2xl mx-auto px-4 py-3">
+      <div className="fixed bottom-16 left-0 right-0 bg-background border-t border-border z-30 shadow-[0_-4px_20px_-4px_rgba(0,0,0,0.15)]">
+        <div className="max-w-2xl mx-auto px-4 py-3 pb-4">
           {/* Collapsed view when no outcome selected */}
           {!selectedOutcome ? (
             <div className="space-y-3">
