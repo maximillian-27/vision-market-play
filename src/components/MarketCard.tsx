@@ -145,7 +145,7 @@ export function MarketCard({ id, creator, title, subtitle, image, outcomes, yesP
                   {displayOutcomes.slice(0, 3).map((outcome, index) => (
                     <button 
                       key={index}
-                      className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 bg-secondary/60 hover:bg-secondary transition-colors"
+                      className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 bg-secondary/60 hover:bg-secondary border border-border/30 hover:border-border/50 transition-all active:scale-[0.98]"
                       onClick={(e) => e.stopPropagation()}
                     >
                       {outcome.logo ? (

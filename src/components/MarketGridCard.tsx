@@ -297,29 +297,25 @@ export function MarketGridCard({
           ) : (
             /* Multi-outcome Market */
             <div className="space-y-1.5">
-              {displayOutcomes.slice(0, 2).map((outcome, index) => (
+              {displayOutcomes.slice(0, 3).map((outcome, index) => (
                 <button 
                   key={index}
-                  className="w-full flex items-center gap-2 rounded-lg px-2 py-1.5 bg-secondary/60 hover:bg-secondary transition-colors text-left"
+                  className="w-full flex items-center gap-2 rounded-lg px-2.5 py-2 bg-secondary/60 hover:bg-secondary border border-border/30 hover:border-border/50 transition-all text-left active:scale-[0.98]"
                   onClick={handleOutcomeClick}
                 >
                   {outcome.logo ? (
-                    <img src={outcome.logo} alt={outcome.label} className="h-4 w-4 object-contain rounded-sm" />
+                    <img src={outcome.logo} alt={outcome.label} className="h-5 w-5 object-contain rounded-sm" />
                   ) : (
-                    <div className="h-4 w-4 rounded-sm bg-primary/10 flex items-center justify-center text-[8px] font-bold text-primary">
+                    <div className="h-5 w-5 rounded-sm bg-primary/10 flex items-center justify-center text-[9px] font-bold text-primary">
                       {outcome.label.charAt(0)}
                     </div>
                   )}
                   <span className="flex-1 text-xs font-medium truncate">{outcome.label}</span>
-                  <span className="text-xs font-bold">{outcome.price}%</span>
-                  <div className="flex gap-0.5">
-                    <span className="text-[9px] px-1.5 py-0.5 rounded bg-success/10 text-success font-medium">Yes</span>
-                    <span className="text-[9px] px-1.5 py-0.5 rounded bg-destructive/10 text-destructive font-medium">No</span>
-                  </div>
+                  <span className="text-xs font-bold text-primary">{outcome.price}%</span>
                 </button>
               ))}
-              {displayOutcomes.length > 2 && (
-                <p className="text-[10px] text-muted-foreground text-center">+{displayOutcomes.length - 2} more outcomes</p>
+              {displayOutcomes.length > 3 && (
+                <p className="text-[10px] text-muted-foreground text-center">+{displayOutcomes.length - 3} more outcomes</p>
               )}
             </div>
           )}
