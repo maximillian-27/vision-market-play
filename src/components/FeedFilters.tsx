@@ -29,7 +29,7 @@ export function FeedFilters({ filters, onFiltersChange }: FeedFiltersProps) {
   const hasActiveFilters = filters.sortBy !== "trending" || filters.region !== "global" || filters.status !== "all" || filters.timeframe !== "all";
 
   return (
-    <div className="space-y-3 sticky top-14 z-10 bg-background/80 backdrop-blur-md py-2 -mx-4 px-4 sm:-mx-0 sm:px-0">
+    <div className="space-y-3 sticky top-14 z-10 bg-background/60 backdrop-blur-xl border-b border-border/30 py-3 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
       {/* Category Tabs + Filter */}
       <div className="flex gap-2 items-center">
         <Button 
