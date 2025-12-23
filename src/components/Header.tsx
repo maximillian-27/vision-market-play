@@ -1,7 +1,8 @@
 import { useState } from "react";
+import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Globe, LogOut, Settings, Search, Home, Newspaper, Users, MessageSquare, Briefcase, Sparkles, Shield, Plus } from "lucide-react";
+import { Globe, LogOut, Settings, Search, Home, Newspaper, Users, MessageSquare, Briefcase, Sparkles, Shield, Plus, Moon, Sun } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import pollgyLogo from "@/assets/pollgy-logo-new.png";
 import { useNavigate } from "react-router-dom";
@@ -23,6 +24,7 @@ import { NotificationsDropdown } from "@/components/NotificationsDropdown";
 export function Header() {
   const isMobile = useIsMobile();
   const navigate = useNavigate();
+  const { theme, setTheme } = useTheme();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isCreator, setIsCreator] = useState(false);
   const [isAdmin] = useState(true);
@@ -31,6 +33,10 @@ export function Header() {
   const [showHowItWorks, setShowHowItWorks] = useState(false);
   const [portfolioValue] = useState(12450);
   const [cashBalance] = useState(5230);
+  
+  const toggleTheme = () => {
+    setTheme(theme === "dark" ? "light" : "dark");
+  };
 
   const navItems = [
     { title: "Markets", url: "/", icon: Home },
@@ -214,6 +220,15 @@ export function Header() {
                       Admin
                     </DropdownMenuItem>
                   )}
+                  
+                  <DropdownMenuItem onClick={toggleTheme} className="gap-2.5 py-2 cursor-pointer rounded-md">
+                    {theme === "dark" ? (
+                      <Sun className="h-4 w-4 text-muted-foreground" />
+                    ) : (
+                      <Moon className="h-4 w-4 text-muted-foreground" />
+                    )}
+                    {theme === "dark" ? "Light Mode" : "Dark Mode"}
+                  </DropdownMenuItem>
                   
                   <DropdownMenuSeparator className="my-1" />
                   <DropdownMenuItem onClick={handleLogout} className="gap-2.5 py-2 cursor-pointer text-destructive focus:text-destructive rounded-md">
