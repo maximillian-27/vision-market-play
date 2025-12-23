@@ -362,45 +362,40 @@ export function MarketGridCard({
               </div>
             ) : isBinary ? (
               <div className="flex items-center gap-2">
-                <div className="flex items-center gap-1 text-[10px] font-bold">
-                  <span className="text-success">{yesPercent}%</span>
-                  <div className="w-12 h-1 rounded-full bg-muted overflow-hidden">
-                    <div 
-                      className="h-full rounded-full bg-success"
-                      style={{ width: `${yesPercent}%` }}
-                    />
-                  </div>
-                </div>
-                <div className="flex gap-1">
+                <div className="flex gap-1.5">
                   <button 
-                    className="rounded px-2 py-1 text-center bg-success/10 text-success text-[9px] font-bold uppercase"
+                    className="rounded-md px-4 py-2 text-center bg-success/15 hover:bg-success/25 text-success border border-success/30 text-xs font-bold uppercase active:scale-95 transition-all"
                     onClick={handleOutcomeClick}
                   >
-                    Yes
+                    Yes {yesPercent}%
                   </button>
                   <button 
-                    className="rounded px-2 py-1 text-center bg-destructive/10 text-destructive text-[9px] font-bold uppercase"
+                    className="rounded-md px-4 py-2 text-center bg-destructive/15 hover:bg-destructive/25 text-destructive border border-destructive/30 text-xs font-bold uppercase active:scale-95 transition-all"
                     onClick={handleOutcomeClick}
                   >
-                    No
+                    No {100 - yesPercent}%
                   </button>
                 </div>
               </div>
             ) : (
-              <div className="flex flex-wrap gap-1">
-                {displayOutcomes.slice(0, 2).map((outcome, index) => (
+              <div className="flex gap-1.5 overflow-x-auto scrollbar-hide -mr-2 pr-2">
+                {displayOutcomes.map((outcome, index) => (
                   <button 
                     key={index}
-                    className="flex items-center gap-1 rounded px-1.5 py-0.5 bg-secondary/60 text-[9px]"
+                    className="flex-shrink-0 flex items-center gap-1.5 rounded-md px-3 py-2 bg-secondary/80 hover:bg-secondary border border-border/40 hover:border-border/60 text-xs active:scale-95 transition-all"
                     onClick={handleOutcomeClick}
                   >
-                    <span className="font-medium truncate max-w-[50px]">{outcome.label}</span>
+                    {outcome.logo ? (
+                      <img src={outcome.logo} alt={outcome.label} className="h-4 w-4 object-contain rounded-sm" />
+                    ) : (
+                      <div className="h-4 w-4 rounded-sm bg-primary/10 flex items-center justify-center text-[8px] font-bold text-primary">
+                        {outcome.label.charAt(0)}
+                      </div>
+                    )}
+                    <span className="font-medium whitespace-nowrap">{outcome.label}</span>
                     <span className="font-bold text-primary">{outcome.price}%</span>
                   </button>
                 ))}
-                {displayOutcomes.length > 2 && (
-                  <span className="text-[9px] text-muted-foreground self-center">+{displayOutcomes.length - 2}</span>
-                )}
               </div>
             )}
 
