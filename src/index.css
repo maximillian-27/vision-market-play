@@ -2,8 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Instagram-inspired design system. Clean, minimal, and polished.
-All colors MUST be HSL.
+/* Clean, minimal, professional trading platform design.
+All colors MUST be HSL. Consistent hover states throughout.
 */
 
 @layer base {
@@ -17,115 +17,124 @@ All colors MUST be HSL.
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 7%;
 
-    --primary: 142 50% 42%;
+    /* Primary = Green (brand color, positive actions) */
+    --primary: 152 60% 40%;
     --primary-foreground: 0 0% 100%;
+    --primary-hover: 152 60% 35%;
 
+    /* Secondary = Neutral gray */
     --secondary: 0 0% 96%;
-    --secondary-foreground: 0 0% 7%;
+    --secondary-foreground: 0 0% 30%;
+    --secondary-hover: 0 0% 92%;
 
     --muted: 0 0% 96%;
     --muted-foreground: 0 0% 45%;
 
-    --accent: 350 80% 55%;
-    --accent-foreground: 0 0% 100%;
+    /* Accent = Soft primary for highlights */
+    --accent: 152 40% 95%;
+    --accent-foreground: 152 60% 30%;
 
-    --destructive: 0 84% 60%;
+    /* Destructive = Red for negative/sell actions */
+    --destructive: 0 72% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    --success: 142 50% 42%;
+    /* Success = Same as primary for consistency */
+    --success: 152 60% 40%;
     --success-foreground: 0 0% 100%;
 
-    --pollgy-blue: 217 91% 60%;
+    /* Brand colors */
+    --pollgy-blue: 217 85% 55%;
     --pollgy-blue-foreground: 0 0% 100%;
 
-    --pollgy-green: 142 50% 42%;
+    --pollgy-green: 152 60% 40%;
     --pollgy-green-foreground: 0 0% 100%;
 
-    --border: 0 0% 90%;
-    --input: 0 0% 90%;
-    --ring: 142 50% 42%;
+    --border: 0 0% 91%;
+    --input: 0 0% 91%;
+    --ring: 152 60% 40%;
 
-    --radius: 0.75rem;
+    --radius: 0.625rem;
 
     --sidebar-background: 0 0% 100%;
     --sidebar-foreground: 0 0% 7%;
-    --sidebar-primary: 142 50% 42%;
+    --sidebar-primary: 152 60% 40%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 0 0% 96%;
     --sidebar-accent-foreground: 0 0% 7%;
-    --sidebar-border: 0 0% 90%;
-    --sidebar-ring: 142 50% 42%;
+    --sidebar-border: 0 0% 91%;
+    --sidebar-ring: 152 60% 40%;
 
+    --transition-fast: all 0.15s ease;
     --transition-smooth: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-bounce: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
     
-    --gradient-pollgy: linear-gradient(135deg, hsl(142 50% 42% / 0.06) 0%, hsl(350 80% 55% / 0.06) 100%);
-    --gradient-pollgy-hover: linear-gradient(135deg, hsl(142 50% 42% / 0.12) 0%, hsl(350 80% 55% / 0.12) 100%);
-    --gradient-pollgy-accent: linear-gradient(135deg, hsl(142 50% 42%) 0%, hsl(170 60% 45%) 100%);
+    --gradient-primary: linear-gradient(135deg, hsl(152 60% 40%) 0%, hsl(165 55% 42%) 100%);
+    --gradient-subtle: linear-gradient(135deg, hsl(152 60% 40% / 0.05) 0%, hsl(165 55% 42% / 0.05) 100%);
     
-    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.03);
-    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
-    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.05), 0 4px 6px -4px rgb(0 0 0 / 0.05);
-    --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.05), 0 1px 2px -1px rgb(0 0 0 / 0.05);
-    --shadow-card-hover: 0 10px 20px -5px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.05);
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.04);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.06), 0 2px 4px -2px rgb(0 0 0 / 0.04);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.06), 0 4px 6px -4px rgb(0 0 0 / 0.04);
+    --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.04), 0 1px 2px -1px rgb(0 0 0 / 0.03);
+    --shadow-card-hover: 0 8px 16px -4px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.04);
   }
 
   .dark {
-    --background: 0 0% 4%;
+    --background: 0 0% 6%;
     --foreground: 0 0% 96%;
 
-    --card: 0 0% 7%;
+    --card: 0 0% 9%;
     --card-foreground: 0 0% 96%;
 
-    --popover: 0 0% 7%;
+    --popover: 0 0% 9%;
     --popover-foreground: 0 0% 96%;
 
-    --primary: 142 55% 48%;
+    --primary: 152 55% 45%;
     --primary-foreground: 0 0% 100%;
+    --primary-hover: 152 55% 40%;
 
-    --secondary: 0 0% 12%;
-    --secondary-foreground: 0 0% 96%;
+    --secondary: 0 0% 14%;
+    --secondary-foreground: 0 0% 85%;
+    --secondary-hover: 0 0% 18%;
 
-    --muted: 0 0% 12%;
+    --muted: 0 0% 14%;
     --muted-foreground: 0 0% 55%;
 
-    --accent: 350 80% 58%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 152 30% 15%;
+    --accent-foreground: 152 55% 70%;
 
-    --destructive: 0 84% 60%;
+    --destructive: 0 72% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    --success: 142 55% 48%;
+    --success: 152 55% 45%;
     --success-foreground: 0 0% 100%;
 
-    --pollgy-blue: 217 91% 65%;
+    --pollgy-blue: 217 85% 60%;
     --pollgy-blue-foreground: 0 0% 100%;
 
-    --pollgy-green: 142 55% 48%;
+    --pollgy-green: 152 55% 45%;
     --pollgy-green-foreground: 0 0% 100%;
 
-    --border: 0 0% 16%;
-    --input: 0 0% 16%;
-    --ring: 142 55% 48%;
+    --border: 0 0% 18%;
+    --input: 0 0% 18%;
+    --ring: 152 55% 45%;
     
-    --sidebar-background: 0 0% 4%;
+    --sidebar-background: 0 0% 6%;
     --sidebar-foreground: 0 0% 96%;
-    --sidebar-primary: 142 55% 48%;
+    --sidebar-primary: 152 55% 45%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 0 0% 12%;
+    --sidebar-accent: 0 0% 14%;
     --sidebar-accent-foreground: 0 0% 96%;
-    --sidebar-border: 0 0% 16%;
-    --sidebar-ring: 142 55% 48%;
+    --sidebar-border: 0 0% 18%;
+    --sidebar-ring: 152 55% 45%;
     
-    --gradient-pollgy: linear-gradient(135deg, hsl(142 55% 48% / 0.08) 0%, hsl(350 80% 58% / 0.08) 100%);
-    --gradient-pollgy-hover: linear-gradient(135deg, hsl(142 55% 48% / 0.15) 0%, hsl(350 80% 58% / 0.15) 100%);
-    --gradient-pollgy-accent: linear-gradient(135deg, hsl(142 55% 48%) 0%, hsl(170 60% 45%) 100%);
+    --gradient-primary: linear-gradient(135deg, hsl(152 55% 45%) 0%, hsl(165 50% 45%) 100%);
+    --gradient-subtle: linear-gradient(135deg, hsl(152 55% 45% / 0.08) 0%, hsl(165 50% 45% / 0.08) 100%);
     
-    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.1);
-    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.2), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.2), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-    --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.15), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-    --shadow-card-hover: 0 10px 20px -5px rgb(0 0 0 / 0.25), 0 4px 6px -4px rgb(0 0 0 / 0.15);
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.15);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.25), 0 2px 4px -2px rgb(0 0 0 / 0.15);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.25), 0 4px 6px -4px rgb(0 0 0 / 0.15);
+    --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.2), 0 1px 2px -1px rgb(0 0 0 / 0.12);
+    --shadow-card-hover: 0 8px 16px -4px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.15);
   }
 }
 

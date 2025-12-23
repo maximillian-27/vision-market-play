@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Globe, LogOut, Settings, Wallet, Search, Home, Newspaper, Users, MessageSquare, Briefcase, Sparkles, Shield, Bell, Plus } from "lucide-react";
+import { Globe, LogOut, Settings, Search, Home, Newspaper, Users, MessageSquare, Briefcase, Sparkles, Shield, Bell, Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import pollgyLogo from "@/assets/pollgy-logo-new.png";
 import { useNavigate } from "react-router-dom";
@@ -23,6 +23,7 @@ import {
 import { useIsMobile } from "@/hooks/use-mobile";
 import { BecomeCreatorDialog } from "@/components/BecomeCreatorDialog";
 import { CreateMarketButton } from "@/components/CreateMarketButton";
+import { HowItWorksDialog } from "@/components/HowItWorksDialog";
 
 export function Header() {
   const isMobile = useIsMobile();
@@ -32,6 +33,7 @@ export function Header() {
   const [isAdmin] = useState(true);
   const [showDepositDialog, setShowDepositDialog] = useState(false);
   const [showCreatorDialog, setShowCreatorDialog] = useState(false);
+  const [showHowItWorks, setShowHowItWorks] = useState(false);
   const [portfolioValue] = useState(12450);
   const [cashBalance] = useState(5230);
 
@@ -57,27 +59,29 @@ export function Header() {
 
   return (
     <>
-      <header className="border-b border-border/40 bg-background/95 backdrop-blur-xl supports-[backdrop-filter]:bg-background/80 fixed top-0 z-50 w-full">
-        <div className="flex h-14 items-center px-4 lg:px-6 gap-3 max-w-[1600px] mx-auto">
+      <header className="border-b border-border/50 bg-background/95 backdrop-blur-xl supports-[backdrop-filter]:bg-background/80 fixed top-0 z-50 w-full">
+        <div className="flex h-14 items-center px-4 lg:px-6 gap-4 max-w-[1600px] mx-auto">
           {/* Logo */}
-          <div className="flex items-center">
+          <button 
+            onClick={() => navigate("/")}
+            className="flex items-center hover:opacity-80 transition-opacity"
+          >
             <img 
               src={pollgyLogo} 
               alt="Pollgy" 
-              className="h-8 cursor-pointer hover:opacity-80 transition-opacity"
-              onClick={() => navigate("/")}
+              className="h-7"
             />
-          </div>
+          </button>
 
           {/* Desktop Navigation */}
           {!isMobile && (
-            <nav className="flex items-center gap-1 ml-6">
+            <nav className="flex items-center gap-1 ml-4">
               {navItems.map((item) => (
                 <NavLink
                   key={item.title}
                   to={item.url}
-                  className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-xl transition-all duration-200"
-                  activeClassName="font-semibold text-foreground bg-muted"
+                  className="px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground rounded-md transition-colors"
+                  activeClassName="font-medium text-foreground bg-secondary"
                 >
                   {item.title}
                 </NavLink>
@@ -87,7 +91,7 @@ export function Header() {
 
           {/* Search - Desktop */}
           <form 
-            className="hidden md:flex relative flex-1 max-w-sm ml-auto mr-2"
+            className="hidden md:flex relative flex-1 max-w-xs ml-auto"
             onSubmit={(e) => {
               e.preventDefault();
               const formData = new FormData(e.currentTarget);
@@ -97,11 +101,11 @@ export function Header() {
               }
             }}
           >
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/60" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/50" />
             <Input 
               name="search"
               placeholder="Search markets..." 
-              className="pl-10 h-10 bg-muted/40 border-transparent hover:bg-muted/60 focus-visible:bg-background"
+              className="pl-9 h-9 bg-secondary/50 border-transparent hover:bg-secondary focus-visible:bg-background text-sm"
             />
           </form>
 
@@ -110,32 +114,31 @@ export function Header() {
             {/* Language Selector */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl text-muted-foreground hover:text-foreground">
+                <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground">
                   <Globe className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="z-50 bg-popover rounded-xl border-border/60 shadow-elevated">
-                <DropdownMenuItem className="rounded-lg">English</DropdownMenuItem>
-                <DropdownMenuItem className="rounded-lg">Español</DropdownMenuItem>
-                <DropdownMenuItem className="rounded-lg">Français</DropdownMenuItem>
-                <DropdownMenuItem className="rounded-lg">Deutsch</DropdownMenuItem>
+              <DropdownMenuContent align="end" className="z-50 bg-popover rounded-lg border-border/60">
+                <DropdownMenuItem>English</DropdownMenuItem>
+                <DropdownMenuItem>Español</DropdownMenuItem>
+                <DropdownMenuItem>Français</DropdownMenuItem>
+                <DropdownMenuItem>Deutsch</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           
             {isLoggedIn && (
               <>
                 {/* Notifications */}
-                <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl text-muted-foreground hover:text-foreground relative">
+                <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground relative">
                   <Bell className="h-4 w-4" />
-                  <span className="absolute top-1 right-1 h-2 w-2 bg-accent rounded-full" />
+                  <span className="absolute top-1.5 right-1.5 h-1.5 w-1.5 bg-primary rounded-full" />
                 </Button>
                 
                 {/* Deposit Button */}
                 <Button 
                   size="sm" 
-                  variant="outline"
                   onClick={() => setShowDepositDialog(true)}
-                  className="h-9 text-xs font-semibold gap-1.5 rounded-xl border-primary/30 text-primary hover:bg-primary/5 hover:border-primary/50"
+                  className="h-8 text-xs gap-1.5"
                 >
                   <Plus className="h-3.5 w-3.5" />
                   <span className="hidden sm:inline">Deposit</span>
@@ -148,15 +151,15 @@ export function Header() {
                 <Button 
                   variant="ghost" 
                   size="sm"
-                  className="hidden md:flex text-muted-foreground hover:text-foreground rounded-xl"
+                  onClick={() => setShowHowItWorks(true)}
+                  className="hidden md:flex text-muted-foreground text-xs"
                 >
                   How it works?
                 </Button>
                 <Button 
                   size="sm" 
-                  variant="login"
                   onClick={handleLogin}
-                  className="rounded-xl font-semibold"
+                  className="h-8 text-xs"
                 >
                   {isMobile ? "Login" : "Login / Sign up"}
                 </Button>
@@ -165,55 +168,55 @@ export function Header() {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button className="focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full transition-transform hover:scale-105">
-                    <Avatar className="h-9 w-9 ring-2 ring-border/60 ring-offset-2 ring-offset-background">
+                    <Avatar className="h-8 w-8 ring-2 ring-border/60">
                       <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=User" alt="Profile" />
-                      <AvatarFallback className="bg-primary/10 text-primary font-semibold text-sm">U</AvatarFallback>
+                      <AvatarFallback className="bg-primary/10 text-primary font-medium text-xs">U</AvatarFallback>
                     </Avatar>
                   </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-64 z-50 bg-popover rounded-2xl border-border/60 shadow-elevated p-2">
+                <DropdownMenuContent align="end" className="w-56 z-50 bg-popover rounded-lg border-border/60 p-1.5">
                   {/* Balance Section */}
-                  <div className="px-3 py-3 space-y-2 bg-muted/50 rounded-xl mb-2">
+                  <div className="px-2 py-2 space-y-1.5 bg-secondary/50 rounded-md mb-1.5">
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-muted-foreground">Portfolio</span>
-                      <span className="font-bold text-success">${portfolioValue.toLocaleString()}</span>
+                      <span className="font-semibold text-success">${portfolioValue.toLocaleString()}</span>
                     </div>
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-muted-foreground">Cash</span>
-                      <span className="font-bold">${cashBalance.toLocaleString()}</span>
+                      <span className="font-semibold">${cashBalance.toLocaleString()}</span>
                     </div>
                   </div>
                   
-                  <DropdownMenuItem onClick={() => navigate("/portfolio")} className="gap-3 rounded-xl py-2.5 cursor-pointer">
+                  <DropdownMenuItem onClick={() => navigate("/portfolio")} className="gap-2.5 py-2 cursor-pointer">
                     <Briefcase className="h-4 w-4 text-muted-foreground" />
                     Portfolio
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate("/settings")} className="gap-3 rounded-xl py-2.5 cursor-pointer">
+                  <DropdownMenuItem onClick={() => navigate("/settings")} className="gap-2.5 py-2 cursor-pointer">
                     <Settings className="h-4 w-4 text-muted-foreground" />
                     Settings
                   </DropdownMenuItem>
                   
                   {isCreator ? (
-                    <DropdownMenuItem onClick={() => navigate("/creator-dashboard")} className="gap-3 rounded-xl py-2.5 cursor-pointer">
+                    <DropdownMenuItem onClick={() => navigate("/creator-dashboard")} className="gap-2.5 py-2 cursor-pointer">
                       <Sparkles className="h-4 w-4 text-primary" />
                       <span className="text-primary font-medium">Creator Dashboard</span>
                     </DropdownMenuItem>
                   ) : (
-                    <DropdownMenuItem onClick={() => setShowCreatorDialog(true)} className="gap-3 rounded-xl py-2.5 cursor-pointer">
+                    <DropdownMenuItem onClick={() => setShowCreatorDialog(true)} className="gap-2.5 py-2 cursor-pointer">
                       <Sparkles className="h-4 w-4 text-muted-foreground" />
                       Become a Creator
                     </DropdownMenuItem>
                   )}
                   
                   {isAdmin && (
-                    <DropdownMenuItem onClick={() => navigate("/admin")} className="gap-3 rounded-xl py-2.5 cursor-pointer">
+                    <DropdownMenuItem onClick={() => navigate("/admin")} className="gap-2.5 py-2 cursor-pointer">
                       <Shield className="h-4 w-4 text-muted-foreground" />
                       Admin
                     </DropdownMenuItem>
                   )}
                   
-                  <DropdownMenuSeparator className="my-2" />
-                  <DropdownMenuItem onClick={handleLogout} className="gap-3 rounded-xl py-2.5 cursor-pointer text-destructive focus:text-destructive">
+                  <DropdownMenuSeparator className="my-1" />
+                  <DropdownMenuItem onClick={handleLogout} className="gap-2.5 py-2 cursor-pointer text-destructive focus:text-destructive">
                     <LogOut className="h-4 w-4" />
                     Logout
                   </DropdownMenuItem>
@@ -234,29 +237,35 @@ export function Header() {
         onSuccess={handleBecomeCreator}
       />
 
+      {/* How It Works Dialog */}
+      <HowItWorksDialog 
+        open={showHowItWorks} 
+        onOpenChange={setShowHowItWorks}
+      />
+
       {/* Deposit Dialog */}
       <Dialog open={showDepositDialog} onOpenChange={setShowDepositDialog}>
-        <DialogContent className="z-50 rounded-2xl border-border/60 shadow-elevated max-w-sm">
+        <DialogContent className="z-50 rounded-lg border-border/60 max-w-sm">
           <DialogHeader>
-            <DialogTitle className="text-xl">Deposit Funds</DialogTitle>
+            <DialogTitle>Deposit Funds</DialogTitle>
             <DialogDescription>
               Add funds to your account to start trading
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-3 pt-4">
+          <div className="space-y-3 pt-2">
             <div className="grid grid-cols-2 gap-2">
               {[50, 100, 250, 500].map((amount) => (
                 <Button 
                   key={amount}
                   variant="outline" 
-                  className="h-20 flex-col rounded-xl border-border/60 hover:border-primary/50 hover:bg-primary/5"
+                  className="h-16 flex-col rounded-lg"
                 >
-                  <span className="text-2xl font-bold">${amount}</span>
+                  <span className="text-xl font-bold">${amount}</span>
                   <span className="text-[10px] text-muted-foreground">Quick Deposit</span>
                 </Button>
               ))}
             </div>
-            <Button className="w-full rounded-xl" size="lg">
+            <Button className="w-full" size="lg">
               Custom Amount
             </Button>
           </div>
