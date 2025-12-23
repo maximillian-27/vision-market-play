@@ -6,6 +6,7 @@ import { Clock, TrendingUp, AlertTriangle, CheckCircle2, Timer, Users, Bookmark 
 import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { MarketDialog } from "@/components/MarketDialog";
+import { QuickTradeSheet } from "@/components/QuickTradeSheet";
 import {
   Dialog,
   DialogContent,
@@ -67,6 +68,7 @@ export function MarketGridCard({
   const { toast } = useToast();
   const isMobile = useIsMobile();
   const [showMarketDialog, setShowMarketDialog] = useState(false);
+  const [showQuickTrade, setShowQuickTrade] = useState(false);
   const [showDisputeDialog, setShowDisputeDialog] = useState(false);
   const [disputeReason, setDisputeReason] = useState("");
   
@@ -91,7 +93,7 @@ export function MarketGridCard({
     e.stopPropagation();
     if (isClosedOrResolved) return;
     if (isMobile) {
-      navigate(`/market/${id}`);
+      setShowQuickTrade(true);
     } else {
       setShowMarketDialog(true);
     }
@@ -153,6 +155,16 @@ export function MarketGridCard({
         open={showMarketDialog}
         onOpenChange={setShowMarketDialog}
         market={marketDialogData}
+      />
+
+      <QuickTradeSheet
+        open={showQuickTrade}
+        onOpenChange={setShowQuickTrade}
+        market={{
+          id,
+          title,
+          outcomes: displayOutcomes,
+        }}
       />
       
       <Dialog open={showDisputeDialog} onOpenChange={setShowDisputeDialog}>
