@@ -64,6 +64,37 @@ const mockMarketData: Record<string, any> = {
       { date: "May", yes: 68, no: 32 },
     ]
   },
+  "2": {
+    creator: {
+      name: "Mike Johnson",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Mike",
+      id: "mike-johnson",
+      verified: true,
+    },
+    title: "Who will win the NBA Championship this season?",
+    subtitle: "The race for the championship is heating up. Which team takes it all?",
+    description: "This market resolves based on the winner of the 2024-2025 NBA Finals. The winning outcome will be determined by the official NBA announcement after the Finals conclude.",
+    resolutionCriteria: "The market will resolve to the team that wins the 2024-2025 NBA Finals, as officially announced by the NBA. If the season is cancelled, all positions will be refunded.",
+    isMultiOutcome: true,
+    outcomes: [
+      { label: "Lakers", price: 25, logo: "https://cdn.nba.com/logos/nba/1610612747/primary/L/logo.svg" },
+      { label: "Celtics", price: 32, logo: "https://cdn.nba.com/logos/nba/1610612738/primary/L/logo.svg" },
+      { label: "Nuggets", price: 21, logo: "https://cdn.nba.com/logos/nba/1610612743/primary/L/logo.svg" },
+      { label: "Warriors", price: 12, logo: "https://cdn.nba.com/logos/nba/1610612744/primary/L/logo.svg" },
+      { label: "Other", price: 10 },
+    ],
+    volume: "$890K",
+    endsIn: "2 months",
+    endDate: "Jun 30, 2025",
+    traders: "8.2K",
+    liquidity: "$320K",
+    priceHistory: [
+      { date: "Jan", lakers: 22, celtics: 28, nuggets: 25 },
+      { date: "Feb", lakers: 24, celtics: 30, nuggets: 23 },
+      { date: "Mar", lakers: 26, celtics: 31, nuggets: 21 },
+      { date: "Apr", lakers: 25, celtics: 32, nuggets: 21 },
+    ]
+  },
 };
 
 const mockComments: Comment[] = [
@@ -254,32 +285,68 @@ export default function MarketDetail() {
                 <p className="text-sm text-muted-foreground">Click an outcome to place your trade</p>
               </CardHeader>
               <CardContent className="p-4 space-y-3">
-                {market.outcomes.map((outcome: any, index: number) => {
-                  const payout = outcome.price > 0 ? (100 / (outcome.price / 100)).toFixed(0) : 0;
-                  return (
-                    <button
-                      key={index}
-                      onClick={(e) => handleOutcomeClick(e, outcome)}
-                      className="w-full p-4 rounded-xl border-2 border-border/50 hover:border-primary/50 bg-background hover:bg-muted/30 transition-all group"
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className={`p-2 rounded-full ${outcome.color === 'success' ? 'bg-success/10 text-success' : 'bg-muted text-muted-foreground'}`}>
-                            {outcome.color === 'success' ? <Check className="h-5 w-5" /> : <X className="h-5 w-5" />}
+                {market.isMultiOutcome ? (
+                  /* Multi-outcome layout - grid style for sports/multi-choice markets */
+                  <div className="space-y-2">
+                    {market.outcomes.map((outcome: any, index: number) => {
+                      const payout = outcome.price > 0 ? (100 / (outcome.price / 100)).toFixed(0) : 0;
+                      return (
+                        <button
+                          key={index}
+                          onClick={(e) => handleOutcomeClick(e, outcome)}
+                          className="w-full p-3 rounded-xl border border-border/50 hover:border-primary/50 bg-background hover:bg-muted/30 transition-all group"
+                        >
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                              {outcome.logo ? (
+                                <img src={outcome.logo} alt={outcome.label} className="h-10 w-10 object-contain" />
+                              ) : (
+                                <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center text-lg font-bold">
+                                  {outcome.label.charAt(0)}
+                                </div>
+                              )}
+                              <div className="text-left">
+                                <p className="font-semibold">{outcome.label}</p>
+                                <p className="text-xs text-muted-foreground">{outcome.price}¢ · ${payout} payout</p>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <p className="text-2xl font-bold">{outcome.price}%</p>
+                            </div>
                           </div>
-                          <div className="text-left">
-                            <p className="font-semibold text-lg">{outcome.label}</p>
-                            <p className="text-sm text-muted-foreground">{outcome.price}¢ per share · ${payout} payout</p>
+                        </button>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  /* Binary outcome layout - Yes/No style */
+                  market.outcomes.map((outcome: any, index: number) => {
+                    const payout = outcome.price > 0 ? (100 / (outcome.price / 100)).toFixed(0) : 0;
+                    return (
+                      <button
+                        key={index}
+                        onClick={(e) => handleOutcomeClick(e, outcome)}
+                        className="w-full p-4 rounded-xl border-2 border-border/50 hover:border-primary/50 bg-background hover:bg-muted/30 transition-all group"
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <div className={`p-2 rounded-full ${outcome.color === 'success' ? 'bg-success/10 text-success' : 'bg-muted text-muted-foreground'}`}>
+                              {outcome.color === 'success' ? <Check className="h-5 w-5" /> : <X className="h-5 w-5" />}
+                            </div>
+                            <div className="text-left">
+                              <p className="font-semibold text-lg">{outcome.label}</p>
+                              <p className="text-sm text-muted-foreground">{outcome.price}¢ per share · ${payout} payout</p>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-3xl font-bold">{outcome.price}%</p>
+                            <p className="text-xs text-muted-foreground">probability</p>
                           </div>
                         </div>
-                        <div className="text-right">
-                          <p className="text-3xl font-bold">{outcome.price}%</p>
-                          <p className="text-xs text-muted-foreground">probability</p>
-                        </div>
-                      </div>
-                    </button>
-                  );
-                })}
+                      </button>
+                    );
+                  })
+                )}
               </CardContent>
             </Card>
 

@@ -18,6 +18,7 @@ import Portfolio from "./pages/Portfolio";
 import Settings from "./pages/Settings";
 import CreatorDashboard from "./pages/CreatorDashboard";
 import Admin from "./pages/Admin";
+import Search from "./pages/Search";
 
 const queryClient = new QueryClient();
 
@@ -41,6 +42,7 @@ function AppContent() {
           <Route path="/settings" element={<Settings />} />
           <Route path="/creator-dashboard" element={<CreatorDashboard />} />
           <Route path="/admin" element={<Admin />} />
+          <Route path="/search" element={<Search />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>

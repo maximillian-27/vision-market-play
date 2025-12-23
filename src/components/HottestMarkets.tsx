@@ -33,40 +33,36 @@ export function HottestMarkets() {
   const navigate = useNavigate();
 
   return (
-    <div className="hidden lg:block sticky top-20 w-80 self-start">
+    <div className="hidden lg:block sticky top-20 w-72 self-start">
       <Card className="border-border/40">
-        <CardHeader>
-          <CardTitle className="text-lg flex items-center gap-2">
-            <TrendingUp className="h-5 w-5 text-primary" />
-            Hottest Markets
+        <CardHeader className="pb-2 pt-4 px-4">
+          <CardTitle className="text-base flex items-center gap-2">
+            <TrendingUp className="h-4 w-4 text-primary" />
+            What's happening
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-3">
-          {hottestMarkets.map((market) => (
+        <CardContent className="p-2 pt-0">
+          {hottestMarkets.map((market, index) => (
             <div
               key={market.id}
               onClick={() => navigate(`/market/${market.id}`)}
-              className="group cursor-pointer border border-border/40 rounded-lg overflow-hidden hover:border-primary/40 transition-all"
+              className={`group cursor-pointer flex gap-3 p-2 rounded-lg hover:bg-muted/50 transition-colors ${
+                index !== hottestMarkets.length - 1 ? "" : ""
+              }`}
             >
-              <div className="relative aspect-video">
-                <img
-                  src={market.image}
-                  alt={market.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-              </div>
-              <div className="p-3 space-y-2">
+              <img
+                src={market.image}
+                alt={market.title}
+                className="w-14 h-14 rounded-lg object-cover flex-shrink-0"
+              />
+              <div className="flex-1 min-w-0 space-y-1">
                 <h4 className="text-sm font-medium leading-tight line-clamp-2 group-hover:text-primary transition-colors">
                   {market.title}
                 </h4>
-                <div className="flex items-center justify-between text-xs text-muted-foreground">
-                  <div className="flex items-center gap-1">
-                    <TrendingUp className="h-3 w-3" />
-                    <span>{market.volume}</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <span className="font-medium text-success">Yes {market.yesPrice}¢</span>
-                  </div>
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <span>{market.volume}</span>
+                  <span>·</span>
+                  <span className="font-medium text-success">Yes {market.yesPrice}¢</span>
                 </div>
               </div>
             </div>
