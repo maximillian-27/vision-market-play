@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Globe, LogOut, Settings, Search, Home, Newspaper, Users, MessageSquare, Briefcase, Sparkles, Shield, Bell, Plus } from "lucide-react";
+import { Globe, LogOut, Settings, Search, Home, Newspaper, Users, MessageSquare, Briefcase, Sparkles, Shield, Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import pollgyLogo from "@/assets/pollgy-logo-new.png";
 import { useNavigate } from "react-router-dom";
@@ -18,6 +18,7 @@ import { BecomeCreatorDialog } from "@/components/BecomeCreatorDialog";
 import { CreateMarketButton } from "@/components/CreateMarketButton";
 import { HowItWorksDialog } from "@/components/HowItWorksDialog";
 import { DepositDialog } from "@/components/DepositDialog";
+import { NotificationsDropdown } from "@/components/NotificationsDropdown";
 
 export function Header() {
   const isMobile = useIsMobile();
@@ -123,10 +124,7 @@ export function Header() {
             {isLoggedIn && (
               <>
                 {/* Notifications */}
-                <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground relative">
-                  <Bell className="h-4 w-4" />
-                  <span className="absolute top-1.5 right-1.5 h-1.5 w-1.5 bg-primary rounded-full" />
-                </Button>
+                <NotificationsDropdown />
                 
                 {/* Deposit Button */}
                 <Button 
