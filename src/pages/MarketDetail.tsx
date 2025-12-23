@@ -59,7 +59,7 @@ const mockMarketData: Record<string, any> = {
     endDate: "Dec 31, 2025",
     endsIn: "3 months",
     traders: 12400,
-    liquidity: "$156K",
+    volume24h: "$324K",
     likesCount: 342,
     priceHistory: [
       { date: "Jan", price: 45 },
@@ -91,7 +91,7 @@ const mockMarketData: Record<string, any> = {
     endDate: "Jun 30, 2025",
     endsIn: "2 months",
     traders: 8200,
-    liquidity: "$89K",
+    volume24h: "$67K",
     likesCount: 189,
     priceHistory: [
       { date: "Jan", price: 28 },
@@ -352,8 +352,8 @@ export default function MarketDetail() {
             <p className="text-sm font-bold">{formatNumber(market.traders)}</p>
           </div>
           <div className="p-2.5 rounded-lg bg-muted/30 text-center">
-            <p className="text-[10px] text-muted-foreground uppercase">Liquidity</p>
-            <p className="text-sm font-bold">{market.liquidity || "$45K"}</p>
+            <p className="text-[10px] text-muted-foreground uppercase">24h Vol</p>
+            <p className="text-sm font-bold">{market.volume24h || "$45K"}</p>
           </div>
         </div>
 
