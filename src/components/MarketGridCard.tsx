@@ -327,24 +327,24 @@ export function MarketGridCard({
         </div>
 
         {/* Mobile Layout - Compact horizontal */}
-        <div className="sm:hidden flex gap-2.5 p-2">
+        <div className="sm:hidden flex gap-3 p-2.5">
           {/* Thumbnail */}
-          <div className={`relative w-20 h-20 rounded-lg overflow-hidden bg-secondary flex-shrink-0 ${isClosedOrResolved ? 'grayscale-[30%]' : ''}`}>
+          <div className={`relative w-16 h-16 rounded-lg overflow-hidden bg-secondary flex-shrink-0 ${isClosedOrResolved ? 'grayscale-[30%]' : ''}`}>
             <img 
               src={image} 
               alt={title}
               className="h-full w-full object-cover"
             />
             {getStatusBadge() && (
-              <div className="absolute top-1 left-1 scale-75 origin-top-left">
+              <div className="absolute top-0.5 left-0.5 scale-[0.6] origin-top-left">
                 {getStatusBadge()}
               </div>
             )}
           </div>
 
           {/* Content */}
-          <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
-            <h3 className="text-xs font-semibold leading-tight line-clamp-2 group-hover:text-primary transition-colors">
+          <div className="flex-1 min-w-0 flex flex-col gap-1.5">
+            <h3 className="text-[13px] font-semibold leading-tight line-clamp-2 group-hover:text-primary transition-colors">
               {title}
             </h3>
 
@@ -353,7 +353,7 @@ export function MarketGridCard({
                 resolution?.toLowerCase() === "yes" ? 'bg-success/10' : 
                 resolution?.toLowerCase() === "no" ? 'bg-secondary' : 'bg-primary/10'
               }`}>
-                <span className={`font-bold text-[10px] ${
+                <span className={`font-bold text-xs ${
                   resolution?.toLowerCase() === "yes" ? 'text-success' : 
                   resolution?.toLowerCase() === "no" ? 'text-muted-foreground' : 'text-primary'
                 }`}>
@@ -361,34 +361,47 @@ export function MarketGridCard({
                 </span>
               </div>
             ) : isBinary ? (
-              <div className="flex items-center gap-2">
-                <div className="flex gap-1.5">
+              <div className="space-y-1.5">
+                {/* Probability bar */}
+                <div className="flex items-center gap-2 text-[11px] font-bold">
+                  <span className="text-success w-8">{yesPercent}%</span>
+                  <div className="flex-1 h-1.5 rounded-full bg-muted overflow-hidden">
+                    <div 
+                      className="h-full rounded-full bg-gradient-to-r from-success to-success/80"
+                      style={{ width: `${yesPercent}%` }}
+                    />
+                  </div>
+                  <span className="text-muted-foreground w-8 text-right">{100 - yesPercent}%</span>
+                </div>
+                
+                {/* Outcome buttons */}
+                <div className="flex gap-2">
                   <button 
-                    className="rounded-md px-4 py-2 text-center bg-success/15 hover:bg-success/25 text-success border border-success/30 text-xs font-bold uppercase active:scale-95 transition-all"
+                    className="flex-1 rounded-md py-1.5 text-center bg-success/10 hover:bg-success/20 text-success border border-success/20 text-[11px] font-bold uppercase active:scale-[0.97] transition-all"
                     onClick={handleOutcomeClick}
                   >
-                    Yes {yesPercent}%
+                    Yes
                   </button>
                   <button 
-                    className="rounded-md px-4 py-2 text-center bg-destructive/15 hover:bg-destructive/25 text-destructive border border-destructive/30 text-xs font-bold uppercase active:scale-95 transition-all"
+                    className="flex-1 rounded-md py-1.5 text-center bg-destructive/10 hover:bg-destructive/20 text-destructive border border-destructive/20 text-[11px] font-bold uppercase active:scale-[0.97] transition-all"
                     onClick={handleOutcomeClick}
                   >
-                    No {100 - yesPercent}%
+                    No
                   </button>
                 </div>
               </div>
             ) : (
-              <div className="flex gap-1.5 overflow-x-auto scrollbar-hide -mr-2 pr-2">
+              <div className="flex gap-1.5 overflow-x-auto scrollbar-hide -mr-2 pr-2 pb-0.5">
                 {displayOutcomes.map((outcome, index) => (
                   <button 
                     key={index}
-                    className="flex-shrink-0 flex items-center gap-1.5 rounded-md px-3 py-2 bg-secondary/80 hover:bg-secondary border border-border/40 hover:border-border/60 text-xs active:scale-95 transition-all"
+                    className="flex-shrink-0 flex items-center gap-1 rounded-md px-2 py-1.5 bg-secondary/80 hover:bg-secondary border border-border/40 text-[11px] active:scale-[0.97] transition-all"
                     onClick={handleOutcomeClick}
                   >
                     {outcome.logo ? (
-                      <img src={outcome.logo} alt={outcome.label} className="h-4 w-4 object-contain rounded-sm" />
+                      <img src={outcome.logo} alt={outcome.label} className="h-3.5 w-3.5 object-contain rounded-sm" />
                     ) : (
-                      <div className="h-4 w-4 rounded-sm bg-primary/10 flex items-center justify-center text-[8px] font-bold text-primary">
+                      <div className="h-3.5 w-3.5 rounded-sm bg-primary/10 flex items-center justify-center text-[7px] font-bold text-primary">
                         {outcome.label.charAt(0)}
                       </div>
                     )}
@@ -399,13 +412,13 @@ export function MarketGridCard({
               </div>
             )}
 
-            <div className="flex items-center gap-2 text-[9px] text-muted-foreground">
-              <span className="flex items-center gap-0.5">
-                <TrendingUp className="h-2.5 w-2.5" />
+            <div className="flex items-center gap-3 text-[10px] text-muted-foreground mt-auto">
+              <span className="flex items-center gap-0.5 font-medium">
+                <TrendingUp className="h-3 w-3" />
                 {volume}
               </span>
               <span className="flex items-center gap-0.5">
-                <Clock className="h-2.5 w-2.5" />
+                <Clock className="h-3 w-3" />
                 {endsIn}
               </span>
             </div>
