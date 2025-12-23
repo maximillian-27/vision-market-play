@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import {
@@ -32,14 +31,9 @@ const categories = [
 ];
 
 export function CreateMarketButton() {
-  const location = useLocation();
   const [open, setOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
-
-  // Hide on creator dashboard and creator profile pages
-  const hiddenPaths = ['/creator-dashboard', '/creator/'];
-  const shouldHide = hiddenPaths.some(path => location.pathname.startsWith(path) || location.pathname === path);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -64,8 +58,6 @@ export function CreateMarketButton() {
     setOpen(false);
     setFormData({ title: "", description: "", category: "", endDate: "" });
   };
-
-  if (shouldHide) return null;
 
   return (
     <>
