@@ -55,13 +55,13 @@ function AppContent() {
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <ProfileDialogProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
+      <Toaster />
+      <Sonner />
+      <BrowserRouter>
+        <ProfileDialogProvider>
           <AppContent />
-        </BrowserRouter>
-      </ProfileDialogProvider>
+        </ProfileDialogProvider>
+      </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
 );
