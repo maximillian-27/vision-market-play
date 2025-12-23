@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Users, UserPlus, TrendingUp } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useProfileDialog } from "@/contexts/ProfileDialogContext";
 
 const followingUsers = [
   {
@@ -62,6 +63,7 @@ const followingCreators = [
 
 export function FollowingSidebar() {
   const navigate = useNavigate();
+  const { openProfile } = useProfileDialog();
 
   return (
     <div className="w-64 lg:w-72 space-y-4 hidden lg:block sticky top-20 self-start max-h-[calc(100vh-6rem)] overflow-y-auto scrollbar-thin">
@@ -80,7 +82,7 @@ export function FollowingSidebar() {
                 <div
                   key={user.username}
                   className="flex items-center gap-2.5 p-2.5 rounded-lg hover:bg-muted/50 cursor-pointer transition-colors"
-                  onClick={() => navigate(`/profile/${user.username.slice(1)}`)}
+                  onClick={() => openProfile(user.username.slice(1))}
                 >
                   <Avatar className="h-9 w-9 flex-shrink-0 ring-1 ring-border/30">
                     <AvatarImage src={user.avatar} alt={user.name} />
@@ -124,7 +126,7 @@ export function FollowingSidebar() {
               <div
                 key={creator.username}
                 className="flex items-center gap-2.5 p-2.5 rounded-lg hover:bg-muted/50 cursor-pointer transition-colors"
-                onClick={() => navigate(`/creator/${creator.username.slice(1)}`)}
+                onClick={() => openProfile(creator.username.slice(1))}
               >
                 <Avatar className="h-9 w-9 flex-shrink-0 ring-1 ring-border/30">
                   <AvatarImage src={creator.avatar} alt={creator.name} />
