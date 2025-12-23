@@ -34,8 +34,7 @@ export const AdminCreators = () => {
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <h2 className="text-xl font-semibold">Creator Management</h2>
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-end gap-4">
         <div className="relative w-full sm:w-64">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
