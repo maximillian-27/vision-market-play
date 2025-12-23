@@ -8,7 +8,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { CreditCard, Bitcoin, Building2, ArrowLeft, Check } from "lucide-react";
+import { CreditCard, Bitcoin, Building2, ArrowLeft, Check, Copy, AlertTriangle } from "lucide-react";
+import { QRCodeSVG } from "qrcode.react";
+import { useToast } from "@/hooks/use-toast";
 
 interface DepositDialogProps {
   open: boolean;
@@ -16,6 +18,7 @@ interface DepositDialogProps {
 }
 
 type PaymentMethod = "card" | "crypto" | "wire" | null;
+type Step = "method" | "amount" | "crypto";
 
 const paymentMethods = [
   {
@@ -46,26 +49,38 @@ const paymentMethods = [
 
 const quickAmounts = [50, 100, 250, 500, 1000];
 
+// Mock crypto wallet data
+const cryptoWalletData = {
+  address: "0xF4E7cB4a23aEa16A819EF0f71F689fdb78A62",
+  network: "Polygon",
+  token: "USDC",
+};
+
 export function DepositDialog({ open, onOpenChange }: DepositDialogProps) {
-  const [step, setStep] = useState<"method" | "amount">("method");
+  const { toast } = useToast();
+  const [step, setStep] = useState<Step>("method");
   const [selectedMethod, setSelectedMethod] = useState<PaymentMethod>(null);
   const [customAmount, setCustomAmount] = useState("");
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
 
   const handleMethodSelect = (method: PaymentMethod) => {
     setSelectedMethod(method);
-    setStep("amount");
+    if (method === "crypto") {
+      setStep("crypto");
+    } else {
+      setStep("amount");
+    }
   };
 
   const handleBack = () => {
     setStep("method");
+    setSelectedMethod(null);
     setSelectedAmount(null);
     setCustomAmount("");
   };
 
   const handleClose = (isOpen: boolean) => {
     if (!isOpen) {
-      // Reset state when closing
       setStep("method");
       setSelectedMethod(null);
       setSelectedAmount(null);
@@ -84,13 +99,21 @@ export function DepositDialog({ open, onOpenChange }: DepositDialogProps) {
     setSelectedAmount(null);
   };
 
+  const handleCopyAddress = () => {
+    navigator.clipboard.writeText(cryptoWalletData.address);
+    toast({
+      title: "Address copied",
+      description: "Wallet address copied to clipboard",
+    });
+  };
+
   const finalAmount = selectedAmount || (customAmount ? parseFloat(customAmount) : 0);
   const selectedMethodData = paymentMethods.find(m => m.id === selectedMethod);
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="z-50 rounded-xl border-border/60 max-w-sm p-0 overflow-hidden">
-        {step === "method" ? (
+        {step === "method" && (
           <>
             <DialogHeader className="p-5 pb-3">
               <DialogTitle className="text-lg">Deposit Funds</DialogTitle>
@@ -123,7 +146,93 @@ export function DepositDialog({ open, onOpenChange }: DepositDialogProps) {
               })}
             </div>
           </>
-        ) : (
+        )}
+
+        {step === "crypto" && (
+          <>
+            <DialogHeader className="p-5 pb-2">
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 -ml-1"
+                  onClick={handleBack}
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                </Button>
+                <div>
+                  <DialogTitle className="text-lg">Deposit {cryptoWalletData.token}</DialogTitle>
+                  <DialogDescription className="text-xs">
+                    Send {cryptoWalletData.token} on {cryptoWalletData.network} to your wallet
+                  </DialogDescription>
+                </div>
+              </div>
+            </DialogHeader>
+            <div className="px-5 pb-5 space-y-4">
+              {/* QR Code */}
+              <div className="flex flex-col items-center">
+                <div className="p-4 bg-white rounded-xl border border-border/60 shadow-sm">
+                  <QRCodeSVG 
+                    value={cryptoWalletData.address} 
+                    size={180}
+                    level="M"
+                    includeMargin={false}
+                  />
+                </div>
+                <p className="text-xs text-muted-foreground mt-2">Scan to deposit</p>
+              </div>
+
+              {/* Wallet Address */}
+              <div className="space-y-2">
+                <p className="text-sm font-medium">Your Wallet Address</p>
+                <div className="flex items-center gap-2">
+                  <div className="flex-1 px-3 py-2.5 bg-secondary/50 rounded-lg border border-border/50 font-mono text-sm truncate">
+                    {cryptoWalletData.address}
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="h-10 w-10 shrink-0"
+                    onClick={handleCopyAddress}
+                  >
+                    <Copy className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+
+              {/* Network & Token Info */}
+              <div className="grid grid-cols-2 gap-3 p-3 bg-secondary/30 rounded-lg">
+                <div>
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Network</p>
+                  <p className="text-sm font-semibold mt-0.5">{cryptoWalletData.network}</p>
+                </div>
+                <div>
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Token</p>
+                  <p className="text-sm font-semibold mt-0.5">{cryptoWalletData.token}</p>
+                </div>
+              </div>
+
+              {/* Warning */}
+              <div className="flex gap-3 p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg">
+                <AlertTriangle className="h-5 w-5 text-amber-500 shrink-0 mt-0.5" />
+                <p className="text-xs text-amber-700 dark:text-amber-400 leading-relaxed">
+                  Only send <span className="font-semibold">{cryptoWalletData.token}</span> on <span className="font-semibold">{cryptoWalletData.network}</span> network. Other tokens or networks may result in permanent loss of funds.
+                </p>
+              </div>
+
+              {/* Done Button */}
+              <Button 
+                className="w-full h-12 text-base font-semibold rounded-xl" 
+                size="lg"
+                onClick={() => handleClose(false)}
+              >
+                Done
+              </Button>
+            </div>
+          </>
+        )}
+
+        {step === "amount" && (
           <>
             <DialogHeader className="p-5 pb-3">
               <div className="flex items-center gap-2">
