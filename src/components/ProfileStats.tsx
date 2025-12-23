@@ -58,15 +58,14 @@ export function ProfileStats({ type, stats }: ProfileStatsProps) {
     <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
       <StatCard
         icon={<TrendingUp className="h-4 w-4" />}
-        label="Total Profit"
+        label="Total P&L"
         value={stats.totalProfit || "$0"}
-        valueClassName={stats.totalProfit?.startsWith("+") ? "text-success" : "text-destructive"}
+        valueClassName={stats.totalProfit?.startsWith("+") ? "text-success" : stats.totalProfit?.startsWith("-") ? "text-destructive" : ""}
       />
       <StatCard
         icon={<Target className="h-4 w-4" />}
-        label="Win Rate"
-        value={`${stats.winRate || 0}%`}
-        valueClassName="text-success"
+        label="Accuracy"
+        value={`${stats.accuracy || 0}%`}
       />
       <StatCard
         icon={<BarChart3 className="h-4 w-4" />}
@@ -75,8 +74,8 @@ export function ProfileStats({ type, stats }: ProfileStatsProps) {
       />
       <StatCard
         icon={<Award className="h-4 w-4" />}
-        label="Accuracy"
-        value={`${stats.accuracy || 0}%`}
+        label="Rank"
+        value={`#${stats.rank || "-"}`}
       />
     </div>
   );
