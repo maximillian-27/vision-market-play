@@ -75,11 +75,17 @@ const getMockMarketDetails = (marketId: string) => ({
   description: "This market tracks the prediction outcome based on official announcements and verified data sources. The resolution will be determined by the primary outcome at the specified end date.",
   resolutionCriteria: "This market resolves to YES if the specified outcome occurs before the end date. Resolution is based on official announcements from primary sources. In case of ambiguity, the market creator will consult with the resolution committee.",
   priceHistory: [
-    { date: "W1", price: 45 },
-    { date: "W2", price: 52 },
-    { date: "W3", price: 48 },
-    { date: "W4", price: 58 },
-    { date: "W5", price: 62 },
+    { date: "Jan 1", price: 42 },
+    { date: "Jan 15", price: 45 },
+    { date: "Feb 1", price: 52 },
+    { date: "Feb 15", price: 48 },
+    { date: "Mar 1", price: 55 },
+    { date: "Mar 15", price: 58 },
+    { date: "Apr 1", price: 62 },
+    { date: "Apr 15", price: 65 },
+    { date: "May 1", price: 68 },
+    { date: "May 15", price: 72 },
+    { date: "Jun 1", price: 70 },
     { date: "Now", price: 68 },
   ],
   comments: [
@@ -199,7 +205,7 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[680px] p-0 gap-0 overflow-hidden max-h-[85vh] flex flex-col">
+      <DialogContent className="sm:max-w-[820px] p-0 gap-0 overflow-hidden max-h-[90vh] flex flex-col">
         {/* Compact Header */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-border/40 flex-shrink-0">
           <div className="flex items-center gap-2">
@@ -247,41 +253,55 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
                 </div>
               </div>
 
-              {/* Mini Chart */}
-              <div className="h-24 rounded-lg overflow-hidden bg-muted/20">
-                <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={priceHistory} margin={{ top: 8, right: 8, left: 8, bottom: 0 }}>
-                    <defs>
-                      <linearGradient id="dialogChartGradient" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3}/>
-                        <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
-                      </linearGradient>
-                    </defs>
-                    <XAxis 
-                      dataKey="date" 
-                      axisLine={false}
-                      tickLine={false}
-                      tick={{ fontSize: 9, fill: 'hsl(var(--muted-foreground))' }}
-                    />
-                    <Tooltip 
-                      contentStyle={{
-                        backgroundColor: "hsl(var(--popover))",
-                        border: "1px solid hsl(var(--border))",
-                        borderRadius: "6px",
-                        fontSize: "11px",
-                        padding: "4px 8px"
-                      }}
-                      formatter={(value: any) => [`${value}%`, ""]}
-                    />
-                    <Area 
-                      type="monotone" 
-                      dataKey="price" 
-                      stroke="hsl(var(--primary))" 
-                      fill="url(#dialogChartGradient)" 
-                      strokeWidth={1.5} 
-                    />
-                  </AreaChart>
-                </ResponsiveContainer>
+              {/* Chart with timeframe filters */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-1.5">
+                  {["1D", "1W", "1M", "All"].map((tf) => (
+                    <button
+                      key={tf}
+                      className="px-2.5 py-1 rounded-md text-[10px] font-medium bg-muted/50 hover:bg-muted text-muted-foreground hover:text-foreground transition-colors first:bg-muted first:text-foreground"
+                    >
+                      {tf}
+                    </button>
+                  ))}
+                </div>
+                <div className="h-40 rounded-lg overflow-hidden bg-muted/20 p-2">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart data={priceHistory} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+                      <defs>
+                        <linearGradient id="dialogChartGradient" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3}/>
+                          <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
+                        </linearGradient>
+                      </defs>
+                      <XAxis 
+                        dataKey="date" 
+                        axisLine={false}
+                        tickLine={false}
+                        tick={{ fontSize: 9, fill: 'hsl(var(--muted-foreground))' }}
+                        interval="preserveStartEnd"
+                      />
+                      <Tooltip 
+                        contentStyle={{
+                          backgroundColor: "hsl(var(--popover))",
+                          border: "1px solid hsl(var(--border))",
+                          borderRadius: "6px",
+                          fontSize: "11px",
+                          padding: "6px 10px"
+                        }}
+                        formatter={(value: any) => [`${value}%`, "Price"]}
+                        labelFormatter={(label) => `Date: ${label}`}
+                      />
+                      <Area 
+                        type="monotone" 
+                        dataKey="price" 
+                        stroke="hsl(var(--primary))" 
+                        fill="url(#dialogChartGradient)" 
+                        strokeWidth={2} 
+                      />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </div>
               </div>
 
               {/* Description */}
