@@ -2,36 +2,27 @@ import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, TrendingUp, Clock, Users, DollarSign, Heart, MessageCircle, Share2, Check, X, BadgeCheck, Info, BarChart3, Zap } from "lucide-react";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, AreaChart } from "recharts";
+import { ArrowLeft, TrendingUp, Clock, Users, Heart, MessageCircle, Share2, Check, X, BadgeCheck, Info, Bookmark, MoreHorizontal } from "lucide-react";
+import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip } from "recharts";
 import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
 import { BuyDialog } from "@/components/BuyDialog";
 
 const commentSchema = z.object({
-  text: z.string()
-    .trim()
-    .min(1, { message: "Comment cannot be empty" })
-    .max(500, { message: "Comment must be less than 500 characters" })
+  text: z.string().trim().min(1).max(500)
 });
 
 interface Comment {
   id: string;
-  author: {
-    name: string;
-    avatar: string;
-    username: string;
-  };
+  author: { name: string; avatar: string; username: string };
   text: string;
   timestamp: string;
   likes: number;
   isLiked: boolean;
-  replies: number;
 }
 
 // Mock data
@@ -44,24 +35,20 @@ const mockMarketData: Record<string, any> = {
       verified: true,
     },
     title: "Will Bitcoin reach $100,000 by end of 2025?",
-    subtitle: "The ultimate crypto milestone - will BTC finally break six figures?",
-    description: "This market resolves to YES if Bitcoin (BTC) reaches or exceeds $100,000 USD on any major exchange (Coinbase, Binance, or Kraken) before 11:59 PM ET on December 31, 2025. The price must be sustained for at least 5 minutes.",
-    resolutionCriteria: "The market will resolve based on data from CoinGecko's Bitcoin price index. A screenshot of the price exceeding $100,000 for at least 5 consecutive minutes will be required.",
+    description: "This market resolves to YES if Bitcoin reaches or exceeds $100,000 USD on any major exchange before December 31, 2025.",
     outcomes: [
       { label: "Yes", price: 68, color: "success" },
       { label: "No", price: 32, color: "destructive" }
     ],
     volume: "$2.4M",
-    endsIn: "3 months",
     endDate: "Dec 31, 2025",
     traders: "12.4K",
-    liquidity: "$450K",
     priceHistory: [
-      { date: "Jan", yes: 45, no: 55 },
-      { date: "Feb", yes: 52, no: 48 },
-      { date: "Mar", yes: 58, no: 42 },
-      { date: "Apr", yes: 62, no: 38 },
-      { date: "May", yes: 68, no: 32 },
+      { date: "Jan", price: 45 },
+      { date: "Feb", price: 52 },
+      { date: "Mar", price: 58 },
+      { date: "Apr", price: 62 },
+      { date: "May", price: 68 },
     ]
   },
   "2": {
@@ -72,27 +59,23 @@ const mockMarketData: Record<string, any> = {
       verified: true,
     },
     title: "Who will win the NBA Championship this season?",
-    subtitle: "The race for the championship is heating up. Which team takes it all?",
-    description: "This market resolves based on the winner of the 2024-2025 NBA Finals. The winning outcome will be determined by the official NBA announcement after the Finals conclude.",
-    resolutionCriteria: "The market will resolve to the team that wins the 2024-2025 NBA Finals, as officially announced by the NBA. If the season is cancelled, all positions will be refunded.",
+    description: "This market resolves based on the winner of the 2024-2025 NBA Finals.",
     isMultiOutcome: true,
     outcomes: [
-      { label: "Lakers", price: 25, logo: "https://cdn.nba.com/logos/nba/1610612747/primary/L/logo.svg" },
       { label: "Celtics", price: 32, logo: "https://cdn.nba.com/logos/nba/1610612738/primary/L/logo.svg" },
+      { label: "Lakers", price: 25, logo: "https://cdn.nba.com/logos/nba/1610612747/primary/L/logo.svg" },
       { label: "Nuggets", price: 21, logo: "https://cdn.nba.com/logos/nba/1610612743/primary/L/logo.svg" },
       { label: "Warriors", price: 12, logo: "https://cdn.nba.com/logos/nba/1610612744/primary/L/logo.svg" },
       { label: "Other", price: 10 },
     ],
     volume: "$890K",
-    endsIn: "2 months",
     endDate: "Jun 30, 2025",
     traders: "8.2K",
-    liquidity: "$320K",
     priceHistory: [
-      { date: "Jan", lakers: 22, celtics: 28, nuggets: 25 },
-      { date: "Feb", lakers: 24, celtics: 30, nuggets: 23 },
-      { date: "Mar", lakers: 26, celtics: 31, nuggets: 21 },
-      { date: "Apr", lakers: 25, celtics: 32, nuggets: 21 },
+      { date: "Jan", price: 28 },
+      { date: "Feb", price: 30 },
+      { date: "Mar", price: 31 },
+      { date: "Apr", price: 32 },
     ]
   },
 };
@@ -101,20 +84,18 @@ const mockComments: Comment[] = [
   {
     id: "1",
     author: { name: "Alex Chen", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Alex", username: "@alexchen" },
-    text: "Strong institutional adoption signals make this very likely. MicroStrategy and other corporations continue to accumulate.",
-    timestamp: "2h ago",
+    text: "Strong institutional adoption signals make this very likely. MicroStrategy and others continue to accumulate.",
+    timestamp: "2h",
     likes: 24,
     isLiked: false,
-    replies: 3
   },
   {
     id: "2",
     author: { name: "Jordan Smith", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Jordan", username: "@jsmith" },
-    text: "Regulatory clarity will be key. If we get ETF approval momentum continues, this could easily happen.",
-    timestamp: "4h ago",
+    text: "Regulatory clarity will be key here.",
+    timestamp: "4h",
     likes: 18,
     isLiked: true,
-    replies: 1
   },
 ];
 
@@ -126,9 +107,8 @@ export default function MarketDetail() {
   
   const [commentText, setCommentText] = useState("");
   const [comments, setComments] = useState<Comment[]>(mockComments);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
-  const [likes, setLikes] = useState(142);
+  const [isSaved, setIsSaved] = useState(false);
   const [showBuyDialog, setShowBuyDialog] = useState(false);
   const [selectedOutcome, setSelectedOutcome] = useState<any>(null);
 
@@ -143,54 +123,33 @@ export default function MarketDetail() {
     );
   }
 
-  const handleCommentSubmit = () => {
+  const handleComment = () => {
     try {
       commentSchema.parse({ text: commentText });
-      setIsSubmitting(true);
       const newComment: Comment = {
         id: Date.now().toString(),
         author: { name: "You", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=User", username: "@you" },
         text: commentText,
-        timestamp: "Just now",
+        timestamp: "now",
         likes: 0,
         isLiked: false,
-        replies: 0
       };
       setComments([newComment, ...comments]);
       setCommentText("");
-      toast({ title: "Comment posted", description: "Your comment has been added." });
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        toast({ title: "Invalid comment", description: error.errors[0].message, variant: "destructive" });
-      }
-    } finally {
-      setIsSubmitting(false);
+      toast({ title: "Comment posted" });
+    } catch {
+      toast({ title: "Comment required", variant: "destructive" });
     }
   };
 
-  const handleLikeComment = (commentId: string) => {
-    setComments(comments.map(comment => 
-      comment.id === commentId 
-        ? { ...comment, isLiked: !comment.isLiked, likes: comment.isLiked ? comment.likes - 1 : comment.likes + 1 }
-        : comment
-    ));
-  };
-
-  const handleLikeMarket = () => {
-    setIsLiked(!isLiked);
-    setLikes(isLiked ? likes - 1 : likes + 1);
-  };
-
-  const handleShareMarket = () => {
-    navigator.clipboard.writeText(window.location.href);
-    toast({ title: "Link copied", description: "Market link has been copied to clipboard." });
-  };
-
-  const handleOutcomeClick = (e: React.MouseEvent, outcome: any) => {
-    e.stopPropagation();
+  const handleOutcomeClick = (outcome: any) => {
     setSelectedOutcome(outcome);
     setShowBuyDialog(true);
   };
+
+  const topOutcome = market.isMultiOutcome 
+    ? market.outcomes.reduce((a: any, b: any) => a.price > b.price ? a : b)
+    : market.outcomes[0];
 
   return (
     <div className="min-h-screen bg-background">
@@ -201,330 +160,312 @@ export default function MarketDetail() {
         marketTitle={market.title}
         marketId={id || "1"}
       />
-      
-      {/* Sticky Header */}
-      <div className="sticky top-14 z-20 bg-background/95 backdrop-blur-sm border-b">
-        <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
-          <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="gap-2 -ml-2">
-            <ArrowLeft className="h-4 w-4" />
-            Back
-          </Button>
-          <div className="flex items-center gap-2">
-            <Button variant="ghost" size="sm" onClick={handleLikeMarket} className="gap-1.5">
-              <Heart className={`h-4 w-4 ${isLiked ? 'fill-destructive text-destructive' : ''}`} />
-              {likes}
-            </Button>
-            <Button variant="ghost" size="sm" onClick={handleShareMarket}>
-              <Share2 className="h-4 w-4" />
-            </Button>
-          </div>
-        </div>
-      </div>
 
-      <div className="max-w-5xl mx-auto px-4 py-6">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Main Content */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Market Header */}
-            <div className="space-y-4">
-              {/* Creator */}
-              <button 
-                onClick={() => navigate(`/creator/${market.creator.id}`)}
-                className="flex items-center gap-2 hover:opacity-80 transition-opacity"
-              >
-                <Avatar className="h-10 w-10">
-                  <AvatarImage src={market.creator.avatar} alt={market.creator.name} />
-                  <AvatarFallback>{market.creator.name.slice(0, 2)}</AvatarFallback>
-                </Avatar>
-                <div className="text-left">
-                  <div className="flex items-center gap-1.5">
-                    <span className="font-medium">{market.creator.name}</span>
-                    {market.creator.verified && (
-                      <BadgeCheck className="h-4 w-4 text-primary fill-primary/20" />
-                    )}
-                  </div>
-                  <span className="text-xs text-muted-foreground">Market Creator</span>
-                </div>
-              </button>
+      <div className="max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-0 lg:gap-8">
+          {/* Main Content - Left Side */}
+          <div className="lg:col-span-7 border-r-0 lg:border-r border-border/40">
+            {/* Mobile Back Button */}
+            <div className="lg:hidden sticky top-14 z-20 bg-background border-b border-border/40">
+              <div className="flex items-center justify-between px-4 py-3">
+                <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="-ml-2">
+                  <ArrowLeft className="h-4 w-4" />
+                </Button>
+                <span className="font-semibold text-sm">Market</span>
+                <Button variant="ghost" size="icon" className="h-8 w-8">
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
 
-              {/* Title */}
-              <h1 className="text-2xl md:text-3xl font-bold leading-tight">{market.title}</h1>
+            {/* Chart Section - Instagram Story-like */}
+            <div className="relative bg-gradient-to-b from-muted/30 to-background">
+              <div className="hidden lg:flex items-center gap-2 px-6 pt-6">
+                <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="-ml-2 gap-2">
+                  <ArrowLeft className="h-4 w-4" />
+                  Back
+                </Button>
+              </div>
               
-              {/* Subtitle */}
-              <p className="text-muted-foreground">{market.subtitle}</p>
-
-              {/* Key Stats */}
-              <div className="flex flex-wrap items-center gap-4 text-sm">
-                <div className="flex items-center gap-1.5 text-muted-foreground">
-                  <TrendingUp className="h-4 w-4" />
-                  <span className="font-medium text-foreground">{market.volume}</span>
-                  <span>volume</span>
-                </div>
-                <div className="flex items-center gap-1.5 text-muted-foreground">
-                  <Users className="h-4 w-4" />
-                  <span className="font-medium text-foreground">{market.traders}</span>
-                  <span>traders</span>
-                </div>
-                <div className="flex items-center gap-1.5 text-muted-foreground">
-                  <Clock className="h-4 w-4" />
-                  <span>Ends {market.endDate}</span>
+              <div className="px-4 lg:px-6 py-4">
+                <div className="h-48 lg:h-56">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart data={market.priceHistory}>
+                      <defs>
+                        <linearGradient id="priceGradient" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3}/>
+                          <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
+                        </linearGradient>
+                      </defs>
+                      <XAxis dataKey="date" stroke="hsl(var(--muted-foreground))" fontSize={11} axisLine={false} tickLine={false} />
+                      <YAxis domain={[0, 100]} hide />
+                      <Tooltip 
+                        contentStyle={{
+                          backgroundColor: "hsl(var(--popover))",
+                          border: "1px solid hsl(var(--border))",
+                          borderRadius: "12px",
+                          fontSize: "12px"
+                        }}
+                        formatter={(value: any) => [`${value}%`, "Price"]}
+                      />
+                      <Area type="monotone" dataKey="price" stroke="hsl(var(--primary))" fill="url(#priceGradient)" strokeWidth={2} />
+                    </AreaChart>
+                  </ResponsiveContainer>
                 </div>
               </div>
             </div>
 
-            {/* Outcomes - Main Trading Section */}
-            <Card className="border-border/40 overflow-hidden">
-              <CardHeader className="bg-muted/30 pb-3">
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-lg">Trade this market</CardTitle>
-                  <Badge variant="outline" className="text-xs">
-                    <Zap className="h-3 w-3 mr-1" />
-                    Live
-                  </Badge>
-                </div>
-                <p className="text-sm text-muted-foreground">Click an outcome to place your trade</p>
-              </CardHeader>
-              <CardContent className="p-4 space-y-3">
-                {market.isMultiOutcome ? (
-                  /* Multi-outcome layout - grid style for sports/multi-choice markets */
-                  <div className="space-y-2">
-                    {market.outcomes.map((outcome: any, index: number) => {
-                      const payout = outcome.price > 0 ? (100 / (outcome.price / 100)).toFixed(0) : 0;
-                      return (
-                        <button
-                          key={index}
-                          onClick={(e) => handleOutcomeClick(e, outcome)}
-                          className="w-full p-3 rounded-xl border border-border/50 hover:border-primary/50 bg-background hover:bg-muted/30 transition-all group"
-                        >
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                              {outcome.logo ? (
-                                <img src={outcome.logo} alt={outcome.label} className="h-10 w-10 object-contain" />
-                              ) : (
-                                <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center text-lg font-bold">
-                                  {outcome.label.charAt(0)}
-                                </div>
-                              )}
-                              <div className="text-left">
-                                <p className="font-semibold">{outcome.label}</p>
-                                <p className="text-xs text-muted-foreground">{outcome.price}¢ · ${payout} payout</p>
-                              </div>
-                            </div>
-                            <div className="text-right">
-                              <p className="text-2xl font-bold">{outcome.price}%</p>
-                            </div>
-                          </div>
-                        </button>
-                      );
-                    })}
-                  </div>
-                ) : (
-                  /* Binary outcome layout - Yes/No style */
-                  market.outcomes.map((outcome: any, index: number) => {
-                    const payout = outcome.price > 0 ? (100 / (outcome.price / 100)).toFixed(0) : 0;
-                    return (
-                      <button
-                        key={index}
-                        onClick={(e) => handleOutcomeClick(e, outcome)}
-                        className="w-full p-4 rounded-xl border-2 border-border/50 hover:border-primary/50 bg-background hover:bg-muted/30 transition-all group"
-                      >
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-3">
-                            <div className={`p-2 rounded-full ${outcome.color === 'success' ? 'bg-success/10 text-success' : 'bg-muted text-muted-foreground'}`}>
-                              {outcome.color === 'success' ? <Check className="h-5 w-5" /> : <X className="h-5 w-5" />}
-                            </div>
-                            <div className="text-left">
-                              <p className="font-semibold text-lg">{outcome.label}</p>
-                              <p className="text-sm text-muted-foreground">{outcome.price}¢ per share · ${payout} payout</p>
-                            </div>
-                          </div>
-                          <div className="text-right">
-                            <p className="text-3xl font-bold">{outcome.price}%</p>
-                            <p className="text-xs text-muted-foreground">probability</p>
-                          </div>
-                        </div>
-                      </button>
-                    );
-                  })
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Price Chart */}
-            <Card className="border-border/40">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <BarChart3 className="h-5 w-5" />
-                  Price History
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ResponsiveContainer width="100%" height={250}>
-                  <AreaChart data={market.priceHistory}>
-                    <defs>
-                      <linearGradient id="yesGradient" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="hsl(var(--success))" stopOpacity={0.3}/>
-                        <stop offset="95%" stopColor="hsl(var(--success))" stopOpacity={0}/>
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                    <XAxis dataKey="date" stroke="hsl(var(--muted-foreground))" fontSize={12} />
-                    <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} domain={[0, 100]} />
-                    <Tooltip 
-                      contentStyle={{
-                        backgroundColor: "hsl(var(--background))",
-                        border: "1px solid hsl(var(--border))",
-                        borderRadius: "8px"
-                      }}
-                    />
-                    <Area type="monotone" dataKey="yes" stroke="hsl(var(--success))" fill="url(#yesGradient)" strokeWidth={2} name="Yes %" />
-                  </AreaChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
-
-            {/* Description & Resolution */}
-            <Card className="border-border/40">
-              <Tabs defaultValue="description">
-                <CardHeader className="pb-0">
-                  <TabsList className="grid w-full grid-cols-2">
-                    <TabsTrigger value="description">Description</TabsTrigger>
-                    <TabsTrigger value="resolution">Resolution Criteria</TabsTrigger>
-                  </TabsList>
-                </CardHeader>
-                <CardContent className="pt-4">
-                  <TabsContent value="description" className="mt-0">
-                    <p className="text-foreground/90 leading-relaxed">{market.description}</p>
-                  </TabsContent>
-                  <TabsContent value="resolution" className="mt-0">
-                    <div className="flex gap-3 p-4 bg-muted/30 rounded-lg border border-border/40">
-                      <Info className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
-                      <p className="text-foreground/90 leading-relaxed">{market.resolutionCriteria}</p>
+            {/* Post Content */}
+            <div className="px-4 lg:px-6">
+              {/* Creator Header */}
+              <div className="flex items-center justify-between py-3">
+                <button 
+                  onClick={() => navigate(`/creator/${market.creator.id}`)}
+                  className="flex items-center gap-3 hover:opacity-80 transition-opacity"
+                >
+                  <Avatar className="h-10 w-10 ring-2 ring-primary/20">
+                    <AvatarImage src={market.creator.avatar} alt={market.creator.name} />
+                    <AvatarFallback>{market.creator.name.slice(0, 2)}</AvatarFallback>
+                  </Avatar>
+                  <div className="text-left">
+                    <div className="flex items-center gap-1.5">
+                      <span className="font-semibold text-sm">{market.creator.name}</span>
+                      {market.creator.verified && (
+                        <BadgeCheck className="h-4 w-4 text-primary fill-primary/20" />
+                      )}
                     </div>
-                  </TabsContent>
-                </CardContent>
-              </Tabs>
-            </Card>
+                    <span className="text-xs text-muted-foreground">Creator</span>
+                  </div>
+                </button>
+                <Button variant="outline" size="sm" className="rounded-full text-xs">
+                  Follow
+                </Button>
+              </div>
 
-            {/* Comments */}
-            <Card className="border-border/40">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <MessageCircle className="h-5 w-5" />
-                  Comments ({comments.length})
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
+              {/* Title */}
+              <h1 className="text-xl lg:text-2xl font-bold leading-tight mb-3">{market.title}</h1>
+
+              {/* Stats Row */}
+              <div className="flex items-center gap-4 text-xs text-muted-foreground mb-4">
+                <div className="flex items-center gap-1">
+                  <TrendingUp className="h-3.5 w-3.5" />
+                  <span className="font-medium text-foreground">{market.volume}</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <Users className="h-3.5 w-3.5" />
+                  <span>{market.traders}</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <Clock className="h-3.5 w-3.5" />
+                  <span>{market.endDate}</span>
+                </div>
+              </div>
+
+              {/* Engagement Actions - Instagram Style */}
+              <div className="flex items-center justify-between py-3 border-y border-border/40">
+                <div className="flex items-center gap-4">
+                  <button 
+                    onClick={() => setIsLiked(!isLiked)}
+                    className="hover:scale-110 transition-transform"
+                  >
+                    <Heart className={`h-6 w-6 ${isLiked ? 'fill-destructive text-destructive' : ''}`} />
+                  </button>
+                  <button className="hover:scale-110 transition-transform">
+                    <MessageCircle className="h-6 w-6" />
+                  </button>
+                  <button 
+                    onClick={() => {
+                      navigator.clipboard.writeText(window.location.href);
+                      toast({ title: "Link copied" });
+                    }}
+                    className="hover:scale-110 transition-transform"
+                  >
+                    <Share2 className="h-6 w-6" />
+                  </button>
+                </div>
+                <button 
+                  onClick={() => setIsSaved(!isSaved)}
+                  className="hover:scale-110 transition-transform"
+                >
+                  <Bookmark className={`h-6 w-6 ${isSaved ? 'fill-foreground' : ''}`} />
+                </button>
+              </div>
+
+              {/* Description */}
+              <div className="py-4">
+                <div className="flex items-start gap-2 text-sm">
+                  <Info className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
+                  <p className="text-muted-foreground leading-relaxed">{market.description}</p>
+                </div>
+              </div>
+
+              <Separator />
+
+              {/* Comments Section */}
+              <div className="py-4 space-y-4">
+                <p className="text-sm text-muted-foreground">{comments.length} comments</p>
+                
                 {/* Comment Input */}
-                <div className="flex gap-3">
-                  <Avatar className="h-10 w-10 flex-shrink-0">
+                <div className="flex items-start gap-3">
+                  <Avatar className="h-8 w-8 flex-shrink-0">
                     <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=User" />
                     <AvatarFallback>U</AvatarFallback>
                   </Avatar>
-                  <div className="flex-1 space-y-2">
+                  <div className="flex-1 flex gap-2">
                     <Textarea
-                      placeholder="Share your thoughts on this market..."
+                      placeholder="Add a comment..."
                       value={commentText}
                       onChange={(e) => setCommentText(e.target.value)}
-                      className="min-h-[80px] resize-none"
+                      className="min-h-[40px] h-10 resize-none text-sm py-2"
                       maxLength={500}
                     />
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-muted-foreground">{commentText.length}/500</span>
-                      <Button onClick={handleCommentSubmit} disabled={!commentText.trim() || isSubmitting} size="sm">
-                        Post Comment
-                      </Button>
-                    </div>
+                    <Button 
+                      size="sm" 
+                      onClick={handleComment}
+                      disabled={!commentText.trim()}
+                      className="h-10"
+                    >
+                      Post
+                    </Button>
                   </div>
                 </div>
-
-                <Separator />
 
                 {/* Comments List */}
                 <div className="space-y-4">
                   {comments.map((comment) => (
                     <div key={comment.id} className="flex gap-3">
-                      <Avatar className="h-10 w-10 flex-shrink-0">
+                      <Avatar className="h-8 w-8 flex-shrink-0">
                         <AvatarImage src={comment.author.avatar} />
                         <AvatarFallback>{comment.author.name.slice(0, 2)}</AvatarFallback>
                       </Avatar>
-                      <div className="flex-1 space-y-2">
-                        <div className="flex items-center gap-2">
-                          <span className="font-semibold text-sm">{comment.author.name}</span>
-                          <span className="text-xs text-muted-foreground">{comment.author.username}</span>
-                          <span className="text-xs text-muted-foreground">·</span>
-                          <span className="text-xs text-muted-foreground">{comment.timestamp}</span>
-                        </div>
-                        <p className="text-foreground/90">{comment.text}</p>
-                        <div className="flex items-center gap-4">
-                          <Button variant="ghost" size="sm" onClick={() => handleLikeComment(comment.id)} className="h-8 px-2 gap-1.5">
-                            <Heart className={`h-4 w-4 ${comment.isLiked ? 'fill-destructive text-destructive' : ''}`} />
-                            {comment.likes > 0 && <span className="text-xs">{comment.likes}</span>}
-                          </Button>
-                          <Button variant="ghost" size="sm" className="h-8 px-2 gap-1.5">
-                            <MessageCircle className="h-4 w-4" />
-                            {comment.replies > 0 && <span className="text-xs">{comment.replies}</span>}
-                          </Button>
+                      <div className="flex-1 space-y-1">
+                        <p className="text-sm">
+                          <span className="font-semibold">{comment.author.username} </span>
+                          <span className="text-foreground/90">{comment.text}</span>
+                        </p>
+                        <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                          <span>{comment.timestamp}</span>
+                          <span>{comment.likes} likes</span>
+                          <button className="font-medium hover:text-foreground">Reply</button>
                         </div>
                       </div>
+                      <button className="self-start">
+                        <Heart className={`h-3.5 w-3.5 ${comment.isLiked ? 'fill-destructive text-destructive' : 'text-muted-foreground'}`} />
+                      </button>
                     </div>
                   ))}
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </div>
 
-          {/* Sidebar */}
-          <div className="space-y-6">
-            {/* Market Stats */}
-            <Card className="border-border/40 sticky top-32">
-              <CardHeader>
-                <CardTitle className="text-base">Market Stats</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center justify-between py-2 border-b border-border/40">
-                  <span className="text-sm text-muted-foreground">Volume</span>
-                  <span className="font-semibold">{market.volume}</span>
-                </div>
-                <div className="flex items-center justify-between py-2 border-b border-border/40">
-                  <span className="text-sm text-muted-foreground">Liquidity</span>
-                  <span className="font-semibold">{market.liquidity}</span>
-                </div>
-                <div className="flex items-center justify-between py-2 border-b border-border/40">
-                  <span className="text-sm text-muted-foreground">Traders</span>
-                  <span className="font-semibold">{market.traders}</span>
-                </div>
-                <div className="flex items-center justify-between py-2 border-b border-border/40">
-                  <span className="text-sm text-muted-foreground">End Date</span>
-                  <span className="font-semibold">{market.endDate}</span>
-                </div>
-                <div className="flex items-center justify-between py-2">
-                  <span className="text-sm text-muted-foreground">Time Left</span>
-                  <Badge variant="outline">{market.endsIn}</Badge>
-                </div>
-
-                <Separator />
-
-                {/* Quick Trade Buttons */}
-                <div className="space-y-2">
-                  <p className="text-sm font-medium">Quick Trade</p>
-                  <div className="grid grid-cols-2 gap-2">
-                    <Button 
-                      className="bg-success hover:bg-success/90" 
-                      onClick={(e) => handleOutcomeClick(e, market.outcomes[0])}
-                    >
-                      Buy Yes {market.outcomes[0].price}¢
-                    </Button>
-                    <Button 
-                      variant="outline"
-                      onClick={(e) => handleOutcomeClick(e, market.outcomes[1])}
-                    >
-                      Buy No {market.outcomes[1].price}¢
-                    </Button>
+          {/* Sidebar - Right Side (Trade Panel) */}
+          <div className="lg:col-span-5 lg:py-6">
+            <div className="sticky top-20 space-y-4 px-4 lg:px-0 pb-6 lg:pb-0">
+              {/* Trade Card */}
+              <Card className="border-border/40 overflow-hidden">
+                <CardContent className="p-0">
+                  {/* Current Price Header */}
+                  <div className="p-4 bg-muted/30 border-b border-border/40">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-xs text-muted-foreground mb-1">
+                          {market.isMultiOutcome ? "Leading" : "Yes probability"}
+                        </p>
+                        <div className="flex items-baseline gap-2">
+                          <span className="text-3xl font-bold">{topOutcome.price}%</span>
+                          {market.isMultiOutcome && (
+                            <span className="text-sm font-medium text-muted-foreground">{topOutcome.label}</span>
+                          )}
+                        </div>
+                      </div>
+                      <Badge variant="outline" className="text-xs font-medium">
+                        Live
+                      </Badge>
+                    </div>
                   </div>
+
+                  {/* Outcomes */}
+                  <div className="p-4 space-y-2">
+                    {market.isMultiOutcome ? (
+                      /* Multi-outcome: Sorted by probability */
+                      [...market.outcomes]
+                        .sort((a: any, b: any) => b.price - a.price)
+                        .map((outcome: any, index: number) => (
+                          <button
+                            key={index}
+                            onClick={() => handleOutcomeClick(outcome)}
+                            className="w-full flex items-center gap-3 p-3 rounded-xl border border-border/50 hover:border-primary/50 hover:bg-muted/30 transition-all group"
+                          >
+                            {outcome.logo ? (
+                              <img src={outcome.logo} alt={outcome.label} className="h-8 w-8 object-contain" />
+                            ) : (
+                              <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center text-sm font-bold">
+                                {outcome.label.charAt(0)}
+                              </div>
+                            )}
+                            <div className="flex-1 text-left">
+                              <p className="font-medium text-sm">{outcome.label}</p>
+                            </div>
+                            <div className="flex items-center gap-3">
+                              <span className="text-lg font-bold">{outcome.price}%</span>
+                              <span className="text-xs text-primary font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+                                Buy →
+                              </span>
+                            </div>
+                          </button>
+                        ))
+                    ) : (
+                      /* Binary outcome: Yes/No buttons */
+                      <div className="grid grid-cols-2 gap-3">
+                        {market.outcomes.map((outcome: any, index: number) => (
+                          <button
+                            key={index}
+                            onClick={() => handleOutcomeClick(outcome)}
+                            className={`p-4 rounded-xl border-2 transition-all ${
+                              outcome.color === 'success'
+                                ? 'border-success/30 bg-success/5 hover:border-success hover:bg-success/10'
+                                : 'border-muted hover:border-foreground/30 hover:bg-muted/50'
+                            }`}
+                          >
+                            <div className={`mx-auto w-10 h-10 rounded-full flex items-center justify-center mb-2 ${
+                              outcome.color === 'success' ? 'bg-success/20 text-success' : 'bg-muted text-muted-foreground'
+                            }`}>
+                              {outcome.color === 'success' ? <Check className="h-5 w-5" /> : <X className="h-5 w-5" />}
+                            </div>
+                            <p className="font-semibold text-lg">{outcome.label}</p>
+                            <p className="text-2xl font-bold mt-1">{outcome.price}¢</p>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Info Footer */}
+                  <div className="px-4 pb-4">
+                    <p className="text-xs text-center text-muted-foreground">
+                      Tap an outcome to place your trade
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Quick Stats */}
+              <div className="grid grid-cols-3 gap-3">
+                <div className="text-center p-3 rounded-xl bg-muted/30">
+                  <p className="text-lg font-bold">{market.volume}</p>
+                  <p className="text-xs text-muted-foreground">Volume</p>
                 </div>
-              </CardContent>
-            </Card>
+                <div className="text-center p-3 rounded-xl bg-muted/30">
+                  <p className="text-lg font-bold">{market.traders}</p>
+                  <p className="text-xs text-muted-foreground">Traders</p>
+                </div>
+                <div className="text-center p-3 rounded-xl bg-muted/30">
+                  <p className="text-lg font-bold">{market.endDate.split(' ')[0]}</p>
+                  <p className="text-xs text-muted-foreground">Ends</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
