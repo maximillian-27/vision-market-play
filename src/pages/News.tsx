@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Clock, TrendingUp, BarChart3 } from "lucide-react";
+import { Clock, BarChart3 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { NewsFilters } from "@/components/NewsFilters";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { MarketCard } from "@/components/MarketCard";
 import { HottestMarkets } from "@/components/HottestMarkets";
 import { ActivitySidebar } from "@/components/ActivitySidebar";
+import { PageHeader } from "@/components/PageHeader";
 import federalReserveImage from "@/assets/federal-reserve.jpg";
-import bitcoinImage from "@/assets/bitcoin-market.jpg";
 
 const newsItems = [
   {
@@ -58,25 +58,27 @@ export default function News() {
   const [selectedNews, setSelectedNews] = useState<typeof newsItems[0] | null>(null);
 
   return (
-    <div className="w-full lg:container lg:max-w-7xl py-4 lg:py-6">
+    <div className="w-full max-w-7xl mx-auto py-4 lg:py-6">
       <div className="flex gap-6 justify-center">
         <ActivitySidebar />
-        <div className="w-full md:max-w-2xl space-y-4">
-          <h1 className="text-2xl font-bold mb-4 md:mb-6 px-4">Latest News</h1>
-          <div className="px-4">
-            <NewsFilters />
-          </div>
-          <div className="space-y-3 md:space-y-4 md:px-4">
+        
+        <div className="w-full max-w-2xl space-y-4 px-4 lg:px-0">
+          <PageHeader 
+            title="News"
+            subtitle="Stay informed with the latest market-moving stories"
+          />
+          
+          <NewsFilters />
+          
+          <div className="space-y-3">
             {newsItems.map((item, index) => (
               <Card 
                 key={index} 
-                className="group cursor-pointer transition-all duration-200 hover:shadow-lg hover:scale-[1.01] md:rounded-lg rounded-none border-0 md:border animate-fade-in"
-                style={{ animationDelay: `${index * 50}ms` }}
+                className="group cursor-pointer transition-all duration-200 hover:shadow-md hover:border-primary/20 border-border/50"
                 onClick={() => setSelectedNews(item)}
               >
-                <CardContent className="p-4 md:p-6">
+                <CardContent className="p-4 md:p-5">
                   <div className="space-y-3">
-                    {/* Header with source and market indicator */}
                     <div className="flex items-center justify-between gap-2">
                       <Badge variant="secondary" className="text-xs font-medium">
                         {item.source}
@@ -84,27 +86,24 @@ export default function News() {
                       {item.relatedMarkets.length > 0 ? (
                         <Badge variant="outline" className="text-xs gap-1.5 border-primary/30 text-primary hover:bg-primary/10">
                           <BarChart3 className="h-3.5 w-3.5" />
-                          <span className="hidden sm:inline">Check Markets</span>
+                          <span className="hidden sm:inline">Trade this</span>
                         </Badge>
                       ) : (
                         <Badge variant="outline" className="text-xs gap-1.5 border-muted-foreground/20 text-muted-foreground/50 bg-transparent">
                           <BarChart3 className="h-3 w-3" />
-                          <span className="hidden sm:inline">No markets yet</span>
+                          <span className="hidden sm:inline">No markets</span>
                         </Badge>
                       )}
                     </div>
 
-                    {/* Title */}
-                    <h3 className="font-bold text-base md:text-lg leading-tight group-hover:text-primary transition-colors">
+                    <h3 className="font-semibold text-base leading-tight group-hover:text-primary transition-colors">
                       {item.title}
                     </h3>
 
-                    {/* Summary */}
-                    <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2 md:line-clamp-3">
+                    <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
                       {item.summary}
                     </p>
 
-                    {/* Time */}
                     <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                       <Clock className="h-3.5 w-3.5" />
                       <span>{item.time}</span>
@@ -115,13 +114,14 @@ export default function News() {
             ))}
           </div>
         </div>
+        
         <HottestMarkets />
       </div>
 
       <Dialog open={!!selectedNews} onOpenChange={(open) => !open && setSelectedNews(null)}>
         <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="text-xl md:text-2xl font-bold pr-6">
+            <DialogTitle className="text-xl font-bold pr-6">
               {selectedNews?.title}
             </DialogTitle>
           </DialogHeader>
@@ -142,7 +142,7 @@ export default function News() {
 
               {selectedNews.relatedMarkets.length > 0 && (
                 <div className="space-y-4 pt-4 border-t">
-                  <h3 className="font-semibold text-lg">Related Markets</h3>
+                  <h3 className="font-semibold">Related Markets</h3>
                   <div className="space-y-4">
                     {selectedNews.relatedMarkets.map((market) => (
                       <MarketCard key={market.id} {...market} />

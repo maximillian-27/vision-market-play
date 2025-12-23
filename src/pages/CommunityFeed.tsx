@@ -6,9 +6,9 @@ import { FollowingSidebar } from "@/components/FollowingSidebar";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Heart, MessageCircle, Share2 } from "lucide-react";
+import { PageHeader } from "@/components/PageHeader";
 import bitcoinImage from "@/assets/bitcoin-market.jpg";
 import nbaImage from "@/assets/nba-championship.jpg";
 import iphoneImage from "@/assets/foldable-iphone.jpg";
@@ -196,14 +196,18 @@ export default function CommunityFeed() {
   const [selectedFilter, setSelectedFilter] = useState("Hot");
 
   return (
-    <div className="w-full lg:container lg:max-w-7xl py-4 lg:py-6">
+    <div className="w-full max-w-7xl mx-auto py-4 lg:py-6">
       <div className="flex gap-6 justify-center">
         <FollowingSidebar />
-        <div className="w-full md:max-w-2xl space-y-4 md:space-y-6 px-4 lg:px-0">
-          <h1 className="text-2xl font-bold">Community Feed</h1>
+        
+        <div className="w-full max-w-2xl space-y-4 px-4 lg:px-0">
+          <PageHeader 
+            title="Community"
+            subtitle="See what others are saying about markets"
+          />
           
           {/* Category Filters */}
-          <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+          <div className="flex gap-1 overflow-x-auto pb-2 scrollbar-hide -mx-1 px-1">
             {categories.map((category) => (
               <button
                 key={category}
@@ -221,10 +225,10 @@ export default function CommunityFeed() {
           
           <div className="space-y-4">
             {mockCommunityPosts.map((post) => (
-              <Card key={post.id} className="overflow-hidden border-border/40">
+              <Card key={post.id} className="overflow-hidden border-border/50">
                 <CardContent className="p-0">
                   {/* User Post Header */}
-                  <div className="p-5 space-y-3">
+                  <div className="p-4 space-y-3">
                     <div className="flex items-start gap-3">
                       <Avatar 
                         className="h-9 w-9 cursor-pointer"
@@ -233,56 +237,51 @@ export default function CommunityFeed() {
                         <AvatarImage src={post.user.avatar} alt={post.user.name} />
                         <AvatarFallback>{post.user.name.slice(0, 2)}</AvatarFallback>
                       </Avatar>
-                      <div className="flex-1">
+                      <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
                           <span 
-                            className="font-medium text-sm cursor-pointer"
+                            className="font-medium text-sm cursor-pointer hover:underline"
                             onClick={() => navigate(`/profile/${post.user.username.slice(1)}`)}
                           >
                             {post.user.username}
                           </span>
-                          <span className="text-xs text-muted-foreground">·</span>
                           <span className="text-xs text-muted-foreground">{post.timestamp}</span>
                         </div>
-                        <p className="text-sm mt-2 leading-relaxed text-foreground/90">{post.thoughts}</p>
+                        <p className="text-sm mt-1.5 leading-relaxed">{post.thoughts}</p>
                       </div>
                     </div>
                   </div>
 
                   {/* Embedded Market */}
-                  <div className="px-5 pb-5">
+                  <div className="px-4 pb-4">
                     <MarketGridCard {...post.market} />
                   </div>
 
                   {/* Engagement Actions */}
-                  <div className="flex items-center gap-1 px-4 pb-4">
-                    <button
-                      className="flex items-center gap-1.5 px-2 py-1.5 rounded-md hover:bg-muted/60 text-muted-foreground hover:text-foreground transition-all text-xs"
-                    >
-                      <Heart className="h-3.5 w-3.5" />
+                  <div className="flex items-center gap-1 px-4 pb-3 border-t pt-3">
+                    <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-full hover:bg-muted/60 text-muted-foreground hover:text-foreground transition-all text-xs">
+                      <Heart className="h-4 w-4" />
                       <span>{post.likes}</span>
                     </button>
                     <button
-                      className="flex items-center gap-1.5 px-2 py-1.5 rounded-md hover:bg-muted/60 text-muted-foreground hover:text-foreground transition-all text-xs"
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-full hover:bg-muted/60 text-muted-foreground hover:text-foreground transition-all text-xs"
                       onClick={() => setExpandedComments({ ...expandedComments, [post.id]: !expandedComments[post.id] })}
                     >
-                      <MessageCircle className="h-3.5 w-3.5" />
+                      <MessageCircle className="h-4 w-4" />
                       <span>{post.comments}</span>
                     </button>
-                    <button
-                      className="flex items-center gap-1.5 px-2 py-1.5 rounded-md hover:bg-muted/60 text-muted-foreground hover:text-foreground transition-all"
-                    >
-                      <Share2 className="h-3.5 w-3.5" />
+                    <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-full hover:bg-muted/60 text-muted-foreground hover:text-foreground transition-all ml-auto">
+                      <Share2 className="h-4 w-4" />
                     </button>
                   </div>
 
                   {/* Comments Section */}
                   {expandedComments[post.id] && (
-                    <div className="border-t">
+                    <div className="border-t bg-muted/20">
                       <div className="p-4 space-y-4">
                         {/* Comment Input */}
                         <div className="flex gap-3">
-                          <Avatar className="h-8 w-8">
+                          <Avatar className="h-8 w-8 flex-shrink-0">
                             <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=User" />
                             <AvatarFallback>U</AvatarFallback>
                           </Avatar>
@@ -291,7 +290,7 @@ export default function CommunityFeed() {
                               placeholder="Add a comment..."
                               value={commentInputs[post.id] || ""}
                               onChange={(e) => setCommentInputs({ ...commentInputs, [post.id]: e.target.value })}
-                              className="min-h-[60px] text-sm"
+                              className="min-h-[60px] text-sm bg-background"
                               maxLength={500}
                             />
                             <div className="flex justify-end">
@@ -305,17 +304,16 @@ export default function CommunityFeed() {
                         {/* Sample Comments */}
                         <div className="space-y-3 pt-2">
                           <div className="flex gap-3">
-                            <Avatar className="h-8 w-8">
+                            <Avatar className="h-7 w-7 flex-shrink-0">
                               <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=Comment1" />
                               <AvatarFallback>JD</AvatarFallback>
                             </Avatar>
                             <div className="flex-1">
                               <div className="flex items-center gap-2">
-                                <span className="font-semibold text-xs">@johndoe</span>
-                                <span className="text-xs text-muted-foreground">·</span>
+                                <span className="font-medium text-xs">@johndoe</span>
                                 <span className="text-xs text-muted-foreground">1h ago</span>
                               </div>
-                              <p className="text-xs mt-1 text-muted-foreground">Great analysis! I agree with your take on this.</p>
+                              <p className="text-xs mt-0.5 text-muted-foreground">Great analysis! I agree with your take on this.</p>
                             </div>
                           </div>
                         </div>
@@ -327,6 +325,7 @@ export default function CommunityFeed() {
             ))}
           </div>
         </div>
+        
         <HottestMarkets />
       </div>
     </div>
