@@ -402,6 +402,24 @@ export function MarketGridCard({
 
           {/* Content */}
           <div className="flex-1 min-w-0 flex flex-col gap-1.5">
+            {/* Creator */}
+            <button 
+              className="flex items-center gap-1.5 hover:opacity-80 transition-opacity w-fit"
+              onClick={(e) => {
+                e.stopPropagation();
+                const profilePath = creator.isCreator !== false 
+                  ? `/creator/${creator.id || creator.name.toLowerCase().replace(/\s+/g, '-')}`
+                  : `/profile/${creator.id || creator.name.toLowerCase().replace(/\s+/g, '-')}`;
+                navigate(profilePath);
+              }}
+            >
+              <Avatar className="h-4 w-4">
+                <AvatarImage src={creator.avatar} alt={creator.name} />
+                <AvatarFallback className="text-[6px]">{creator.name.slice(0, 2)}</AvatarFallback>
+              </Avatar>
+              <span className="text-[10px] text-muted-foreground font-medium truncate max-w-[100px]">{creator.name}</span>
+            </button>
+            
             <div className="flex items-start justify-between gap-2">
               <h3 className="text-[13px] font-semibold leading-tight line-clamp-2 group-hover:text-primary transition-colors flex-1">
                 {title}
