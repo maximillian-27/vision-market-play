@@ -16,7 +16,8 @@ import {
   Settings,
   Wallet,
   Clock,
-  Sparkles
+  Sparkles,
+  Trophy
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -46,6 +47,7 @@ const creatorStats = {
   accuracy: 84,
   earnings: 4250,
   currentBalance: 1847.32,
+  rank: 24,
 };
 
 const recentMarkets = [
@@ -194,7 +196,7 @@ const CreatorDashboard = () => {
           </Select>
         </div>
 
-        {/* Stats Overview - 2x2 grid on mobile */}
+        {/* Main Stats - Followers, Volume, Earnings, Avg/Market */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 mb-3 sm:mb-4">
           <Card className="border-border/40">
             <CardContent className="p-2.5 sm:p-4">
@@ -215,26 +217,10 @@ const CreatorDashboard = () => {
           <Card className="border-border/40">
             <CardContent className="p-2.5 sm:p-4">
               <div className="flex items-center gap-1 sm:gap-2 text-muted-foreground text-[10px] sm:text-sm mb-0.5 sm:mb-1">
-                <Eye className="h-3 w-3 sm:h-4 sm:w-4" />
-                <span>Views</span>
+                <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span>Volume</span>
               </div>
-              <div className="flex items-center gap-1.5 sm:gap-2">
-                <p className="text-base sm:text-2xl font-bold">{(creatorStats.totalViews / 1000).toFixed(0)}K</p>
-                <Badge className="text-[8px] sm:text-xs bg-success/10 text-success border-0 px-1 sm:px-1.5">
-                  <ArrowUpRight className="h-2 w-2 sm:h-3 sm:w-3" />
-                  {creatorStats.viewsGrowth}%
-                </Badge>
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card className="border-border/40">
-            <CardContent className="p-2.5 sm:p-4">
-              <div className="flex items-center gap-1 sm:gap-2 text-muted-foreground text-[10px] sm:text-sm mb-0.5 sm:mb-1">
-                <BarChart3 className="h-3 w-3 sm:h-4 sm:w-4" />
-                <span>Markets</span>
-              </div>
-              <p className="text-base sm:text-2xl font-bold">{creatorStats.marketsCreated}</p>
+              <p className="text-base sm:text-2xl font-bold">${(creatorStats.totalVolume / 1000000).toFixed(1)}M</p>
             </CardContent>
           </Card>
           
@@ -242,19 +228,29 @@ const CreatorDashboard = () => {
             <CardContent className="p-2.5 sm:p-4">
               <div className="flex items-center gap-1 sm:gap-2 text-muted-foreground text-[10px] sm:text-sm mb-0.5 sm:mb-1">
                 <DollarSign className="h-3 w-3 sm:h-4 sm:w-4" />
-                <span>Volume</span>
+                <span>Earnings</span>
               </div>
-              <p className="text-base sm:text-2xl font-bold">${(creatorStats.totalVolume / 1000000).toFixed(1)}M</p>
+              <p className="text-base sm:text-2xl font-bold text-success">${creatorStats.earnings.toLocaleString()}</p>
+            </CardContent>
+          </Card>
+          
+          <Card className="border-border/40">
+            <CardContent className="p-2.5 sm:p-4">
+              <div className="flex items-center gap-1 sm:gap-2 text-muted-foreground text-[10px] sm:text-sm mb-0.5 sm:mb-1">
+                <BarChart3 className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span>Avg/Market</span>
+              </div>
+              <p className="text-base sm:text-2xl font-bold">${(creatorStats.avgMarketVolume / 1000).toFixed(0)}K</p>
             </CardContent>
           </Card>
         </div>
 
-        {/* Secondary Stats - 2x2 grid on mobile */}
+        {/* Secondary Stats - Markets, Resolved, Views, Rank */}
         <div className="grid grid-cols-4 gap-1.5 sm:gap-3 mb-4 sm:mb-5">
           <Card className="border-border/40 bg-muted/20">
             <CardContent className="p-2 sm:p-4">
-              <p className="text-[9px] sm:text-sm text-muted-foreground mb-0.5 truncate">Avg/Market</p>
-              <p className="text-sm sm:text-xl font-semibold">${(creatorStats.avgMarketVolume / 1000).toFixed(0)}K</p>
+              <p className="text-[9px] sm:text-sm text-muted-foreground mb-0.5 truncate">Markets</p>
+              <p className="text-sm sm:text-xl font-semibold">{creatorStats.marketsCreated}</p>
             </CardContent>
           </Card>
           <Card className="border-border/40 bg-muted/20">
@@ -265,14 +261,17 @@ const CreatorDashboard = () => {
           </Card>
           <Card className="border-border/40 bg-muted/20">
             <CardContent className="p-2 sm:p-4">
-              <p className="text-[9px] sm:text-sm text-muted-foreground mb-0.5 truncate">Accuracy</p>
-              <p className="text-sm sm:text-xl font-semibold text-success">{creatorStats.accuracy}%</p>
+              <p className="text-[9px] sm:text-sm text-muted-foreground mb-0.5 truncate">Views</p>
+              <p className="text-sm sm:text-xl font-semibold">{(creatorStats.totalViews / 1000).toFixed(0)}K</p>
             </CardContent>
           </Card>
           <Card className="border-border/40 bg-muted/20">
             <CardContent className="p-2 sm:p-4">
-              <p className="text-[9px] sm:text-sm text-muted-foreground mb-0.5 truncate">Earnings</p>
-              <p className="text-sm sm:text-xl font-semibold text-success">${(creatorStats.earnings / 1000).toFixed(1)}K</p>
+              <p className="text-[9px] sm:text-sm text-muted-foreground mb-0.5 truncate">Rank</p>
+              <div className="flex items-center gap-1">
+                <Trophy className="h-3 w-3 sm:h-4 sm:w-4 text-amber-500" />
+                <p className="text-sm sm:text-xl font-semibold">#{creatorStats.rank}</p>
+              </div>
             </CardContent>
           </Card>
         </div>
