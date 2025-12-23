@@ -6,7 +6,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
@@ -20,14 +19,17 @@ import {
   X,
   Wallet,
   Share2,
-  MessageCircle,
   ChevronDown,
   ChevronUp,
   FileText,
-  BarChart3,
+  Scale,
   Send,
-  Heart
+  Heart,
+  MessageCircle,
+  ExternalLink,
+  Zap
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface Outcome {
   label: string;
@@ -73,11 +75,11 @@ const getMockMarketDetails = (marketId: string) => ({
   description: "This market tracks the prediction outcome based on official announcements and verified data sources. The resolution will be determined by the primary outcome at the specified end date.",
   resolutionCriteria: "This market resolves to YES if the specified outcome occurs before the end date. Resolution is based on official announcements from primary sources. In case of ambiguity, the market creator will consult with the resolution committee.",
   priceHistory: [
-    { date: "Week 1", price: 45 },
-    { date: "Week 2", price: 52 },
-    { date: "Week 3", price: 48 },
-    { date: "Week 4", price: 58 },
-    { date: "Week 5", price: 62 },
+    { date: "W1", price: 45 },
+    { date: "W2", price: 52 },
+    { date: "W3", price: 48 },
+    { date: "W4", price: 58 },
+    { date: "W5", price: 62 },
     { date: "Now", price: 68 },
   ],
   comments: [
@@ -95,13 +97,6 @@ const getMockMarketDetails = (marketId: string) => ({
       timestamp: "4h",
       likes: 12,
     },
-    {
-      id: "3",
-      author: { name: "Emily Davis", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Emily", username: "emilyd" },
-      text: "Great market! Been following this closely.",
-      timestamp: "6h",
-      likes: 8,
-    },
   ],
 });
 
@@ -112,12 +107,13 @@ const buySchema = z.object({
 });
 
 export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) {
+  const navigate = useNavigate();
   const { toast } = useToast();
   const [selectedOutcome, setSelectedOutcome] = useState<Outcome | null>(null);
   const [amount, setAmount] = useState("10");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [activeTab, setActiveTab] = useState("trade");
   const [showResolution, setShowResolution] = useState(false);
+  const [showComments, setShowComments] = useState(false);
   const [commentText, setCommentText] = useState("");
 
   const mockDetails = getMockMarketDetails(market.id);
@@ -154,7 +150,7 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
       
       setTimeout(() => {
         toast({
-          title: "Order placed",
+          title: "Order placed!",
           description: `You bought ${shares} shares of "${selectedOutcome.label}" for $${amountNum.toFixed(2)}`,
         });
         onOpenChange(false);
@@ -175,7 +171,7 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
 
   const handleShare = () => {
     navigator.clipboard.writeText(`${window.location.origin}/market/${market.id}`);
-    toast({ title: "Link copied to clipboard" });
+    toast({ title: "Link copied!" });
   };
 
   const handleComment = () => {
@@ -184,397 +180,346 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
     setCommentText("");
   };
 
-  const quickAmounts = [10, 25, 50, 100];
+  const quickAmounts = [5, 10, 25, 50];
 
   const handleClose = (isOpen: boolean) => {
     if (!isOpen) {
       setSelectedOutcome(null);
       setAmount("10");
-      setActiveTab("trade");
+      setShowComments(false);
+      setShowResolution(false);
     }
     onOpenChange(isOpen);
   };
 
+  const handleViewFullPage = () => {
+    onOpenChange(false);
+    navigate(`/market/${market.id}`);
+  };
+
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-xl p-0 gap-0 overflow-hidden max-h-[90vh]">
-        {/* Header with image and actions */}
-        <div className="relative h-28 bg-muted overflow-hidden flex-shrink-0">
-          <img 
-            src={market.image} 
-            alt={market.title}
-            className="w-full h-full object-cover opacity-80"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
-          
-          {/* Top bar with creator and actions */}
-          <div className="absolute top-3 left-3 right-3 flex items-center justify-between">
-            {/* Creator badge */}
-            <div className="flex items-center gap-1.5 bg-background/80 backdrop-blur-sm rounded-full px-2 py-1">
-              <Avatar className="h-5 w-5">
-                <AvatarImage src={market.creator.avatar} alt={market.creator.name} />
-                <AvatarFallback className="text-[8px]">{market.creator.name.slice(0, 2)}</AvatarFallback>
-              </Avatar>
-              <span className="text-xs font-medium">{market.creator.name}</span>
-              {market.creator.isCreator !== false && (
-                <BadgeCheck className="h-3.5 w-3.5 text-primary fill-primary/20" />
-              )}
-            </div>
-
-            {/* Share button */}
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="h-8 w-8 bg-background/80 backdrop-blur-sm hover:bg-background/90"
-              onClick={handleShare}
-            >
+      <DialogContent className="sm:max-w-[680px] p-0 gap-0 overflow-hidden max-h-[85vh] flex flex-col">
+        {/* Compact Header */}
+        <div className="flex items-center justify-between px-4 py-3 border-b border-border/40 flex-shrink-0">
+          <div className="flex items-center gap-2">
+            <Avatar className="h-7 w-7">
+              <AvatarImage src={market.creator.avatar} alt={market.creator.name} />
+              <AvatarFallback className="text-[10px]">{market.creator.name.slice(0, 2)}</AvatarFallback>
+            </Avatar>
+            <span className="text-sm font-medium">{market.creator.name}</span>
+            {market.creator.isCreator !== false && (
+              <BadgeCheck className="h-4 w-4 text-primary fill-primary/20" />
+            )}
+          </div>
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={handleShare}>
               <Share2 className="h-4 w-4" />
             </Button>
-          </div>
-          
-          {/* Stats overlay */}
-          <div className="absolute bottom-2 left-3 flex items-center gap-3 text-[11px]">
-            <div className="flex items-center gap-1 bg-background/80 backdrop-blur-sm rounded-full px-2 py-0.5">
-              <TrendingUp className="h-3 w-3 text-primary" />
-              <span className="font-semibold">{market.volume}</span>
-            </div>
-            <div className="flex items-center gap-1 bg-background/80 backdrop-blur-sm rounded-full px-2 py-0.5">
-              <Clock className="h-3 w-3" />
-              <span>{market.endsIn}</span>
-            </div>
-            {market.traders && (
-              <div className="flex items-center gap-1 bg-background/80 backdrop-blur-sm rounded-full px-2 py-0.5">
-                <Users className="h-3 w-3" />
-                <span>{market.traders.toLocaleString()}</span>
-              </div>
-            )}
+            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={handleViewFullPage}>
+              <ExternalLink className="h-4 w-4" />
+            </Button>
           </div>
         </div>
 
-        <ScrollArea className="flex-1 max-h-[calc(90vh-112px)]">
-          <div className="p-4 space-y-4">
-            {/* Title */}
-            <h2 className="text-lg font-bold leading-tight">{market.title}</h2>
-
-            {/* Tabs for different sections */}
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="w-full grid grid-cols-3 h-9">
-                <TabsTrigger value="trade" className="text-xs">Trade</TabsTrigger>
-                <TabsTrigger value="chart" className="text-xs">Chart</TabsTrigger>
-                <TabsTrigger value="discuss" className="text-xs">Comments</TabsTrigger>
-              </TabsList>
-
-              {/* TRADE TAB */}
-              <TabsContent value="trade" className="mt-4 space-y-4">
-                {/* Outcome Selection */}
-                <div className="space-y-2">
-                  <p className="text-sm font-medium text-muted-foreground">Select outcome</p>
-                  
-                  {isBinary ? (
-                    <div className="grid grid-cols-2 gap-2">
-                      {market.outcomes.map((outcome, index) => {
-                        const isYes = outcome.label.toLowerCase() === "yes";
-                        const isSelected = selectedOutcome?.label === outcome.label;
-                        
-                        return (
-                          <button
-                            key={index}
-                            onClick={() => setSelectedOutcome(outcome)}
-                            className={`p-3 rounded-xl transition-all active:scale-[0.98] border-2 ${
-                              isSelected
-                                ? isYes 
-                                  ? 'border-success bg-success/10' 
-                                  : 'border-muted-foreground bg-muted'
-                                : isYes
-                                  ? 'border-success/30 hover:border-success/50 hover:bg-success/5'
-                                  : 'border-border hover:border-muted-foreground/50 hover:bg-muted/50'
-                            }`}
-                          >
-                            <div className={`mx-auto w-8 h-8 rounded-full flex items-center justify-center mb-2 ${
-                              isYes ? 'bg-success/20 text-success' : 'bg-muted text-muted-foreground'
-                            }`}>
-                              {isYes ? <Check className="h-4 w-4" /> : <X className="h-4 w-4" />}
-                            </div>
-                            <p className="font-semibold text-sm">{outcome.label}</p>
-                            <p className="text-lg font-bold">{outcome.price}¢</p>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  ) : (
-                    <div className="space-y-1.5 max-h-[140px] overflow-y-auto">
-                      {market.outcomes.map((outcome, index) => {
-                        const isSelected = selectedOutcome?.label === outcome.label;
-                        
-                        return (
-                          <button
-                            key={index}
-                            onClick={() => setSelectedOutcome(outcome)}
-                            className={`w-full flex items-center gap-3 p-2.5 rounded-xl transition-all border ${
-                              isSelected
-                                ? 'border-primary bg-primary/5'
-                                : 'border-transparent hover:bg-muted/50'
-                            }`}
-                          >
-                            {outcome.logo ? (
-                              <img src={outcome.logo} alt={outcome.label} className="h-8 w-8 object-contain" />
-                            ) : (
-                              <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center text-sm font-bold">
-                                {outcome.label.charAt(0)}
-                              </div>
-                            )}
-                            <span className="flex-1 text-left font-medium text-sm">{outcome.label}</span>
-                            <span className="text-base font-bold">{outcome.price}%</span>
-                            {isSelected && (
-                              <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center">
-                                <Check className="h-3 w-3 text-primary-foreground" />
-                              </div>
-                            )}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-
-                {/* Amount Input - Only show when outcome is selected */}
-                {selectedOutcome && (
-                  <>
-                    <Separator />
-                    
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <p className="text-sm font-medium text-muted-foreground">Amount</p>
-                        <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                          <Wallet className="h-3.5 w-3.5" />
-                          <span>$5,230.00</span>
-                        </div>
-                      </div>
-                      
-                      <div className="relative">
-                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground font-medium">$</span>
-                        <Input
-                          type="number"
-                          value={amount}
-                          onChange={(e) => setAmount(e.target.value)}
-                          className="pl-7 h-11 text-lg font-semibold"
-                          min="1"
-                          max="10000"
-                          step="1"
-                        />
-                      </div>
-                      
-                      <div className="grid grid-cols-4 gap-1.5">
-                        {quickAmounts.map((quickAmount) => (
-                          <Button
-                            key={quickAmount}
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setAmount(quickAmount.toString())}
-                            className={`h-8 text-xs ${amount === quickAmount.toString() ? 'border-primary bg-primary/5' : ''}`}
-                          >
-                            ${quickAmount}
-                          </Button>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="p-3 rounded-xl bg-muted/30 space-y-1.5">
-                      <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Shares</span>
-                        <span className="font-semibold">{shares.toLocaleString()}</span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Potential profit</span>
-                        <span className={`font-semibold ${potentialProfit > 0 ? 'text-success' : ''}`}>
-                          +${potentialProfit.toFixed(2)}
-                        </span>
-                      </div>
-                    </div>
-                  </>
-                )}
-
-                {/* Buy Button */}
-                <Button
-                  className="w-full h-11 font-semibold"
-                  onClick={handleBuy}
-                  disabled={!selectedOutcome || isSubmitting || amountNum < 1 || amountNum > 10000}
-                >
-                  {isSubmitting 
-                    ? "Placing order..." 
-                    : selectedOutcome 
-                      ? `Buy ${selectedOutcome.label} for $${amountNum.toFixed(2)}`
-                      : "Select an outcome"
-                  }
-                </Button>
-
-                <Separator />
-
-                {/* Description */}
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2 text-sm font-medium">
-                    <FileText className="h-4 w-4 text-muted-foreground" />
-                    <span>Description</span>
+        {/* Two Column Layout */}
+        <div className="flex flex-col sm:flex-row flex-1 overflow-hidden">
+          {/* LEFT: Market Info */}
+          <ScrollArea className="flex-1 sm:border-r border-border/40">
+            <div className="p-4 space-y-4">
+              {/* Title & Stats */}
+              <div className="space-y-2">
+                <h2 className="text-base font-bold leading-tight">{market.title}</h2>
+                <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
+                  <div className="flex items-center gap-1">
+                    <TrendingUp className="h-3.5 w-3.5 text-primary" />
+                    <span className="font-semibold text-foreground">{market.volume}</span>
+                    <span>volume</span>
                   </div>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    {description}
-                  </p>
-                </div>
-
-                {/* Resolution Criteria - Collapsible */}
-                <Collapsible open={showResolution} onOpenChange={setShowResolution}>
-                  <CollapsibleTrigger className="flex items-center justify-between w-full py-2 text-sm font-medium hover:text-primary transition-colors">
-                    <div className="flex items-center gap-2">
-                      <BarChart3 className="h-4 w-4 text-muted-foreground" />
-                      <span>Resolution Criteria</span>
-                    </div>
-                    {showResolution ? (
-                      <ChevronUp className="h-4 w-4 text-muted-foreground" />
-                    ) : (
-                      <ChevronDown className="h-4 w-4 text-muted-foreground" />
-                    )}
-                  </CollapsibleTrigger>
-                  <CollapsibleContent>
-                    <div className="p-3 rounded-lg bg-muted/30 mt-2">
-                      <p className="text-sm text-muted-foreground leading-relaxed">
-                        {resolutionCriteria}
-                      </p>
-                    </div>
-                  </CollapsibleContent>
-                </Collapsible>
-              </TabsContent>
-
-              {/* CHART TAB */}
-              <TabsContent value="chart" className="mt-4 space-y-4">
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <p className="text-sm font-medium">Price History</p>
-                    <Badge variant="secondary" className="text-xs">
-                      {isBinary ? `${market.outcomes[0].price}¢` : `${market.outcomes[0].price}%`}
-                    </Badge>
+                  <div className="flex items-center gap-1">
+                    <Users className="h-3.5 w-3.5" />
+                    <span>{market.traders?.toLocaleString() || "1.2K"} traders</span>
                   </div>
-                  
-                  <div className="h-48 rounded-xl overflow-hidden bg-muted/20 p-2">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <AreaChart data={priceHistory} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-                        <defs>
-                          <linearGradient id="dialogChartGradient" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.4}/>
-                            <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
-                          </linearGradient>
-                        </defs>
-                        <XAxis 
-                          dataKey="date" 
-                          axisLine={false}
-                          tickLine={false}
-                          tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
-                        />
-                        <Tooltip 
-                          contentStyle={{
-                            backgroundColor: "hsl(var(--popover))",
-                            border: "1px solid hsl(var(--border))",
-                            borderRadius: "8px",
-                            fontSize: "12px"
-                          }}
-                          formatter={(value: any) => [`${value}%`, "Price"]}
-                        />
-                        <Area 
-                          type="monotone" 
-                          dataKey="price" 
-                          stroke="hsl(var(--primary))" 
-                          fill="url(#dialogChartGradient)" 
-                          strokeWidth={2} 
-                        />
-                      </AreaChart>
-                    </ResponsiveContainer>
+                  <div className="flex items-center gap-1">
+                    <Clock className="h-3.5 w-3.5" />
+                    <span>{market.endsIn}</span>
                   </div>
                 </div>
+              </div>
 
-                {/* Market Stats */}
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="p-3 rounded-lg bg-muted/30">
-                    <p className="text-xs text-muted-foreground">Volume</p>
-                    <p className="text-lg font-bold">{market.volume}</p>
-                  </div>
-                  <div className="p-3 rounded-lg bg-muted/30">
-                    <p className="text-xs text-muted-foreground">Traders</p>
-                    <p className="text-lg font-bold">{market.traders?.toLocaleString() || "1.2K"}</p>
-                  </div>
-                  <div className="p-3 rounded-lg bg-muted/30">
-                    <p className="text-xs text-muted-foreground">Ends</p>
-                    <p className="text-lg font-bold">{market.endsIn}</p>
-                  </div>
-                  <div className="p-3 rounded-lg bg-muted/30">
-                    <p className="text-xs text-muted-foreground">Liquidity</p>
-                    <p className="text-lg font-bold">$45K</p>
-                  </div>
-                </div>
-              </TabsContent>
-
-              {/* COMMENTS TAB */}
-              <TabsContent value="discuss" className="mt-4 space-y-4">
-                {/* Comment Input */}
-                <div className="flex items-center gap-3">
-                  <Avatar className="h-8 w-8 flex-shrink-0">
-                    <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=User" />
-                    <AvatarFallback>U</AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1 relative">
-                    <Input
-                      placeholder="Add a comment..."
-                      value={commentText}
-                      onChange={(e) => setCommentText(e.target.value)}
-                      onKeyDown={(e) => e.key === 'Enter' && handleComment()}
-                      className="pr-10 h-9 text-sm"
+              {/* Mini Chart */}
+              <div className="h-24 rounded-lg overflow-hidden bg-muted/20">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={priceHistory} margin={{ top: 8, right: 8, left: 8, bottom: 0 }}>
+                    <defs>
+                      <linearGradient id="dialogChartGradient" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3}/>
+                        <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
+                      </linearGradient>
+                    </defs>
+                    <XAxis 
+                      dataKey="date" 
+                      axisLine={false}
+                      tickLine={false}
+                      tick={{ fontSize: 9, fill: 'hsl(var(--muted-foreground))' }}
                     />
-                    {commentText.trim() && (
-                      <button 
-                        onClick={handleComment}
-                        className="absolute right-2 top-1/2 -translate-y-1/2 text-primary"
+                    <Tooltip 
+                      contentStyle={{
+                        backgroundColor: "hsl(var(--popover))",
+                        border: "1px solid hsl(var(--border))",
+                        borderRadius: "6px",
+                        fontSize: "11px",
+                        padding: "4px 8px"
+                      }}
+                      formatter={(value: any) => [`${value}%`, ""]}
+                    />
+                    <Area 
+                      type="monotone" 
+                      dataKey="price" 
+                      stroke="hsl(var(--primary))" 
+                      fill="url(#dialogChartGradient)" 
+                      strokeWidth={1.5} 
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
+
+              {/* Description */}
+              <div className="space-y-1.5">
+                <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+                  <FileText className="h-3.5 w-3.5" />
+                  <span>Description</span>
+                </div>
+                <p className="text-sm text-foreground/80 leading-relaxed">
+                  {description}
+                </p>
+              </div>
+
+              {/* Resolution Criteria */}
+              <Collapsible open={showResolution} onOpenChange={setShowResolution}>
+                <CollapsibleTrigger className="flex items-center justify-between w-full py-2 px-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors">
+                  <div className="flex items-center gap-1.5 text-xs font-medium">
+                    <Scale className="h-3.5 w-3.5 text-muted-foreground" />
+                    <span>Resolution Criteria</span>
+                  </div>
+                  {showResolution ? (
+                    <ChevronUp className="h-4 w-4 text-muted-foreground" />
+                  ) : (
+                    <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                  )}
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <p className="text-sm text-muted-foreground leading-relaxed mt-2 px-1">
+                    {resolutionCriteria}
+                  </p>
+                </CollapsibleContent>
+              </Collapsible>
+
+              {/* Comments Preview */}
+              <Collapsible open={showComments} onOpenChange={setShowComments}>
+                <CollapsibleTrigger className="flex items-center justify-between w-full py-2 px-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors">
+                  <div className="flex items-center gap-1.5 text-xs font-medium">
+                    <MessageCircle className="h-3.5 w-3.5 text-muted-foreground" />
+                    <span>{comments.length} Comments</span>
+                  </div>
+                  {showComments ? (
+                    <ChevronUp className="h-4 w-4 text-muted-foreground" />
+                  ) : (
+                    <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                  )}
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <div className="mt-3 space-y-3">
+                    {comments.slice(0, 3).map((comment) => (
+                      <div key={comment.id} className="flex items-start gap-2">
+                        <Avatar className="h-6 w-6 flex-shrink-0">
+                          <AvatarImage src={comment.author.avatar} />
+                          <AvatarFallback className="text-[8px]">{comment.author.name.slice(0, 2)}</AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs">
+                            <span className="font-semibold">{comment.author.username} </span>
+                            <span className="text-foreground/80">{comment.text}</span>
+                          </p>
+                          <div className="flex items-center gap-2 mt-0.5 text-[10px] text-muted-foreground">
+                            <span>{comment.timestamp}</span>
+                            <span>{comment.likes} likes</span>
+                          </div>
+                        </div>
+                        <Heart className="h-3 w-3 text-muted-foreground flex-shrink-0 mt-0.5" />
+                      </div>
+                    ))}
+                    
+                    {/* Add comment */}
+                    <div className="flex items-center gap-2 pt-2">
+                      <Input
+                        placeholder="Add a comment..."
+                        value={commentText}
+                        onChange={(e) => setCommentText(e.target.value)}
+                        onKeyDown={(e) => e.key === 'Enter' && handleComment()}
+                        className="h-8 text-xs"
+                      />
+                      {commentText.trim() && (
+                        <Button size="icon" className="h-8 w-8" onClick={handleComment}>
+                          <Send className="h-3.5 w-3.5" />
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                </CollapsibleContent>
+              </Collapsible>
+            </div>
+          </ScrollArea>
+
+          {/* RIGHT: Quick Trade Panel - Always Visible */}
+          <div className="w-full sm:w-[260px] flex-shrink-0 bg-muted/20 flex flex-col">
+            <div className="p-4 space-y-4 flex-1">
+              {/* Quick Trade Header */}
+              <div className="flex items-center gap-2">
+                <Zap className="h-4 w-4 text-primary" />
+                <span className="text-sm font-semibold">Quick Trade</span>
+              </div>
+
+              {/* Outcome Selection */}
+              {isBinary ? (
+                <div className="grid grid-cols-2 gap-2">
+                  {market.outcomes.map((outcome, index) => {
+                    const isYes = outcome.label.toLowerCase() === "yes";
+                    const isSelected = selectedOutcome?.label === outcome.label;
+                    
+                    return (
+                      <button
+                        key={index}
+                        onClick={() => setSelectedOutcome(outcome)}
+                        className={`p-3 rounded-xl transition-all active:scale-[0.98] border-2 ${
+                          isSelected
+                            ? isYes 
+                              ? 'border-success bg-success/15' 
+                              : 'border-muted-foreground bg-muted'
+                            : isYes
+                              ? 'border-success/30 hover:border-success/50 bg-success/5'
+                              : 'border-border hover:border-muted-foreground/50 bg-background'
+                        }`}
                       >
-                        <Send className="h-4 w-4" />
+                        <div className={`mx-auto w-7 h-7 rounded-full flex items-center justify-center mb-1.5 ${
+                          isYes ? 'bg-success/20 text-success' : 'bg-muted text-muted-foreground'
+                        }`}>
+                          {isYes ? <Check className="h-4 w-4" /> : <X className="h-4 w-4" />}
+                        </div>
+                        <p className="font-semibold text-xs">{outcome.label}</p>
+                        <p className="text-lg font-bold">{outcome.price}¢</p>
                       </button>
-                    )}
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="space-y-1.5 max-h-[140px] overflow-y-auto">
+                  {market.outcomes.map((outcome, index) => {
+                    const isSelected = selectedOutcome?.label === outcome.label;
+                    
+                    return (
+                      <button
+                        key={index}
+                        onClick={() => setSelectedOutcome(outcome)}
+                        className={`w-full flex items-center gap-2 p-2 rounded-lg transition-all border ${
+                          isSelected
+                            ? 'border-primary bg-primary/10'
+                            : 'border-transparent hover:bg-muted/50 bg-background'
+                        }`}
+                      >
+                        {outcome.logo ? (
+                          <img src={outcome.logo} alt={outcome.label} className="h-6 w-6 object-contain" />
+                        ) : (
+                          <div className="h-6 w-6 rounded-full bg-muted flex items-center justify-center text-xs font-bold">
+                            {outcome.label.charAt(0)}
+                          </div>
+                        )}
+                        <span className="flex-1 text-left font-medium text-xs truncate">{outcome.label}</span>
+                        <span className="text-sm font-bold">{outcome.price}%</span>
+                        {isSelected && (
+                          <Check className="h-3.5 w-3.5 text-primary" />
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+
+              {/* Amount Section */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-muted-foreground">Amount</span>
+                  <div className="flex items-center gap-1 text-muted-foreground">
+                    <Wallet className="h-3 w-3" />
+                    <span>$5,230</span>
                   </div>
                 </div>
-
-                <Separator />
-
-                {/* Comments List */}
-                <div className="space-y-4">
-                  {comments.map((comment) => (
-                    <div key={comment.id} className="flex items-start gap-3">
-                      <Avatar className="h-8 w-8 flex-shrink-0">
-                        <AvatarImage src={comment.author.avatar} />
-                        <AvatarFallback>{comment.author.name.slice(0, 2)}</AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm">
-                          <span className="font-semibold">{comment.author.username} </span>
-                          <span className="text-foreground/90">{comment.text}</span>
-                        </p>
-                        <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground">
-                          <span>{comment.timestamp}</span>
-                          <span>{comment.likes} likes</span>
-                          <button className="font-medium hover:text-foreground">Reply</button>
-                        </div>
-                      </div>
-                      <button className="pt-1 hover:text-primary transition-colors">
-                        <Heart className="h-3.5 w-3.5" />
-                      </button>
-                    </div>
+                
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">$</span>
+                  <Input
+                    type="number"
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
+                    className="pl-6 h-10 text-base font-semibold bg-background"
+                    min="1"
+                    max="10000"
+                    step="1"
+                  />
+                </div>
+                
+                <div className="grid grid-cols-4 gap-1">
+                  {quickAmounts.map((quickAmount) => (
+                    <Button
+                      key={quickAmount}
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setAmount(quickAmount.toString())}
+                      className={`h-7 text-[10px] px-0 ${amount === quickAmount.toString() ? 'border-primary bg-primary/5' : 'bg-background'}`}
+                    >
+                      ${quickAmount}
+                    </Button>
                   ))}
                 </div>
+              </div>
 
-                {comments.length > 3 && (
-                  <Button variant="ghost" className="w-full text-sm text-muted-foreground">
-                    View all {comments.length} comments
-                  </Button>
-                )}
-              </TabsContent>
-            </Tabs>
+              {/* Order Summary - Always visible */}
+              <div className="p-2.5 rounded-lg bg-background border border-border/50 space-y-1.5">
+                <div className="flex justify-between text-xs">
+                  <span className="text-muted-foreground">Shares</span>
+                  <span className="font-semibold">{selectedOutcome ? shares.toLocaleString() : "—"}</span>
+                </div>
+                <div className="flex justify-between text-xs">
+                  <span className="text-muted-foreground">Avg price</span>
+                  <span className="font-semibold">{selectedOutcome ? `${selectedOutcome.price}¢` : "—"}</span>
+                </div>
+                <Separator className="my-1.5" />
+                <div className="flex justify-between text-xs">
+                  <span className="text-muted-foreground">Potential profit</span>
+                  <span className={`font-bold ${selectedOutcome && potentialProfit > 0 ? 'text-success' : ''}`}>
+                    {selectedOutcome ? `+$${potentialProfit.toFixed(2)}` : "—"}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Sticky Buy Button */}
+            <div className="p-4 pt-0">
+              <Button
+                className="w-full h-11 font-semibold text-sm"
+                onClick={handleBuy}
+                disabled={!selectedOutcome || isSubmitting || amountNum < 1 || amountNum > 10000}
+              >
+                {isSubmitting 
+                  ? "Placing order..." 
+                  : selectedOutcome 
+                    ? `Buy ${selectedOutcome.label} • $${amountNum.toFixed(2)}`
+                    : "Select outcome to trade"
+                }
+              </Button>
+            </div>
           </div>
-        </ScrollArea>
+        </div>
       </DialogContent>
     </Dialog>
   );
