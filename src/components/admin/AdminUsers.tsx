@@ -72,7 +72,8 @@ export const AdminUsers = () => {
         </Button>
       </div>
 
-      <Card className="border-border/40">
+      {/* Desktop Table */}
+      <Card className="border-border/40 hidden md:block">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
@@ -137,6 +138,58 @@ export const AdminUsers = () => {
           </table>
         </div>
       </Card>
+
+      {/* Mobile Cards */}
+      <div className="md:hidden space-y-3">
+        {filteredUsers.map((user) => (
+          <Card key={user.id} className="border-border/40 p-4">
+            <div className="flex items-start justify-between mb-3">
+              <div>
+                <p className="font-medium">{user.name}</p>
+                <p className="text-sm text-muted-foreground">{user.email}</p>
+              </div>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="h-8 w-8">
+                    <MoreHorizontal className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="bg-popover">
+                  <DropdownMenuItem className="gap-2">
+                    <Eye className="h-4 w-4" /> View Profile
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="gap-2">
+                    <Mail className="h-4 w-4" /> Send Email
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="gap-2 text-destructive">
+                    <Ban className="h-4 w-4" /> Suspend
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+            <div className="grid grid-cols-2 gap-2 text-sm">
+              <div>
+                <span className="text-muted-foreground">Status:</span>{" "}
+                <Badge
+                  variant={user.status === "Active" ? "default" : user.status === "Pending" ? "secondary" : "destructive"}
+                  className="text-xs"
+                >
+                  {user.status}
+                </Badge>
+              </div>
+              <div>
+                <span className="text-muted-foreground">Verified:</span>{" "}
+                <Badge variant={user.verified ? "default" : "secondary"} className="text-xs">
+                  {user.verified ? "Yes" : "No"}
+                </Badge>
+              </div>
+              <div><span className="text-muted-foreground">Portfolio:</span> <span className="font-medium">${user.portfolio.toLocaleString()}</span></div>
+              <div><span className="text-muted-foreground">Trades:</span> {user.trades}</div>
+              <div className="col-span-2"><span className="text-muted-foreground">Joined:</span> {user.joined}</div>
+            </div>
+          </Card>
+        ))}
+      </div>
     </div>
   );
 };

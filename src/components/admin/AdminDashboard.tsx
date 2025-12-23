@@ -143,9 +143,9 @@ export const AdminDashboard = () => {
         <CardContent className="p-0">
           <div className="divide-y divide-border/40">
             {recentActivity.map((activity) => (
-              <div key={activity.id} className="flex items-center justify-between p-4 hover:bg-muted/30 transition-colors">
+              <div key={activity.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 hover:bg-muted/30 transition-colors gap-1">
                 <p className="text-sm">{activity.message}</p>
-                <span className="text-xs text-muted-foreground whitespace-nowrap ml-4">{activity.time}</span>
+                <span className="text-xs text-muted-foreground whitespace-nowrap">{activity.time}</span>
               </div>
             ))}
           </div>

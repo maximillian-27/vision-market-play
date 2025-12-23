@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Settings } from "lucide-react";
-import { AdminSidebar } from "@/components/admin/AdminSidebar";
+import { AdminSidebar, MobileAdminSidebar } from "@/components/admin/AdminSidebar";
 import { AdminDashboard } from "@/components/admin/AdminDashboard";
 import { AdminUsers } from "@/components/admin/AdminUsers";
 import { AdminMarkets } from "@/components/admin/AdminMarkets";
@@ -77,7 +77,27 @@ const Admin = () => {
       />
 
       <div className="flex-1 overflow-auto">
-        <div className="p-6">
+        {/* Mobile Header */}
+        <div className="sticky top-0 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border/40 p-4 md:hidden">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <MobileAdminSidebar
+                activeSection={activeSection}
+                onSectionChange={setActiveSection}
+              />
+              <div>
+                <h1 className="text-lg font-bold">{currentSection.title}</h1>
+                <p className="text-xs text-muted-foreground">{currentSection.description}</p>
+              </div>
+            </div>
+            <Button variant="ghost" size="icon">
+              <Settings className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+
+        {/* Desktop Header */}
+        <div className="hidden md:block p-6">
           <div className="flex items-center justify-between mb-6">
             <div>
               <h1 className="text-2xl font-bold">{currentSection.title}</h1>
@@ -88,7 +108,10 @@ const Admin = () => {
               Settings
             </Button>
           </div>
+        </div>
 
+        {/* Content */}
+        <div className="p-4 md:px-6 md:pt-0">
           {renderSectionContent()}
         </div>
       </div>
