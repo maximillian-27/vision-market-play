@@ -598,15 +598,26 @@ export default function MarketDetail() {
             </Button>
           </div>
 
-          {/* Order Summary - compact */}
+          {/* Order Summary - compact with all key info */}
           {selectedOutcome && (
             <div className="flex items-center justify-between text-xs bg-muted/30 rounded-lg px-3 py-2">
-              <span className="text-muted-foreground">
-                {shares} shares @ {selectedOutcome.price}¢
-              </span>
-              <span className={`font-semibold ${potentialProfit > 0 ? 'text-success' : ''}`}>
-                Profit: +${potentialProfit.toFixed(2)}
-              </span>
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-1">
+                  <span className="text-muted-foreground">Shares</span>
+                  <span className="font-semibold">{shares}</span>
+                </div>
+                <div className="w-px h-3 bg-border" />
+                <div className="flex items-center gap-1">
+                  <span className="text-muted-foreground">Avg</span>
+                  <span className="font-semibold">{selectedOutcome.price}¢</span>
+                </div>
+              </div>
+              <div className="flex items-center gap-1">
+                <span className="text-muted-foreground">Profit</span>
+                <span className={`font-semibold ${potentialProfit > 0 ? 'text-success' : ''}`}>
+                  +${potentialProfit.toFixed(2)}
+                </span>
+              </div>
             </div>
           )}
         </div>
