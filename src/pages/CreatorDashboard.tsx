@@ -100,98 +100,91 @@ const CreatorDashboard = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="max-w-7xl mx-auto px-4 lg:px-8 py-6">
-        <PageHeader 
-          title="Creator Dashboard" 
-          subtitle="Track your market performance and audience growth"
-          action={
-            <div className="flex gap-2">
-              <Button variant="outline" size="sm" onClick={() => navigate("/settings")} className="gap-2">
-                <Settings className="h-4 w-4" />
-                Settings
-              </Button>
-              <Button size="sm" className="gap-2">
-                <Plus className="h-4 w-4" />
-                Create Market
-              </Button>
-            </div>
-          }
-        />
+    <div className="min-h-screen bg-background pb-20 md:pb-6">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-6">
+        {/* Mobile-optimized header */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5">
+          <div>
+            <h1 className="text-xl sm:text-2xl font-bold">Creator Dashboard</h1>
+            <p className="text-sm text-muted-foreground">Track your performance</p>
+          </div>
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm" onClick={() => navigate("/settings")} className="gap-1.5 h-9 flex-1 sm:flex-none">
+              <Settings className="h-4 w-4" />
+              <span className="sm:inline">Settings</span>
+            </Button>
+            <Button size="sm" className="gap-1.5 h-9 flex-1 sm:flex-none">
+              <Plus className="h-4 w-4" />
+              <span>Create</span>
+            </Button>
+          </div>
+        </div>
 
-        {/* Earnings Balance & Market Tokens Card */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        {/* Balance & Tokens - Stacked on mobile */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-5">
           {/* Current Balance Card */}
           <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-primary/10">
-            <CardContent className="p-5">
-              <div className="flex items-start justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center">
-                    <Wallet className="h-6 w-6 text-primary" />
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                    <Wallet className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground font-medium">Current Balance</p>
-                    <p className="text-3xl font-bold text-primary">${creatorStats.currentBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                    <p className="text-xs sm:text-sm text-muted-foreground font-medium">Current Balance</p>
+                    <p className="text-2xl sm:text-3xl font-bold text-primary">${creatorStats.currentBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
                   </div>
                 </div>
-                <Button variant="outline" size="sm" className="text-xs">
+                <Button variant="outline" size="sm" className="text-xs h-8 shrink-0">
                   Withdraw
                 </Button>
               </div>
-              <div className="flex items-center gap-2 mt-4 pt-4 border-t border-border/30 text-xs text-muted-foreground">
-                <Clock className="h-3.5 w-3.5" />
+              <div className="flex items-center gap-2 mt-3 pt-3 border-t border-border/30 text-[11px] sm:text-xs text-muted-foreground">
+                <Clock className="h-3 w-3 sm:h-3.5 sm:w-3.5 shrink-0" />
                 <span>Payouts every Friday at 12:00 AM EST</span>
               </div>
             </CardContent>
           </Card>
 
           {/* Market Tokens Card */}
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Card className="border-amber-500/20 bg-gradient-to-br from-amber-500/5 to-amber-500/10 cursor-help">
-                  <CardContent className="p-5">
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-center gap-4">
-                        <div className="h-12 w-12 rounded-xl bg-amber-500/10 flex items-center justify-center">
-                          <Sparkles className="h-6 w-6 text-amber-500" />
-                        </div>
-                        <div>
-                          <p className="text-sm text-muted-foreground font-medium">Market Tokens</p>
-                          <div className="flex items-baseline gap-1.5">
-                            <span className="text-3xl font-bold text-amber-500">{marketTokens}</span>
-                            <span className="text-lg text-muted-foreground font-medium">/ 1</span>
-                          </div>
-                        </div>
-                      </div>
-                      <Badge variant="outline" className={`${marketTokens > 0 ? 'border-success/40 text-success bg-success/10' : 'border-muted text-muted-foreground'}`}>
-                        {marketTokens > 0 ? 'Available' : 'Used'}
-                      </Badge>
+          <Card className="border-amber-500/20 bg-gradient-to-br from-amber-500/5 to-amber-500/10">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-xl bg-amber-500/10 flex items-center justify-center shrink-0">
+                    <Sparkles className="h-5 w-5 sm:h-6 sm:w-6 text-amber-500" />
+                  </div>
+                  <div>
+                    <p className="text-xs sm:text-sm text-muted-foreground font-medium">Market Tokens</p>
+                    <div className="flex items-baseline gap-1">
+                      <span className="text-2xl sm:text-3xl font-bold text-amber-500">{marketTokens}</span>
+                      <span className="text-base sm:text-lg text-muted-foreground font-medium">/ 1</span>
                     </div>
-                    <div className="flex items-center justify-between mt-4 pt-4 border-t border-border/30">
-                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                        <Clock className="h-3.5 w-3.5" />
-                        <span>Refreshes at midnight GMT+1</span>
-                      </div>
-                      <div className="flex items-center gap-1.5 bg-background/60 px-2.5 py-1 rounded-md border border-border/40">
-                        <span className="text-[10px] text-muted-foreground uppercase tracking-wide">In</span>
-                        <span className="text-sm font-mono font-bold text-foreground">{timeUntilRefresh}</span>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </TooltipTrigger>
-              <TooltipContent side="bottom" className="max-w-xs">
-                <p className="text-sm">You can create 1 market per day. Tokens refresh daily at midnight GMT+1.</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+                  </div>
+                </div>
+                <Badge variant="outline" className={`text-[10px] sm:text-xs shrink-0 ${marketTokens > 0 ? 'border-success/40 text-success bg-success/10' : 'border-muted text-muted-foreground'}`}>
+                  {marketTokens > 0 ? 'Available' : 'Used'}
+                </Badge>
+              </div>
+              <div className="flex items-center justify-between mt-3 pt-3 border-t border-border/30 gap-2">
+                <div className="flex items-center gap-1.5 text-[11px] sm:text-xs text-muted-foreground">
+                  <Clock className="h-3 w-3 sm:h-3.5 sm:w-3.5 shrink-0" />
+                  <span className="hidden sm:inline">Refreshes at midnight GMT+1</span>
+                  <span className="sm:hidden">Midnight GMT+1</span>
+                </div>
+                <div className="flex items-center gap-1 bg-background/60 px-2 py-0.5 rounded-md border border-border/40">
+                  <span className="text-[9px] sm:text-[10px] text-muted-foreground uppercase">In</span>
+                  <span className="text-xs sm:text-sm font-mono font-bold text-foreground">{timeUntilRefresh}</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Time Range Selector */}
-        <div className="flex justify-end mb-6">
+        <div className="flex justify-end mb-4">
           <Select value={timeframe} onValueChange={setTimeframe}>
-            <SelectTrigger className="w-32 h-9">
+            <SelectTrigger className="w-28 sm:w-32 h-8 text-xs sm:text-sm">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -203,18 +196,18 @@ const CreatorDashboard = () => {
           </Select>
         </div>
 
-        {/* Stats Overview */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        {/* Stats Overview - Scrollable on mobile */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4 mb-4">
           <Card className="border-border/40">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-2 text-muted-foreground text-sm mb-1">
-                <Users className="h-4 w-4" />
-                Followers
+            <CardContent className="p-3 sm:p-4">
+              <div className="flex items-center gap-1.5 sm:gap-2 text-muted-foreground text-xs sm:text-sm mb-1">
+                <Users className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                <span className="truncate">Followers</span>
               </div>
-              <div className="flex items-center gap-2">
-                <p className="text-2xl font-bold">{creatorStats.totalFollowers.toLocaleString()}</p>
-                <Badge className="text-xs bg-success/10 text-success border-0">
-                  <ArrowUpRight className="h-3 w-3 mr-1" />
+              <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                <p className="text-lg sm:text-2xl font-bold">{creatorStats.totalFollowers.toLocaleString()}</p>
+                <Badge className="text-[10px] sm:text-xs bg-success/10 text-success border-0 w-fit">
+                  <ArrowUpRight className="h-2.5 w-2.5 sm:h-3 sm:w-3 mr-0.5" />
                   {creatorStats.followersGrowth}%
                 </Badge>
               </div>
@@ -222,15 +215,15 @@ const CreatorDashboard = () => {
           </Card>
           
           <Card className="border-border/40">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-2 text-muted-foreground text-sm mb-1">
-                <Eye className="h-4 w-4" />
-                Total Views
+            <CardContent className="p-3 sm:p-4">
+              <div className="flex items-center gap-1.5 sm:gap-2 text-muted-foreground text-xs sm:text-sm mb-1">
+                <Eye className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                <span className="truncate">Views</span>
               </div>
-              <div className="flex items-center gap-2">
-                <p className="text-2xl font-bold">{(creatorStats.totalViews / 1000).toFixed(0)}K</p>
-                <Badge className="text-xs bg-success/10 text-success border-0">
-                  <ArrowUpRight className="h-3 w-3 mr-1" />
+              <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                <p className="text-lg sm:text-2xl font-bold">{(creatorStats.totalViews / 1000).toFixed(0)}K</p>
+                <Badge className="text-[10px] sm:text-xs bg-success/10 text-success border-0 w-fit">
+                  <ArrowUpRight className="h-2.5 w-2.5 sm:h-3 sm:w-3 mr-0.5" />
                   {creatorStats.viewsGrowth}%
                 </Badge>
               </div>
@@ -238,95 +231,96 @@ const CreatorDashboard = () => {
           </Card>
           
           <Card className="border-border/40">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-2 text-muted-foreground text-sm mb-1">
-                <BarChart3 className="h-4 w-4" />
-                Markets Created
+            <CardContent className="p-3 sm:p-4">
+              <div className="flex items-center gap-1.5 sm:gap-2 text-muted-foreground text-xs sm:text-sm mb-1">
+                <BarChart3 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                <span className="truncate">Markets</span>
               </div>
-              <p className="text-2xl font-bold">{creatorStats.marketsCreated}</p>
+              <p className="text-lg sm:text-2xl font-bold">{creatorStats.marketsCreated}</p>
             </CardContent>
           </Card>
           
           <Card className="border-border/40">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-2 text-muted-foreground text-sm mb-1">
-                <DollarSign className="h-4 w-4" />
-                Total Volume
+            <CardContent className="p-3 sm:p-4">
+              <div className="flex items-center gap-1.5 sm:gap-2 text-muted-foreground text-xs sm:text-sm mb-1">
+                <DollarSign className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                <span className="truncate">Volume</span>
               </div>
-              <p className="text-2xl font-bold">${(creatorStats.totalVolume / 1000000).toFixed(2)}M</p>
+              <p className="text-lg sm:text-2xl font-bold">${(creatorStats.totalVolume / 1000000).toFixed(2)}M</p>
             </CardContent>
           </Card>
         </div>
 
-        {/* Secondary Stats */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-          <Card className="border-border/40 bg-muted/20">
-            <CardContent className="p-4">
-              <p className="text-sm text-muted-foreground mb-1">Avg Volume/Market</p>
-              <p className="text-xl font-semibold">${creatorStats.avgMarketVolume.toLocaleString()}</p>
+        {/* Secondary Stats - Horizontal scroll on mobile */}
+        <div className="flex gap-2 sm:grid sm:grid-cols-2 lg:grid-cols-4 sm:gap-4 mb-5 overflow-x-auto pb-2 sm:pb-0 -mx-3 px-3 sm:mx-0 sm:px-0">
+          <Card className="border-border/40 bg-muted/20 min-w-[140px] sm:min-w-0 shrink-0 sm:shrink">
+            <CardContent className="p-3 sm:p-4">
+              <p className="text-[11px] sm:text-sm text-muted-foreground mb-0.5 sm:mb-1 truncate">Avg Vol/Market</p>
+              <p className="text-base sm:text-xl font-semibold">${(creatorStats.avgMarketVolume / 1000).toFixed(0)}K</p>
             </CardContent>
           </Card>
-          <Card className="border-border/40 bg-muted/20">
-            <CardContent className="p-4">
-              <p className="text-sm text-muted-foreground mb-1">Resolved Markets</p>
-              <p className="text-xl font-semibold">{creatorStats.resolvedMarkets}</p>
+          <Card className="border-border/40 bg-muted/20 min-w-[140px] sm:min-w-0 shrink-0 sm:shrink">
+            <CardContent className="p-3 sm:p-4">
+              <p className="text-[11px] sm:text-sm text-muted-foreground mb-0.5 sm:mb-1 truncate">Resolved</p>
+              <p className="text-base sm:text-xl font-semibold">{creatorStats.resolvedMarkets}</p>
             </CardContent>
           </Card>
-          <Card className="border-border/40 bg-muted/20">
-            <CardContent className="p-4">
-              <p className="text-sm text-muted-foreground mb-1">Resolution Accuracy</p>
-              <p className="text-xl font-semibold text-success">{creatorStats.accuracy}%</p>
+          <Card className="border-border/40 bg-muted/20 min-w-[140px] sm:min-w-0 shrink-0 sm:shrink">
+            <CardContent className="p-3 sm:p-4">
+              <p className="text-[11px] sm:text-sm text-muted-foreground mb-0.5 sm:mb-1 truncate">Accuracy</p>
+              <p className="text-base sm:text-xl font-semibold text-success">{creatorStats.accuracy}%</p>
             </CardContent>
           </Card>
-          <Card className="border-border/40 bg-muted/20">
-            <CardContent className="p-4">
-              <p className="text-sm text-muted-foreground mb-1">Creator Earnings</p>
-              <p className="text-xl font-semibold text-success">${creatorStats.earnings.toLocaleString()}</p>
+          <Card className="border-border/40 bg-muted/20 min-w-[140px] sm:min-w-0 shrink-0 sm:shrink">
+            <CardContent className="p-3 sm:p-4">
+              <p className="text-[11px] sm:text-sm text-muted-foreground mb-0.5 sm:mb-1 truncate">Earnings</p>
+              <p className="text-base sm:text-xl font-semibold text-success">${creatorStats.earnings.toLocaleString()}</p>
             </CardContent>
           </Card>
         </div>
 
         {/* Main Content Tabs */}
-        <Tabs defaultValue="markets" className="space-y-6">
-          <TabsList className="bg-muted/50 p-1">
-            <TabsTrigger value="markets" className="data-[state=active]:bg-background">
-              Your Markets
+        <Tabs defaultValue="markets" className="space-y-4">
+          <TabsList className="bg-muted/50 p-1 w-full sm:w-auto grid grid-cols-3 sm:inline-flex">
+            <TabsTrigger value="markets" className="data-[state=active]:bg-background text-xs sm:text-sm">
+              Markets
             </TabsTrigger>
-            <TabsTrigger value="audience" className="data-[state=active]:bg-background">
+            <TabsTrigger value="audience" className="data-[state=active]:bg-background text-xs sm:text-sm">
               Audience
             </TabsTrigger>
-            <TabsTrigger value="earnings" className="data-[state=active]:bg-background">
+            <TabsTrigger value="earnings" className="data-[state=active]:bg-background text-xs sm:text-sm">
               Earnings
             </TabsTrigger>
           </TabsList>
 
           {/* Markets Tab */}
-          <TabsContent value="markets" className="space-y-4">
+          <TabsContent value="markets" className="space-y-3">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold">Your Markets</h3>
-              <Button size="sm" className="gap-2">
-                <Plus className="h-4 w-4" />
-                Create New
+              <h3 className="text-base sm:text-lg font-semibold">Your Markets</h3>
+              <Button size="sm" className="gap-1.5 h-8 text-xs sm:text-sm">
+                <Plus className="h-3.5 w-3.5" />
+                <span className="hidden sm:inline">Create New</span>
+                <span className="sm:hidden">New</span>
               </Button>
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-2 sm:space-y-3">
               {recentMarkets.map((market) => (
                 <Card key={market.id} className="border-border/40 hover:border-border/60 transition-colors cursor-pointer">
-                  <CardContent className="p-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1">
-                          <p className="font-medium">{market.title}</p>
+                  <CardContent className="p-3 sm:p-4">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-start sm:items-center gap-2 mb-1 flex-wrap">
+                          <p className="font-medium text-sm sm:text-base line-clamp-2 sm:line-clamp-1">{market.title}</p>
                           <Badge 
                             variant={market.status === "Active" ? "default" : "secondary"}
-                            className="text-xs"
+                            className="text-[10px] sm:text-xs shrink-0"
                           >
                             {market.status}
                             {market.resolution && `: ${market.resolution}`}
                           </Badge>
                         </div>
-                        <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                        <div className="flex items-center gap-3 text-xs sm:text-sm text-muted-foreground">
                           <span className="flex items-center gap-1">
                             <Calendar className="h-3 w-3" />
                             {market.created}
@@ -334,9 +328,10 @@ const CreatorDashboard = () => {
                           <span>{market.traders.toLocaleString()} traders</span>
                         </div>
                       </div>
-                      <div className="text-right">
-                        <p className="font-semibold">${(market.volume / 1000).toFixed(0)}K</p>
-                        <p className="text-sm text-muted-foreground">volume</p>
+                      <div className="flex items-center justify-between sm:text-right sm:block border-t sm:border-0 pt-2 sm:pt-0 mt-1 sm:mt-0">
+                        <span className="text-xs text-muted-foreground sm:hidden">Volume</span>
+                        <p className="font-semibold text-sm sm:text-base">${(market.volume / 1000).toFixed(0)}K</p>
+                        <p className="text-xs text-muted-foreground hidden sm:block">volume</p>
                       </div>
                     </div>
                   </CardContent>
@@ -346,22 +341,22 @@ const CreatorDashboard = () => {
           </TabsContent>
 
           {/* Audience Tab */}
-          <TabsContent value="audience" className="space-y-4">
-            <h3 className="text-lg font-semibold">Follower Activity</h3>
+          <TabsContent value="audience" className="space-y-3">
+            <h3 className="text-base sm:text-lg font-semibold">Follower Activity</h3>
 
             <Card className="border-border/40">
-              <CardHeader>
-                <CardTitle className="text-base">Recent Follower Changes</CardTitle>
+              <CardHeader className="pb-2 p-3 sm:p-6">
+                <CardTitle className="text-sm sm:text-base">Recent Changes</CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
+              <CardContent className="p-3 sm:p-6 pt-0 sm:pt-0">
+                <div className="space-y-2">
                   {followerActivity.map((day, index) => (
                     <div key={index} className="flex items-center justify-between py-2 border-b border-border/20 last:border-0">
-                      <span className="text-sm text-muted-foreground">{day.date}</span>
-                      <div className="flex items-center gap-4">
-                        <span className="text-sm text-success">+{day.new} new</span>
-                        <span className="text-sm text-destructive">-{day.lost} lost</span>
-                        <span className="text-sm font-medium">Net: +{day.new - day.lost}</span>
+                      <span className="text-xs sm:text-sm text-muted-foreground">{day.date}</span>
+                      <div className="flex items-center gap-2 sm:gap-4 text-xs sm:text-sm">
+                        <span className="text-success">+{day.new}</span>
+                        <span className="text-destructive">-{day.lost}</span>
+                        <span className="font-medium">+{day.new - day.lost}</span>
                       </div>
                     </div>
                   ))}
@@ -371,37 +366,37 @@ const CreatorDashboard = () => {
           </TabsContent>
 
           {/* Earnings Tab */}
-          <TabsContent value="earnings" className="space-y-4">
-            <h3 className="text-lg font-semibold">Earnings Overview</h3>
+          <TabsContent value="earnings" className="space-y-3">
+            <h3 className="text-base sm:text-lg font-semibold">Earnings Overview</h3>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <Card className="border-border/40">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">Total Earnings</CardTitle>
+                <CardHeader className="pb-1 p-3 sm:p-6 sm:pb-2">
+                  <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground">Total Earnings</CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <p className="text-3xl font-bold text-success">${creatorStats.earnings.toLocaleString()}</p>
-                  <p className="text-sm text-muted-foreground">All time</p>
+                <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0">
+                  <p className="text-2xl sm:text-3xl font-bold text-success">${creatorStats.earnings.toLocaleString()}</p>
+                  <p className="text-xs sm:text-sm text-muted-foreground">All time</p>
                 </CardContent>
               </Card>
 
               <Card className="border-border/40">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">This Month</CardTitle>
+                <CardHeader className="pb-1 p-3 sm:p-6 sm:pb-2">
+                  <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground">This Month</CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <p className="text-3xl font-bold">$847</p>
-                  <p className="text-sm text-muted-foreground">January 2024</p>
+                <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0">
+                  <p className="text-2xl sm:text-3xl font-bold">$847</p>
+                  <p className="text-xs sm:text-sm text-muted-foreground">January 2024</p>
                 </CardContent>
               </Card>
 
               <Card className="border-border/40">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">Pending Payout</CardTitle>
+                <CardHeader className="pb-1 p-3 sm:p-6 sm:pb-2">
+                  <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground">Pending Payout</CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <p className="text-3xl font-bold">$234</p>
-                  <Button variant="outline" size="sm" className="mt-2">
+                <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0">
+                  <p className="text-2xl sm:text-3xl font-bold">$234</p>
+                  <Button variant="outline" size="sm" className="mt-2 h-8 text-xs">
                     Withdraw
                   </Button>
                 </CardContent>
