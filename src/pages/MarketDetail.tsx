@@ -309,11 +309,21 @@ export default function MarketDetail() {
           </div>
         </div>
 
-        {/* Chart */}
-        <div className="px-4 pb-4">
-          <div className="h-28 rounded-xl overflow-hidden bg-muted/20">
+        {/* Chart with timeframe filters */}
+        <div className="px-4 pb-4 space-y-2">
+          <div className="flex items-center gap-1.5">
+            {["1D", "1W", "1M", "All"].map((tf) => (
+              <button
+                key={tf}
+                className="px-2.5 py-1 rounded-md text-[10px] font-medium bg-muted/50 hover:bg-muted text-muted-foreground hover:text-foreground transition-colors first:bg-muted first:text-foreground"
+              >
+                {tf}
+              </button>
+            ))}
+          </div>
+          <div className="h-36 rounded-xl overflow-hidden bg-muted/20 p-2">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={market.priceHistory} margin={{ top: 10, right: 10, left: 10, bottom: 0 }}>
+              <AreaChart data={market.priceHistory} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                 <defs>
                   <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.4}/>
@@ -325,15 +335,18 @@ export default function MarketDetail() {
                   axisLine={false}
                   tickLine={false}
                   tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
+                  interval="preserveStartEnd"
                 />
                 <Tooltip 
                   contentStyle={{
                     backgroundColor: "hsl(var(--popover))",
                     border: "1px solid hsl(var(--border))",
                     borderRadius: "8px",
-                    fontSize: "12px"
+                    fontSize: "12px",
+                    padding: "6px 10px"
                   }}
-                  formatter={(value: any) => [`${value}%`, ""]}
+                  formatter={(value: any) => [`${value}%`, "Price"]}
+                  labelFormatter={(label) => `Date: ${label}`}
                 />
                 <Area type="monotone" dataKey="price" stroke="hsl(var(--primary))" fill="url(#chartGradient)" strokeWidth={2} />
               </AreaChart>
