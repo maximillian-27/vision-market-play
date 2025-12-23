@@ -120,8 +120,8 @@ export const AdminTransactions = () => {
         </Card>
       </div>
 
-      {/* Transactions List */}
-      <Card className="border-border/40">
+      {/* Desktop Table */}
+      <Card className="border-border/40 hidden md:block">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
@@ -188,6 +188,60 @@ export const AdminTransactions = () => {
           </table>
         </div>
       </Card>
+
+      {/* Mobile Cards */}
+      <div className="md:hidden space-y-3">
+        {filteredTransactions.map((txn) => {
+          const Icon = typeIcons[txn.type as keyof typeof typeIcons];
+          const color = typeColors[txn.type as keyof typeof typeColors];
+          return (
+            <Card key={txn.id} className="border-border/40 p-4">
+              <div className="flex items-start justify-between mb-2">
+                <div>
+                  <code className="text-xs bg-muted px-2 py-1 rounded">{txn.id}</code>
+                  <p className="text-sm text-muted-foreground mt-1">{txn.user}</p>
+                </div>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon" className="h-8 w-8">
+                      <MoreHorizontal className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="bg-popover">
+                    <DropdownMenuItem className="gap-2">
+                      <Eye className="h-4 w-4" /> View Details
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+              <div className="grid grid-cols-2 gap-2 text-sm">
+                <div>
+                  <span className="text-muted-foreground">Type:</span>{" "}
+                  <span className={`inline-flex items-center gap-1 ${color}`}>
+                    <Icon className="h-3 w-3" /> {txn.type}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">Status:</span>{" "}
+                  <Badge
+                    variant={
+                      txn.status === "Completed" ? "default" :
+                      txn.status === "Pending" ? "secondary" :
+                      txn.status === "Under Review" ? "outline" : "destructive"
+                    }
+                    className="text-xs"
+                  >
+                    {txn.status}
+                  </Badge>
+                </div>
+                <div><span className="text-muted-foreground">Amount:</span> <span className="font-medium">${txn.amount.toLocaleString()}</span></div>
+                <div><span className="text-muted-foreground">Method:</span> {txn.method}</div>
+                <div className="col-span-2 text-xs text-muted-foreground">{txn.date}</div>
+              </div>
+            </Card>
+          );
+        })}
+      </div>
     </div>
   );
 };

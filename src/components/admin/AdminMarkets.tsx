@@ -40,33 +40,31 @@ export const AdminMarkets = () => {
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <h2 className="text-xl font-semibold">All Markets</h2>
-        <div className="flex items-center gap-3 w-full sm:w-auto flex-wrap">
-          <div className="relative flex-1 sm:w-64">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search markets..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-9 h-9"
-            />
-          </div>
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-28 h-9">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All</SelectItem>
-              <SelectItem value="active">Active</SelectItem>
-              <SelectItem value="paused">Paused</SelectItem>
-              <SelectItem value="resolved">Resolved</SelectItem>
-            </SelectContent>
-          </Select>
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+        <div className="relative flex-1 w-full sm:w-64">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search markets..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-9 h-9"
+          />
         </div>
+        <Select value={statusFilter} onValueChange={setStatusFilter}>
+          <SelectTrigger className="w-28 h-9">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All</SelectItem>
+            <SelectItem value="active">Active</SelectItem>
+            <SelectItem value="paused">Paused</SelectItem>
+            <SelectItem value="resolved">Resolved</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
-      <Card className="border-border/40">
+      {/* Desktop Table */}
+      <Card className="border-border/40 hidden md:block">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
@@ -127,6 +125,53 @@ export const AdminMarkets = () => {
           </table>
         </div>
       </Card>
+
+      {/* Mobile Cards */}
+      <div className="md:hidden space-y-3">
+        {filteredMarkets.map((market) => (
+          <Card key={market.id} className="border-border/40 p-4">
+            <div className="flex items-start justify-between mb-2">
+              <p className="font-medium text-sm pr-2">{market.title}</p>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="h-8 w-8 flex-shrink-0">
+                    <MoreHorizontal className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="bg-popover">
+                  <DropdownMenuItem className="gap-2">
+                    <Eye className="h-4 w-4" /> View Details
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="gap-2">
+                    <Pause className="h-4 w-4" /> Pause Market
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="gap-2">
+                    <CheckCircle className="h-4 w-4" /> Resolve
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="gap-2 text-destructive">
+                    <XCircle className="h-4 w-4" /> Cancel Market
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+            <p className="text-xs text-muted-foreground mb-3">by {market.creator}</p>
+            <div className="grid grid-cols-2 gap-2 text-sm">
+              <div>
+                <span className="text-muted-foreground">Status:</span>{" "}
+                <Badge
+                  variant={market.status === "Active" ? "default" : market.status === "Resolved" ? "secondary" : "outline"}
+                  className="text-xs"
+                >
+                  {market.status}
+                </Badge>
+              </div>
+              <div><span className="text-muted-foreground">End:</span> {market.endDate}</div>
+              <div><span className="text-muted-foreground">Volume:</span> <span className="font-medium">${market.volume.toLocaleString()}</span></div>
+              <div><span className="text-muted-foreground">Trades:</span> {market.trades.toLocaleString()}</div>
+            </div>
+          </Card>
+        ))}
+      </div>
     </div>
   );
 };
