@@ -5,7 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, UserPlus, UserCheck, BadgeCheck, TrendingUp, Clock, Calendar, MapPin, Share2, ArrowUpRight, ArrowDownLeft } from "lucide-react";
+import { ArrowLeft, UserPlus, UserCheck, BadgeCheck, TrendingUp, Clock, Calendar, MapPin, Share2, ArrowUpRight, ArrowDownLeft, MessageCircle, Heart, Repeat2 } from "lucide-react";
 import { MarketCard } from "@/components/MarketCard";
 import { SocialStats } from "@/components/SocialStats";
 import { ProfileStats } from "@/components/ProfileStats";
@@ -82,24 +82,51 @@ const mockCreatorMarkets = [
   },
 ];
 
-const mockUserReposts = [
+// Mock activity data - X-style posts
+interface ActivityItem {
+  id: string;
+  type: "post" | "comment" | "repost";
+  timestamp: string;
+  content: string;
+  market?: {
+    id: string;
+    title: string;
+    image: string;
+  };
+  likes: number;
+  comments: number;
+  reposts: number;
+}
+
+const mockUserActivity: ActivityItem[] = [
   {
-    id: "r1",
-    timestamp: "2 days ago",
-    thoughts: "This is actually more likely than people think.",
-    market: {
-      id: "1",
-      creator: { name: "Sarah Chen", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah", isCreator: true },
-      title: "Will Bitcoin reach $100,000 by end of 2025?",
-      subtitle: "The ultimate crypto milestone",
-      image: bitcoinImage,
-      yesPrice: 68,
-      noPrice: 32,
-      volume: "$2.4M",
-      endsIn: "3 months",
-      likes: 142,
-      comments: 38,
-    }
+    id: "a1",
+    type: "post",
+    timestamp: "2h",
+    content: "Really bullish on this Bitcoin prediction. The institutional adoption signals are too strong to ignore.",
+    market: { id: "1", title: "Will Bitcoin reach $100,000 by end of 2025?", image: bitcoinImage },
+    likes: 42,
+    comments: 8,
+    reposts: 3,
+  },
+  {
+    id: "a2",
+    type: "repost",
+    timestamp: "1d",
+    content: "This is actually more likely than people think.",
+    market: { id: "2", title: "Lakers make NBA playoffs?", image: nbaImage },
+    likes: 18,
+    comments: 4,
+    reposts: 1,
+  },
+  {
+    id: "a3",
+    type: "post",
+    timestamp: "3d",
+    content: "Just got into prediction markets last month and already seeing great returns. The key is doing your research!",
+    likes: 67,
+    comments: 12,
+    reposts: 5,
   },
 ];
 
@@ -311,7 +338,7 @@ export default function Profile() {
                 ) : (
                   <>
                     <TabsTrigger value="positions">Positions</TabsTrigger>
-                    <TabsTrigger value="activity">Activity</TabsTrigger>
+                    <TabsTrigger value="posts">Posts</TabsTrigger>
                     <TabsTrigger value="achievements">Achievements</TabsTrigger>
                   </>
                 )}
@@ -373,21 +400,82 @@ export default function Profile() {
               </TabsContent>
             )}
             
-            {/* Activity Tab */}
-            <TabsContent value="activity" className="p-4 space-y-4">
-              {mockUserReposts.map((repost) => (
-                <div key={repost.id} className="space-y-3">
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <span>{displayName} shared</span>
-                    <span>·</span>
-                    <span>{repost.timestamp}</span>
+            {/* Posts Tab - X-style feed */}
+            <TabsContent value="posts" className="p-0">
+              <div className="divide-y divide-border/40">
+                {mockUserActivity.map((activity) => (
+                  <div 
+                    key={activity.id} 
+                    className="p-4 hover:bg-muted/30 transition-colors"
+                  >
+                    {/* Repost indicator */}
+                    {activity.type === "repost" && (
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2 ml-12">
+                        <Repeat2 className="h-3 w-3" />
+                        <span>{displayName} reposted</span>
+                      </div>
+                    )}
+                    
+                    <div className="flex gap-3">
+                      {/* Avatar */}
+                      <Avatar className="h-10 w-10 flex-shrink-0">
+                        <AvatarImage src={userData.avatar} alt={displayName} />
+                        <AvatarFallback>{displayName.slice(0, 2)}</AvatarFallback>
+                      </Avatar>
+                      
+                      {/* Post Content */}
+                      <div className="flex-1 min-w-0 space-y-2">
+                        {/* Header */}
+                        <div className="flex items-center gap-2">
+                          <span className="font-semibold text-sm">{displayName}</span>
+                          <span className="text-muted-foreground text-sm">{userData.username}</span>
+                          <span className="text-muted-foreground text-sm">·</span>
+                          <span className="text-muted-foreground text-sm">{activity.timestamp}</span>
+                        </div>
+                        
+                        {/* Post text */}
+                        <p className="text-sm leading-relaxed">{activity.content}</p>
+                        
+                        {/* Attached Market */}
+                        {activity.market && (
+                          <div 
+                            className="border border-border/50 rounded-xl overflow-hidden cursor-pointer hover:bg-muted/30 transition-colors"
+                            onClick={() => navigate(`/market/${activity.market!.id}`)}
+                          >
+                            <div className="flex gap-3 p-3">
+                              <img 
+                                src={activity.market.image} 
+                                alt={activity.market.title}
+                                className="h-16 w-16 rounded-lg object-cover flex-shrink-0"
+                              />
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-medium line-clamp-2">{activity.market.title}</p>
+                                <p className="text-xs text-muted-foreground mt-1">View market →</p>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                        
+                        {/* Engagement actions */}
+                        <div className="flex items-center gap-6 pt-2">
+                          <button className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors text-sm">
+                            <MessageCircle className="h-4 w-4" />
+                            <span>{activity.comments}</span>
+                          </button>
+                          <button className="flex items-center gap-1.5 text-muted-foreground hover:text-success transition-colors text-sm">
+                            <Repeat2 className="h-4 w-4" />
+                            <span>{activity.reposts}</span>
+                          </button>
+                          <button className="flex items-center gap-1.5 text-muted-foreground hover:text-destructive transition-colors text-sm">
+                            <Heart className="h-4 w-4" />
+                            <span>{activity.likes}</span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  {repost.thoughts && (
-                    <p className="text-foreground pl-3 border-l-2 border-primary/30">{repost.thoughts}</p>
-                  )}
-                  <MarketCard {...repost.market} />
-                </div>
-              ))}
+                ))}
+              </div>
             </TabsContent>
             
             {/* About Tab - Creators */}
