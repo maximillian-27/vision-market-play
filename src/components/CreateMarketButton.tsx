@@ -18,7 +18,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
 
 const categories = [
   "Crypto",
@@ -41,7 +40,6 @@ export function CreateMarketButton() {
   const [isChecking, setIsChecking] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [aiChecked, setAiChecked] = useState(false);
-  const [runAiCheck, setRunAiCheck] = useState(true);
   const [recommendations, setRecommendations] = useState<AIRecommendation[]>([]);
   const [submitted, setSubmitted] = useState(false);
 
@@ -98,11 +96,6 @@ export function CreateMarketButton() {
   };
 
   const handleSubmit = async () => {
-    if (runAiCheck && !aiChecked) {
-      await handleAICheck();
-      return;
-    }
-    
     setIsSubmitting(true);
     await new Promise(resolve => setTimeout(resolve, 1500));
     setIsSubmitting(false);
@@ -269,20 +262,24 @@ export function CreateMarketButton() {
               </div>
             </div>
 
-            <div className="flex items-center space-x-2 pt-2">
-              <Checkbox 
-                id="aiCheck" 
-                checked={runAiCheck}
-                onCheckedChange={(checked) => setRunAiCheck(checked as boolean)}
-              />
-              <Label htmlFor="aiCheck" className="text-sm font-normal cursor-pointer flex items-center gap-2">
-                <Sparkles className="h-4 w-4 text-primary" />
-                Run AI check before posting
-              </Label>
-            </div>
+            {!aiChecked && (
+              <div className="p-4 rounded-lg border border-primary/20 bg-primary/5 space-y-2">
+                <div className="flex items-center gap-2 text-sm font-medium">
+                  <Sparkles className="h-4 w-4 text-primary" />
+                  AI Review Required
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Before submitting, our AI will review your market for clarity, potential issues, and suggest improvements.
+                </p>
+              </div>
+            )}
 
             {aiChecked && recommendations.length > 0 && (
-              <div className="space-y-2 pt-2">
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-sm font-medium text-primary">
+                  <Check className="h-4 w-4" />
+                  AI Review Complete
+                </div>
                 {recommendations.map((rec, idx) => (
                   <div 
                     key={idx} 
@@ -361,17 +358,26 @@ export function CreateMarketButton() {
                   >
                     Next <ChevronRight className="h-4 w-4 ml-1" />
                   </Button>
-                ) : (
+                ) : !aiChecked ? (
                   <Button 
-                    onClick={handleSubmit}
-                    disabled={!canProceedStep3 || isChecking || isSubmitting}
+                    onClick={handleAICheck}
+                    disabled={!canProceedStep3 || isChecking}
+                    variant="outline"
+                    className="border-primary text-primary hover:bg-primary hover:text-primary-foreground"
                   >
                     {isChecking ? (
                       <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Checking...</>
-                    ) : isSubmitting ? (
+                    ) : (
+                      <><Sparkles className="h-4 w-4 mr-2" /> Check with AI</>
+                    )}
+                  </Button>
+                ) : (
+                  <Button 
+                    onClick={handleSubmit}
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? (
                       <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Submitting...</>
-                    ) : runAiCheck && !aiChecked ? (
-                      <><Sparkles className="h-4 w-4 mr-2" /> Check & Submit</>
                     ) : (
                       "Submit Market"
                     )}
