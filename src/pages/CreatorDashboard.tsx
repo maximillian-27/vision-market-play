@@ -17,7 +17,11 @@ import {
   Wallet,
   Clock,
   Sparkles,
-  Trophy
+  Trophy,
+  CircleDot,
+  CheckCircle2,
+  AlertTriangle,
+  XCircle
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -50,11 +54,19 @@ const creatorStats = {
   rank: 24,
 };
 
+const marketsByStatus = {
+  open: 8,
+  resolved: 38,
+  disputing: 1,
+  cancelled: 0,
+};
+
 const recentMarkets = [
-  { id: 1, title: "Will Bitcoin reach $100k by 2025?", status: "Active", volume: 125000, traders: 2340, created: "2024-01-10" },
-  { id: 2, title: "Fed rate cut in March 2025?", status: "Active", volume: 89000, traders: 1560, created: "2024-01-08" },
+  { id: 1, title: "Will Bitcoin reach $100k by 2025?", status: "Open", volume: 125000, traders: 2340, created: "2024-01-10" },
+  { id: 2, title: "Fed rate cut in March 2025?", status: "Open", volume: 89000, traders: 1560, created: "2024-01-08" },
   { id: 3, title: "Tesla Q4 earnings beat estimates?", status: "Resolved", volume: 156000, traders: 3200, created: "2024-01-01", resolution: "Yes" },
-  { id: 4, title: "Apple Vision Pro sales exceed 1M in Q1?", status: "Active", volume: 67000, traders: 890, created: "2023-12-28" },
+  { id: 4, title: "Apple Vision Pro sales exceed 1M in Q1?", status: "Open", volume: 67000, traders: 890, created: "2023-12-28" },
+  { id: 5, title: "Will OpenAI release GPT-5 in Q1?", status: "Disputing", volume: 234000, traders: 4100, created: "2023-12-15" },
 ];
 
 const followerActivity = [
@@ -291,15 +303,49 @@ const CreatorDashboard = () => {
           </TabsList>
 
           {/* Markets Tab */}
-          <TabsContent value="markets" className="space-y-2 sm:space-y-3">
+          <TabsContent value="markets" className="space-y-3 sm:space-y-4">
+            {/* Markets Status Overview */}
+            <div className="grid grid-cols-4 gap-1.5 sm:gap-3">
+              <Card className="border-primary/30 bg-primary/5 cursor-pointer hover:bg-primary/10 transition-colors">
+                <CardContent className="p-2 sm:p-3 flex flex-col items-center text-center">
+                  <CircleDot className="h-4 w-4 sm:h-5 sm:w-5 text-primary mb-1" />
+                  <p className="text-lg sm:text-2xl font-bold">{marketsByStatus.open}</p>
+                  <p className="text-[9px] sm:text-xs text-muted-foreground">Open</p>
+                </CardContent>
+              </Card>
+              <Card className="border-success/30 bg-success/5 cursor-pointer hover:bg-success/10 transition-colors">
+                <CardContent className="p-2 sm:p-3 flex flex-col items-center text-center">
+                  <CheckCircle2 className="h-4 w-4 sm:h-5 sm:w-5 text-success mb-1" />
+                  <p className="text-lg sm:text-2xl font-bold">{marketsByStatus.resolved}</p>
+                  <p className="text-[9px] sm:text-xs text-muted-foreground">Resolved</p>
+                </CardContent>
+              </Card>
+              <Card className="border-amber-500/30 bg-amber-500/5 cursor-pointer hover:bg-amber-500/10 transition-colors">
+                <CardContent className="p-2 sm:p-3 flex flex-col items-center text-center">
+                  <AlertTriangle className="h-4 w-4 sm:h-5 sm:w-5 text-amber-500 mb-1" />
+                  <p className="text-lg sm:text-2xl font-bold">{marketsByStatus.disputing}</p>
+                  <p className="text-[9px] sm:text-xs text-muted-foreground">Disputing</p>
+                </CardContent>
+              </Card>
+              <Card className="border-muted-foreground/30 bg-muted/30 cursor-pointer hover:bg-muted/50 transition-colors">
+                <CardContent className="p-2 sm:p-3 flex flex-col items-center text-center">
+                  <XCircle className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground mb-1" />
+                  <p className="text-lg sm:text-2xl font-bold">{marketsByStatus.cancelled}</p>
+                  <p className="text-[9px] sm:text-xs text-muted-foreground">Cancelled</p>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Markets List Header */}
             <div className="flex items-center justify-between">
-              <h3 className="text-sm sm:text-lg font-semibold">Your Markets</h3>
+              <h3 className="text-sm sm:text-lg font-semibold">Recent Markets</h3>
               <Button size="sm" className="gap-1 h-7 sm:h-8 text-[10px] sm:text-sm px-2 sm:px-3">
                 <Plus className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
                 <span>New</span>
               </Button>
             </div>
 
+            {/* Markets List */}
             <div className="space-y-1.5 sm:space-y-3">
               {recentMarkets.map((market) => (
                 <Card key={market.id} className="border-border/40 hover:border-border/60 transition-colors cursor-pointer">
@@ -309,8 +355,13 @@ const CreatorDashboard = () => {
                         <div className="flex items-start gap-1.5 sm:gap-2 mb-1">
                           <p className="font-medium text-xs sm:text-base line-clamp-2 leading-tight">{market.title}</p>
                           <Badge 
-                            variant={market.status === "Active" ? "default" : "secondary"}
-                            className="text-[8px] sm:text-xs shrink-0 px-1 sm:px-2"
+                            variant="outline"
+                            className={`text-[8px] sm:text-xs shrink-0 px-1 sm:px-2 ${
+                              market.status === "Open" ? "border-primary/40 text-primary bg-primary/10" :
+                              market.status === "Resolved" ? "border-success/40 text-success bg-success/10" :
+                              market.status === "Disputing" ? "border-amber-500/40 text-amber-500 bg-amber-500/10" :
+                              "border-muted text-muted-foreground"
+                            }`}
                           >
                             {market.status === "Resolved" && market.resolution ? `✓ ${market.resolution}` : market.status}
                           </Badge>
