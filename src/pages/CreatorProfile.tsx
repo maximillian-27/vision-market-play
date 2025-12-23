@@ -5,11 +5,14 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, UserPlus, UserCheck, BadgeCheck, MapPin, Calendar, Link as LinkIcon, Share2 } from "lucide-react";
-import { MarketCard } from "@/components/MarketCard";
+import { ArrowLeft, UserPlus, UserCheck, BadgeCheck, MapPin, Calendar, Link as LinkIcon, Share2, MessageCircle, Heart, TrendingUp, BarChart3 } from "lucide-react";
+import { MarketGridCard } from "@/components/MarketGridCard";
 import { SocialStats } from "@/components/SocialStats";
 import { ProfileStats } from "@/components/ProfileStats";
 import { useToast } from "@/hooks/use-toast";
+import bitcoinImage from "@/assets/bitcoin-market.jpg";
+import iphoneImage from "@/assets/foldable-iphone.jpg";
+import fedImage from "@/assets/federal-reserve.jpg";
 
 // Mock creator data
 const creatorData: Record<string, {
@@ -82,58 +85,109 @@ const creatorData: Record<string, {
   },
 };
 
-const mockCreatorMarkets = [
+// Mock created markets (for Markets tab)
+const getCreatorMarkets = (creatorName: string) => [
   {
     id: "1",
-    creator: {
-      name: "Sarah Chen",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah",
-      isCreator: true
-    },
+    creator: { name: creatorName, avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${creatorName}`, isCreator: true },
     title: "Will Bitcoin reach $100K by end of 2025?",
-    subtitle: "Major crypto milestone approaching as institutional adoption accelerates",
+    image: bitcoinImage,
     yesPrice: 68,
     noPrice: 32,
     volume: "$1.2M",
     endsIn: "3 months",
-    image: "/src/assets/bitcoin-market.jpg",
-    likes: 142,
-    comments: 38,
+    status: "open" as const,
   },
   {
     id: "2",
-    creator: {
-      name: "Sarah Chen",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah",
-      isCreator: true
-    },
+    creator: { name: creatorName, avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${creatorName}`, isCreator: true },
     title: "Will Apple release a foldable iPhone in 2025?",
-    subtitle: "Apple's next innovation could reshape the smartphone market",
+    image: iphoneImage,
     yesPrice: 45,
     noPrice: 55,
     volume: "$890K",
     endsIn: "8 months",
-    image: "/src/assets/foldable-iphone.jpg",
-    likes: 98,
-    comments: 29,
+    status: "open" as const,
   },
   {
     id: "3",
-    creator: {
-      name: "Sarah Chen",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah",
-      isCreator: true
-    },
+    creator: { name: creatorName, avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${creatorName}`, isCreator: true },
     title: "Federal Reserve cuts rates by 0.5% in next meeting?",
-    subtitle: "Economic indicators suggest potential policy shift ahead",
+    image: fedImage,
     yesPrice: 73,
     noPrice: 27,
     volume: "$2.1M",
     endsIn: "2 weeks",
-    image: "/src/assets/federal-reserve.jpg",
-    likes: 215,
-    comments: 64,
+    status: "open" as const,
   }
+];
+
+// Mock activity data
+interface ActivityItem {
+  id: string;
+  type: "comment" | "like" | "trade" | "market_created" | "market_resolved";
+  timestamp: string;
+  market?: {
+    id: string;
+    title: string;
+    image: string;
+  };
+  content?: string;
+  metadata?: {
+    position?: string;
+    amount?: string;
+    outcome?: string;
+  };
+}
+
+const getCreatorActivity = (creatorName: string): ActivityItem[] => [
+  {
+    id: "a1",
+    type: "comment",
+    timestamp: "2 hours ago",
+    market: { id: "1", title: "Will Bitcoin reach $100K by end of 2025?", image: bitcoinImage },
+    content: "Strong institutional adoption signals make this very likely. MicroStrategy and other corporations continue to accumulate BTC.",
+  },
+  {
+    id: "a2",
+    type: "market_created",
+    timestamp: "1 day ago",
+    market: { id: "3", title: "Federal Reserve cuts rates by 0.5% in next meeting?", image: fedImage },
+  },
+  {
+    id: "a3",
+    type: "trade",
+    timestamp: "2 days ago",
+    market: { id: "1", title: "Will Bitcoin reach $100K by end of 2025?", image: bitcoinImage },
+    metadata: { position: "Yes", amount: "$500" },
+  },
+  {
+    id: "a4",
+    type: "comment",
+    timestamp: "3 days ago",
+    market: { id: "2", title: "Will Apple release a foldable iPhone in 2025?", image: iphoneImage },
+    content: "Apple's supply chain partners have been rumored to be working on folding display tech. Keep an eye on this one.",
+  },
+  {
+    id: "a5",
+    type: "like",
+    timestamp: "4 days ago",
+    market: { id: "1", title: "Will Bitcoin reach $100K by end of 2025?", image: bitcoinImage },
+  },
+  {
+    id: "a6",
+    type: "market_resolved",
+    timestamp: "1 week ago",
+    market: { id: "10", title: "Did Ethereum break $4,000 in Q4 2024?", image: bitcoinImage },
+    metadata: { outcome: "Yes" },
+  },
+  {
+    id: "a7",
+    type: "comment",
+    timestamp: "1 week ago",
+    market: { id: "1", title: "Will Bitcoin reach $100K by end of 2025?", image: bitcoinImage },
+    content: "The halving cycle historically leads to significant price appreciation. 2025 could be the year.",
+  },
 ];
 
 export default function CreatorProfile() {
@@ -143,6 +197,8 @@ export default function CreatorProfile() {
   const [isFollowing, setIsFollowing] = useState(false);
   
   const creator = userId ? creatorData[userId as keyof typeof creatorData] : null;
+  const creatorMarkets = creator ? getCreatorMarkets(creator.name) : [];
+  const creatorActivity = creator ? getCreatorActivity(creator.name) : [];
   
   if (!creator) {
     return (
@@ -161,6 +217,26 @@ export default function CreatorProfile() {
       title: "Link copied",
       description: "Profile link has been copied to clipboard.",
     });
+  };
+
+  const getActivityIcon = (type: ActivityItem["type"]) => {
+    switch (type) {
+      case "comment": return <MessageCircle className="h-4 w-4" />;
+      case "like": return <Heart className="h-4 w-4 text-destructive" />;
+      case "trade": return <TrendingUp className="h-4 w-4 text-success" />;
+      case "market_created": return <BarChart3 className="h-4 w-4 text-primary" />;
+      case "market_resolved": return <Badge className="h-4 w-4 text-success" />;
+    }
+  };
+
+  const getActivityText = (activity: ActivityItem) => {
+    switch (activity.type) {
+      case "comment": return "commented on";
+      case "like": return "liked";
+      case "trade": return `bought ${activity.metadata?.position} for ${activity.metadata?.amount} on`;
+      case "market_created": return "created market";
+      case "market_resolved": return `resolved market as ${activity.metadata?.outcome}:`;
+    }
   };
 
   return (
@@ -284,30 +360,87 @@ export default function CreatorProfile() {
           }}
         />
 
-        {/* Markets Tabs */}
+        {/* Content Tabs */}
         <Card className="border-border/40">
-          <Tabs defaultValue="active" className="w-full">
+          <Tabs defaultValue="markets" className="w-full">
             <CardHeader className="pb-0">
               <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="active">Active ({mockCreatorMarkets.length})</TabsTrigger>
-                <TabsTrigger value="resolved">Resolved ({creator.totalResolved})</TabsTrigger>
+                <TabsTrigger value="markets">Markets ({creatorMarkets.length})</TabsTrigger>
+                <TabsTrigger value="activity">Activity</TabsTrigger>
                 <TabsTrigger value="about">About</TabsTrigger>
               </TabsList>
             </CardHeader>
             
-            <TabsContent value="active" className="p-4 space-y-4">
-              {mockCreatorMarkets.map((market) => (
-                <MarketCard key={market.id} {...market} />
-              ))}
-            </TabsContent>
-            
-            <TabsContent value="resolved" className="p-4">
-              <div className="text-center py-12 text-muted-foreground">
-                <p>No resolved markets to display</p>
-                <p className="text-sm mt-1">Resolved markets will appear here</p>
+            {/* Markets Tab - Only shows created markets */}
+            <TabsContent value="markets" className="p-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {creatorMarkets.map((market) => (
+                  <MarketGridCard key={market.id} {...market} />
+                ))}
               </div>
             </TabsContent>
             
+            {/* Activity Tab - Shows all activity as a feed */}
+            <TabsContent value="activity" className="p-0">
+              <div className="divide-y divide-border/40">
+                {creatorActivity.map((activity) => (
+                  <div 
+                    key={activity.id} 
+                    className="p-4 hover:bg-muted/30 transition-colors cursor-pointer"
+                    onClick={() => activity.market && navigate(`/market/${activity.market.id}`)}
+                  >
+                    <div className="flex gap-3">
+                      {/* Activity Icon */}
+                      <div className="flex-shrink-0 mt-1">
+                        <div className="h-8 w-8 rounded-full bg-muted/50 flex items-center justify-center">
+                          {getActivityIcon(activity.type)}
+                        </div>
+                      </div>
+                      
+                      {/* Activity Content */}
+                      <div className="flex-1 min-w-0 space-y-2">
+                        {/* Activity Header */}
+                        <div className="flex items-start justify-between gap-2">
+                          <p className="text-sm">
+                            <span className="font-semibold">{creator.name}</span>
+                            <span className="text-muted-foreground"> {getActivityText(activity)} </span>
+                            {activity.market && (
+                              <span className="font-medium text-foreground">{activity.market.title}</span>
+                            )}
+                          </p>
+                          <span className="text-xs text-muted-foreground whitespace-nowrap">
+                            {activity.timestamp}
+                          </span>
+                        </div>
+                        
+                        {/* Comment Content */}
+                        {activity.type === "comment" && activity.content && (
+                          <div className="pl-0">
+                            <p className="text-sm text-foreground/80 bg-muted/30 rounded-lg p-3 border-l-2 border-primary/30">
+                              "{activity.content}"
+                            </p>
+                          </div>
+                        )}
+                        
+                        {/* Market Preview for non-comment activities */}
+                        {activity.market && activity.type !== "comment" && (
+                          <div className="flex items-center gap-3 p-2 bg-muted/20 rounded-lg">
+                            <img 
+                              src={activity.market.image} 
+                              alt={activity.market.title}
+                              className="h-12 w-12 rounded-md object-cover"
+                            />
+                            <p className="text-sm font-medium line-clamp-2">{activity.market.title}</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </TabsContent>
+            
+            {/* About Tab */}
             <TabsContent value="about" className="p-4 space-y-6">
               <div className="space-y-4">
                 <div>
