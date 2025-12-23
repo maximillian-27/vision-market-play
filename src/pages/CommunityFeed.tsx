@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Heart, MessageCircle, Share2, Image, ChartBar, X } from "lucide-react";
 import { PageHeader } from "@/components/PageHeader";
-import { useProfileDialog } from "@/contexts/ProfileDialogContext";
 import {
   Select,
   SelectContent,
@@ -199,7 +198,6 @@ const categories = ["Hot", "Following", "Politics", "Sports", "Crypto", "Tech", 
 
 export default function CommunityFeed() {
   const navigate = useNavigate();
-  const { openProfile } = useProfileDialog();
   const [commentInputs, setCommentInputs] = useState<{ [key: string]: string }>({});
   const [expandedComments, setExpandedComments] = useState<{ [key: string]: boolean }>({});
   const [selectedFilter, setSelectedFilter] = useState("Hot");
@@ -339,7 +337,7 @@ export default function CommunityFeed() {
                     <div className="flex items-start gap-3">
                       <Avatar 
                         className="h-9 w-9 cursor-pointer"
-                        onClick={() => openProfile(post.user.username.slice(1))}
+                        onClick={() => navigate(`/profile/${post.user.username.slice(1)}`)}
                       >
                         <AvatarImage src={post.user.avatar} alt={post.user.name} />
                         <AvatarFallback>{post.user.name.slice(0, 2)}</AvatarFallback>
@@ -348,7 +346,7 @@ export default function CommunityFeed() {
                         <div className="flex items-center gap-2">
                           <span 
                             className="font-medium text-sm cursor-pointer hover:underline"
-                            onClick={() => openProfile(post.user.username.slice(1))}
+                            onClick={() => navigate(`/profile/${post.user.username.slice(1)}`)}
                           >
                             {post.user.username}
                           </span>

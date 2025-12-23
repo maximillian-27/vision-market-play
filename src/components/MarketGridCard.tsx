@@ -19,7 +19,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { QuoteRepostDialog } from "@/components/QuoteRepostDialog";
-import { useProfileDialog } from "@/contexts/ProfileDialogContext";
 
 type MarketStatus = "open" | "closing" | "closed" | "resolved";
 
@@ -69,7 +68,6 @@ export function MarketGridCard({
   const navigate = useNavigate();
   const { toast } = useToast();
   const isMobile = useIsMobile();
-  const { openProfile } = useProfileDialog();
   const [showMarketDialog, setShowMarketDialog] = useState(false);
   const [showQuickTrade, setShowQuickTrade] = useState(false);
   const [showDisputeDialog, setShowDisputeDialog] = useState(false);
@@ -273,8 +271,10 @@ export function MarketGridCard({
               className="flex items-center gap-1.5 hover:opacity-70 transition-opacity"
               onClick={(e) => {
                 e.stopPropagation();
-                const userId = creator.id || creator.name.toLowerCase().replace(/\s+/g, '-');
-                openProfile(userId);
+                const profilePath = creator.isCreator !== false 
+                  ? `/creator/${creator.id || creator.name.toLowerCase().replace(/\s+/g, '-')}`
+                  : `/profile/${creator.id || creator.name.toLowerCase().replace(/\s+/g, '-')}`;
+                navigate(profilePath);
               }}
             >
               <Avatar className="h-5 w-5">
@@ -415,8 +415,10 @@ export function MarketGridCard({
                 className="flex items-center gap-1.5 hover:opacity-70 transition-opacity w-fit"
                 onClick={(e) => {
                   e.stopPropagation();
-                  const userId = creator.id || creator.name.toLowerCase().replace(/\s+/g, '-');
-                  openProfile(userId);
+                  const profilePath = creator.isCreator !== false 
+                    ? `/creator/${creator.id || creator.name.toLowerCase().replace(/\s+/g, '-')}`
+                    : `/profile/${creator.id || creator.name.toLowerCase().replace(/\s+/g, '-')}`;
+                  navigate(profilePath);
                 }}
               >
                 <Avatar className="h-4 w-4">

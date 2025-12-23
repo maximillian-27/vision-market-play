@@ -6,7 +6,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { MobileNav } from "@/components/MobileNav";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { ProfileDialogProvider } from "@/contexts/ProfileDialogContext";
 import Feed from "./pages/Feed";
 import CommunityFeed from "./pages/CommunityFeed";
 import News from "./pages/News";
@@ -58,9 +57,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <ProfileDialogProvider>
-          <AppContent />
-        </ProfileDialogProvider>
+        <AppContent />
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
