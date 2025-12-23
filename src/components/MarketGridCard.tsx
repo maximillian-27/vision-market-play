@@ -462,25 +462,25 @@ export function MarketGridCard({
                   </div>
                 </div>
               ) : (
-                <div className="flex gap-1.5 overflow-x-auto scrollbar-hide mt-auto">
-                  {displayOutcomes.slice(0, 3).map((outcome, index) => (
-                    <button 
-                      key={index}
-                      className="flex items-center gap-1.5 rounded-md px-2.5 py-1.5 bg-secondary/80 border border-border/40 text-[11px] active:scale-95 transition-transform"
-                      onClick={handleOutcomeClick}
-                    >
-                      {outcome.logo && (
-                        <img src={outcome.logo} alt={outcome.label} className="h-4 w-4 object-contain rounded-sm" />
-                      )}
-                      <span className="font-medium truncate max-w-20">{outcome.label}</span>
-                      <span className="font-bold text-primary">{outcome.price}%</span>
-                    </button>
-                  ))}
-                  {displayOutcomes.length > 3 && (
-                    <span className="text-[10px] text-muted-foreground self-center">+{displayOutcomes.length - 3}</span>
-                  )}
-                </div>
-              )}
+              <div className="flex flex-wrap gap-1.5 mt-auto">
+                {displayOutcomes.slice(0, 3).map((outcome, index) => (
+                  <button 
+                    key={index}
+                    className="flex items-center gap-1.5 rounded-md px-2.5 py-1.5 bg-secondary/80 border border-border/40 text-[11px] active:scale-95 transition-transform"
+                    onClick={handleOutcomeClick}
+                  >
+                    {outcome.logo && (
+                      <img src={outcome.logo} alt={outcome.label} className="h-4 w-4 object-contain rounded-sm flex-shrink-0" />
+                    )}
+                    <span className="font-medium">{outcome.label}</span>
+                    <span className="font-bold text-primary">{outcome.price}%</span>
+                  </button>
+                ))}
+                {displayOutcomes.length > 3 && (
+                  <span className="text-[10px] text-muted-foreground self-center">+{displayOutcomes.length - 3}</span>
+                )}
+              </div>
+            )}
             </div>
           </div>
 
