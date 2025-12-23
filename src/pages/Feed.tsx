@@ -300,12 +300,6 @@ export default function Feed() {
         <PageHeader 
           title="Markets"
           subtitle="Trade on the outcome of real-world events"
-          action={
-            <Button size="sm" className="gap-1.5">
-              <Plus className="h-4 w-4" />
-              <span className="hidden sm:inline">Create Market</span>
-            </Button>
-          }
         />
         
         <FeedFilters filters={filters} onFiltersChange={setFilters} />
