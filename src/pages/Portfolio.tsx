@@ -66,8 +66,8 @@ const Portfolio = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-6">
+    <div className="min-h-screen bg-background pb-20 sm:pb-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
         <PageHeader 
           title="Portfolio" 
           subtitle="Track your trading performance and manage your funds"
@@ -238,16 +238,45 @@ const Portfolio = () => {
           </TabsContent>
 
           {/* Trade History */}
-          <TabsContent value="history" className="space-y-4">
+          <TabsContent value="history" className="space-y-3 sm:space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold">Trade History</h3>
-              <Button variant="outline" size="sm" className="gap-2">
-                <Filter className="h-4 w-4" />
+              <h3 className="text-sm sm:text-lg font-semibold">Trade History</h3>
+              <Button variant="outline" size="sm" className="gap-1.5 h-7 sm:h-8 text-[10px] sm:text-xs">
+                <Filter className="h-3 w-3 sm:h-4 sm:w-4" />
                 Filter
               </Button>
             </div>
 
-            <Card className="border-border/40">
+            {/* Mobile: Card layout */}
+            <div className="sm:hidden space-y-2">
+              {tradeHistory.map((trade) => {
+                const isSell = trade.type === "Sell";
+                return (
+                  <div key={trade.id} className="p-3 rounded-lg border border-border/40 bg-background">
+                    <div className="flex items-start justify-between gap-2 mb-2">
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-sm truncate">{trade.market}</p>
+                        <p className="text-[10px] text-muted-foreground">{trade.date}</p>
+                      </div>
+                      <span className={`text-sm font-bold ${isSell ? 'text-success' : 'text-destructive'}`}>
+                        {isSell ? '+' : '-'}${trade.total}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
+                      <Badge variant={trade.type === "Buy" ? "default" : "secondary"} className="text-[9px] px-1.5 h-4">
+                        {trade.type}
+                      </Badge>
+                      <span>{trade.position}</span>
+                      <span>•</span>
+                      <span>{trade.shares} @ ${trade.price}</span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Desktop: Table layout */}
+            <Card className="border-border/40 hidden sm:block">
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
@@ -264,7 +293,6 @@ const Portfolio = () => {
                   <tbody>
                     {tradeHistory.map((trade) => {
                       const isSell = trade.type === "Sell";
-                      
                       return (
                         <tr key={trade.id} className="border-b border-border/20 hover:bg-muted/30 transition-colors">
                           <td className="p-4 text-sm">{trade.date}</td>
@@ -292,22 +320,54 @@ const Portfolio = () => {
           </TabsContent>
 
           {/* Transactions */}
-          <TabsContent value="transactions" className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold">Deposits & Withdrawals</h3>
-              <div className="flex gap-2">
-                <Button size="sm" className="gap-2">
-                  <Upload className="h-4 w-4" />
-                  Deposit
+          <TabsContent value="transactions" className="space-y-3 sm:space-y-4">
+            <div className="flex items-center justify-between gap-2">
+              <h3 className="text-sm sm:text-lg font-semibold">Deposits & Withdrawals</h3>
+              <div className="flex gap-1.5 sm:gap-2">
+                <Button size="sm" className="gap-1 h-7 sm:h-8 text-[10px] sm:text-xs px-2 sm:px-3">
+                  <Upload className="h-3 w-3 sm:h-4 sm:w-4" />
+                  <span className="hidden sm:inline">Deposit</span>
+                  <span className="sm:hidden">+</span>
                 </Button>
-                <Button variant="outline" size="sm" className="gap-2">
-                  <Download className="h-4 w-4" />
-                  Withdraw
+                <Button variant="outline" size="sm" className="gap-1 h-7 sm:h-8 text-[10px] sm:text-xs px-2 sm:px-3">
+                  <Download className="h-3 w-3 sm:h-4 sm:w-4" />
+                  <span className="hidden sm:inline">Withdraw</span>
+                  <span className="sm:hidden">-</span>
                 </Button>
               </div>
             </div>
 
-            <Card className="border-border/40">
+            {/* Mobile: Card layout */}
+            <div className="sm:hidden space-y-2">
+              {transactions.map((tx) => (
+                <div key={tx.id} className="p-3 rounded-lg border border-border/40 bg-background flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-2.5">
+                    <div className={`h-8 w-8 rounded-full flex items-center justify-center ${tx.type === "Deposit" ? 'bg-success/10' : 'bg-destructive/10'}`}>
+                      {tx.type === "Deposit" ? (
+                        <ArrowDownRight className="h-4 w-4 text-success" />
+                      ) : (
+                        <ArrowUpRight className="h-4 w-4 text-destructive" />
+                      )}
+                    </div>
+                    <div>
+                      <p className="font-medium text-sm">{tx.type}</p>
+                      <p className="text-[10px] text-muted-foreground">{tx.date} • {tx.method}</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className={`font-bold text-sm ${tx.type === "Deposit" ? 'text-success' : 'text-destructive'}`}>
+                      {tx.type === "Deposit" ? '+' : '-'}${tx.amount}
+                    </p>
+                    <Badge variant="secondary" className="text-[8px] px-1 h-4">
+                      {tx.status}
+                    </Badge>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Desktop: Table layout */}
+            <Card className="border-border/40 hidden sm:block">
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
@@ -351,65 +411,53 @@ const Portfolio = () => {
           </TabsContent>
 
           {/* Analytics */}
-          <TabsContent value="analytics" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <TabsContent value="analytics" className="space-y-4 sm:space-y-6">
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4">
               <Card className="border-border/40">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">Invested</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-3xl font-bold">${portfolioStats.investedAmount.toLocaleString()}</p>
-                  <p className="text-sm text-muted-foreground">Currently in markets</p>
+                <CardContent className="p-3 sm:p-4">
+                  <p className="text-[10px] sm:text-sm text-muted-foreground mb-0.5">Invested</p>
+                  <p className="text-lg sm:text-2xl font-bold">${portfolioStats.investedAmount.toLocaleString()}</p>
+                  <p className="text-[9px] sm:text-xs text-muted-foreground">In markets</p>
                 </CardContent>
               </Card>
 
               <Card className="border-border/40">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">Average Return</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-3xl font-bold text-success">+24.3%</p>
-                  <p className="text-sm text-muted-foreground">Per winning trade</p>
+                <CardContent className="p-3 sm:p-4">
+                  <p className="text-[10px] sm:text-sm text-muted-foreground mb-0.5">Avg Return</p>
+                  <p className="text-lg sm:text-2xl font-bold text-success">+24.3%</p>
+                  <p className="text-[9px] sm:text-xs text-muted-foreground">Per win</p>
                 </CardContent>
               </Card>
 
               <Card className="border-border/40">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">Total Trades</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-3xl font-bold">127</p>
-                  <p className="text-sm text-muted-foreground">Since joining</p>
+                <CardContent className="p-3 sm:p-4">
+                  <p className="text-[10px] sm:text-sm text-muted-foreground mb-0.5">Total Trades</p>
+                  <p className="text-lg sm:text-2xl font-bold">127</p>
+                  <p className="text-[9px] sm:text-xs text-muted-foreground">All time</p>
                 </CardContent>
               </Card>
 
               <Card className="border-border/40">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">Best Trade</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-3xl font-bold text-success">+$847</p>
-                  <p className="text-sm text-muted-foreground">Bitcoin $100k market</p>
+                <CardContent className="p-3 sm:p-4">
+                  <p className="text-[10px] sm:text-sm text-muted-foreground mb-0.5">Best Trade</p>
+                  <p className="text-lg sm:text-2xl font-bold text-success">+$847</p>
+                  <p className="text-[9px] sm:text-xs text-muted-foreground truncate">BTC $100k</p>
                 </CardContent>
               </Card>
 
               <Card className="border-border/40">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">Worst Trade</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-3xl font-bold text-destructive">-$156</p>
-                  <p className="text-sm text-muted-foreground">Fed rate hike market</p>
+                <CardContent className="p-3 sm:p-4">
+                  <p className="text-[10px] sm:text-sm text-muted-foreground mb-0.5">Worst Trade</p>
+                  <p className="text-lg sm:text-2xl font-bold text-destructive">-$156</p>
+                  <p className="text-[9px] sm:text-xs text-muted-foreground truncate">Fed rate</p>
                 </CardContent>
               </Card>
 
               <Card className="border-border/40">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">Favorite Category</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-3xl font-bold">Crypto</p>
-                  <p className="text-sm text-muted-foreground">42% of your trades</p>
+                <CardContent className="p-3 sm:p-4">
+                  <p className="text-[10px] sm:text-sm text-muted-foreground mb-0.5">Top Category</p>
+                  <p className="text-lg sm:text-2xl font-bold">Crypto</p>
+                  <p className="text-[9px] sm:text-xs text-muted-foreground">42% trades</p>
                 </CardContent>
               </Card>
             </div>
