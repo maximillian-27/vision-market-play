@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { PageHeader } from "@/components/PageHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -16,7 +17,8 @@ import {
   BarChart3,
   Download,
   Upload,
-  Filter
+  Filter,
+  ChevronRight
 } from "lucide-react";
 import {
   Select,
@@ -61,58 +63,59 @@ const transactions = [
 
 const Portfolio = () => {
   const [timeframe, setTimeframe] = useState("all");
+  const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-7xl mx-auto px-4 lg:px-8 py-6">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-6">
         <PageHeader 
           title="Portfolio" 
           subtitle="Track your trading performance and manage your funds"
         />
 
-        {/* Stats Overview */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        {/* Stats Overview - Mobile optimized */}
+        <div className="grid grid-cols-2 gap-2 sm:gap-4 mb-4 sm:mb-6">
           <Card className="border-border/40">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-2 text-muted-foreground text-sm mb-1">
-                <Wallet className="h-4 w-4" />
+            <CardContent className="p-3 sm:p-4">
+              <div className="flex items-center gap-1.5 text-muted-foreground text-[11px] sm:text-sm mb-0.5 sm:mb-1">
+                <Wallet className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 Total Value
               </div>
-              <p className="text-2xl font-bold">${portfolioStats.totalValue.toLocaleString()}</p>
+              <p className="text-lg sm:text-2xl font-bold">${portfolioStats.totalValue.toLocaleString()}</p>
             </CardContent>
           </Card>
           
           <Card className="border-border/40">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-2 text-muted-foreground text-sm mb-1">
-                <DollarSign className="h-4 w-4" />
-                Cash Balance
+            <CardContent className="p-3 sm:p-4">
+              <div className="flex items-center gap-1.5 text-muted-foreground text-[11px] sm:text-sm mb-0.5 sm:mb-1">
+                <DollarSign className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                Cash
               </div>
-              <p className="text-2xl font-bold">${portfolioStats.cashBalance.toLocaleString()}</p>
+              <p className="text-lg sm:text-2xl font-bold">${portfolioStats.cashBalance.toLocaleString()}</p>
             </CardContent>
           </Card>
           
           <Card className="border-border/40">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-2 text-muted-foreground text-sm mb-1">
-                <PieChart className="h-4 w-4" />
+            <CardContent className="p-3 sm:p-4">
+              <div className="flex items-center gap-1.5 text-muted-foreground text-[11px] sm:text-sm mb-0.5 sm:mb-1">
+                <PieChart className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 Invested
               </div>
-              <p className="text-2xl font-bold">${portfolioStats.investedAmount.toLocaleString()}</p>
+              <p className="text-lg sm:text-2xl font-bold">${portfolioStats.investedAmount.toLocaleString()}</p>
             </CardContent>
           </Card>
           
           <Card className="border-border/40">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-2 text-muted-foreground text-sm mb-1">
-                <BarChart3 className="h-4 w-4" />
-                Total P&L
+            <CardContent className="p-3 sm:p-4">
+              <div className="flex items-center gap-1.5 text-muted-foreground text-[11px] sm:text-sm mb-0.5 sm:mb-1">
+                <BarChart3 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                P&L
               </div>
-              <div className="flex items-center gap-2">
-                <p className={`text-2xl font-bold ${portfolioStats.totalPnL >= 0 ? 'text-success' : 'text-destructive'}`}>
+              <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+                <p className={`text-lg sm:text-2xl font-bold ${portfolioStats.totalPnL >= 0 ? 'text-success' : 'text-destructive'}`}>
                   {portfolioStats.totalPnL >= 0 ? '+' : ''}${portfolioStats.totalPnL.toLocaleString()}
                 </p>
-                <Badge variant={portfolioStats.totalPnLPercent >= 0 ? "default" : "destructive"} className="text-xs">
+                <Badge variant={portfolioStats.totalPnLPercent >= 0 ? "default" : "destructive"} className="text-[10px] sm:text-xs px-1.5">
                   {portfolioStats.totalPnLPercent >= 0 ? '+' : ''}{portfolioStats.totalPnLPercent}%
                 </Badge>
               </div>
@@ -121,40 +124,42 @@ const Portfolio = () => {
         </div>
 
         {/* Quick Actions */}
-        <div className="flex gap-3 mb-6">
-          <Button className="gap-2">
-            <Upload className="h-4 w-4" />
+        <div className="flex gap-2 sm:gap-3 mb-4 sm:mb-6">
+          <Button size="sm" className="gap-1.5 sm:gap-2 text-xs sm:text-sm flex-1 sm:flex-none">
+            <Upload className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
             Deposit
           </Button>
-          <Button variant="outline" className="gap-2">
-            <Download className="h-4 w-4" />
+          <Button variant="outline" size="sm" className="gap-1.5 sm:gap-2 text-xs sm:text-sm flex-1 sm:flex-none">
+            <Download className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
             Withdraw
           </Button>
         </div>
 
         {/* Main Content Tabs */}
-        <Tabs defaultValue="positions" className="space-y-6">
-          <TabsList className="bg-muted/50 p-1">
-            <TabsTrigger value="positions" className="data-[state=active]:bg-background">
-              Active Positions
-            </TabsTrigger>
-            <TabsTrigger value="history" className="data-[state=active]:bg-background">
-              Trade History
-            </TabsTrigger>
-            <TabsTrigger value="transactions" className="data-[state=active]:bg-background">
-              Deposits & Withdrawals
-            </TabsTrigger>
-            <TabsTrigger value="analytics" className="data-[state=active]:bg-background">
-              Analytics
-            </TabsTrigger>
-          </TabsList>
+        <Tabs defaultValue="positions" className="space-y-4 sm:space-y-6">
+          <div className="overflow-x-auto -mx-3 px-3 sm:mx-0 sm:px-0 scrollbar-hide">
+            <TabsList className="bg-muted/50 p-1 w-max sm:w-auto">
+              <TabsTrigger value="positions" className="data-[state=active]:bg-background text-xs sm:text-sm px-2.5 sm:px-3">
+                Positions
+              </TabsTrigger>
+              <TabsTrigger value="history" className="data-[state=active]:bg-background text-xs sm:text-sm px-2.5 sm:px-3">
+                History
+              </TabsTrigger>
+              <TabsTrigger value="transactions" className="data-[state=active]:bg-background text-xs sm:text-sm px-2.5 sm:px-3">
+                Deposits
+              </TabsTrigger>
+              <TabsTrigger value="analytics" className="data-[state=active]:bg-background text-xs sm:text-sm px-2.5 sm:px-3">
+                Analytics
+              </TabsTrigger>
+            </TabsList>
+          </div>
 
           {/* Active Positions */}
-          <TabsContent value="positions" className="space-y-4">
+          <TabsContent value="positions" className="space-y-3 sm:space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold">Active Positions ({positions.length})</h3>
+              <h3 className="text-sm sm:text-lg font-semibold">Active ({positions.length})</h3>
               <Select value={timeframe} onValueChange={setTimeframe}>
-                <SelectTrigger className="w-32 h-9">
+                <SelectTrigger className="w-24 sm:w-32 h-8 sm:h-9 text-xs sm:text-sm">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -165,11 +170,39 @@ const Portfolio = () => {
               </Select>
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-2 sm:space-y-3">
               {positions.map((position) => (
-                <Card key={position.id} className="border-border/40 hover:border-border/60 transition-colors">
-                  <CardContent className="p-4">
-                    <div className="flex items-center justify-between">
+                <Card 
+                  key={position.id} 
+                  className="border-border/40 hover:border-border/60 transition-colors cursor-pointer active:scale-[0.99]"
+                  onClick={() => navigate(`/market/${position.id}`)}
+                >
+                  <CardContent className="p-3 sm:p-4">
+                    {/* Mobile: Stacked layout */}
+                    <div className="sm:hidden">
+                      <div className="flex items-start justify-between gap-2 mb-2">
+                        <p className="font-medium text-sm leading-tight line-clamp-2 flex-1">{position.market}</p>
+                        <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0 mt-0.5" />
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Badge 
+                            variant={position.position === "Yes" ? "default" : "secondary"} 
+                            className={`text-[10px] px-1.5 ${position.position === "Yes" ? "bg-success/15 text-success border-success/30" : ""}`}
+                          >
+                            {position.position}
+                          </Badge>
+                          <span className="text-[11px] text-muted-foreground">{position.shares} @ ${position.avgPrice}</span>
+                        </div>
+                        <div className={`flex items-center gap-0.5 text-xs font-semibold ${position.pnl >= 0 ? 'text-success' : 'text-destructive'}`}>
+                          {position.pnl >= 0 ? <ArrowUpRight className="h-3 w-3" /> : <ArrowDownRight className="h-3 w-3" />}
+                          {position.pnl >= 0 ? '+' : ''}{position.pnlPercent}%
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Desktop: Row layout */}
+                    <div className="hidden sm:flex items-center justify-between">
                       <div className="flex-1">
                         <p className="font-medium mb-1">{position.market}</p>
                         <div className="flex items-center gap-3 text-sm text-muted-foreground">
@@ -179,14 +212,17 @@ const Portfolio = () => {
                           <span>{position.shares} shares @ ${position.avgPrice}</span>
                         </div>
                       </div>
-                      <div className="text-right">
-                        <p className="text-sm text-muted-foreground">Current: ${position.currentPrice}</p>
-                        <div className={`flex items-center gap-1 ${position.pnl >= 0 ? 'text-success' : 'text-destructive'}`}>
-                          {position.pnl >= 0 ? <ArrowUpRight className="h-4 w-4" /> : <ArrowDownRight className="h-4 w-4" />}
-                          <span className="font-semibold">
-                            {position.pnl >= 0 ? '+' : ''}${position.pnl} ({position.pnlPercent >= 0 ? '+' : ''}{position.pnlPercent}%)
-                          </span>
+                      <div className="text-right flex items-center gap-4">
+                        <div>
+                          <p className="text-sm text-muted-foreground">Current: ${position.currentPrice}</p>
+                          <div className={`flex items-center justify-end gap-1 ${position.pnl >= 0 ? 'text-success' : 'text-destructive'}`}>
+                            {position.pnl >= 0 ? <ArrowUpRight className="h-4 w-4" /> : <ArrowDownRight className="h-4 w-4" />}
+                            <span className="font-semibold">
+                              {position.pnl >= 0 ? '+' : ''}${position.pnl} ({position.pnlPercent >= 0 ? '+' : ''}{position.pnlPercent}%)
+                            </span>
+                          </div>
                         </div>
+                        <ChevronRight className="h-4 w-4 text-muted-foreground" />
                       </div>
                     </div>
                   </CardContent>
