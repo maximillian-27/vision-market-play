@@ -442,13 +442,16 @@ export function ResolvedMarketDialog({
                 </div>
               </div>
 
-              {/* User Position Summary (if any) */}
               <div className="p-3 rounded-lg bg-background border border-border/50 space-y-2">
                 <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
                   <span>Your Position</span>
-                  {userPosition.isWinner && (
+                  {userPosition.isWinner ? (
                     <Badge className="bg-yes/20 text-yes border-yes/30 text-[10px] px-1.5 py-0">
                       Winner
+                    </Badge>
+                  ) : (
+                    <Badge className="bg-no/20 text-no border-no/30 text-[10px] px-1.5 py-0">
+                      Loss
                     </Badge>
                   )}
                 </div>
@@ -544,17 +547,6 @@ export function ResolvedMarketDialog({
                   Claim ${userPosition.currentValue.toFixed(2)}
                 </Button>
               )}
-            </div>
-
-            {/* View Full Page Button */}
-            <div className="p-4 pt-0">
-              <Button
-                variant="outline"
-                className="w-full"
-                onClick={handleViewFullPage}
-              >
-                View Full Details
-              </Button>
             </div>
           </div>
         </div>
