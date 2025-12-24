@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { MarketDialog } from "@/components/MarketDialog";
 import { ResolvedMarketDialog } from "@/components/ResolvedMarketDialog";
+import { ResolvedMarketSheet } from "@/components/ResolvedMarketSheet";
 import { QuickTradeSheet } from "@/components/QuickTradeSheet";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -63,6 +64,7 @@ export function MarketGridCard({
   const [showMarketDialog, setShowMarketDialog] = useState(false);
   const [showQuickTrade, setShowQuickTrade] = useState(false);
   const [showResolvedDialog, setShowResolvedDialog] = useState(false);
+  const [showResolvedSheet, setShowResolvedSheet] = useState(false);
   const [showRepostDialog, setShowRepostDialog] = useState(false);
   
   const displayOutcomes = outcomes || [
@@ -76,14 +78,14 @@ export function MarketGridCard({
   const handleCardClick = () => {
     if (isClosedOrResolved) {
       if (isMobile) {
-        navigate(`/market/${id}`);
+        setShowResolvedSheet(true);
       } else {
         setShowResolvedDialog(true);
       }
       return;
     }
     if (isMobile) {
-      navigate(`/market/${id}`);
+      setShowQuickTrade(true);
     } else {
       setShowMarketDialog(true);
     }
@@ -159,15 +161,26 @@ export function MarketGridCard({
       />
       
       {isClosedOrResolved && (
-        <ResolvedMarketDialog
-          open={showResolvedDialog}
-          onOpenChange={setShowResolvedDialog}
-          market={marketDialogData}
-          status={status as "closed" | "resolved"}
-          resolution={resolution || "Yes"}
-          disputeEndsIn={disputeEndsIn}
-          resolvedAt={resolvedAt}
-        />
+        <>
+          <ResolvedMarketDialog
+            open={showResolvedDialog}
+            onOpenChange={setShowResolvedDialog}
+            market={marketDialogData}
+            status={status as "closed" | "resolved"}
+            resolution={resolution || "Yes"}
+            disputeEndsIn={disputeEndsIn}
+            resolvedAt={resolvedAt}
+          />
+          <ResolvedMarketSheet
+            open={showResolvedSheet}
+            onOpenChange={setShowResolvedSheet}
+            market={marketDialogData}
+            status={status as "closed" | "resolved"}
+            resolution={resolution || "Yes"}
+            disputeEndsIn={disputeEndsIn}
+            resolvedAt={resolvedAt}
+          />
+        </>
       )}
       
       <Card 
@@ -436,7 +449,7 @@ export function MarketGridCard({
                       className="ml-auto px-2 py-1 rounded-md bg-orange-500/10 text-orange-600 border border-orange-500/20 text-[10px] font-medium"
                       onClick={(e) => {
                         e.stopPropagation();
-                        setShowResolvedDialog(true);
+                        setShowResolvedSheet(true);
                       }}
                     >
                       Dispute
