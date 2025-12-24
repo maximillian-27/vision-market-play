@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { 
   TrendingUp, 
   TrendingDown, 
@@ -18,7 +19,8 @@ import {
   Download,
   Upload,
   Filter,
-  ChevronRight
+  ChevronRight,
+  ChevronDown
 } from "lucide-react";
 import {
   Select,
@@ -75,6 +77,7 @@ type StatsTimeframe = "daily" | "weekly" | "monthly" | "90days" | "yearly";
 const Portfolio = () => {
   const [timeframe, setTimeframe] = useState("all");
   const [statsTimeframe, setStatsTimeframe] = useState<StatsTimeframe>("monthly");
+  const [showDetails, setShowDetails] = useState(false);
   const navigate = useNavigate();
   
   const currentStats = statsByTimeline[statsTimeframe];
@@ -111,62 +114,90 @@ const Portfolio = () => {
           
         </div>
 
-        {/* Win Rate & P&L with Timeline Filter */}
-        <Card className="border-border/40 mb-4 sm:mb-6">
-          <CardContent className="p-3 sm:p-4">
-            {/* Timeline selector */}
-            <div className="flex items-center justify-between mb-3 sm:mb-4">
-              <span className="text-xs sm:text-sm text-muted-foreground font-medium">Performance</span>
-              <div className="flex gap-1 overflow-x-auto scrollbar-hide">
-                {[
-                  { key: "daily", label: "1D" },
-                  { key: "weekly", label: "1W" },
-                  { key: "monthly", label: "1M" },
-                  { key: "90days", label: "90D" },
-                  { key: "yearly", label: "1Y" },
-                ].map((item) => (
-                  <button
-                    key={item.key}
-                    onClick={() => setStatsTimeframe(item.key as StatsTimeframe)}
-                    className={`px-2 sm:px-3 py-1 sm:py-1.5 text-[10px] sm:text-xs font-medium rounded-md transition-colors ${
-                      statsTimeframe === item.key
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-muted/50 text-muted-foreground hover:bg-muted"
-                    }`}
-                  >
-                    {item.label}
+        {/* Performance Card - Minimalistic with expandable details */}
+        <Collapsible open={showDetails} onOpenChange={setShowDetails}>
+          <div className="rounded-lg border border-border/40 bg-card mb-4 sm:mb-6">
+            <div className="p-3 sm:p-4">
+              {/* Main P&L Display */}
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-xs text-muted-foreground">P&L</span>
+                    <div className="flex gap-1">
+                      {[
+                        { key: "daily", label: "1D" },
+                        { key: "weekly", label: "1W" },
+                        { key: "monthly", label: "1M" },
+                        { key: "90days", label: "90D" },
+                        { key: "yearly", label: "1Y" },
+                      ].map((item) => (
+                        <button
+                          key={item.key}
+                          onClick={() => setStatsTimeframe(item.key as StatsTimeframe)}
+                          className={`px-1.5 sm:px-2 py-0.5 text-[9px] sm:text-[10px] font-medium rounded transition-colors ${
+                            statsTimeframe === item.key
+                              ? "bg-primary/10 text-primary"
+                              : "text-muted-foreground/60 hover:text-muted-foreground"
+                          }`}
+                        >
+                          {item.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="flex items-baseline gap-2">
+                    <span className={`text-2xl sm:text-3xl font-bold tracking-tight ${currentStats.pnl >= 0 ? 'text-success' : 'text-destructive'}`}>
+                      {currentStats.pnl >= 0 ? '+' : ''}${currentStats.pnl.toLocaleString()}
+                    </span>
+                    <span className={`text-xs sm:text-sm font-medium ${currentStats.pnlPercent >= 0 ? 'text-success/70' : 'text-destructive/70'}`}>
+                      {currentStats.pnlPercent >= 0 ? '+' : ''}{currentStats.pnlPercent}%
+                    </span>
+                  </div>
+                </div>
+                
+                <CollapsibleTrigger asChild>
+                  <button className="p-2 hover:bg-muted/50 rounded-md transition-colors">
+                    <ChevronDown className={`h-4 w-4 text-muted-foreground transition-transform duration-200 ${showDetails ? 'rotate-180' : ''}`} />
                   </button>
-                ))}
+                </CollapsibleTrigger>
               </div>
             </div>
             
-            {/* Stats row */}
-            <div className="grid grid-cols-2 gap-3 sm:gap-6">
-              <div>
-                <div className="flex items-center gap-1.5 text-muted-foreground text-[11px] sm:text-sm mb-0.5 sm:mb-1">
-                  <TrendingUp className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                  Win Rate
+            {/* Expandable Details */}
+            <CollapsibleContent>
+              <div className="px-3 sm:px-4 pb-3 sm:pb-4 pt-0">
+                <div className="border-t border-border/30 pt-3 sm:pt-4">
+                  <div className="grid grid-cols-3 gap-3 sm:gap-4">
+                    <div>
+                      <p className="text-[10px] sm:text-xs text-muted-foreground mb-0.5">Win Rate</p>
+                      <p className="text-sm sm:text-lg font-semibold text-success">{currentStats.winRate}%</p>
+                    </div>
+                    <div>
+                      <p className="text-[10px] sm:text-xs text-muted-foreground mb-0.5">Avg Return</p>
+                      <p className="text-sm sm:text-lg font-semibold text-success">+24.3%</p>
+                    </div>
+                    <div>
+                      <p className="text-[10px] sm:text-xs text-muted-foreground mb-0.5">Total Trades</p>
+                      <p className="text-sm sm:text-lg font-semibold">127</p>
+                    </div>
+                    <div>
+                      <p className="text-[10px] sm:text-xs text-muted-foreground mb-0.5">Best Trade</p>
+                      <p className="text-sm sm:text-lg font-semibold text-success">+$847</p>
+                    </div>
+                    <div>
+                      <p className="text-[10px] sm:text-xs text-muted-foreground mb-0.5">Worst Trade</p>
+                      <p className="text-sm sm:text-lg font-semibold text-destructive">-$156</p>
+                    </div>
+                    <div>
+                      <p className="text-[10px] sm:text-xs text-muted-foreground mb-0.5">Top Category</p>
+                      <p className="text-sm sm:text-lg font-semibold">Crypto</p>
+                    </div>
+                  </div>
                 </div>
-                <p className="text-lg sm:text-2xl font-bold text-success">{currentStats.winRate}%</p>
               </div>
-              
-              <div>
-                <div className="flex items-center gap-1.5 text-muted-foreground text-[11px] sm:text-sm mb-0.5 sm:mb-1">
-                  <BarChart3 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                  P&L
-                </div>
-                <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
-                  <p className={`text-lg sm:text-2xl font-bold ${currentStats.pnl >= 0 ? 'text-success' : 'text-destructive'}`}>
-                    {currentStats.pnl >= 0 ? '+' : ''}${currentStats.pnl.toLocaleString()}
-                  </p>
-                  <Badge variant={currentStats.pnlPercent >= 0 ? "default" : "destructive"} className="text-[10px] sm:text-xs px-1.5">
-                    {currentStats.pnlPercent >= 0 ? '+' : ''}{currentStats.pnlPercent}%
-                  </Badge>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CollapsibleContent>
+          </div>
+        </Collapsible>
 
         {/* Quick Actions */}
         <div className="flex gap-2 sm:gap-3 mb-4 sm:mb-6">
@@ -457,12 +488,38 @@ const Portfolio = () => {
 
           {/* Analytics */}
           <TabsContent value="analytics" className="space-y-4 sm:space-y-6">
+            {/* Timeline filter */}
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm sm:text-lg font-semibold">Performance Analytics</h3>
+              <div className="flex gap-1 overflow-x-auto scrollbar-hide">
+                {[
+                  { key: "daily", label: "1D" },
+                  { key: "weekly", label: "1W" },
+                  { key: "monthly", label: "1M" },
+                  { key: "90days", label: "90D" },
+                  { key: "yearly", label: "1Y" },
+                ].map((item) => (
+                  <button
+                    key={item.key}
+                    onClick={() => setStatsTimeframe(item.key as StatsTimeframe)}
+                    className={`px-2 sm:px-3 py-1 sm:py-1.5 text-[10px] sm:text-xs font-medium rounded-md transition-colors ${
+                      statsTimeframe === item.key
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-muted/50 text-muted-foreground hover:bg-muted"
+                    }`}
+                  >
+                    {item.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             <div className="grid grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4">
               <Card className="border-border/40">
                 <CardContent className="p-3 sm:p-4">
-                  <p className="text-[10px] sm:text-sm text-muted-foreground mb-0.5">Invested</p>
-                  <p className="text-lg sm:text-2xl font-bold">${portfolioStats.investedAmount.toLocaleString()}</p>
-                  <p className="text-[9px] sm:text-xs text-muted-foreground">In markets</p>
+                  <p className="text-[10px] sm:text-sm text-muted-foreground mb-0.5">Win Rate</p>
+                  <p className="text-lg sm:text-2xl font-bold text-success">{currentStats.winRate}%</p>
+                  <p className="text-[9px] sm:text-xs text-muted-foreground">Successful trades</p>
                 </CardContent>
               </Card>
 
