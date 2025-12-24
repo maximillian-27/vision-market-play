@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,6 +7,15 @@ import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { 
   ArrowLeft, 
   Heart, 
@@ -25,7 +34,10 @@ import {
   FileText,
   Scale,
   Wallet,
-  Zap
+  Zap,
+  AlertTriangle,
+  CheckCircle2,
+  Timer
 } from "lucide-react";
 import { ResponsiveContainer, AreaChart, Area, XAxis, Tooltip } from "recharts";
 import { useToast } from "@/hooks/use-toast";
@@ -139,9 +151,16 @@ const buySchema = z.object({
 
 export default function MarketDetail() {
   const { id } = useParams();
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { toast } = useToast();
   const market = mockMarketData[id || "1"];
+  
+  // Get status from URL params (for closed/resolved markets)
+  const urlStatus = searchParams.get('status') as 'closed' | 'resolved' | null;
+  const urlResolution = searchParams.get('resolution') || 'Yes';
+  const isClosedOrResolved = urlStatus === 'closed' || urlStatus === 'resolved';
+  const isDisputable = urlStatus === 'closed';
   
   const [commentText, setCommentText] = useState("");
   const [comments, setComments] = useState<Comment[]>(mockComments);
@@ -154,6 +173,8 @@ export default function MarketDetail() {
   const [showResolution, setShowResolution] = useState(false);
   const [showComments, setShowComments] = useState(false);
   const [showRepostDialog, setShowRepostDialog] = useState(false);
+  const [showDisputeDialog, setShowDisputeDialog] = useState(false);
+  const [disputeReason, setDisputeReason] = useState("");
 
   if (!market) {
     return (
@@ -228,6 +249,15 @@ export default function MarketDetail() {
     }
   };
 
+  const handleDispute = () => {
+    toast({
+      title: "Dispute submitted",
+      description: "Your dispute has been submitted for review.",
+    });
+    setShowDisputeDialog(false);
+    setDisputeReason("");
+  };
+
   const formatNumber = (num: number) => {
     if (num >= 1000) return `${(num / 1000).toFixed(1)}K`;
     return num.toString();
@@ -297,7 +327,21 @@ export default function MarketDetail() {
               </div>
             </div>
           </button>
-          <Badge variant="secondary" className="text-[10px] px-2">Live</Badge>
+          {isClosedOrResolved ? (
+            isDisputable ? (
+              <Badge className="bg-orange-500/20 text-orange-600 border border-orange-500/30 text-[10px] px-2">
+                <Timer className="h-3 w-3 mr-1" />
+                Dispute Period
+              </Badge>
+            ) : (
+              <Badge className="bg-muted text-muted-foreground border border-border text-[10px] px-2">
+                <CheckCircle2 className="h-3 w-3 mr-1" />
+                Resolved
+              </Badge>
+            )
+          ) : (
+            <Badge variant="secondary" className="text-[10px] px-2">Live</Badge>
+          )}
         </div>
 
         {/* Title */}
@@ -508,141 +552,277 @@ export default function MarketDetail() {
         </Collapsible>
       </div>
 
-      {/* Sticky Trade Panel at Bottom */}
-      <div className="fixed bottom-14 md:bottom-0 left-0 right-0 bg-background/95 backdrop-blur-md border-t border-border/40 z-30">
-        <div className="max-w-2xl mx-auto p-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] space-y-2">
-          {/* Quick Trade Header */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Zap className="h-4 w-4 text-primary" />
-              <span className="text-sm font-semibold">Quick Trade</span>
+      {/* Resolution Result Panel - for closed/resolved markets */}
+      {isClosedOrResolved ? (
+        <div className="fixed bottom-14 md:bottom-0 left-0 right-0 bg-background/95 backdrop-blur-md border-t border-border/40 z-30">
+          <div className="max-w-2xl mx-auto p-4 pb-[calc(env(safe-area-inset-bottom)+1rem)] space-y-4">
+            {/* Result Header */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className={`h-5 w-5 ${
+                  urlResolution?.toLowerCase() === 'yes' ? 'text-yes' : 
+                  urlResolution?.toLowerCase() === 'no' ? 'text-no' : 'text-primary'
+                }`} />
+                <span className="text-sm font-semibold">Market Result</span>
+              </div>
+              {isDisputable && (
+                <Badge className="bg-orange-500/20 text-orange-600 border border-orange-500/30 text-xs">
+                  <Timer className="h-3 w-3 mr-1" />
+                  2d 14h left to dispute
+                </Badge>
+              )}
             </div>
-            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-              <Wallet className="h-3.5 w-3.5" />
-              <span>$5,230</span>
-            </div>
-          </div>
 
-          {/* Outcome Selection */}
-          {isBinary ? (
-            <div className="space-y-2">
-              {/* Probability bar */}
-              <div className="flex items-center gap-2 text-xs font-bold">
-                <span className="text-success w-10">{market.outcomes[0].price}%</span>
-                <div className="flex-1 h-2 rounded-full bg-muted overflow-hidden">
-                  <div 
-                    className="h-full rounded-full bg-gradient-to-r from-success to-success/80"
-                    style={{ width: `${market.outcomes[0].price}%` }}
-                  />
-                </div>
-                <span className="text-muted-foreground w-10 text-right">{market.outcomes[1].price}%</span>
+            {/* Outcome Display */}
+            <div className="rounded-xl bg-muted/30 p-4 space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-muted-foreground">Final Outcome</span>
+                <span className={`text-xl font-bold ${
+                  urlResolution?.toLowerCase() === 'yes' ? 'text-yes' : 
+                  urlResolution?.toLowerCase() === 'no' ? 'text-no' : 'text-primary'
+                }`}>
+                  {urlResolution}
+                </span>
               </div>
               
-              {/* Outcome buttons */}
-              <div className="grid grid-cols-2 gap-2">
+              {/* Progress bar */}
+              {isBinary && (
+                <div className="h-2.5 rounded-full bg-muted overflow-hidden">
+                  <div 
+                    className={`h-full rounded-full transition-all duration-500 ${
+                      urlResolution?.toLowerCase() === 'yes' ? 'bg-yes' : 'bg-no'
+                    }`}
+                    style={{ width: urlResolution?.toLowerCase() === 'yes' ? '100%' : '0%' }}
+                  />
+                </div>
+              )}
+
+              {/* Resolution Reason */}
+              <div className="pt-2 border-t border-border/50">
+                <p className="text-xs text-muted-foreground mb-1">Resolution Reason</p>
+                <p className="text-sm text-foreground">
+                  {urlResolution?.toLowerCase() === 'yes' 
+                    ? 'Bitcoin reached $100,000 on Coinbase on December 15, 2025, and sustained above this level for over 30 minutes.'
+                    : 'Bitcoin did not reach $100,000 by the resolution date.'}
+                </p>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            {isDisputable ? (
+              <div className="flex gap-3">
+                <Button 
+                  variant="outline"
+                  className="flex-1 h-11 text-orange-600 border-orange-500/30 hover:bg-orange-500/10 hover:border-orange-500/50"
+                  onClick={() => setShowDisputeDialog(true)}
+                >
+                  <AlertTriangle className="h-4 w-4 mr-2" />
+                  Dispute Resolution
+                </Button>
+                <Button 
+                  className="flex-1 h-11"
+                  onClick={() => {
+                    toast({
+                      title: "Position claimed",
+                      description: "Your winnings have been added to your balance.",
+                    });
+                  }}
+                >
+                  Claim Winnings
+                </Button>
+              </div>
+            ) : (
+              <Button 
+                className="w-full h-11"
+                onClick={() => {
+                  toast({
+                    title: "Position claimed",
+                    description: "Your winnings have been added to your balance.",
+                  });
+                }}
+              >
+                <CheckCircle2 className="h-4 w-4 mr-2" />
+                Claim Winnings
+              </Button>
+            )}
+          </div>
+        </div>
+      ) : (
+        /* Sticky Trade Panel at Bottom - for active markets */
+        <div className="fixed bottom-14 md:bottom-0 left-0 right-0 bg-background/95 backdrop-blur-md border-t border-border/40 z-30">
+          <div className="max-w-2xl mx-auto p-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] space-y-2">
+            {/* Quick Trade Header */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Zap className="h-4 w-4 text-primary" />
+                <span className="text-sm font-semibold">Quick Trade</span>
+              </div>
+              <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                <Wallet className="h-3.5 w-3.5" />
+                <span>$5,230</span>
+              </div>
+            </div>
+
+            {/* Outcome Selection */}
+            {isBinary ? (
+              <div className="space-y-2">
+                {/* Probability bar */}
+                <div className="flex items-center gap-2 text-xs font-bold">
+                  <span className="text-success w-10">{market.outcomes[0].price}%</span>
+                  <div className="flex-1 h-2 rounded-full bg-muted overflow-hidden">
+                    <div 
+                      className="h-full rounded-full bg-gradient-to-r from-success to-success/80"
+                      style={{ width: `${market.outcomes[0].price}%` }}
+                    />
+                  </div>
+                  <span className="text-muted-foreground w-10 text-right">{market.outcomes[1].price}%</span>
+                </div>
+                
+                {/* Outcome buttons */}
+                <div className="grid grid-cols-2 gap-2">
+                  {market.outcomes.map((outcome: any, index: number) => {
+                    const isYes = outcome.label.toLowerCase() === "yes";
+                    const isSelected = selectedOutcome?.label === outcome.label;
+                    
+                    return (
+                      <button
+                        key={index}
+                        onClick={() => setSelectedOutcome(outcome)}
+                        className={`rounded-lg py-2.5 text-center transition-all active:scale-[0.98] border ${
+                          isSelected
+                            ? isYes 
+                              ? 'border-success bg-success/20 text-success' 
+                              : 'border-destructive bg-destructive/20 text-destructive'
+                            : isYes
+                              ? 'border-success/30 bg-success/10 text-success hover:bg-success/15'
+                              : 'border-destructive/30 bg-destructive/10 text-destructive hover:bg-destructive/15'
+                        }`}
+                      >
+                        <span className="text-sm font-bold uppercase">{outcome.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            ) : (
+              <div className="flex gap-2 overflow-x-auto scrollbar-hide -mx-3 px-3 pb-1">
                 {market.outcomes.map((outcome: any, index: number) => {
-                  const isYes = outcome.label.toLowerCase() === "yes";
                   const isSelected = selectedOutcome?.label === outcome.label;
                   
                   return (
                     <button
                       key={index}
                       onClick={() => setSelectedOutcome(outcome)}
-                      className={`rounded-lg py-2.5 text-center transition-all active:scale-[0.98] border ${
+                      className={`flex-shrink-0 flex items-center gap-2 rounded-xl px-4 py-2.5 transition-all active:scale-[0.98] border ${
                         isSelected
-                          ? isYes 
-                            ? 'border-success bg-success/20 text-success' 
-                            : 'border-destructive bg-destructive/20 text-destructive'
-                          : isYes
-                            ? 'border-success/30 bg-success/10 text-success hover:bg-success/15'
-                            : 'border-destructive/30 bg-destructive/10 text-destructive hover:bg-destructive/15'
+                          ? 'border-primary bg-primary/10'
+                          : 'border-border/40 bg-secondary/60 hover:bg-secondary'
                       }`}
                     >
-                      <span className="text-sm font-bold uppercase">{outcome.label}</span>
+                      {outcome.logo ? (
+                        <img src={outcome.logo} alt={outcome.label} className="h-5 w-5 object-contain rounded-sm" />
+                      ) : (
+                        <div className="h-5 w-5 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary">
+                          {outcome.label.charAt(0)}
+                        </div>
+                      )}
+                      <span className="text-sm font-semibold whitespace-nowrap">{outcome.label}</span>
+                      <span className="text-sm font-bold text-primary">{outcome.price}%</span>
                     </button>
                   );
                 })}
               </div>
-            </div>
-          ) : (
-            <div className="flex gap-2 overflow-x-auto scrollbar-hide -mx-3 px-3 pb-1">
-              {market.outcomes.map((outcome: any, index: number) => {
-                const isSelected = selectedOutcome?.label === outcome.label;
-                
-                return (
-                  <button
-                    key={index}
-                    onClick={() => setSelectedOutcome(outcome)}
-                    className={`flex-shrink-0 flex items-center gap-2 rounded-xl px-4 py-2.5 transition-all active:scale-[0.98] border ${
-                      isSelected
-                        ? 'border-primary bg-primary/10'
-                        : 'border-border/40 bg-secondary/60 hover:bg-secondary'
-                    }`}
-                  >
-                    {outcome.logo ? (
-                      <img src={outcome.logo} alt={outcome.label} className="h-5 w-5 object-contain rounded-sm" />
-                    ) : (
-                      <div className="h-5 w-5 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary">
-                        {outcome.label.charAt(0)}
-                      </div>
-                    )}
-                    <span className="text-sm font-semibold whitespace-nowrap">{outcome.label}</span>
-                    <span className="text-sm font-bold text-primary">{outcome.price}%</span>
-                  </button>
-                );
-              })}
-            </div>
-          )}
+            )}
 
-          {/* Amount & Buy */}
-          <div className="flex items-center gap-2">
-            <div className="relative flex-1">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground font-medium text-sm">$</span>
-              <Input
-                type="number"
-                inputMode="decimal"
-                placeholder="0.00"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-                className="pl-7 pr-3 h-10 text-base font-semibold bg-muted/30 border-border/50 focus:border-primary"
-              />
+            {/* Amount & Buy */}
+            <div className="flex items-center gap-2">
+              <div className="relative flex-1">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground font-medium text-sm">$</span>
+                <Input
+                  type="number"
+                  inputMode="decimal"
+                  placeholder="0.00"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                  className="pl-7 pr-3 h-10 text-base font-semibold bg-muted/30 border-border/50 focus:border-primary"
+                />
+              </div>
+              <Button
+                className="h-10 px-5 font-semibold text-sm min-w-[110px]"
+                onClick={handleBuy}
+                disabled={!selectedOutcome || isSubmitting || amountNum < 1}
+              >
+                {isSubmitting 
+                  ? "..." 
+                  : selectedOutcome 
+                    ? `Buy $${amountNum}`
+                    : "Select"
+                }
+              </Button>
             </div>
-            <Button
-              className="h-10 px-5 font-semibold text-sm min-w-[110px]"
-              onClick={handleBuy}
-              disabled={!selectedOutcome || isSubmitting || amountNum < 1}
-            >
-              {isSubmitting 
-                ? "..." 
-                : selectedOutcome 
-                  ? `Buy $${amountNum}`
-                  : "Select"
-              }
-            </Button>
-          </div>
 
-          {/* Order Summary - always visible with key info */}
-          <div className="flex items-center justify-between text-xs bg-muted/30 rounded-lg px-3 py-2">
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-1">
-                <span className="text-muted-foreground">Shares</span>
-                <span className="font-semibold">{selectedOutcome ? shares : '-'}</span>
+            {/* Order Summary - always visible with key info */}
+            <div className="flex items-center justify-between text-xs bg-muted/30 rounded-lg px-3 py-2">
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-1">
+                  <span className="text-muted-foreground">Shares</span>
+                  <span className="font-semibold">{selectedOutcome ? shares : '-'}</span>
+                </div>
+                <div className="w-px h-3 bg-border" />
+                <div className="flex items-center gap-1">
+                  <span className="text-muted-foreground">Avg</span>
+                  <span className="font-semibold">{selectedOutcome ? `${selectedOutcome.price}¢` : '-'}</span>
+                </div>
               </div>
-              <div className="w-px h-3 bg-border" />
               <div className="flex items-center gap-1">
-                <span className="text-muted-foreground">Avg</span>
-                <span className="font-semibold">{selectedOutcome ? `${selectedOutcome.price}¢` : '-'}</span>
+                <span className="text-muted-foreground">Profit</span>
+                <span className={`font-semibold ${selectedOutcome && potentialProfit > 0 ? 'text-success' : ''}`}>
+                  {selectedOutcome ? `+$${potentialProfit.toFixed(2)}` : '-'}
+                </span>
               </div>
-            </div>
-            <div className="flex items-center gap-1">
-              <span className="text-muted-foreground">Profit</span>
-              <span className={`font-semibold ${selectedOutcome && potentialProfit > 0 ? 'text-success' : ''}`}>
-                {selectedOutcome ? `+$${potentialProfit.toFixed(2)}` : '-'}
-              </span>
             </div>
           </div>
         </div>
-      </div>
+      )}
+
+      {/* Dispute Dialog */}
+      <Dialog open={showDisputeDialog} onOpenChange={setShowDisputeDialog}>
+        <DialogContent className="rounded-xl border-border max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <AlertTriangle className="h-5 w-5 text-orange-500" />
+              Dispute Resolution
+            </DialogTitle>
+            <DialogDescription>
+              You have 2 days 14 hours left to submit a dispute.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-2">
+            <div className="p-3 bg-secondary rounded-lg">
+              <p className="text-xs text-muted-foreground mb-1">Current Resolution</p>
+              <p className="font-semibold">{urlResolution?.toUpperCase()}</p>
+            </div>
+            <Textarea
+              placeholder="Explain why this resolution is incorrect..."
+              value={disputeReason}
+              onChange={(e) => setDisputeReason(e.target.value)}
+              className="min-h-[100px] rounded-lg"
+            />
+          </div>
+          <DialogFooter className="gap-2">
+            <Button variant="outline" onClick={() => setShowDisputeDialog(false)}>
+              Cancel
+            </Button>
+            <Button 
+              onClick={handleDispute}
+              disabled={!disputeReason.trim()}
+              className="bg-orange-500 hover:bg-orange-600"
+            >
+              Submit Dispute
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <QuoteRepostDialog
         open={showRepostDialog}
