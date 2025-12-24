@@ -6,16 +6,8 @@ import { Clock, TrendingUp, AlertTriangle, CheckCircle2, Timer, Bookmark, Share2
 import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { MarketDialog } from "@/components/MarketDialog";
+import { ResolvedMarketDialog } from "@/components/ResolvedMarketDialog";
 import { QuickTradeSheet } from "@/components/QuickTradeSheet";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
-import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { QuoteRepostDialog } from "@/components/QuoteRepostDialog";
@@ -70,8 +62,7 @@ export function MarketGridCard({
   const isMobile = useIsMobile();
   const [showMarketDialog, setShowMarketDialog] = useState(false);
   const [showQuickTrade, setShowQuickTrade] = useState(false);
-  const [showDisputeDialog, setShowDisputeDialog] = useState(false);
-  const [disputeReason, setDisputeReason] = useState("");
+  const [showResolvedDialog, setShowResolvedDialog] = useState(false);
   const [showRepostDialog, setShowRepostDialog] = useState(false);
   
   const displayOutcomes = outcomes || [
@@ -83,7 +74,14 @@ export function MarketGridCard({
   const isBinary = displayOutcomes.length === 2 && !outcomes;
 
   const handleCardClick = () => {
-    if (isClosedOrResolved) return;
+    if (isClosedOrResolved) {
+      if (isMobile) {
+        navigate(`/market/${id}`);
+      } else {
+        setShowResolvedDialog(true);
+      }
+      return;
+    }
     if (isMobile) {
       navigate(`/market/${id}`);
     } else {
@@ -99,15 +97,6 @@ export function MarketGridCard({
     } else {
       setShowMarketDialog(true);
     }
-  };
-
-  const handleDispute = () => {
-    toast({
-      title: "Dispute submitted",
-      description: "Your dispute has been submitted for review.",
-    });
-    setShowDisputeDialog(false);
-    setDisputeReason("");
   };
 
   const getStatusBadge = () => {
@@ -169,43 +158,17 @@ export function MarketGridCard({
         }}
       />
       
-      <Dialog open={showDisputeDialog} onOpenChange={setShowDisputeDialog}>
-        <DialogContent onClick={(e) => e.stopPropagation()} className="rounded-xl border-border">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <AlertTriangle className="h-5 w-5 text-orange-500" />
-              Dispute Resolution
-            </DialogTitle>
-            <DialogDescription>
-              You have {disputeEndsIn} to submit a dispute.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 py-2">
-            <div className="p-3 bg-secondary rounded-lg">
-              <p className="text-xs text-muted-foreground mb-1">Current Resolution</p>
-              <p className="font-semibold">{resolution?.toUpperCase()}</p>
-            </div>
-            <Textarea
-              placeholder="Explain why this resolution is incorrect..."
-              value={disputeReason}
-              onChange={(e) => setDisputeReason(e.target.value)}
-              className="min-h-[80px] rounded-lg"
-            />
-          </div>
-          <DialogFooter className="gap-2">
-            <Button variant="outline" onClick={() => setShowDisputeDialog(false)}>
-              Cancel
-            </Button>
-            <Button 
-              onClick={handleDispute}
-              disabled={!disputeReason.trim()}
-              className="bg-orange-500 hover:bg-orange-600"
-            >
-              Submit
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      {isClosedOrResolved && (
+        <ResolvedMarketDialog
+          open={showResolvedDialog}
+          onOpenChange={setShowResolvedDialog}
+          market={marketDialogData}
+          status={status as "closed" | "resolved"}
+          resolution={resolution || "Yes"}
+          disputeEndsIn={disputeEndsIn}
+          resolvedAt={resolvedAt}
+        />
+      )}
       
       <Card 
         className={`group overflow-hidden cursor-pointer border-border bg-card card-hover`}
@@ -324,7 +287,7 @@ export function MarketGridCard({
                     className="w-full text-orange-600 border-orange-500/30 hover:bg-orange-500/10 hover:border-orange-500/50 text-xs h-8"
                     onClick={(e) => {
                       e.stopPropagation();
-                      setShowDisputeDialog(true);
+                      setShowResolvedDialog(true);
                     }}
                   >
                     <AlertTriangle className="h-3.5 w-3.5 mr-1.5" />
@@ -340,7 +303,7 @@ export function MarketGridCard({
                     className="w-full text-xs h-8"
                     onClick={(e) => {
                       e.stopPropagation();
-                      navigate(`/market/${id}`);
+                      setShowResolvedDialog(true);
                     }}
                   >
                     View Details
@@ -473,7 +436,7 @@ export function MarketGridCard({
                       className="ml-auto px-2 py-1 rounded-md bg-orange-500/10 text-orange-600 border border-orange-500/20 text-[10px] font-medium"
                       onClick={(e) => {
                         e.stopPropagation();
-                        setShowDisputeDialog(true);
+                        setShowResolvedDialog(true);
                       }}
                     >
                       Dispute
