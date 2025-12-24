@@ -75,11 +75,7 @@ export function MarketGridCard({
 
   const handleCardClick = () => {
     if (isClosedOrResolved) {
-      if (isMobile) {
-        navigate(`/market/${id}`);
-      } else {
-        setShowResolvedDialog(true);
-      }
+      setShowResolvedDialog(true);
       return;
     }
     if (isMobile) {
