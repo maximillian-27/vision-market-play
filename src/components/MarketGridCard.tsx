@@ -171,7 +171,7 @@ export function MarketGridCard({
       )}
       
       <Card 
-        className={`group overflow-hidden cursor-pointer border-border bg-card card-hover`}
+        className={`group overflow-hidden cursor-pointer border-border bg-card card-hover relative z-0`}
         onClick={handleCardClick}
       >
         {/* Desktop Layout */}
