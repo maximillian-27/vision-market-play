@@ -8,16 +8,17 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { 
   Search as SearchIcon, 
   BadgeCheck, 
-  TrendingUp, 
   Users, 
   BarChart3, 
   MessageSquare,
   Newspaper,
   Heart,
-  Repeat2,
+  MessageCircle,
+  Share2,
   ExternalLink,
   Clock
 } from "lucide-react";
+import { MarketCard } from "@/components/MarketCard";
 import { MarketGridCard } from "@/components/MarketGridCard";
 import bitcoinImage from "@/assets/bitcoin-market.jpg";
 import nbaImage from "@/assets/nba-championship.jpg";
@@ -29,17 +30,19 @@ import aiImage from "@/assets/ai-customer-service.jpg";
 const allMarkets = [
   {
     id: "1",
-    creator: { name: "Sarah Chen", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah" },
+    creator: { name: "Sarah Chen", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah", isCreator: true },
     title: "Will Bitcoin reach $100,000 by end of 2025?",
     image: bitcoinImage,
     yesPrice: 68,
     noPrice: 32,
     volume: "$2.4M",
     endsIn: "3 months",
+    likes: 142,
+    comments: 38,
   },
   {
     id: "2",
-    creator: { name: "Mike Johnson", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Mike" },
+    creator: { name: "Mike Johnson", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Mike", isCreator: true },
     title: "Who will win the NBA Championship this season?",
     image: nbaImage,
     outcomes: [
@@ -50,20 +53,24 @@ const allMarkets = [
     ],
     volume: "$890K",
     endsIn: "2 months",
+    likes: 89,
+    comments: 24,
   },
   {
     id: "3",
-    creator: { name: "Emma Wilson", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Emma" },
+    creator: { name: "Emma Wilson", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Emma", isCreator: true },
     title: "Will Apple release a foldable iPhone in 2025?",
     image: iphoneImage,
     yesPrice: 23,
     noPrice: 77,
     volume: "$1.2M",
     endsIn: "11 months",
+    likes: 203,
+    comments: 67,
   },
   {
     id: "4",
-    creator: { name: "Alex Rodriguez", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Alex" },
+    creator: { name: "Alex Rodriguez", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Alex", isCreator: true },
     title: "Next US Federal Reserve interest rate decision?",
     image: fedImage,
     outcomes: [
@@ -73,16 +80,20 @@ const allMarkets = [
     ],
     volume: "$3.1M",
     endsIn: "1 month",
+    likes: 321,
+    comments: 95,
   },
   {
     id: "5",
-    creator: { name: "Jordan Lee", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Jordan" },
+    creator: { name: "Jordan Lee", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Jordan", isCreator: true },
     title: "Will AI replace 25% of customer service jobs by 2026?",
     image: aiImage,
     yesPrice: 71,
     noPrice: 29,
     volume: "$1.8M",
     endsIn: "1 year",
+    likes: 176,
+    comments: 52,
   },
 ];
 
@@ -145,37 +156,46 @@ const allUsers = [
   },
 ];
 
-// Mock data for posts
+// Mock data for posts (community style)
 const allPosts = [
   {
-    id: "post-1",
-    author: { name: "Sarah Chen", username: "@sarahchen", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah", verified: true },
-    content: "Bitcoin just broke through $95K! My prediction market is looking strong 📈",
-    likes: 234,
-    reposts: 45,
-    comments: 28,
-    time: "2h ago",
-    marketRef: { id: "1", title: "Will Bitcoin reach $100,000?" },
+    id: "c1",
+    user: {
+      name: "Alex Thompson",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=AlexT",
+      username: "@alexthompson"
+    },
+    thoughts: "This is actually more likely than people think. Institutional adoption is accelerating and the ETF approvals have brought in serious capital. I'm betting YES on this one.",
+    timestamp: "2h ago",
+    likes: 45,
+    comments: 12,
+    market: allMarkets[0]
   },
   {
-    id: "post-2",
-    author: { name: "MarketMaven", username: "@marketmaven", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Maven", verified: true },
-    content: "The Fed is definitely going to cut rates. All signals pointing that way. Check my market for the latest odds!",
-    likes: 156,
-    reposts: 32,
-    comments: 19,
-    time: "4h ago",
-    marketRef: { id: "4", title: "Next US Federal Reserve interest rate decision?" },
+    id: "c2",
+    user: {
+      name: "Maria Garcia",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Maria",
+      username: "@mariagarcia"
+    },
+    thoughts: "Apple typically waits until technology matures before adopting it. Looking at their track record with features like NFC, wireless charging, etc., I think they'll skip 2025.",
+    timestamp: "4h ago",
+    likes: 67,
+    comments: 23,
+    market: allMarkets[2]
   },
   {
-    id: "post-3",
-    author: { name: "Alex Thompson", username: "@alexthompson", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=AlexT", verified: false },
-    content: "Just went all in on YES for the foldable iPhone market. Apple patents don't lie! 🔥",
+    id: "c3",
+    user: {
+      name: "David Kim",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=David",
+      username: "@davidkim"
+    },
+    thoughts: "The Fed has been pretty clear about their stance. With inflation cooling down but still above target, I think they hold steady. Too risky to cut now.",
+    timestamp: "6h ago",
     likes: 89,
-    reposts: 12,
-    comments: 34,
-    time: "6h ago",
-    marketRef: { id: "3", title: "Will Apple release a foldable iPhone?" },
+    comments: 31,
+    market: allMarkets[3]
   },
 ];
 
@@ -247,9 +267,9 @@ export default function Search() {
 
   const filteredPosts = allPosts.filter(
     (post) =>
-      post.content.toLowerCase().includes(query.toLowerCase()) ||
-      post.author.name.toLowerCase().includes(query.toLowerCase()) ||
-      post.marketRef?.title.toLowerCase().includes(query.toLowerCase())
+      post.thoughts.toLowerCase().includes(query.toLowerCase()) ||
+      post.user.name.toLowerCase().includes(query.toLowerCase()) ||
+      post.market?.title.toLowerCase().includes(query.toLowerCase())
   );
 
   const filteredNews = allNews.filter(
@@ -284,7 +304,7 @@ export default function Search() {
   }
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-4 space-y-4">
+    <div className="max-w-2xl mx-auto px-4 py-4 space-y-4">
       {/* Search Header */}
       <div>
         <h1 className="text-lg font-semibold">Results for "{query}"</h1>
@@ -330,7 +350,7 @@ export default function Search() {
               >
                 <div className="space-y-3">
                   {filteredMarkets.slice(0, 2).map((market) => (
-                    <MarketGridCard key={market.id} {...market} />
+                    <MarketCard key={market.id} {...market} />
                   ))}
                 </div>
               </ResultSection>
@@ -356,9 +376,9 @@ export default function Search() {
                 count={filteredPosts.length}
                 onSeeAll={() => setActiveTab("posts")}
               >
-                <div className="space-y-2">
+                <div className="space-y-3">
                   {filteredPosts.slice(0, 2).map((post) => (
-                    <PostCard key={post.id} post={post} navigate={navigate} formatNumber={formatNumber} />
+                    <CommunityPostCard key={post.id} post={post} navigate={navigate} />
                   ))}
                 </div>
               </ResultSection>
@@ -387,7 +407,7 @@ export default function Search() {
           filteredMarkets.length > 0 ? (
             <div className="space-y-3">
               {filteredMarkets.map((market) => (
-                <MarketGridCard key={market.id} {...market} />
+                <MarketCard key={market.id} {...market} />
               ))}
             </div>
           ) : (
@@ -411,9 +431,9 @@ export default function Search() {
         {/* Posts Tab */}
         {activeTab === "posts" && (
           filteredPosts.length > 0 ? (
-            <div className="space-y-2">
+            <div className="space-y-3">
               {filteredPosts.map((post) => (
-                <PostCard key={post.id} post={post} navigate={navigate} formatNumber={formatNumber} />
+                <CommunityPostCard key={post.id} post={post} navigate={navigate} />
               ))}
             </div>
           ) : (
@@ -495,49 +515,61 @@ function UserCard({ user, navigate, formatNumber }: { user: any; navigate: any; 
   );
 }
 
-function PostCard({ post, navigate, formatNumber }: { post: any; navigate: any; formatNumber: (n: number) => string }) {
+function CommunityPostCard({ post, navigate }: { post: any; navigate: any }) {
   return (
-    <Card className="border-border/50 hover:border-border transition-colors cursor-pointer">
-      <CardContent className="p-3 space-y-2">
-        <div className="flex items-center gap-2">
-          <Avatar className="h-8 w-8">
-            <AvatarImage src={post.author.avatar} alt={post.author.name} />
-            <AvatarFallback>{post.author.name.slice(0, 2)}</AvatarFallback>
-          </Avatar>
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-1.5">
-              <span className="font-medium text-sm">{post.author.name}</span>
-              {post.author.verified && <BadgeCheck className="h-3.5 w-3.5 text-primary fill-primary/20" />}
-              <span className="text-xs text-muted-foreground">· {post.time}</span>
+    <Card className="overflow-hidden border-border/50">
+      <CardContent className="p-0">
+        {/* User Post Header */}
+        <div className="p-4 space-y-3">
+          <div className="flex items-start gap-3">
+            <Avatar 
+              className="h-9 w-9 cursor-pointer"
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate(`/profile/${post.user.username.slice(1)}`);
+              }}
+            >
+              <AvatarImage src={post.user.avatar} alt={post.user.name} />
+              <AvatarFallback>{post.user.name.slice(0, 2)}</AvatarFallback>
+            </Avatar>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2">
+                <span 
+                  className="font-medium text-sm cursor-pointer hover:underline"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigate(`/profile/${post.user.username.slice(1)}`);
+                  }}
+                >
+                  {post.user.username}
+                </span>
+                <span className="text-xs text-muted-foreground">{post.timestamp}</span>
+              </div>
+              <p className="text-sm mt-1.5 leading-relaxed">{post.thoughts}</p>
             </div>
           </div>
         </div>
-        <p className="text-sm">{post.content}</p>
-        {post.marketRef && (
-          <div 
-            className="flex items-center gap-2 text-xs text-primary bg-primary/5 rounded-md px-2 py-1.5 hover:bg-primary/10 transition-colors"
-            onClick={(e) => {
-              e.stopPropagation();
-              navigate(`/market/${post.marketRef.id}`);
-            }}
-          >
-            <BarChart3 className="h-3 w-3" />
-            <span className="truncate">{post.marketRef.title}</span>
+
+        {/* Embedded Market */}
+        {post.market && (
+          <div className="px-4 pb-4">
+            <MarketGridCard {...post.market} />
           </div>
         )}
-        <div className="flex items-center gap-4 text-xs text-muted-foreground pt-1">
-          <span className="flex items-center gap-1">
-            <Heart className="h-3.5 w-3.5" />
-            {formatNumber(post.likes)}
-          </span>
-          <span className="flex items-center gap-1">
-            <Repeat2 className="h-3.5 w-3.5" />
-            {formatNumber(post.reposts)}
-          </span>
-          <span className="flex items-center gap-1">
-            <MessageSquare className="h-3.5 w-3.5" />
-            {formatNumber(post.comments)}
-          </span>
+
+        {/* Engagement Actions */}
+        <div className="flex items-center gap-1 px-4 pb-3 border-t pt-3">
+          <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-full hover:bg-muted/60 text-muted-foreground hover:text-foreground transition-all text-xs">
+            <Heart className="h-4 w-4" />
+            <span>{post.likes}</span>
+          </button>
+          <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-full hover:bg-muted/60 text-muted-foreground hover:text-foreground transition-all text-xs">
+            <MessageCircle className="h-4 w-4" />
+            <span>{post.comments}</span>
+          </button>
+          <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-full hover:bg-muted/60 text-muted-foreground hover:text-foreground transition-all ml-auto">
+            <Share2 className="h-4 w-4" />
+          </button>
         </div>
       </CardContent>
     </Card>
