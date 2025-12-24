@@ -213,22 +213,17 @@ const Portfolio = () => {
 
         {/* Main Content Tabs */}
         <Tabs defaultValue="positions" className="space-y-4 sm:space-y-6">
-          <div className="overflow-x-auto -mx-3 px-3 sm:mx-0 sm:px-0 scrollbar-hide">
-            <TabsList className="bg-muted/50 p-1 w-max sm:w-auto">
-              <TabsTrigger value="positions" className="data-[state=active]:bg-background text-xs sm:text-sm px-2.5 sm:px-3">
-                Positions
-              </TabsTrigger>
-              <TabsTrigger value="history" className="data-[state=active]:bg-background text-xs sm:text-sm px-2.5 sm:px-3">
-                History
-              </TabsTrigger>
-              <TabsTrigger value="transactions" className="data-[state=active]:bg-background text-xs sm:text-sm px-2.5 sm:px-3">
-                Deposits
-              </TabsTrigger>
-              <TabsTrigger value="analytics" className="data-[state=active]:bg-background text-xs sm:text-sm px-2.5 sm:px-3">
-                Analytics
-              </TabsTrigger>
-            </TabsList>
-          </div>
+          <TabsList className="bg-muted/50 p-1 w-full grid grid-cols-3">
+            <TabsTrigger value="positions" className="data-[state=active]:bg-background text-xs sm:text-sm">
+              Positions
+            </TabsTrigger>
+            <TabsTrigger value="history" className="data-[state=active]:bg-background text-xs sm:text-sm">
+              History
+            </TabsTrigger>
+            <TabsTrigger value="transactions" className="data-[state=active]:bg-background text-xs sm:text-sm">
+              Deposits
+            </TabsTrigger>
+          </TabsList>
 
           {/* Active Positions */}
           <TabsContent value="positions" className="space-y-3 sm:space-y-4">
@@ -486,84 +481,6 @@ const Portfolio = () => {
             </Card>
           </TabsContent>
 
-          {/* Analytics */}
-          <TabsContent value="analytics" className="space-y-4 sm:space-y-6">
-            {/* Timeline filter */}
-            <div className="flex items-center justify-between">
-              <h3 className="text-sm sm:text-lg font-semibold">Performance Analytics</h3>
-              <div className="flex gap-1 overflow-x-auto scrollbar-hide">
-                {[
-                  { key: "daily", label: "1D" },
-                  { key: "weekly", label: "1W" },
-                  { key: "monthly", label: "1M" },
-                  { key: "90days", label: "90D" },
-                  { key: "yearly", label: "1Y" },
-                ].map((item) => (
-                  <button
-                    key={item.key}
-                    onClick={() => setStatsTimeframe(item.key as StatsTimeframe)}
-                    className={`px-2 sm:px-3 py-1 sm:py-1.5 text-[10px] sm:text-xs font-medium rounded-md transition-colors ${
-                      statsTimeframe === item.key
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-muted/50 text-muted-foreground hover:bg-muted"
-                    }`}
-                  >
-                    {item.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4">
-              <Card className="border-border/40">
-                <CardContent className="p-3 sm:p-4">
-                  <p className="text-[10px] sm:text-sm text-muted-foreground mb-0.5">Win Rate</p>
-                  <p className="text-lg sm:text-2xl font-bold text-success">{currentStats.winRate}%</p>
-                  <p className="text-[9px] sm:text-xs text-muted-foreground">Successful trades</p>
-                </CardContent>
-              </Card>
-
-              <Card className="border-border/40">
-                <CardContent className="p-3 sm:p-4">
-                  <p className="text-[10px] sm:text-sm text-muted-foreground mb-0.5">Avg Return</p>
-                  <p className="text-lg sm:text-2xl font-bold text-success">+24.3%</p>
-                  <p className="text-[9px] sm:text-xs text-muted-foreground">Per win</p>
-                </CardContent>
-              </Card>
-
-              <Card className="border-border/40">
-                <CardContent className="p-3 sm:p-4">
-                  <p className="text-[10px] sm:text-sm text-muted-foreground mb-0.5">Total Trades</p>
-                  <p className="text-lg sm:text-2xl font-bold">127</p>
-                  <p className="text-[9px] sm:text-xs text-muted-foreground">All time</p>
-                </CardContent>
-              </Card>
-
-              <Card className="border-border/40">
-                <CardContent className="p-3 sm:p-4">
-                  <p className="text-[10px] sm:text-sm text-muted-foreground mb-0.5">Best Trade</p>
-                  <p className="text-lg sm:text-2xl font-bold text-success">+$847</p>
-                  <p className="text-[9px] sm:text-xs text-muted-foreground truncate">BTC $100k</p>
-                </CardContent>
-              </Card>
-
-              <Card className="border-border/40">
-                <CardContent className="p-3 sm:p-4">
-                  <p className="text-[10px] sm:text-sm text-muted-foreground mb-0.5">Worst Trade</p>
-                  <p className="text-lg sm:text-2xl font-bold text-destructive">-$156</p>
-                  <p className="text-[9px] sm:text-xs text-muted-foreground truncate">Fed rate</p>
-                </CardContent>
-              </Card>
-
-              <Card className="border-border/40">
-                <CardContent className="p-3 sm:p-4">
-                  <p className="text-[10px] sm:text-sm text-muted-foreground mb-0.5">Top Category</p>
-                  <p className="text-lg sm:text-2xl font-bold">Crypto</p>
-                  <p className="text-[9px] sm:text-xs text-muted-foreground">42% trades</p>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
         </Tabs>
       </div>
     </div>
