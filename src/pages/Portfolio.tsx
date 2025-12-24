@@ -39,6 +39,15 @@ const portfolioStats = {
   todayPnLPercent: 1.9,
 };
 
+// Stats by timeline
+const statsByTimeline = {
+  daily: { winRate: 75, pnl: 234, pnlPercent: 1.9 },
+  weekly: { winRate: 71, pnl: 892, pnlPercent: 7.8 },
+  monthly: { winRate: 68, pnl: 1847, pnlPercent: 17.4 },
+  "90days": { winRate: 65, pnl: 3241, pnlPercent: 32.1 },
+  yearly: { winRate: 62, pnl: 5890, pnlPercent: 58.2 },
+};
+
 const positions = [
   { id: 1, market: "Will Bitcoin reach $100k by 2025?", position: "Yes", shares: 150, avgPrice: 0.45, currentPrice: 0.62, pnl: 25.5, pnlPercent: 37.8 },
   { id: 2, market: "Fed rate cut in March 2025?", position: "No", shares: 200, avgPrice: 0.38, currentPrice: 0.41, pnl: 6, pnlPercent: 7.9 },
@@ -61,9 +70,14 @@ const transactions = [
   { id: 4, date: "2023-12-28", type: "Deposit", method: "Crypto", amount: 1000, status: "Completed" },
 ];
 
+type StatsTimeframe = "daily" | "weekly" | "monthly" | "90days" | "yearly";
+
 const Portfolio = () => {
   const [timeframe, setTimeframe] = useState("all");
+  const [statsTimeframe, setStatsTimeframe] = useState<StatsTimeframe>("monthly");
   const navigate = useNavigate();
+  
+  const currentStats = statsByTimeline[statsTimeframe];
 
   return (
     <div className="min-h-screen bg-background pb-20 sm:pb-6">
@@ -95,33 +109,64 @@ const Portfolio = () => {
             </CardContent>
           </Card>
           
-          <Card className="border-border/40">
-            <CardContent className="p-3 sm:p-4">
-              <div className="flex items-center gap-1.5 text-muted-foreground text-[11px] sm:text-sm mb-0.5 sm:mb-1">
-                <TrendingUp className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                Win Rate
-              </div>
-              <p className="text-lg sm:text-2xl font-bold text-success">68%</p>
-            </CardContent>
-          </Card>
-          
-          <Card className="border-border/40">
-            <CardContent className="p-3 sm:p-4">
-              <div className="flex items-center gap-1.5 text-muted-foreground text-[11px] sm:text-sm mb-0.5 sm:mb-1">
-                <BarChart3 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                P&L
-              </div>
-              <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
-                <p className={`text-lg sm:text-2xl font-bold ${portfolioStats.totalPnL >= 0 ? 'text-success' : 'text-destructive'}`}>
-                  {portfolioStats.totalPnL >= 0 ? '+' : ''}${portfolioStats.totalPnL.toLocaleString()}
-                </p>
-                <Badge variant={portfolioStats.totalPnLPercent >= 0 ? "default" : "destructive"} className="text-[10px] sm:text-xs px-1.5">
-                  {portfolioStats.totalPnLPercent >= 0 ? '+' : ''}{portfolioStats.totalPnLPercent}%
-                </Badge>
-              </div>
-            </CardContent>
-          </Card>
         </div>
+
+        {/* Win Rate & P&L with Timeline Filter */}
+        <Card className="border-border/40 mb-4 sm:mb-6">
+          <CardContent className="p-3 sm:p-4">
+            {/* Timeline selector */}
+            <div className="flex items-center justify-between mb-3 sm:mb-4">
+              <span className="text-xs sm:text-sm text-muted-foreground font-medium">Performance</span>
+              <div className="flex gap-1 overflow-x-auto scrollbar-hide">
+                {[
+                  { key: "daily", label: "1D" },
+                  { key: "weekly", label: "1W" },
+                  { key: "monthly", label: "1M" },
+                  { key: "90days", label: "90D" },
+                  { key: "yearly", label: "1Y" },
+                ].map((item) => (
+                  <button
+                    key={item.key}
+                    onClick={() => setStatsTimeframe(item.key as StatsTimeframe)}
+                    className={`px-2 sm:px-3 py-1 sm:py-1.5 text-[10px] sm:text-xs font-medium rounded-md transition-colors ${
+                      statsTimeframe === item.key
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-muted/50 text-muted-foreground hover:bg-muted"
+                    }`}
+                  >
+                    {item.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+            
+            {/* Stats row */}
+            <div className="grid grid-cols-2 gap-3 sm:gap-6">
+              <div>
+                <div className="flex items-center gap-1.5 text-muted-foreground text-[11px] sm:text-sm mb-0.5 sm:mb-1">
+                  <TrendingUp className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                  Win Rate
+                </div>
+                <p className="text-lg sm:text-2xl font-bold text-success">{currentStats.winRate}%</p>
+              </div>
+              
+              <div>
+                <div className="flex items-center gap-1.5 text-muted-foreground text-[11px] sm:text-sm mb-0.5 sm:mb-1">
+                  <BarChart3 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                  P&L
+                </div>
+                <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+                  <p className={`text-lg sm:text-2xl font-bold ${currentStats.pnl >= 0 ? 'text-success' : 'text-destructive'}`}>
+                    {currentStats.pnl >= 0 ? '+' : ''}${currentStats.pnl.toLocaleString()}
+                  </p>
+                  <Badge variant={currentStats.pnlPercent >= 0 ? "default" : "destructive"} className="text-[10px] sm:text-xs px-1.5">
+                    {currentStats.pnlPercent >= 0 ? '+' : ''}{currentStats.pnlPercent}%
+                  </Badge>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Quick Actions */}
         <div className="flex gap-2 sm:gap-3 mb-4 sm:mb-6">
