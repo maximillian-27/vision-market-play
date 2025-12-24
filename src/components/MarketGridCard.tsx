@@ -75,7 +75,11 @@ export function MarketGridCard({
 
   const handleCardClick = () => {
     if (isClosedOrResolved) {
-      setShowResolvedDialog(true);
+      if (isMobile) {
+        navigate(`/market/${id}`);
+      } else {
+        setShowResolvedDialog(true);
+      }
       return;
     }
     if (isMobile) {
@@ -167,7 +171,7 @@ export function MarketGridCard({
       )}
       
       <Card 
-        className={`group overflow-hidden cursor-pointer border-border bg-card card-hover relative z-0`}
+        className={`group overflow-hidden cursor-pointer border-border bg-card card-hover`}
         onClick={handleCardClick}
       >
         {/* Desktop Layout */}

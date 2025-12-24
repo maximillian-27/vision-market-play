@@ -295,7 +295,7 @@ export default function Feed() {
   }, [filters]);
 
   return (
-    <div className="w-full max-w-[1600px] mx-auto px-4 md:px-6 lg:px-8 py-4 lg:py-6 pb-20 sm:pb-6">
+    <div className="w-full max-w-[1600px] mx-auto px-4 md:px-6 lg:px-8 py-4 lg:py-6">
       <div className="space-y-4">
         <PageHeader 
           title="Markets"
