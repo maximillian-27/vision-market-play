@@ -121,16 +121,16 @@ export function MarketGridCard({
         );
       case "closed":
         return (
-          <Badge className="bg-orange-500/90 text-white border-0 text-[10px] font-medium px-2 py-0.5 shadow-sm">
-            <AlertTriangle className="h-3 w-3 mr-1" />
-            Dispute Period
+          <Badge className="bg-orange-500/20 text-orange-600 border border-orange-500/30 text-[10px] font-medium px-2 py-0.5">
+            <Clock className="h-3 w-3 mr-1" />
+            Dispute: {disputeEndsIn}
           </Badge>
         );
       case "resolved":
         return (
-          <Badge className="bg-primary/90 text-primary-foreground border-0 text-[10px] font-medium px-2 py-0.5 shadow-sm">
+          <Badge className="bg-muted text-muted-foreground border border-border text-[10px] font-medium px-2 py-0.5">
             <CheckCircle2 className="h-3 w-3 mr-1" />
-            Resolved
+            {resolvedAt}
           </Badge>
         );
       default:
@@ -208,13 +208,13 @@ export function MarketGridCard({
       </Dialog>
       
       <Card 
-        className={`group overflow-hidden cursor-pointer border-border bg-card card-hover ${isClosedOrResolved ? 'opacity-75' : ''}`}
+        className={`group overflow-hidden cursor-pointer border-border bg-card card-hover`}
         onClick={handleCardClick}
       >
         {/* Desktop Layout */}
         <div className="sm:block hidden">
           {/* Image */}
-          <div className={`relative aspect-[16/9] w-full overflow-hidden bg-secondary ${isClosedOrResolved ? 'grayscale-[20%]' : ''}`}>
+          <div className={`relative aspect-[16/9] w-full overflow-hidden bg-secondary`}>
             <img 
               src={image} 
               alt={title}
@@ -290,33 +290,60 @@ export function MarketGridCard({
             </h3>
 
             {isClosedOrResolved ? (
-              <div className="space-y-2">
-                <div className={`text-center py-2 rounded-lg ${
-                  resolution?.toLowerCase() === "yes" ? 'bg-yes-muted' : 
-                  resolution?.toLowerCase() === "no" ? 'bg-no-muted' : 'bg-primary-muted'
-                }`}>
-                  <span className={`font-bold text-sm ${
-                    resolution?.toLowerCase() === "yes" ? 'text-yes' : 
-                    resolution?.toLowerCase() === "no" ? 'text-no' : 'text-primary'
-                  }`}>
-                    {resolution}
-                  </span>
-                  <p className="text-[10px] text-muted-foreground mt-0.5">
-                    {status === "closed" ? `Dispute ends: ${disputeEndsIn}` : resolvedAt}
-                  </p>
+              <div className="space-y-2.5">
+                {/* Resolution Result */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-muted-foreground">Outcome</span>
+                    <span className={`text-sm font-bold ${
+                      resolution?.toLowerCase() === "yes" ? 'text-yes' : 
+                      resolution?.toLowerCase() === "no" ? 'text-no' : 'text-primary'
+                    }`}>
+                      {resolution}
+                    </span>
+                  </div>
+                  
+                  {/* Progress bar showing final result */}
+                  {isBinary && (
+                    <div className="h-2 rounded-full bg-muted overflow-hidden">
+                      <div 
+                        className={`h-full rounded-full transition-all duration-300 ${
+                          resolution?.toLowerCase() === "yes" ? 'bg-yes' : 'bg-no'
+                        }`}
+                        style={{ width: resolution?.toLowerCase() === "yes" ? '100%' : '0%' }}
+                      />
+                    </div>
+                  )}
                 </div>
+
+                {/* Dispute button for closed markets */}
                 {status === "closed" && (
                   <Button
                     variant="outline"
                     size="sm"
-                    className="w-full text-orange-600 border-orange-500/30 hover:bg-orange-500/10 text-xs h-8"
+                    className="w-full text-orange-600 border-orange-500/30 hover:bg-orange-500/10 hover:border-orange-500/50 text-xs h-8"
                     onClick={(e) => {
                       e.stopPropagation();
                       setShowDisputeDialog(true);
                     }}
                   >
-                    <AlertTriangle className="h-3 w-3 mr-1.5" />
-                    Dispute
+                    <AlertTriangle className="h-3.5 w-3.5 mr-1.5" />
+                    Dispute Resolution
+                  </Button>
+                )}
+
+                {/* View details for resolved */}
+                {status === "resolved" && (
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    className="w-full text-xs h-8"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/market/${id}`);
+                    }}
+                  >
+                    View Details
                   </Button>
                 )}
               </div>
@@ -395,7 +422,7 @@ export function MarketGridCard({
         <div className="sm:hidden flex flex-col">
           <div className="flex gap-3 p-3 pb-2">
             {/* Thumbnail */}
-            <div className={`relative w-20 h-20 rounded-lg overflow-hidden bg-secondary flex-shrink-0 ${isClosedOrResolved ? 'grayscale-[20%]' : ''}`}>
+            <div className={`relative w-20 h-20 rounded-lg overflow-hidden bg-secondary flex-shrink-0`}>
               <img 
                 src={image} 
                 alt={title}
@@ -433,16 +460,25 @@ export function MarketGridCard({
               </h3>
 
               {isClosedOrResolved ? (
-                <div className={`inline-flex items-center gap-1 px-2 py-1 rounded-md w-fit mt-auto ${
-                  resolution?.toLowerCase() === "yes" ? 'bg-yes-muted' : 
-                  resolution?.toLowerCase() === "no" ? 'bg-no-muted' : 'bg-primary-muted'
-                }`}>
+                <div className="flex items-center gap-2 mt-auto">
+                  <span className="text-xs text-muted-foreground">Outcome:</span>
                   <span className={`font-bold text-xs ${
                     resolution?.toLowerCase() === "yes" ? 'text-yes' : 
                     resolution?.toLowerCase() === "no" ? 'text-no' : 'text-primary'
                   }`}>
                     {resolution}
                   </span>
+                  {status === "closed" && (
+                    <button 
+                      className="ml-auto px-2 py-1 rounded-md bg-orange-500/10 text-orange-600 border border-orange-500/20 text-[10px] font-medium"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setShowDisputeDialog(true);
+                      }}
+                    >
+                      Dispute
+                    </button>
+                  )}
                 </div>
               ) : isBinary ? (
                 <div className="flex items-center gap-2 mt-auto">
