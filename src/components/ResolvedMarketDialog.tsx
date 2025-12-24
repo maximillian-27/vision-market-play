@@ -872,7 +872,7 @@ export function ResolvedMarketDialog({
     <>
       {isMobile ? (
         <Sheet open={open} onOpenChange={handleClose}>
-          <SheetContent side="bottom" className="h-[95vh] p-0 rounded-t-xl">
+          <SheetContent side="bottom" className="h-full p-0 rounded-none border-0">
             {mobileContent}
           </SheetContent>
         </Sheet>
