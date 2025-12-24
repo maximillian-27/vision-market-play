@@ -173,6 +173,11 @@ export function MarketGridCard({
           id,
           title,
           outcomes: displayOutcomes,
+          status,
+          resolution,
+          disputeEndsIn,
+          resolvedAt,
+          volume,
         }}
       />
       
