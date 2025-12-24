@@ -83,11 +83,7 @@ export function MarketGridCard({
   const isBinary = displayOutcomes.length === 2 && !outcomes;
 
   const handleCardClick = () => {
-    // Always allow navigation for closed/resolved markets
-    if (isClosedOrResolved) {
-      navigate(`/market/${id}?status=${status}&resolution=${resolution || ''}`);
-      return;
-    }
+    if (isClosedOrResolved) return;
     if (isMobile) {
       navigate(`/market/${id}`);
     } else {
