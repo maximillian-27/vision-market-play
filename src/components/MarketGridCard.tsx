@@ -74,12 +74,12 @@ export function MarketGridCard({
   const isBinary = displayOutcomes.length === 2 && !outcomes;
 
   const handleCardClick = () => {
-    if (isMobile) {
-      navigate(`/market/${id}`);
-      return;
-    }
     if (isClosedOrResolved) {
       setShowResolvedDialog(true);
+      return;
+    }
+    if (isMobile) {
+      navigate(`/market/${id}`);
     } else {
       setShowMarketDialog(true);
     }
