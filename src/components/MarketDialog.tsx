@@ -28,10 +28,7 @@ import {
   MessageCircle,
   ExternalLink,
   Zap,
-  Repeat2,
-  AlertTriangle,
-  CheckCircle2,
-  Timer
+  Repeat2
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { QuoteRepostDialog } from "@/components/QuoteRepostDialog";
@@ -72,10 +69,6 @@ interface MarketDialogProps {
     resolutionCriteria?: string;
     priceHistory?: { date: string; price: number }[];
     comments?: Comment[];
-    status?: "open" | "closing" | "closed" | "resolved";
-    resolution?: string;
-    disputeEndsIn?: string;
-    resolvedAt?: string;
   };
 }
 
@@ -141,8 +134,6 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
   const isBinary = market.outcomes.length === 2 && 
     market.outcomes.some(o => o.label.toLowerCase() === "yes") &&
     market.outcomes.some(o => o.label.toLowerCase() === "no");
-
-  const isClosedOrResolved = market.status === "closed" || market.status === "resolved";
 
   const amountNum = parseFloat(amount) || 0;
   const shares = selectedOutcome && selectedOutcome.price > 0 
@@ -408,282 +399,158 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
             </div>
           </ScrollArea>
 
-          {/* RIGHT: Trade/Status Panel */}
-          <div className="w-full sm:w-[280px] flex-shrink-0 bg-muted/20 flex flex-col">
+          {/* RIGHT: Quick Trade Panel - Always Visible */}
+          <div className="w-full sm:w-[260px] flex-shrink-0 bg-muted/20 flex flex-col">
             <div className="p-4 space-y-4 flex-1">
-              {/* Panel Header */}
+              {/* Quick Trade Header */}
               <div className="flex items-center gap-2">
-                {isClosedOrResolved ? (
-                  <>
-                    {market.status === "closed" ? (
-                      <AlertTriangle className="h-4 w-4 text-orange-500" />
-                    ) : (
-                      <CheckCircle2 className="h-4 w-4 text-primary" />
-                    )}
-                    <span className="text-sm font-semibold">
-                      {market.status === "closed" ? "Dispute Period" : "Market Resolved"}
-                    </span>
-                  </>
-                ) : (
-                  <>
-                    <Zap className="h-4 w-4 text-primary" />
-                    <span className="text-sm font-semibold">Quick Trade</span>
-                  </>
-                )}
+                <Zap className="h-4 w-4 text-primary" />
+                <span className="text-sm font-semibold">Quick Trade</span>
               </div>
 
-              {/* Closed/Resolved Content */}
-              {isClosedOrResolved ? (
-                <div className="space-y-4">
-                  {/* Resolution Result */}
-                  <div className="p-4 rounded-xl bg-background border border-border space-y-3">
-                    <div className="text-center">
-                      <p className="text-xs text-muted-foreground mb-1">Final Outcome</p>
-                      <p className={`text-2xl font-bold ${
-                        market.resolution?.toLowerCase() === "yes" ? 'text-success' : 
-                        market.resolution?.toLowerCase() === "no" ? 'text-destructive' : 'text-primary'
-                      }`}>
-                        {market.resolution}
-                      </p>
+              {/* Outcome Selection */}
+              {isBinary ? (
+                <div className="space-y-2">
+                  {/* Probability bar */}
+                  <div className="flex items-center gap-2 text-xs font-bold">
+                    <span className="text-success w-10">{market.outcomes.find(o => o.label.toLowerCase() === "yes")?.price || 50}%</span>
+                    <div className="flex-1 h-2 rounded-full bg-muted overflow-hidden">
+                      <div 
+                        className="h-full rounded-full bg-gradient-to-r from-success to-success/80"
+                        style={{ width: `${market.outcomes.find(o => o.label.toLowerCase() === "yes")?.price || 50}%` }}
+                      />
                     </div>
-                    
-                    {isBinary && (
-                      <div className="h-3 rounded-full bg-muted overflow-hidden">
-                        <div 
-                          className={`h-full rounded-full transition-all ${
-                            market.resolution?.toLowerCase() === "yes" ? 'bg-success' : 'bg-destructive'
-                          }`}
-                          style={{ width: market.resolution?.toLowerCase() === "yes" ? '100%' : '0%' }}
-                        />
-                      </div>
-                    )}
-
-                    <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
-                      {market.status === "closed" ? (
-                        <>
-                          <Timer className="h-3.5 w-3.5" />
-                          <span>Dispute ends in {market.disputeEndsIn}</span>
-                        </>
-                      ) : (
-                        <>
-                          <CheckCircle2 className="h-3.5 w-3.5" />
-                          <span>Resolved on {market.resolvedAt}</span>
-                        </>
-                      )}
-                    </div>
+                    <span className="text-muted-foreground w-10 text-right">{market.outcomes.find(o => o.label.toLowerCase() === "no")?.price || 50}%</span>
                   </div>
-
-                  {/* Dispute Section for Closed Markets */}
-                  {market.status === "closed" && (
-                    <div className="space-y-3">
-                      <div className="p-3 rounded-lg bg-orange-500/10 border border-orange-500/20">
-                        <p className="text-xs text-orange-600 leading-relaxed">
-                          If you believe this resolution is incorrect, you can submit a dispute with evidence before the period ends.
-                        </p>
-                      </div>
-                      <Button
-                        variant="outline"
-                        className="w-full text-orange-600 border-orange-500/30 hover:bg-orange-500/10 hover:border-orange-500/50"
-                      >
-                        <AlertTriangle className="h-4 w-4 mr-2" />
-                        Submit Dispute
-                      </Button>
-                    </div>
-                  )}
-
-                  {/* Claim Section for Resolved Markets */}
-                  {market.status === "resolved" && (
-                    <div className="space-y-3">
-                      <div className="p-3 rounded-lg bg-primary/5 border border-primary/20 space-y-2">
-                        <div className="flex justify-between text-xs">
-                          <span className="text-muted-foreground">Your position</span>
-                          <span className="font-semibold">250 shares @ Yes</span>
-                        </div>
-                        <div className="flex justify-between text-xs">
-                          <span className="text-muted-foreground">Payout</span>
-                          <span className="font-bold text-success">+$250.00</span>
-                        </div>
-                      </div>
-                      <Button className="w-full">
-                        <CheckCircle2 className="h-4 w-4 mr-2" />
-                        Claim Winnings
-                      </Button>
-                    </div>
-                  )}
-
-                  {/* Historical Stats */}
-                  <div className="space-y-2 pt-2 border-t border-border">
-                    <p className="text-xs font-medium text-muted-foreground">Market Stats</p>
-                    <div className="grid grid-cols-2 gap-2">
-                      <div className="p-2 rounded-lg bg-background border border-border/50">
-                        <p className="text-[10px] text-muted-foreground">Total Volume</p>
-                        <p className="text-sm font-semibold">{market.volume}</p>
-                      </div>
-                      <div className="p-2 rounded-lg bg-background border border-border/50">
-                        <p className="text-[10px] text-muted-foreground">Traders</p>
-                        <p className="text-sm font-semibold">{market.traders?.toLocaleString() || "1.2K"}</p>
-                      </div>
-                    </div>
+                  
+                  {/* Outcome buttons */}
+                  <div className="grid grid-cols-2 gap-2">
+                    {market.outcomes.map((outcome, index) => {
+                      const isYes = outcome.label.toLowerCase() === "yes";
+                      const isSelected = selectedOutcome?.label === outcome.label;
+                      
+                      return (
+                        <button
+                          key={index}
+                          onClick={() => setSelectedOutcome(outcome)}
+                          className={`rounded-lg py-2.5 text-center transition-all active:scale-[0.98] border ${
+                            isSelected
+                              ? isYes 
+                                ? 'border-success bg-success/20 text-success' 
+                                : 'border-destructive bg-destructive/20 text-destructive'
+                              : isYes
+                                ? 'border-success/30 bg-success/10 text-success hover:bg-success/15'
+                                : 'border-destructive/30 bg-destructive/10 text-destructive hover:bg-destructive/15'
+                          }`}
+                        >
+                          <span className="text-sm font-bold uppercase">{outcome.label}</span>
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
               ) : (
-                <>
-                  {/* Active Market Trading UI */}
-                  {isBinary ? (
-                    <div className="space-y-2">
-                      {/* Probability bar */}
-                      <div className="flex items-center gap-2 text-xs font-bold">
-                        <span className="text-success w-10">{market.outcomes.find(o => o.label.toLowerCase() === "yes")?.price || 50}%</span>
-                        <div className="flex-1 h-2 rounded-full bg-muted overflow-hidden">
-                          <div 
-                            className="h-full rounded-full bg-gradient-to-r from-success to-success/80"
-                            style={{ width: `${market.outcomes.find(o => o.label.toLowerCase() === "yes")?.price || 50}%` }}
-                          />
-                        </div>
-                        <span className="text-muted-foreground w-10 text-right">{market.outcomes.find(o => o.label.toLowerCase() === "no")?.price || 50}%</span>
-                      </div>
-                      
-                      {/* Outcome buttons */}
-                      <div className="grid grid-cols-2 gap-2">
-                        {market.outcomes.map((outcome, index) => {
-                          const isYes = outcome.label.toLowerCase() === "yes";
-                          const isSelected = selectedOutcome?.label === outcome.label;
-                          
-                          return (
-                            <button
-                              key={index}
-                              onClick={() => setSelectedOutcome(outcome)}
-                              className={`rounded-lg py-2.5 text-center transition-all active:scale-[0.98] border ${
-                                isSelected
-                                  ? isYes 
-                                    ? 'border-success bg-success/20 text-success' 
-                                    : 'border-destructive bg-destructive/20 text-destructive'
-                                  : isYes
-                                    ? 'border-success/30 bg-success/10 text-success hover:bg-success/15'
-                                    : 'border-destructive/30 bg-destructive/10 text-destructive hover:bg-destructive/15'
-                              }`}
-                            >
-                              <span className="text-sm font-bold uppercase">{outcome.label}</span>
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="space-y-1.5 max-h-[160px] overflow-y-auto">
-                      {market.outcomes.map((outcome, index) => {
-                        const isSelected = selectedOutcome?.label === outcome.label;
-                        
-                        return (
-                          <button
-                            key={index}
-                            onClick={() => setSelectedOutcome(outcome)}
-                            className={`w-full flex items-center gap-2 rounded-lg px-3 py-2.5 transition-all active:scale-[0.98] border text-left ${
-                              isSelected
-                                ? 'border-primary bg-primary/10'
-                                : 'border-border/40 bg-secondary/60 hover:bg-secondary hover:border-border/60'
-                            }`}
-                          >
-                            {outcome.logo ? (
-                              <img src={outcome.logo} alt={outcome.label} className="h-5 w-5 object-contain rounded-sm" />
-                            ) : (
-                              <div className="h-5 w-5 rounded-sm bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary">
-                                {outcome.label.charAt(0)}
-                              </div>
-                            )}
-                            <span className="flex-1 text-sm font-medium truncate">{outcome.label}</span>
-                            <span className="text-sm font-bold text-primary">{outcome.price}%</span>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  )}
-
-                  {/* Amount Section */}
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between text-xs">
-                      <span className="text-muted-foreground">Amount</span>
-                      <div className="flex items-center gap-1 text-muted-foreground">
-                        <Wallet className="h-3 w-3" />
-                        <span>$5,230</span>
-                      </div>
-                    </div>
+                <div className="space-y-1.5 max-h-[160px] overflow-y-auto">
+                  {market.outcomes.map((outcome, index) => {
+                    const isSelected = selectedOutcome?.label === outcome.label;
                     
-                    <div className="relative">
-                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">$</span>
-                      <Input
-                        type="number"
-                        value={amount}
-                        onChange={(e) => setAmount(e.target.value)}
-                        className="pl-6 h-10 text-base font-semibold bg-background"
-                        min="1"
-                        max="10000"
-                        step="1"
-                      />
-                    </div>
-                    
-                    <div className="grid grid-cols-4 gap-1">
-                      {quickAmounts.map((quickAmount) => (
-                        <Button
-                          key={quickAmount}
-                          variant="outline"
-                          size="sm"
-                          onClick={() => setAmount(quickAmount.toString())}
-                          className={`h-7 text-[10px] px-0 ${amount === quickAmount.toString() ? 'border-primary bg-primary/5' : 'bg-background'}`}
-                        >
-                          ${quickAmount}
-                        </Button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Order Summary */}
-                  <div className="p-2.5 rounded-lg bg-background border border-border/50 space-y-1.5">
-                    <div className="flex justify-between text-xs">
-                      <span className="text-muted-foreground">Shares</span>
-                      <span className="font-semibold">{selectedOutcome ? shares.toLocaleString() : "—"}</span>
-                    </div>
-                    <div className="flex justify-between text-xs">
-                      <span className="text-muted-foreground">Avg price</span>
-                      <span className="font-semibold">{selectedOutcome ? `${selectedOutcome.price}¢` : "—"}</span>
-                    </div>
-                    <Separator className="my-1.5" />
-                    <div className="flex justify-between text-xs">
-                      <span className="text-muted-foreground">Potential profit</span>
-                      <span className={`font-bold ${selectedOutcome && potentialProfit > 0 ? 'text-success' : ''}`}>
-                        {selectedOutcome ? `+$${potentialProfit.toFixed(2)}` : "—"}
-                      </span>
-                    </div>
-                  </div>
-                </>
+                    return (
+                      <button
+                        key={index}
+                        onClick={() => setSelectedOutcome(outcome)}
+                        className={`w-full flex items-center gap-2 rounded-lg px-3 py-2.5 transition-all active:scale-[0.98] border text-left ${
+                          isSelected
+                            ? 'border-primary bg-primary/10'
+                            : 'border-border/40 bg-secondary/60 hover:bg-secondary hover:border-border/60'
+                        }`}
+                      >
+                        {outcome.logo ? (
+                          <img src={outcome.logo} alt={outcome.label} className="h-5 w-5 object-contain rounded-sm" />
+                        ) : (
+                          <div className="h-5 w-5 rounded-sm bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary">
+                            {outcome.label.charAt(0)}
+                          </div>
+                        )}
+                        <span className="flex-1 text-sm font-medium truncate">{outcome.label}</span>
+                        <span className="text-sm font-bold text-primary">{outcome.price}%</span>
+                      </button>
+                    );
+                  })}
+                </div>
               )}
+
+              {/* Amount Section */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-muted-foreground">Amount</span>
+                  <div className="flex items-center gap-1 text-muted-foreground">
+                    <Wallet className="h-3 w-3" />
+                    <span>$5,230</span>
+                  </div>
+                </div>
+                
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">$</span>
+                  <Input
+                    type="number"
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
+                    className="pl-6 h-10 text-base font-semibold bg-background"
+                    min="1"
+                    max="10000"
+                    step="1"
+                  />
+                </div>
+                
+                <div className="grid grid-cols-4 gap-1">
+                  {quickAmounts.map((quickAmount) => (
+                    <Button
+                      key={quickAmount}
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setAmount(quickAmount.toString())}
+                      className={`h-7 text-[10px] px-0 ${amount === quickAmount.toString() ? 'border-primary bg-primary/5' : 'bg-background'}`}
+                    >
+                      ${quickAmount}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Order Summary - Always visible */}
+              <div className="p-2.5 rounded-lg bg-background border border-border/50 space-y-1.5">
+                <div className="flex justify-between text-xs">
+                  <span className="text-muted-foreground">Shares</span>
+                  <span className="font-semibold">{selectedOutcome ? shares.toLocaleString() : "—"}</span>
+                </div>
+                <div className="flex justify-between text-xs">
+                  <span className="text-muted-foreground">Avg price</span>
+                  <span className="font-semibold">{selectedOutcome ? `${selectedOutcome.price}¢` : "—"}</span>
+                </div>
+                <Separator className="my-1.5" />
+                <div className="flex justify-between text-xs">
+                  <span className="text-muted-foreground">Potential profit</span>
+                  <span className={`font-bold ${selectedOutcome && potentialProfit > 0 ? 'text-success' : ''}`}>
+                    {selectedOutcome ? `+$${potentialProfit.toFixed(2)}` : "—"}
+                  </span>
+                </div>
+              </div>
             </div>
 
-            {/* Sticky Bottom Button */}
+            {/* Sticky Buy Button */}
             <div className="p-4 pt-0">
-              {isClosedOrResolved ? (
-                <Button
-                  variant="outline"
-                  className="w-full h-11"
-                  onClick={handleViewFullPage}
-                >
-                  <ExternalLink className="h-4 w-4 mr-2" />
-                  View Full Details
-                </Button>
-              ) : (
-                <Button
-                  className="w-full h-11 font-semibold text-sm"
-                  onClick={handleBuy}
-                  disabled={!selectedOutcome || isSubmitting || amountNum < 1 || amountNum > 10000}
-                >
-                  {isSubmitting 
-                    ? "Placing order..." 
-                    : selectedOutcome 
-                      ? `Buy ${selectedOutcome.label} • $${amountNum.toFixed(2)}`
-                      : "Select outcome to trade"
-                  }
-                </Button>
-              )}
+              <Button
+                className="w-full h-11 font-semibold text-sm"
+                onClick={handleBuy}
+                disabled={!selectedOutcome || isSubmitting || amountNum < 1 || amountNum > 10000}
+              >
+                {isSubmitting 
+                  ? "Placing order..." 
+                  : selectedOutcome 
+                    ? `Buy ${selectedOutcome.label} • $${amountNum.toFixed(2)}`
+                    : "Select outcome to trade"
+                }
+              </Button>
             </div>
           </div>
         </div>

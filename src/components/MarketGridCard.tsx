@@ -83,6 +83,7 @@ export function MarketGridCard({
   const isBinary = displayOutcomes.length === 2 && !outcomes;
 
   const handleCardClick = () => {
+    if (isClosedOrResolved) return;
     if (isMobile) {
       navigate(`/market/${id}`);
     } else {
@@ -92,11 +93,7 @@ export function MarketGridCard({
 
   const handleOutcomeClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (isClosedOrResolved) {
-      // For closed/resolved, just open the market
-      handleCardClick();
-      return;
-    }
+    if (isClosedOrResolved) return;
     if (isMobile) {
       setShowQuickTrade(true);
     } else {
@@ -149,10 +146,6 @@ export function MarketGridCard({
     outcomes: displayOutcomes,
     volume,
     endsIn,
-    status,
-    resolution,
-    disputeEndsIn,
-    resolvedAt,
   };
 
   const yesPercent = isBinary ? displayOutcomes[0].price : 50;
