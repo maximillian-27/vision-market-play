@@ -84,7 +84,8 @@ export function MarketGridCard({
 
   const handleCardClick = () => {
     if (isMobile) {
-      navigate(`/market/${id}`);
+      // On mobile, show sheet for all markets (including closed/resolved)
+      setShowQuickTrade(true);
     } else {
       setShowMarketDialog(true);
     }
@@ -92,11 +93,6 @@ export function MarketGridCard({
 
   const handleOutcomeClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (isClosedOrResolved) {
-      // For closed/resolved, just open the market
-      handleCardClick();
-      return;
-    }
     if (isMobile) {
       setShowQuickTrade(true);
     } else {
