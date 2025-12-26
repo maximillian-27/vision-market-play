@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Globe, LogOut, Settings, Search, Home, Newspaper, Users, MessageSquare, Briefcase, Sparkles, Shield, Plus, Moon, Sun } from "lucide-react";
+import { Globe, LogOut, Settings, Search, Home, Newspaper, Users, MessageSquare, Briefcase, Sparkles, Shield, Plus, Moon, Sun, HelpCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import pollgyLogo from "@/assets/pollgy-logo-new.png";
 import { useNavigate } from "react-router-dom";
@@ -228,6 +228,11 @@ export function Header() {
                       <Moon className="h-4 w-4 text-muted-foreground" />
                     )}
                     {theme === "dark" ? "Light Mode" : "Dark Mode"}
+                  </DropdownMenuItem>
+                  
+                  <DropdownMenuItem onClick={() => setShowHowItWorks(true)} className="gap-2.5 py-2 cursor-pointer rounded-md">
+                    <HelpCircle className="h-4 w-4 text-muted-foreground" />
+                    How it works?
                   </DropdownMenuItem>
                   
                   <DropdownMenuSeparator className="my-1" />
