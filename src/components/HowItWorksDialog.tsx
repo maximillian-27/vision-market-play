@@ -25,7 +25,11 @@ import {
   Target,
   Gavel,
   BookOpen,
-  Lightbulb
+  Lightbulb,
+  PenTool,
+  XCircle,
+  BadgeCheck,
+  FileText
 } from "lucide-react";
 
 interface HowItWorksDialogProps {
@@ -38,7 +42,7 @@ export function HowItWorksDialog({ open, onOpenChange }: HowItWorksDialogProps) 
 
   const content = (
     <Tabs defaultValue="basics" className="w-full">
-      <TabsList className="w-full grid grid-cols-4 mb-4 h-auto p-1">
+      <TabsList className="w-full grid grid-cols-5 mb-4 h-auto p-1">
         <TabsTrigger value="basics" className="text-xs py-2 px-1">
           <BookOpen className="h-3.5 w-3.5 mr-1 hidden sm:inline" />
           Basics
@@ -50,6 +54,10 @@ export function HowItWorksDialog({ open, onOpenChange }: HowItWorksDialogProps) 
         <TabsTrigger value="money" className="text-xs py-2 px-1">
           <Wallet className="h-3.5 w-3.5 mr-1 hidden sm:inline" />
           Money
+        </TabsTrigger>
+        <TabsTrigger value="creators" className="text-xs py-2 px-1">
+          <PenTool className="h-3.5 w-3.5 mr-1 hidden sm:inline" />
+          Creators
         </TabsTrigger>
         <TabsTrigger value="advanced" className="text-xs py-2 px-1">
           <Lightbulb className="h-3.5 w-3.5 mr-1 hidden sm:inline" />
@@ -398,6 +406,199 @@ export function HowItWorksDialog({ open, onOpenChange }: HowItWorksDialogProps) 
             <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
               <span className="text-sm">Account fee</span>
               <span className="text-sm font-medium text-success">Free</span>
+            </div>
+          </div>
+        </section>
+        {/* Non-refundable fees notice */}
+        <section className="p-3 rounded-lg border border-amber-500/30 bg-amber-500/5">
+          <div className="flex items-start gap-2">
+            <AlertTriangle className="h-4 w-4 text-amber-500 mt-0.5 flex-shrink-0" />
+            <div>
+              <p className="text-sm font-medium text-amber-600 dark:text-amber-400">Fees are Non-Refundable</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                In the event that a market is canceled, all trading fees are non-refundable. 
+                Your original investment will be returned, but any fees paid during trading will not be refunded.
+              </p>
+            </div>
+          </div>
+        </section>
+      </TabsContent>
+
+      {/* CREATORS TAB */}
+      <TabsContent value="creators" className="mt-0 space-y-5">
+        {/* What is a Creator */}
+        <section className="space-y-3">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+              <PenTool className="h-4 w-4 text-primary" />
+            </div>
+            <h3 className="font-bold text-base">What is a Creator?</h3>
+          </div>
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            Creators are verified users who can create and manage prediction markets on Pollgy. 
+            They design questions, set resolution criteria, and earn fees from trading activity.
+          </p>
+          <div className="grid grid-cols-3 gap-2 text-center">
+            <div className="p-3 rounded-lg bg-muted/30">
+              <p className="text-lg font-bold text-primary">1%</p>
+              <p className="text-[10px] text-muted-foreground">Creator fee</p>
+            </div>
+            <div className="p-3 rounded-lg bg-muted/30">
+              <p className="text-lg font-bold">∞</p>
+              <p className="text-[10px] text-muted-foreground">Markets</p>
+            </div>
+            <div className="p-3 rounded-lg bg-muted/30">
+              <p className="text-lg font-bold">24h</p>
+              <p className="text-[10px] text-muted-foreground">Approval time</p>
+            </div>
+          </div>
+        </section>
+
+        {/* How to Become a Creator */}
+        <section className="space-y-3">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-success/10 flex items-center justify-center">
+              <BadgeCheck className="h-4 w-4 text-success" />
+            </div>
+            <h3 className="font-bold text-base">How to Become a Creator</h3>
+          </div>
+          <div className="space-y-2">
+            <div className="flex gap-3 p-3 rounded-lg bg-muted/30">
+              <div className="w-6 h-6 rounded-full bg-success/20 text-success flex items-center justify-center text-xs font-bold flex-shrink-0">1</div>
+              <div>
+                <p className="text-sm font-medium">Apply for Creator Status</p>
+                <p className="text-xs text-muted-foreground">Go to your profile and click "Become a Creator"</p>
+              </div>
+            </div>
+            <div className="flex gap-3 p-3 rounded-lg bg-muted/30">
+              <div className="w-6 h-6 rounded-full bg-success/20 text-success flex items-center justify-center text-xs font-bold flex-shrink-0">2</div>
+              <div>
+                <p className="text-sm font-medium">Complete Verification</p>
+                <p className="text-xs text-muted-foreground">Verify your identity and agree to creator terms</p>
+              </div>
+            </div>
+            <div className="flex gap-3 p-3 rounded-lg bg-muted/30">
+              <div className="w-6 h-6 rounded-full bg-success/20 text-success flex items-center justify-center text-xs font-bold flex-shrink-0">3</div>
+              <div>
+                <p className="text-sm font-medium">Wait for Approval</p>
+                <p className="text-xs text-muted-foreground">Our team reviews applications within 24 hours</p>
+              </div>
+            </div>
+            <div className="flex gap-3 p-3 rounded-lg bg-muted/30">
+              <div className="w-6 h-6 rounded-full bg-success/20 text-success flex items-center justify-center text-xs font-bold flex-shrink-0">4</div>
+              <div>
+                <p className="text-sm font-medium">Start Creating</p>
+                <p className="text-xs text-muted-foreground">Once approved, you can create unlimited markets</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Creating a Market */}
+        <section className="space-y-3">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
+              <FileText className="h-4 w-4 text-blue-500" />
+            </div>
+            <h3 className="font-bold text-base">Creating a Market</h3>
+          </div>
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            When creating a market, you'll need to provide:
+          </p>
+          <ul className="space-y-2 text-sm">
+            <li className="flex items-start gap-2">
+              <CheckCircle2 className="h-4 w-4 text-success mt-0.5 flex-shrink-0" />
+              <span><span className="font-medium">Clear question</span> - A yes/no question with one definitive answer</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <CheckCircle2 className="h-4 w-4 text-success mt-0.5 flex-shrink-0" />
+              <span><span className="font-medium">Resolution criteria</span> - Exactly how the outcome will be determined</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <CheckCircle2 className="h-4 w-4 text-success mt-0.5 flex-shrink-0" />
+              <span><span className="font-medium">End date</span> - When trading closes and resolution begins</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <CheckCircle2 className="h-4 w-4 text-success mt-0.5 flex-shrink-0" />
+              <span><span className="font-medium">Category</span> - Help users find your market</span>
+            </li>
+          </ul>
+        </section>
+
+        {/* Creator Responsibilities */}
+        <section className="space-y-3">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center">
+              <Scale className="h-4 w-4 text-amber-500" />
+            </div>
+            <h3 className="font-bold text-base">Creator Responsibilities</h3>
+          </div>
+          <div className="space-y-2">
+            <div className="p-3 rounded-lg bg-muted/30">
+              <p className="text-sm font-medium mb-1">Accurate Resolution</p>
+              <p className="text-xs text-muted-foreground">Resolve markets fairly based on stated criteria</p>
+            </div>
+            <div className="p-3 rounded-lg bg-muted/30">
+              <p className="text-sm font-medium mb-1">Clear Communication</p>
+              <p className="text-xs text-muted-foreground">Respond to user questions in market comments</p>
+            </div>
+            <div className="p-3 rounded-lg bg-muted/30">
+              <p className="text-sm font-medium mb-1">Timely Resolution</p>
+              <p className="text-xs text-muted-foreground">Resolve markets within 48 hours of the end date</p>
+            </div>
+          </div>
+        </section>
+
+        {/* Market Cancellation */}
+        <section className="space-y-3">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-destructive/10 flex items-center justify-center">
+              <XCircle className="h-4 w-4 text-destructive" />
+            </div>
+            <h3 className="font-bold text-base">Market Cancellation</h3>
+          </div>
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            In rare cases, markets may be canceled if the outcome becomes unknowable or the question is fundamentally flawed.
+          </p>
+          <div className="p-3 rounded-lg border border-destructive/30 bg-destructive/5">
+            <div className="flex items-start gap-2">
+              <AlertTriangle className="h-4 w-4 text-destructive mt-0.5 flex-shrink-0" />
+              <div>
+                <p className="text-sm font-medium text-destructive">Important: Fees Are Non-Refundable</p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  When a market is canceled, your original investment is returned to your cash balance. 
+                  However, <span className="font-medium text-foreground">all trading fees paid are non-refundable</span>. 
+                  This includes the 2% trading fee collected on each transaction.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Creator Earnings */}
+        <section className="space-y-3">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-success/10 flex items-center justify-center">
+              <DollarSign className="h-4 w-4 text-success" />
+            </div>
+            <h3 className="font-bold text-base">Creator Earnings</h3>
+          </div>
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            Earn passive income from every trade on your markets:
+          </p>
+          <div className="p-4 rounded-xl border border-border bg-muted/20 space-y-3">
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-muted-foreground">Your share of trading fees</span>
+              <span className="font-bold text-primary">1% per trade</span>
+            </div>
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-muted-foreground">Platform fee</span>
+              <span className="font-medium">1% per trade</span>
+            </div>
+            <div className="border-t border-border pt-3">
+              <p className="text-xs text-muted-foreground">
+                Example: If your market has $10,000 in trading volume, you earn $100 in creator fees.
+              </p>
             </div>
           </div>
         </section>
