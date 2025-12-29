@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 import { Header } from "@/components/Header";
 import { MobileNav } from "@/components/MobileNav";
+import Footer from "@/components/Footer";
 import { useIsMobile } from "@/hooks/use-mobile";
 import Feed from "./pages/Feed";
 import CommunityFeed from "./pages/CommunityFeed";
@@ -27,9 +28,9 @@ function AppContent() {
   const isMobile = useIsMobile();
 
   return (
-    <div className="min-h-screen flex w-full relative">
+    <div className="min-h-screen flex flex-col w-full relative">
+      <Header />
       <main className={`flex-1 w-full ${isMobile ? 'pb-16 overflow-x-hidden pt-14' : 'pt-14'}`}>
-        <Header />
         <Routes>
           <Route path="/" element={<Feed />} />
           <Route path="/market/:id" element={<MarketDetail />} />
@@ -47,6 +48,7 @@ function AppContent() {
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
+      {!isMobile && <Footer />}
       {isMobile && <MobileNav />}
     </div>
   );
