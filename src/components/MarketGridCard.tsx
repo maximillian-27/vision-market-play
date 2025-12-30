@@ -99,24 +99,24 @@ export function MarketGridCard({
     switch (status) {
       case "closing":
         return (
-          <Badge className="bg-amber-500/90 text-white border-0 text-[10px] font-medium px-2 py-0.5 shadow-sm">
-            <Timer className="h-3 w-3 mr-1" />
+          <span className="flex items-center gap-1 text-amber-500 text-[10px] font-medium">
+            <Timer className="h-2.5 w-2.5" />
             Closing Soon
-          </Badge>
+          </span>
         );
       case "closed":
         return (
-          <Badge className="bg-orange-500/20 text-orange-600 border border-orange-500/30 text-[10px] font-medium px-2 py-0.5">
-            <Clock className="h-3 w-3 mr-1" />
+          <span className="flex items-center gap-1 text-orange-500 text-[10px] font-medium">
+            <AlertTriangle className="h-2.5 w-2.5" />
             Dispute: {disputeEndsIn}
-          </Badge>
+          </span>
         );
       case "resolved":
         return (
-          <Badge className="bg-muted text-muted-foreground border border-border text-[10px] font-medium px-2 py-0.5">
-            <CheckCircle2 className="h-3 w-3 mr-1" />
-            {resolvedAt}
-          </Badge>
+          <span className="flex items-center gap-1 text-muted-foreground text-[10px] font-medium">
+            <CheckCircle2 className="h-2.5 w-2.5" />
+            Resolved
+          </span>
         );
       default:
         return null;
