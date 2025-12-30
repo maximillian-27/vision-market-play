@@ -99,9 +99,9 @@ export function MarketGridCard({
     switch (status) {
       case "closing":
         return (
-          <span className="flex items-center gap-1 text-amber-500 text-[10px] font-medium">
-            <Timer className="h-2.5 w-2.5" />
-            Closing Soon
+          <span className="flex items-center gap-1 text-amber-500 text-[10px] font-medium whitespace-nowrap">
+            <Timer className="h-2.5 w-2.5 flex-shrink-0" />
+            Closing
           </span>
         );
       case "closed":
