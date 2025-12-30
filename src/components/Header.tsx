@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Globe, LogOut, Settings, Search, Home, Newspaper, Users, MessageSquare, Briefcase, Sparkles, Shield, Plus, Moon, Sun, HelpCircle } from "lucide-react";
+import { Globe, LogOut, Settings, Search, Home, Newspaper, Users, MessageSquare, Briefcase, Sparkles, Shield, Plus, Moon, Sun, HelpCircle, FileText, Twitter, Instagram, Linkedin } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import pollgyLogo from "@/assets/pollgy-logo-new.png";
 import { useNavigate } from "react-router-dom";
