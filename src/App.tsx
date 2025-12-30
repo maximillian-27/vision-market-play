@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 import { Header } from "@/components/Header";
 import { MobileNav } from "@/components/MobileNav";
+import { FloatingFooter } from "@/components/FloatingFooter";
 import { useIsMobile } from "@/hooks/use-mobile";
 import Feed from "./pages/Feed";
 import CommunityFeed from "./pages/CommunityFeed";
@@ -48,6 +49,7 @@ function AppContent() {
         </Routes>
       </main>
       {isMobile && <MobileNav />}
+      <FloatingFooter />
     </div>
   );
 }
