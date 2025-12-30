@@ -197,7 +197,7 @@ export function MarketGridCard({
           </div>
 
           {/* Content area - grows to push footer down */}
-          <div className="flex-1">
+          <div className="flex-1 flex flex-col justify-center">
             {isClosedOrResolved ? (
               <div className="space-y-2">
                 {/* Resolution Result */}
