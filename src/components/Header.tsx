@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Globe, LogOut, Settings, Search, Home, Newspaper, Users, MessageSquare, Briefcase, Sparkles, Shield, Plus, Moon, Sun, HelpCircle } from "lucide-react";
+import { Globe, LogOut, Settings, Search, Home, Newspaper, Users, MessageSquare, Briefcase, Sparkles, Shield, Plus, Moon, Sun, HelpCircle, AlertTriangle } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import pollgyLogo from "@/assets/pollgy-logo-new.png";
 import { useNavigate } from "react-router-dom";
@@ -13,6 +13,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { BecomeCreatorDialog } from "@/components/BecomeCreatorDialog";
@@ -20,6 +21,7 @@ import { CreateMarketButton } from "@/components/CreateMarketButton";
 import { HowItWorksDialog } from "@/components/HowItWorksDialog";
 import { DepositDialog } from "@/components/DepositDialog";
 import { NotificationsDropdown } from "@/components/NotificationsDropdown";
+import { footerLinks, riskDisclaimer } from "@/components/FloatingFooter";
 
 export function Header() {
   const isMobile = useIsMobile();
@@ -240,6 +242,33 @@ export function Header() {
                     <LogOut className="h-4 w-4" />
                     Logout
                   </DropdownMenuItem>
+                  
+                  {/* Mobile: Legal & Support Info */}
+                  {isMobile && (
+                    <>
+                      <DropdownMenuSeparator className="my-1" />
+                      <div className="px-2 py-2 space-y-1">
+                        <div className="flex items-center gap-1.5 text-[10px] text-amber-500 mb-2">
+                          <AlertTriangle className="h-3 w-3" />
+                          <span className="text-muted-foreground">{riskDisclaimer}</span>
+                        </div>
+                        <div className="flex flex-wrap gap-x-3 gap-y-1">
+                          {footerLinks.map((link) => (
+                            <a
+                              key={link.label}
+                              href={link.href}
+                              className="text-[10px] text-muted-foreground hover:text-foreground transition-colors"
+                            >
+                              {link.label}
+                            </a>
+                          ))}
+                        </div>
+                        <div className="text-[10px] text-muted-foreground/60 pt-1">
+                          © {new Date().getFullYear()} Pollgy
+                        </div>
+                      </div>
+                    </>
+                  )}
                 </DropdownMenuContent>
               </DropdownMenu>
             )}
