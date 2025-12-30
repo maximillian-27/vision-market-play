@@ -170,210 +170,154 @@ export function MarketGridCard({
         className={`group overflow-hidden cursor-pointer border-border bg-card card-hover`}
         onClick={handleCardClick}
       >
-        {/* Desktop Layout */}
-        <div className="sm:block hidden">
-          {/* Image */}
-          <div className={`relative aspect-[16/9] w-full overflow-hidden bg-secondary`}>
-            <img 
-              src={image} 
-              alt={title}
-              className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
-            />
+        {/* Desktop Layout - Compact with small image */}
+        <div className="sm:block hidden p-3">
+          {/* Header with image, title */}
+          <div className="flex items-start gap-3 mb-2.5">
+            {/* Small square image */}
+            <div className="relative w-10 h-10 rounded-lg overflow-hidden bg-secondary flex-shrink-0">
+              <img 
+                src={image} 
+                alt={title}
+                className="h-full w-full object-cover"
+              />
+            </div>
             
-            {getStatusBadge() && (
-              <div className="absolute top-2 left-2">
-                {getStatusBadge()}
+            {/* Title and status */}
+            <div className="flex-1 min-w-0">
+              <div className="flex items-start justify-between gap-2">
+                <h3 className="text-sm font-semibold leading-snug line-clamp-2 group-hover:text-primary transition-colors flex-1">
+                  {title}
+                </h3>
+                {isBinary && !isClosedOrResolved && (
+                  <span className="text-sm font-bold text-primary flex-shrink-0">{yesPercent}%</span>
+                )}
               </div>
-            )}
-            
-            {/* Action buttons overlay */}
+              {getStatusBadge() && (
+                <div className="mt-1">
+                  {getStatusBadge()}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {isClosedOrResolved ? (
+            <div className="space-y-2">
+              {/* Resolution Result */}
+              <div className="flex items-center justify-between py-1.5 px-2 rounded-lg bg-secondary/50">
+                <span className="text-xs text-muted-foreground">Outcome</span>
+                <span className={`text-sm font-bold ${
+                  resolution?.toLowerCase() === "yes" ? 'text-yes' : 
+                  resolution?.toLowerCase() === "no" ? 'text-no' : 'text-primary'
+                }`}>
+                  {resolution}
+                </span>
+              </div>
+              
+              {/* Dispute button for closed markets */}
+              {status === "closed" && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full text-orange-600 border-orange-500/30 hover:bg-orange-500/10 hover:border-orange-500/50 text-xs h-7"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowResolvedDialog(true);
+                  }}
+                >
+                  <AlertTriangle className="h-3 w-3 mr-1" />
+                  Dispute
+                </Button>
+              )}
+            </div>
+          ) : isBinary ? (
+            <div className="flex items-center gap-2">
+              <button 
+                className="flex-1 rounded-md py-1.5 text-center bg-yes-muted hover:bg-yes text-yes hover:text-yes-foreground border border-yes/20 hover:border-yes transition-all active:scale-[0.98]"
+                onClick={handleOutcomeClick}
+              >
+                <span className="text-xs font-bold">Yes</span>
+              </button>
+              <button 
+                className="flex-1 rounded-md py-1.5 text-center bg-no-muted hover:bg-no text-no hover:text-no-foreground border border-no/20 hover:border-no transition-all active:scale-[0.98]"
+                onClick={handleOutcomeClick}
+              >
+                <span className="text-xs font-bold">No</span>
+              </button>
+            </div>
+          ) : (
+            <div className="space-y-1">
+              {displayOutcomes.slice(0, 2).map((outcome, index) => (
+                <div 
+                  key={index}
+                  className="flex items-center justify-between text-xs py-1"
+                >
+                  <span className="font-medium truncate flex-1">{outcome.label}</span>
+                  <div className="flex items-center gap-2">
+                    <span className="font-bold text-foreground">{outcome.price}%</span>
+                    <div className="flex gap-1">
+                      <button 
+                        className="px-2 py-0.5 rounded bg-yes-muted hover:bg-yes text-yes hover:text-yes-foreground text-[10px] font-bold transition-all"
+                        onClick={handleOutcomeClick}
+                      >
+                        Yes
+                      </button>
+                      <button 
+                        className="px-2 py-0.5 rounded bg-no-muted hover:bg-no text-no hover:text-no-foreground text-[10px] font-bold transition-all"
+                        onClick={handleOutcomeClick}
+                      >
+                        No
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+              {displayOutcomes.length > 2 && (
+                <p className="text-[10px] text-muted-foreground">+{displayOutcomes.length - 2} more</p>
+              )}
+            </div>
+          )}
+          
+          {/* Stats footer */}
+          <div className="flex items-center gap-3 text-[10px] text-muted-foreground mt-2 pt-2 border-t border-border">
+            <span className="font-medium">{volume} Vol.</span>
+            <span className="flex items-center gap-1">
+              <Clock className="h-2.5 w-2.5" />
+              {endsIn}
+            </span>
+            {/* Action buttons */}
             {!isClosedOrResolved && (
-              <div className="absolute top-2 right-2 flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+              <div className="ml-auto flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                 <button 
-                  className="p-1.5 rounded-full bg-background/90 backdrop-blur-sm hover:bg-background transition-colors shadow-sm"
+                  className="p-1 rounded hover:bg-secondary transition-colors"
                   onClick={(e) => {
                     e.stopPropagation();
                     navigator.clipboard.writeText(`${window.location.origin}/market/${id}`);
                     toast({ title: "Link copied!" });
                   }}
                 >
-                  <Share2 className="h-3.5 w-3.5 text-foreground" />
+                  <Share2 className="h-3 w-3" />
                 </button>
                 <button 
-                  className="p-1.5 rounded-full bg-background/90 backdrop-blur-sm hover:bg-background transition-colors shadow-sm"
+                  className="p-1 rounded hover:bg-secondary transition-colors"
                   onClick={(e) => {
                     e.stopPropagation();
                     setShowRepostDialog(true);
                   }}
                 >
-                  <Repeat2 className="h-3.5 w-3.5 text-foreground" />
+                  <Repeat2 className="h-3 w-3" />
+                </button>
+                <button 
+                  className="p-1 rounded hover:bg-secondary transition-colors"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toast({ title: "Saved to watchlist" });
+                  }}
+                >
+                  <Bookmark className="h-3 w-3" />
                 </button>
               </div>
             )}
-            
-            {isClosedOrResolved && (
-              <button 
-                className="absolute top-2 right-2 p-1.5 rounded-full bg-background/90 backdrop-blur-sm hover:bg-background transition-colors shadow-sm"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  toast({ title: "Saved to watchlist" });
-                }}
-              >
-                <Bookmark className="h-3.5 w-3.5 text-foreground" />
-              </button>
-            )}
-          </div>
-
-          <div className="p-3 space-y-2.5">
-            {/* Creator */}
-            <button 
-              className="flex items-center gap-1.5 hover:opacity-70 transition-opacity"
-              onClick={(e) => {
-                e.stopPropagation();
-                const profilePath = creator.isCreator !== false 
-                  ? `/creator/${creator.id || creator.name.toLowerCase().replace(/\s+/g, '-')}`
-                  : `/profile/${creator.id || creator.name.toLowerCase().replace(/\s+/g, '-')}`;
-                navigate(profilePath);
-              }}
-            >
-              <Avatar className="h-5 w-5">
-                <AvatarImage src={creator.avatar} alt={creator.name} />
-                <AvatarFallback className="text-[8px] font-medium">{creator.name.slice(0, 2)}</AvatarFallback>
-              </Avatar>
-              <span className="text-xs text-muted-foreground font-medium truncate max-w-[120px]">{creator.name}</span>
-            </button>
-            
-            {/* Title */}
-            <h3 className="text-sm font-semibold leading-snug line-clamp-2 min-h-[2.5rem] group-hover:text-primary transition-colors text-balance">
-              {title}
-            </h3>
-
-            {isClosedOrResolved ? (
-              <div className="space-y-2.5">
-                {/* Resolution Result */}
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs text-muted-foreground">Outcome</span>
-                    <span className={`text-sm font-bold ${
-                      resolution?.toLowerCase() === "yes" ? 'text-yes' : 
-                      resolution?.toLowerCase() === "no" ? 'text-no' : 'text-primary'
-                    }`}>
-                      {resolution}
-                    </span>
-                  </div>
-                  
-                  {/* Progress bar showing final result */}
-                  {isBinary && (
-                    <div className="h-2 rounded-full bg-muted overflow-hidden">
-                      <div 
-                        className={`h-full rounded-full transition-all duration-300 ${
-                          resolution?.toLowerCase() === "yes" ? 'bg-yes' : 'bg-no'
-                        }`}
-                        style={{ width: resolution?.toLowerCase() === "yes" ? '100%' : '0%' }}
-                      />
-                    </div>
-                  )}
-                </div>
-
-                {/* Dispute button for closed markets */}
-                {status === "closed" && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="w-full text-orange-600 border-orange-500/30 hover:bg-orange-500/10 hover:border-orange-500/50 text-xs h-8"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setShowResolvedDialog(true);
-                    }}
-                  >
-                    <AlertTriangle className="h-3.5 w-3.5 mr-1.5" />
-                    Dispute Resolution
-                  </Button>
-                )}
-
-                {/* View details for resolved */}
-                {status === "resolved" && (
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    className="w-full text-xs h-8"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setShowResolvedDialog(true);
-                    }}
-                  >
-                    View Details
-                  </Button>
-                )}
-              </div>
-            ) : isBinary ? (
-              <div className="space-y-2.5">
-                {/* Probability bar */}
-                <div className="space-y-1.5">
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="font-semibold text-yes">{yesPercent}%</span>
-                    <span className="font-semibold text-no">{noPercent}%</span>
-                  </div>
-                  <div className="h-1.5 rounded-full bg-no-muted overflow-hidden">
-                    <div 
-                      className="h-full rounded-full bg-yes transition-all duration-300"
-                      style={{ width: `${yesPercent}%` }}
-                    />
-                  </div>
-                </div>
-                
-                {/* Yes/No buttons - Polymarket style */}
-                <div className="grid grid-cols-2 gap-2">
-                  <button 
-                    className="rounded-lg py-2 text-center bg-yes-muted hover:bg-yes text-yes hover:text-yes-foreground border border-yes/20 hover:border-yes transition-all active:scale-[0.98]"
-                    onClick={handleOutcomeClick}
-                  >
-                    <span className="text-xs font-bold">Yes {yesPercent}¢</span>
-                  </button>
-                  <button 
-                    className="rounded-lg py-2 text-center bg-no-muted hover:bg-no text-no hover:text-no-foreground border border-no/20 hover:border-no transition-all active:scale-[0.98]"
-                    onClick={handleOutcomeClick}
-                  >
-                    <span className="text-xs font-bold">No {noPercent}¢</span>
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <div className="space-y-1.5">
-                {displayOutcomes.slice(0, 2).map((outcome, index) => (
-                  <button 
-                    key={index}
-                    className="w-full flex items-center gap-2 rounded-lg px-2.5 py-2 bg-secondary hover:bg-secondary-hover border border-border hover:border-border-hover transition-all text-left active:scale-[0.99]"
-                    onClick={handleOutcomeClick}
-                  >
-                    {outcome.logo ? (
-                      <img src={outcome.logo} alt={outcome.label} className="h-5 w-5 object-contain rounded" />
-                    ) : (
-                      <div className="h-5 w-5 rounded bg-primary-muted flex items-center justify-center text-[10px] font-bold text-primary">
-                        {outcome.label.charAt(0)}
-                      </div>
-                    )}
-                    <span className="flex-1 text-xs font-medium truncate">{outcome.label}</span>
-                    <span className="text-xs font-bold text-primary">{outcome.price}%</span>
-                  </button>
-                ))}
-                {displayOutcomes.length > 2 && (
-                  <p className="text-[10px] text-muted-foreground text-center pt-0.5">+{displayOutcomes.length - 2} more options</p>
-                )}
-              </div>
-            )}
-            
-            {/* Stats footer */}
-            <div className="flex items-center justify-between text-[11px] text-muted-foreground pt-2 border-t border-border">
-              <span className="flex items-center gap-1 font-medium">
-                <TrendingUp className="h-3 w-3" />
-                {volume}
-              </span>
-              <span className="flex items-center gap-1">
-                <Clock className="h-3 w-3" />
-                {endsIn}
-              </span>
-            </div>
           </div>
         </div>
 
