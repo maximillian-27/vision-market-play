@@ -48,7 +48,7 @@ function AppContent() {
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
-      {isMobile && <MobileNav />}
+      {isMobile ? <MobileNav /> : <Footer />}
     </div>
   );
 }
