@@ -295,13 +295,8 @@ export default function Feed() {
   }, [filters]);
 
   return (
-    <div className="w-full max-w-[1600px] mx-auto px-4 md:px-6 lg:px-8 py-4 lg:py-6">
+    <div className="w-full max-w-[1600px] mx-auto px-4 md:px-6 lg:px-8">
       <div className="space-y-4">
-        <PageHeader 
-          title="Markets"
-          subtitle="Trade on the outcome of real-world events"
-        />
-        
         <FeedFilters filters={filters} onFiltersChange={setFilters} />
         
         {filteredMarkets.length === 0 ? (
