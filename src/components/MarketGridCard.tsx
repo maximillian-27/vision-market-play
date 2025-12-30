@@ -183,7 +183,7 @@ export function MarketGridCard({
               />
             </div>
             
-            {/* Title and status */}
+            {/* Title */}
             <div className="flex-1 min-w-0">
               <div className="flex items-start justify-between gap-2">
                 <h3 className="text-sm font-semibold leading-snug line-clamp-2 group-hover:text-primary transition-colors flex-1">
@@ -193,11 +193,6 @@ export function MarketGridCard({
                   <span className="text-sm font-bold text-primary flex-shrink-0">{yesPercent}%</span>
                 )}
               </div>
-              {getStatusBadge() && (
-                <div className="mt-1">
-                  {getStatusBadge()}
-                </div>
-              )}
             </div>
           </div>
 
@@ -269,10 +264,14 @@ export function MarketGridCard({
           {/* Stats footer */}
           <div className="flex items-center gap-3 text-[10px] text-muted-foreground mt-2 pt-2 border-t border-border">
             <span className="font-medium">{volume} Vol.</span>
-            <span className="flex items-center gap-1">
-              <Clock className="h-2.5 w-2.5" />
-              {endsIn}
-            </span>
+            {getStatusBadge() ? (
+              getStatusBadge()
+            ) : (
+              <span className="flex items-center gap-1">
+                <Clock className="h-2.5 w-2.5" />
+                {endsIn}
+              </span>
+            )}
             {/* Action buttons */}
             {!isClosedOrResolved && (
               <div className="ml-auto flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
