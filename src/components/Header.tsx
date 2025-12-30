@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Globe, LogOut, Settings, Search, Home, Newspaper, Users, MessageSquare, Briefcase, Sparkles, Shield, Plus, Moon, Sun, HelpCircle } from "lucide-react";
+import { Globe, LogOut, Settings, Search, Home, Newspaper, Users, MessageSquare, Briefcase, Sparkles, Shield, Plus, Moon, Sun, HelpCircle, Twitter, Instagram, Send, MessageCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import pollgyLogo from "@/assets/pollgy-logo-new.png";
 import { useNavigate } from "react-router-dom";
@@ -240,6 +240,31 @@ export function Header() {
                     <LogOut className="h-4 w-4" />
                     Logout
                   </DropdownMenuItem>
+                  
+                  {/* Footer Section */}
+                  <div className="mt-2 pt-2 border-t border-border">
+                    <div className="flex flex-wrap items-center gap-x-2 gap-y-1 px-2 py-1.5 text-[10px] text-muted-foreground">
+                      <span>Pollgy © {new Date().getFullYear()}</span>
+                      <span>·</span>
+                      <button onClick={() => navigate("/privacy")} className="hover:text-foreground transition-colors">Privacy</button>
+                      <span>·</span>
+                      <button onClick={() => navigate("/terms")} className="hover:text-foreground transition-colors">Terms</button>
+                    </div>
+                    <div className="flex items-center gap-3 px-2 py-1.5">
+                      <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors">
+                        <Twitter className="h-3 w-3" />
+                      </a>
+                      <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors">
+                        <Instagram className="h-3 w-3" />
+                      </a>
+                      <a href="https://t.me" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors">
+                        <Send className="h-3 w-3" />
+                      </a>
+                      <a href="https://discord.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors">
+                        <MessageCircle className="h-3 w-3" />
+                      </a>
+                    </div>
+                  </div>
                 </DropdownMenuContent>
               </DropdownMenu>
             )}
