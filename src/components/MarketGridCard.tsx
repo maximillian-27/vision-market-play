@@ -230,13 +230,13 @@ export function MarketGridCard({
             ) : isBinary ? (
               <div className="flex items-center gap-2">
                 <button 
-                  className="flex-1 rounded-md py-1.5 text-center bg-yes-muted hover:bg-yes text-yes hover:text-yes-foreground border border-yes/20 hover:border-yes transition-all active:scale-[0.98]"
+                  className="flex-1 rounded-md py-1.5 text-center bg-yes/15 dark:bg-yes/25 hover:bg-yes text-yes hover:text-yes-foreground border border-yes/30 dark:border-yes/40 hover:border-yes transition-all active:scale-[0.98]"
                   onClick={handleOutcomeClick}
                 >
                   <span className="text-xs font-bold">Yes</span>
                 </button>
                 <button 
-                  className="flex-1 rounded-md py-1.5 text-center bg-no-muted hover:bg-no text-no hover:text-no-foreground border border-no/20 hover:border-no transition-all active:scale-[0.98]"
+                  className="flex-1 rounded-md py-1.5 text-center bg-no/15 dark:bg-no/25 hover:bg-no text-no hover:text-no-foreground border border-no/30 dark:border-no/40 hover:border-no transition-all active:scale-[0.98]"
                   onClick={handleOutcomeClick}
                 >
                   <span className="text-xs font-bold">No</span>
@@ -381,13 +381,13 @@ export function MarketGridCard({
                   </div>
                   <div className="flex gap-1.5">
                     <button 
-                      className="px-2.5 py-1 rounded-md bg-yes-muted text-yes border border-yes/20 text-[11px] font-bold active:scale-95 transition-transform"
+                      className="px-2.5 py-1 rounded-md bg-yes/15 dark:bg-yes/25 text-yes border border-yes/30 dark:border-yes/40 text-[11px] font-bold active:scale-95 transition-transform"
                       onClick={handleOutcomeClick}
                     >
                       Yes
                     </button>
                     <button 
-                      className="px-2.5 py-1 rounded-md bg-no-muted text-no border border-no/20 text-[11px] font-bold active:scale-95 transition-transform"
+                      className="px-2.5 py-1 rounded-md bg-no/15 dark:bg-no/25 text-no border border-no/30 dark:border-no/40 text-[11px] font-bold active:scale-95 transition-transform"
                       onClick={handleOutcomeClick}
                     >
                       No
