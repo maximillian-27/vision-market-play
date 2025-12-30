@@ -2,7 +2,6 @@ import { useState, useMemo } from "react";
 import { FeedFilters, FilterState } from "@/components/FeedFilters";
 import { MarketGridCard } from "@/components/MarketGridCard";
 import { PageHeader } from "@/components/PageHeader";
-import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import bitcoinImage from "@/assets/bitcoin-market.jpg";
@@ -296,51 +295,48 @@ export default function Feed() {
   }, [filters]);
 
   return (
-    <div className="w-full min-h-[calc(100vh-3.5rem)] flex flex-col">
-      <div className="flex-1 max-w-[1600px] mx-auto px-4 md:px-6 lg:px-8 py-4 lg:py-6 w-full">
-        <div className="space-y-4">
-          <PageHeader 
-            title="Markets"
-            subtitle="Trade on the outcome of real-world events"
-          />
-          
-          <FeedFilters filters={filters} onFiltersChange={setFilters} />
-          
-          {filteredMarkets.length === 0 ? (
-            <div className="text-center py-16">
-              <p className="text-muted-foreground">No markets found matching your filters</p>
-              <Button 
-                variant="link" 
-                onClick={() => setFilters({ ...filters, status: "all", category: "All" })}
-              >
-                Clear filters
-              </Button>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-3">
-              {filteredMarkets.map((market) => (
-                <MarketGridCard 
-                  key={market.id} 
-                  id={market.id}
-                  creator={market.creator}
-                  title={market.title}
-                  image={market.image}
-                  outcomes={market.outcomes}
-                  yesPrice={market.yesPrice}
-                  noPrice={market.noPrice}
-                  volume={market.volume}
-                  endsIn={market.endsIn}
-                  status={market.status}
-                  resolution={market.resolution}
-                  disputeEndsIn={market.disputeEndsIn}
-                  resolvedAt={market.resolvedAt}
-                />
-              ))}
-            </div>
-          )}
-        </div>
+    <div className="w-full max-w-[1600px] mx-auto px-4 md:px-6 lg:px-8 py-4 lg:py-6">
+      <div className="space-y-4">
+        <PageHeader 
+          title="Markets"
+          subtitle="Trade on the outcome of real-world events"
+        />
+        
+        <FeedFilters filters={filters} onFiltersChange={setFilters} />
+        
+        {filteredMarkets.length === 0 ? (
+          <div className="text-center py-16">
+            <p className="text-muted-foreground">No markets found matching your filters</p>
+            <Button 
+              variant="link" 
+              onClick={() => setFilters({ ...filters, status: "all", category: "All" })}
+            >
+              Clear filters
+            </Button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-3">
+            {filteredMarkets.map((market) => (
+              <MarketGridCard 
+                key={market.id} 
+                id={market.id}
+                creator={market.creator}
+                title={market.title}
+                image={market.image}
+                outcomes={market.outcomes}
+                yesPrice={market.yesPrice}
+                noPrice={market.noPrice}
+                volume={market.volume}
+                endsIn={market.endsIn}
+                status={market.status}
+                resolution={market.resolution}
+                disputeEndsIn={market.disputeEndsIn}
+                resolvedAt={market.resolvedAt}
+              />
+            ))}
+          </div>
+        )}
       </div>
-      <Footer />
     </div>
   );
 }
