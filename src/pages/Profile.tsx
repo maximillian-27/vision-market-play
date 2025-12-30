@@ -393,9 +393,56 @@ export default function Profile() {
                     </div>
                   </>
                 ) : (
-                  <div className="text-center py-12 text-muted-foreground">
-                    <p>This user's positions are private</p>
-                  </div>
+                  <>
+                    <div className="p-4 border rounded-lg border-border/40 hover:bg-muted/30 transition-colors">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <h3 className="font-semibold">Will AI replace 50% of jobs by 2030?</h3>
+                          <p className="text-sm text-muted-foreground mt-1">Position: Yes at 42¢</p>
+                          <div className="flex items-center gap-2 mt-2">
+                            <Clock className="h-3.5 w-3.5 text-muted-foreground" />
+                            <span className="text-xs text-muted-foreground">5 years left</span>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-lg font-semibold text-success">+$89</div>
+                          <div className="text-xs text-muted-foreground">+21.2%</div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="p-4 border rounded-lg border-border/40 hover:bg-muted/30 transition-colors">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <h3 className="font-semibold">Tesla stock above $300 by Q2 2025?</h3>
+                          <p className="text-sm text-muted-foreground mt-1">Position: No at 61¢</p>
+                          <div className="flex items-center gap-2 mt-2">
+                            <Clock className="h-3.5 w-3.5 text-muted-foreground" />
+                            <span className="text-xs text-muted-foreground">6 months left</span>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-lg font-semibold text-success">+$156</div>
+                          <div className="text-xs text-muted-foreground">+25.6%</div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="p-4 border rounded-lg border-border/40 hover:bg-muted/30 transition-colors">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <h3 className="font-semibold">Fed cuts rates before March 2025?</h3>
+                          <p className="text-sm text-muted-foreground mt-1">Position: Yes at 73¢</p>
+                          <div className="flex items-center gap-2 mt-2">
+                            <Clock className="h-3.5 w-3.5 text-muted-foreground" />
+                            <span className="text-xs text-muted-foreground">3 months left</span>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-lg font-semibold text-destructive">-$32</div>
+                          <div className="text-xs text-muted-foreground">-4.4%</div>
+                        </div>
+                      </div>
+                    </div>
+                  </>
                 )}
               </TabsContent>
             )}
