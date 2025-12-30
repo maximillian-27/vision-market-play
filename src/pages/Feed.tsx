@@ -295,7 +295,7 @@ export default function Feed() {
   }, [filters]);
 
   return (
-    <div className="w-full max-w-[1600px] mx-auto px-4 md:px-6 lg:px-8 -mt-4 sm:mt-0">
+    <div className="w-full max-w-[1600px] mx-auto px-4 md:px-6 lg:px-8">
       <div className="space-y-4">
         <FeedFilters filters={filters} onFiltersChange={setFilters} />
         
