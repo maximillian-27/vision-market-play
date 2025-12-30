@@ -295,8 +295,8 @@ export default function Feed() {
   }, [filters]);
 
   return (
-    <div className="w-full max-w-[1600px] mx-auto px-4 md:px-6 lg:px-8 pt-0">
-      <div className="space-y-4 -mt-2 md:mt-0">
+    <div className="w-full max-w-[1600px] mx-auto px-4 md:px-6 lg:px-8">
+      <div className="space-y-4">
         <FeedFilters filters={filters} onFiltersChange={setFilters} />
         
         {filteredMarkets.length === 0 ? (
