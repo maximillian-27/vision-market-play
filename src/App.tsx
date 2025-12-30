@@ -29,7 +29,7 @@ function AppContent() {
 
   return (
     <div className="min-h-screen flex w-full relative">
-      <main className={`flex-1 w-full ${isMobile ? 'pb-16 overflow-x-hidden pt-14' : 'pt-14'}`}>
+      <main className={`flex-1 w-full ${isMobile ? 'pb-16 overflow-x-hidden pt-14' : 'pt-14 pb-10'}`}>
         <Header />
         <Routes>
           <Route path="/" element={<Feed />} />
