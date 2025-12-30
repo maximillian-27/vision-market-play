@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
 import { MobileNav } from "@/components/MobileNav";
 import { useIsMobile } from "@/hooks/use-mobile";
 import Feed from "./pages/Feed";
@@ -28,7 +29,7 @@ function AppContent() {
 
   return (
     <div className="min-h-screen flex w-full relative">
-      <main className={`flex-1 w-full ${isMobile ? 'pb-16 overflow-x-hidden pt-14' : 'pt-14'}`}>
+      <main className={`flex-1 w-full ${isMobile ? 'pb-16 overflow-x-hidden pt-14' : 'pt-14 pb-10'}`}>
         <Header />
         <Routes>
           <Route path="/" element={<Feed />} />
@@ -47,7 +48,7 @@ function AppContent() {
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
-      {isMobile && <MobileNav />}
+      {isMobile ? <MobileNav /> : <Footer />}
     </div>
   );
 }

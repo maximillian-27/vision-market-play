@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Globe, LogOut, Settings, Search, Home, Newspaper, Users, MessageSquare, Briefcase, Sparkles, Shield, Plus, Moon, Sun, HelpCircle } from "lucide-react";
+import { Globe, LogOut, Settings, Search, Home, Newspaper, Users, MessageSquare, Briefcase, Sparkles, Shield, Plus, Moon, Sun, HelpCircle, FileText, Twitter, Instagram, Linkedin } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import pollgyLogo from "@/assets/pollgy-logo-new.png";
 import { useNavigate } from "react-router-dom";
@@ -154,6 +154,46 @@ export function Header() {
                 >
                   How it works?
                 </Button>
+                
+                {/* Mobile: Info dropdown when not logged in */}
+                {isMobile && (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
+                        <FileText className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-48 z-50 bg-popover rounded-lg border-border p-2">
+                      <DropdownMenuItem onClick={() => setShowHowItWorks(true)} className="gap-2.5 py-2 cursor-pointer rounded-md">
+                        <HelpCircle className="h-4 w-4 text-muted-foreground" />
+                        How it works?
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator className="my-1" />
+                      <div className="px-2 py-1.5">
+                        <p className="text-[10px] text-muted-foreground mb-1.5">Legal & Info</p>
+                        <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs">
+                          <a href="/privacy" className="text-muted-foreground hover:text-foreground">Privacy</a>
+                          <a href="/terms" className="text-muted-foreground hover:text-foreground">Terms</a>
+                          <a href="/careers" className="text-muted-foreground hover:text-foreground">Careers</a>
+                          <a href="/press" className="text-muted-foreground hover:text-foreground">Press</a>
+                        </div>
+                        <div className="flex items-center gap-3 mt-2">
+                          <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground">
+                            <Twitter className="h-3.5 w-3.5" />
+                          </a>
+                          <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground">
+                            <Instagram className="h-3.5 w-3.5" />
+                          </a>
+                          <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground">
+                            <Linkedin className="h-3.5 w-3.5" />
+                          </a>
+                        </div>
+                        <p className="text-[10px] text-muted-foreground/60 mt-2">© {new Date().getFullYear()} Pollgy LLC</p>
+                      </div>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                )}
+                
                 <Button 
                   variant="outline"
                   size="sm" 
@@ -234,6 +274,33 @@ export function Header() {
                     <HelpCircle className="h-4 w-4 text-muted-foreground" />
                     How it works?
                   </DropdownMenuItem>
+                  
+                  {isMobile && (
+                    <>
+                      <DropdownMenuSeparator className="my-1" />
+                      <div className="px-2 py-1.5">
+                        <p className="text-[10px] text-muted-foreground mb-1.5">Legal & Info</p>
+                        <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs">
+                          <a href="/privacy" className="text-muted-foreground hover:text-foreground">Privacy</a>
+                          <a href="/terms" className="text-muted-foreground hover:text-foreground">Terms</a>
+                          <a href="/careers" className="text-muted-foreground hover:text-foreground">Careers</a>
+                          <a href="/press" className="text-muted-foreground hover:text-foreground">Press</a>
+                        </div>
+                        <div className="flex items-center gap-3 mt-2">
+                          <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground">
+                            <Twitter className="h-3.5 w-3.5" />
+                          </a>
+                          <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground">
+                            <Instagram className="h-3.5 w-3.5" />
+                          </a>
+                          <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground">
+                            <Linkedin className="h-3.5 w-3.5" />
+                          </a>
+                        </div>
+                        <p className="text-[10px] text-muted-foreground/60 mt-2">© {new Date().getFullYear()} Pollgy LLC</p>
+                      </div>
+                    </>
+                  )}
                   
                   <DropdownMenuSeparator className="my-1" />
                   <DropdownMenuItem onClick={handleLogout} className="gap-2.5 py-2 cursor-pointer text-destructive focus:text-destructive rounded-md">
