@@ -356,94 +356,81 @@ export default function Profile() {
             
             {/* Positions Tab - Traders */}
             {!isCreator && (
-              <TabsContent value="positions" className="p-4 space-y-4">
-                {isOwnProfile ? (
-                  <>
-                    <div className="p-4 border rounded-lg border-border/40 hover:bg-muted/30 transition-colors">
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <h3 className="font-semibold">Bitcoin reaches $100K by 2025?</h3>
-                          <p className="text-sm text-muted-foreground mt-1">Position: Yes at 68¢</p>
-                          <div className="flex items-center gap-2 mt-2">
-                            <Clock className="h-3.5 w-3.5 text-muted-foreground" />
-                            <span className="text-xs text-muted-foreground">3 months left</span>
-                          </div>
+              <TabsContent value="positions" className="p-0">
+                <div className="divide-y divide-border/40">
+                  {isOwnProfile ? (
+                    <>
+                      <div 
+                        className="px-4 py-3 flex items-center justify-between cursor-pointer hover:bg-muted/30 active:bg-muted/50 transition-colors"
+                        onClick={() => navigate('/market/1')}
+                      >
+                        <div className="flex-1 min-w-0 pr-4">
+                          <h3 className="font-medium text-sm leading-snug">Bitcoin reaches $100K by 2025?</h3>
+                          <p className="text-xs text-muted-foreground mt-0.5">Yes at 68¢ · 3mo left</p>
                         </div>
-                        <div className="text-right">
-                          <div className="text-lg font-semibold text-success">+$124</div>
-                          <div className="text-xs text-muted-foreground">+15.2%</div>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="p-4 border rounded-lg border-border/40 hover:bg-muted/30 transition-colors">
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <h3 className="font-semibold">Lakers make NBA playoffs?</h3>
-                          <p className="text-sm text-muted-foreground mt-1">Position: No at 55¢</p>
-                          <div className="flex items-center gap-2 mt-2">
-                            <Clock className="h-3.5 w-3.5 text-muted-foreground" />
-                            <span className="text-xs text-muted-foreground">2 weeks left</span>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <div className="text-lg font-semibold text-destructive">-$45</div>
-                          <div className="text-xs text-muted-foreground">-8.1%</div>
+                        <div className="text-right shrink-0">
+                          <div className="text-sm font-semibold text-success">+$124</div>
+                          <div className="text-[11px] text-muted-foreground">+15.2%</div>
                         </div>
                       </div>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <div className="p-4 border rounded-lg border-border/40 hover:bg-muted/30 transition-colors">
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <h3 className="font-semibold">Will AI replace 50% of jobs by 2030?</h3>
-                          <p className="text-sm text-muted-foreground mt-1">Position: Yes at 42¢</p>
-                          <div className="flex items-center gap-2 mt-2">
-                            <Clock className="h-3.5 w-3.5 text-muted-foreground" />
-                            <span className="text-xs text-muted-foreground">5 years left</span>
-                          </div>
+                      <div 
+                        className="px-4 py-3 flex items-center justify-between cursor-pointer hover:bg-muted/30 active:bg-muted/50 transition-colors"
+                        onClick={() => navigate('/market/2')}
+                      >
+                        <div className="flex-1 min-w-0 pr-4">
+                          <h3 className="font-medium text-sm leading-snug">Lakers make NBA playoffs?</h3>
+                          <p className="text-xs text-muted-foreground mt-0.5">No at 55¢ · 2w left</p>
                         </div>
-                        <div className="text-right">
-                          <div className="text-lg font-semibold text-success">+$89</div>
-                          <div className="text-xs text-muted-foreground">+21.2%</div>
+                        <div className="text-right shrink-0">
+                          <div className="text-sm font-semibold text-destructive">-$45</div>
+                          <div className="text-[11px] text-muted-foreground">-8.1%</div>
                         </div>
                       </div>
-                    </div>
-                    <div className="p-4 border rounded-lg border-border/40 hover:bg-muted/30 transition-colors">
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <h3 className="font-semibold">Tesla stock above $300 by Q2 2025?</h3>
-                          <p className="text-sm text-muted-foreground mt-1">Position: No at 61¢</p>
-                          <div className="flex items-center gap-2 mt-2">
-                            <Clock className="h-3.5 w-3.5 text-muted-foreground" />
-                            <span className="text-xs text-muted-foreground">6 months left</span>
-                          </div>
+                    </>
+                  ) : (
+                    <>
+                      <div 
+                        className="px-4 py-3 flex items-center justify-between cursor-pointer hover:bg-muted/30 active:bg-muted/50 transition-colors"
+                        onClick={() => navigate('/market/3')}
+                      >
+                        <div className="flex-1 min-w-0 pr-4">
+                          <h3 className="font-medium text-sm leading-snug">Will AI replace 50% of jobs by 2030?</h3>
+                          <p className="text-xs text-muted-foreground mt-0.5">Yes at 42¢ · 5y left</p>
                         </div>
-                        <div className="text-right">
-                          <div className="text-lg font-semibold text-success">+$156</div>
-                          <div className="text-xs text-muted-foreground">+25.6%</div>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="p-4 border rounded-lg border-border/40 hover:bg-muted/30 transition-colors">
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <h3 className="font-semibold">Fed cuts rates before March 2025?</h3>
-                          <p className="text-sm text-muted-foreground mt-1">Position: Yes at 73¢</p>
-                          <div className="flex items-center gap-2 mt-2">
-                            <Clock className="h-3.5 w-3.5 text-muted-foreground" />
-                            <span className="text-xs text-muted-foreground">3 months left</span>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <div className="text-lg font-semibold text-destructive">-$32</div>
-                          <div className="text-xs text-muted-foreground">-4.4%</div>
+                        <div className="text-right shrink-0">
+                          <div className="text-sm font-semibold text-success">+$89</div>
+                          <div className="text-[11px] text-muted-foreground">+21.2%</div>
                         </div>
                       </div>
-                    </div>
-                  </>
-                )}
+                      <div 
+                        className="px-4 py-3 flex items-center justify-between cursor-pointer hover:bg-muted/30 active:bg-muted/50 transition-colors"
+                        onClick={() => navigate('/market/4')}
+                      >
+                        <div className="flex-1 min-w-0 pr-4">
+                          <h3 className="font-medium text-sm leading-snug">Tesla stock above $300 by Q2 2025?</h3>
+                          <p className="text-xs text-muted-foreground mt-0.5">No at 61¢ · 6mo left</p>
+                        </div>
+                        <div className="text-right shrink-0">
+                          <div className="text-sm font-semibold text-success">+$156</div>
+                          <div className="text-[11px] text-muted-foreground">+25.6%</div>
+                        </div>
+                      </div>
+                      <div 
+                        className="px-4 py-3 flex items-center justify-between cursor-pointer hover:bg-muted/30 active:bg-muted/50 transition-colors"
+                        onClick={() => navigate('/market/5')}
+                      >
+                        <div className="flex-1 min-w-0 pr-4">
+                          <h3 className="font-medium text-sm leading-snug">Fed cuts rates before March 2025?</h3>
+                          <p className="text-xs text-muted-foreground mt-0.5">Yes at 73¢ · 3mo left</p>
+                        </div>
+                        <div className="text-right shrink-0">
+                          <div className="text-sm font-semibold text-destructive">-$32</div>
+                          <div className="text-[11px] text-muted-foreground">-4.4%</div>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
               </TabsContent>
             )}
             
