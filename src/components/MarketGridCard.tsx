@@ -167,11 +167,11 @@ export function MarketGridCard({
       )}
       
       <Card 
-        className={`group overflow-hidden cursor-pointer border-border bg-card card-hover`}
+        className={`group overflow-hidden cursor-pointer border-border bg-card card-hover h-full`}
         onClick={handleCardClick}
       >
         {/* Desktop Layout - Compact with small image */}
-        <div className="sm:block hidden p-3">
+        <div className="sm:flex hidden flex-col p-3 h-full">
           {/* Header with image, title */}
           <div className="flex items-start gap-3 mb-2.5">
             {/* Small square image */}
@@ -201,82 +201,70 @@ export function MarketGridCard({
             </div>
           </div>
 
-          {isClosedOrResolved ? (
-            <div className="space-y-2">
-              {/* Resolution Result */}
-              <div className="flex items-center justify-between py-1.5 px-2 rounded-lg bg-secondary/50">
-                <span className="text-xs text-muted-foreground">Outcome</span>
-                <span className={`text-sm font-bold ${
-                  resolution?.toLowerCase() === "yes" ? 'text-yes' : 
-                  resolution?.toLowerCase() === "no" ? 'text-no' : 'text-primary'
-                }`}>
-                  {resolution}
-                </span>
-              </div>
-              
-              {/* Dispute button for closed markets */}
-              {status === "closed" && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="w-full text-orange-600 border-orange-500/30 hover:bg-orange-500/10 hover:border-orange-500/50 text-xs h-7"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setShowResolvedDialog(true);
-                  }}
-                >
-                  <AlertTriangle className="h-3 w-3 mr-1" />
-                  Dispute
-                </Button>
-              )}
-            </div>
-          ) : isBinary ? (
-            <div className="flex items-center gap-2">
-              <button 
-                className="flex-1 rounded-md py-1.5 text-center bg-yes-muted hover:bg-yes text-yes hover:text-yes-foreground border border-yes/20 hover:border-yes transition-all active:scale-[0.98]"
-                onClick={handleOutcomeClick}
-              >
-                <span className="text-xs font-bold">Yes</span>
-              </button>
-              <button 
-                className="flex-1 rounded-md py-1.5 text-center bg-no-muted hover:bg-no text-no hover:text-no-foreground border border-no/20 hover:border-no transition-all active:scale-[0.98]"
-                onClick={handleOutcomeClick}
-              >
-                <span className="text-xs font-bold">No</span>
-              </button>
-            </div>
-          ) : (
-            <div className="space-y-1">
-              {displayOutcomes.slice(0, 2).map((outcome, index) => (
-                <div 
-                  key={index}
-                  className="flex items-center justify-between text-xs py-1"
-                >
-                  <span className="font-medium truncate flex-1">{outcome.label}</span>
-                  <div className="flex items-center gap-2">
-                    <span className="font-bold text-foreground">{outcome.price}%</span>
-                    <div className="flex gap-1">
-                      <button 
-                        className="px-2 py-0.5 rounded bg-yes-muted hover:bg-yes text-yes hover:text-yes-foreground text-[10px] font-bold transition-all"
-                        onClick={handleOutcomeClick}
-                      >
-                        Yes
-                      </button>
-                      <button 
-                        className="px-2 py-0.5 rounded bg-no-muted hover:bg-no text-no hover:text-no-foreground text-[10px] font-bold transition-all"
-                        onClick={handleOutcomeClick}
-                      >
-                        No
-                      </button>
-                    </div>
-                  </div>
+          {/* Content area - grows to push footer down */}
+          <div className="flex-1">
+            {isClosedOrResolved ? (
+              <div className="space-y-2">
+                {/* Resolution Result */}
+                <div className="flex items-center justify-between py-1.5 px-2 rounded-lg bg-secondary/50">
+                  <span className="text-xs text-muted-foreground">Outcome</span>
+                  <span className={`text-sm font-bold ${
+                    resolution?.toLowerCase() === "yes" ? 'text-yes' : 
+                    resolution?.toLowerCase() === "no" ? 'text-no' : 'text-primary'
+                  }`}>
+                    {resolution}
+                  </span>
                 </div>
-              ))}
-              {displayOutcomes.length > 2 && (
-                <p className="text-[10px] text-muted-foreground">+{displayOutcomes.length - 2} more</p>
-              )}
-            </div>
-          )}
+                
+                {/* Dispute button for closed markets */}
+                {status === "closed" && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full text-orange-600 border-orange-500/30 hover:bg-orange-500/10 hover:border-orange-500/50 text-xs h-7"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setShowResolvedDialog(true);
+                    }}
+                  >
+                    <AlertTriangle className="h-3 w-3 mr-1" />
+                    Dispute
+                  </Button>
+                )}
+              </div>
+            ) : isBinary ? (
+              <div className="flex items-center gap-2">
+                <button 
+                  className="flex-1 rounded-md py-1.5 text-center bg-yes-muted hover:bg-yes text-yes hover:text-yes-foreground border border-yes/20 hover:border-yes transition-all active:scale-[0.98]"
+                  onClick={handleOutcomeClick}
+                >
+                  <span className="text-xs font-bold">Yes</span>
+                </button>
+                <button 
+                  className="flex-1 rounded-md py-1.5 text-center bg-no-muted hover:bg-no text-no hover:text-no-foreground border border-no/20 hover:border-no transition-all active:scale-[0.98]"
+                  onClick={handleOutcomeClick}
+                >
+                  <span className="text-xs font-bold">No</span>
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-1">
+                {displayOutcomes.slice(0, 2).map((outcome, index) => (
+                  <button 
+                    key={index}
+                    className="w-full flex items-center justify-between text-xs py-1.5 px-2 rounded-lg bg-secondary/50 hover:bg-secondary transition-all"
+                    onClick={handleOutcomeClick}
+                  >
+                    <span className="font-medium truncate flex-1 text-left">{outcome.label}</span>
+                    <span className="font-bold text-primary">{outcome.price}%</span>
+                  </button>
+                ))}
+                {displayOutcomes.length > 2 && (
+                  <p className="text-[10px] text-muted-foreground">+{displayOutcomes.length - 2} more</p>
+                )}
+              </div>
+            )}
+          </div>
           
           {/* Stats footer */}
           <div className="flex items-center gap-3 text-[10px] text-muted-foreground mt-2 pt-2 border-t border-border">
