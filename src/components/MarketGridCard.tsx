@@ -95,13 +95,15 @@ export function MarketGridCard({
     }
   };
 
+  const isClosing = status === "closing";
+
   const getStatusBadge = () => {
     switch (status) {
       case "closing":
         return (
-          <span className="flex items-center gap-1 text-amber-500 text-[10px] font-medium whitespace-nowrap">
+          <span className="flex items-center gap-1 text-amber-500 text-[10px] font-medium whitespace-nowrap animate-pulse">
             <Timer className="h-2.5 w-2.5 flex-shrink-0" />
-            Closing
+            Closing soon
           </span>
         );
       case "closed":
@@ -167,7 +169,7 @@ export function MarketGridCard({
       )}
       
       <Card 
-        className={`group overflow-hidden cursor-pointer border-border bg-card card-hover h-full`}
+        className={`group overflow-hidden cursor-pointer border-border bg-card card-hover h-full ${isClosing ? 'ring-1 ring-amber-500/30 border-amber-500/40' : ''}`}
         onClick={handleCardClick}
       >
         {/* Desktop Layout - Compact with small image */}
@@ -264,7 +266,12 @@ export function MarketGridCard({
           {/* Stats footer */}
           <div className="flex items-center gap-3 text-[10px] text-muted-foreground mt-2 pt-2 border-t border-border">
             <span className="font-medium">{volume} Vol.</span>
-            {getStatusBadge() ? (
+            {isClosing ? (
+              <span className="flex items-center gap-1 text-amber-500 font-medium animate-pulse">
+                <Timer className="h-2.5 w-2.5" />
+                {endsIn} left
+              </span>
+            ) : getStatusBadge() ? (
               getStatusBadge()
             ) : (
               <span className="flex items-center gap-1">
@@ -312,13 +319,22 @@ export function MarketGridCard({
         <div className="sm:hidden flex flex-col">
           <div className="flex gap-3 p-3 pb-2">
             {/* Thumbnail */}
-            <div className={`relative w-20 h-20 rounded-lg overflow-hidden bg-secondary flex-shrink-0`}>
+            <div className={`relative w-20 h-20 rounded-lg overflow-hidden bg-secondary flex-shrink-0 ${isClosing ? 'ring-1 ring-amber-500/50' : ''}`}>
               <img 
                 src={image} 
                 alt={title}
                 className="h-full w-full object-cover"
               />
-              {getStatusBadge() && (
+              {isClosing && (
+                <div className="absolute inset-0 bg-gradient-to-t from-amber-900/60 to-transparent" />
+              )}
+              {isClosing && (
+                <div className="absolute bottom-1 left-1 right-1 flex items-center justify-center gap-1 px-1.5 py-0.5 rounded bg-amber-500/90 text-white">
+                  <Timer className="h-2.5 w-2.5" />
+                  <span className="text-[9px] font-bold">{endsIn}</span>
+                </div>
+              )}
+              {!isClosing && getStatusBadge() && (
                 <div className="absolute top-1 left-1 scale-75 origin-top-left">
                   {getStatusBadge()}
                 </div>
@@ -419,15 +435,22 @@ export function MarketGridCard({
           </div>
 
           {/* Bottom stats bar */}
-          <div className="flex items-center justify-between px-3 py-2 border-t border-border text-[11px] text-muted-foreground">
-            <span className="flex items-center gap-1 font-medium">
+          <div className={`flex items-center justify-between px-3 py-2 border-t text-[11px] ${isClosing ? 'border-amber-500/30 bg-amber-500/5' : 'border-border text-muted-foreground'}`}>
+            <span className="flex items-center gap-1 font-medium text-muted-foreground">
               <TrendingUp className="h-3 w-3" />
               {volume}
             </span>
-            <span className="flex items-center gap-1">
-              <Clock className="h-3 w-3" />
-              {endsIn}
-            </span>
+            {isClosing ? (
+              <span className="flex items-center gap-1 text-amber-500 font-semibold animate-pulse">
+                <Timer className="h-3 w-3" />
+                Closing soon
+              </span>
+            ) : (
+              <span className="flex items-center gap-1 text-muted-foreground">
+                <Clock className="h-3 w-3" />
+                {endsIn}
+              </span>
+            )}
           </div>
         </div>
       </Card>

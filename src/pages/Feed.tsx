@@ -116,11 +116,11 @@ const mockMarkets: Market[] = [
     yesPrice: 71,
     noPrice: 29,
     volume: "$1.8M",
-    endsIn: "1 year",
+    endsIn: "4 hours",
     likes: 176,
     comments: 52,
     category: "Tech",
-    status: "open",
+    status: "closing",
   },
   // Closing Soon
   {
