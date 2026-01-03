@@ -69,6 +69,8 @@ interface MarketDialogProps {
     resolutionCriteria?: string;
     priceHistory?: { date: string; price: number }[];
     comments?: Comment[];
+    status?: string;
+    resolutionDate?: string;
   };
 }
 
@@ -134,6 +136,8 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
   const isBinary = market.outcomes.length === 2 && 
     market.outcomes.some(o => o.label.toLowerCase() === "yes") &&
     market.outcomes.some(o => o.label.toLowerCase() === "no");
+  
+  const isAwaitingResolution = market.status === "awaiting_resolution";
 
   const amountNum = parseFloat(amount) || 0;
   const shares = selectedOutcome && selectedOutcome.price > 0 
@@ -408,8 +412,45 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
                 <span className="text-sm font-semibold">Quick Trade</span>
               </div>
 
-              {/* Outcome Selection */}
-              {isBinary ? (
+              {/* Awaiting Resolution State */}
+              {isAwaitingResolution ? (
+                <div className="space-y-4">
+                  {/* Status Banner */}
+                  <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20 text-center">
+                    <Clock className="h-5 w-5 text-blue-500 mx-auto mb-1.5" />
+                    <p className="text-sm font-semibold text-blue-600 dark:text-blue-400">Betting Closed</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">Awaiting resolution</p>
+                    {market.resolutionDate && (
+                      <p className="text-xs text-blue-500 mt-1">{market.resolutionDate}</p>
+                    )}
+                  </div>
+                  
+                  {/* Final Prices Display */}
+                  {isBinary && (
+                    <div className="space-y-2">
+                      <p className="text-xs text-muted-foreground text-center">Final Prices</p>
+                      <div className="grid grid-cols-2 gap-2 opacity-75">
+                        {market.outcomes.map((outcome, index) => {
+                          const isYes = outcome.label.toLowerCase() === "yes";
+                          return (
+                            <div
+                              key={index}
+                              className={`rounded-lg py-2.5 text-center border ${
+                                isYes
+                                  ? 'border-success/30 bg-success/10 text-success'
+                                  : 'border-destructive/30 bg-destructive/10 text-destructive'
+                              }`}
+                            >
+                              <span className="text-sm font-bold uppercase">{outcome.label}</span>
+                              <p className="text-xs opacity-75">{outcome.price}%</p>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : isBinary ? (
                 <div className="space-y-2">
                   {/* Probability bar */}
                   <div className="flex items-center gap-2 text-xs font-bold">
@@ -480,6 +521,7 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
               )}
 
               {/* Amount Section */}
+              {!isAwaitingResolution && (
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-muted-foreground">Amount</span>
@@ -516,8 +558,10 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
                   ))}
                 </div>
               </div>
+              )}
 
               {/* Order Summary - Always visible */}
+              {!isAwaitingResolution && (
               <div className="p-2.5 rounded-lg bg-background border border-border/50 space-y-1.5">
                 <div className="flex justify-between text-xs">
                   <span className="text-muted-foreground">Shares</span>
@@ -535,9 +579,11 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
                   </span>
                 </div>
               </div>
+              )}
             </div>
 
             {/* Sticky Buy Button */}
+            {!isAwaitingResolution && (
             <div className="p-4 pt-0">
               <Button
                 className="w-full h-11 font-semibold text-sm"
@@ -552,6 +598,7 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
                 }
               </Button>
             </div>
+            )}
           </div>
         </div>
       </DialogContent>

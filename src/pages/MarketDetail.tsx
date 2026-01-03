@@ -102,6 +102,36 @@ const mockMarketData: Record<string, any> = {
       { date: "Apr", price: 32 },
     ]
   },
+  "5": {
+    creator: {
+      name: "Jordan Lee",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Jordan",
+      id: "jordan-lee",
+      verified: true,
+    },
+    title: "Will AI replace 25% of customer service jobs by 2026?",
+    description: "This market resolves to YES if at least 25% of customer service positions are replaced by AI chatbots or automated systems by December 31, 2026, as measured by major industry reports.",
+    resolutionCriteria: "Resolution is based on industry reports from Gartner, McKinsey, or similar authoritative sources. The 25% threshold must be met globally across major markets.",
+    outcomes: [
+      { label: "Yes", price: 71, color: "success" },
+      { label: "No", price: 29, color: "destructive" }
+    ],
+    volume: "$1.8M",
+    endDate: "Dec 31, 2025",
+    endsIn: "Ended",
+    traders: 9800,
+    volume24h: "$0",
+    likesCount: 176,
+    status: "awaiting_resolution",
+    resolutionDate: "Jan 15, 2026",
+    priceHistory: [
+      { date: "Jan", price: 55 },
+      { date: "Feb", price: 58 },
+      { date: "Mar", price: 65 },
+      { date: "Apr", price: 68 },
+      { date: "May", price: 71 },
+    ]
+  },
 };
 
 const mockComments: Comment[] = [
@@ -167,6 +197,7 @@ export default function MarketDetail() {
   }
 
   const isBinary = !market.isMultiOutcome;
+  const isAwaitingResolution = market.status === "awaiting_resolution";
   const amountNum = parseFloat(amount) || 0;
   const shares = selectedOutcome && selectedOutcome.price > 0 
     ? Math.floor((amountNum * 100) / selectedOutcome.price) 
@@ -297,7 +328,9 @@ export default function MarketDetail() {
               </div>
             </div>
           </button>
-          <Badge variant="secondary" className="text-[10px] px-2">Live</Badge>
+          <Badge variant="secondary" className={`text-[10px] px-2 ${isAwaitingResolution ? 'bg-blue-500/10 text-blue-600 border-blue-500/20' : ''}`}>
+            {isAwaitingResolution ? 'Awaiting Resolution' : 'Live'}
+          </Badge>
         </div>
 
         {/* Title */}
@@ -517,130 +550,182 @@ export default function MarketDetail() {
               <Zap className="h-4 w-4 text-primary" />
               <span className="text-sm font-semibold">Quick Trade</span>
             </div>
-            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-              <Wallet className="h-3.5 w-3.5" />
-              <span>$5,230</span>
-            </div>
+            {!isAwaitingResolution && (
+              <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                <Wallet className="h-3.5 w-3.5" />
+                <span>$5,230</span>
+              </div>
+            )}
           </div>
 
-          {/* Outcome Selection */}
-          {isBinary ? (
-            <div className="space-y-2">
-              {/* Probability bar */}
-              <div className="flex items-center gap-2 text-xs font-bold">
-                <span className="text-success w-10">{market.outcomes[0].price}%</span>
-                <div className="flex-1 h-2 rounded-full bg-muted overflow-hidden">
-                  <div 
-                    className="h-full rounded-full bg-gradient-to-r from-success to-success/80"
-                    style={{ width: `${market.outcomes[0].price}%` }}
-                  />
-                </div>
-                <span className="text-muted-foreground w-10 text-right">{market.outcomes[1].price}%</span>
+          {/* Awaiting Resolution State */}
+          {isAwaitingResolution ? (
+            <div className="space-y-3">
+              {/* Status Banner */}
+              <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20 text-center">
+                <Clock className="h-5 w-5 text-blue-500 mx-auto mb-1.5" />
+                <p className="text-sm font-semibold text-blue-600 dark:text-blue-400">Betting Closed</p>
+                <p className="text-xs text-muted-foreground mt-0.5">Awaiting resolution</p>
+                {market.resolutionDate && (
+                  <p className="text-xs text-blue-500 mt-1">{market.resolutionDate}</p>
+                )}
               </div>
               
-              {/* Outcome buttons */}
-              <div className="grid grid-cols-2 gap-2">
-                {market.outcomes.map((outcome: any, index: number) => {
-                  const isYes = outcome.label.toLowerCase() === "yes";
-                  const isSelected = selectedOutcome?.label === outcome.label;
-                  
-                  return (
-                    <button
-                      key={index}
-                      onClick={() => setSelectedOutcome(outcome)}
-                      className={`rounded-lg py-2.5 text-center transition-all active:scale-[0.98] border ${
-                        isSelected
-                          ? isYes 
-                            ? 'border-success bg-success/20 text-success' 
-                            : 'border-destructive bg-destructive/20 text-destructive'
-                          : isYes
-                            ? 'border-success/30 bg-success/10 text-success hover:bg-success/15'
-                            : 'border-destructive/30 bg-destructive/10 text-destructive hover:bg-destructive/15'
-                      }`}
-                    >
-                      <span className="text-sm font-bold uppercase">{outcome.label}</span>
-                    </button>
-                  );
-                })}
-              </div>
+              {/* Final Prices Display */}
+              {isBinary && (
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-xs font-bold opacity-75">
+                    <span className="text-success w-10">{market.outcomes[0].price}%</span>
+                    <div className="flex-1 h-2 rounded-full bg-muted overflow-hidden">
+                      <div 
+                        className="h-full rounded-full bg-gradient-to-r from-success to-success/80"
+                        style={{ width: `${market.outcomes[0].price}%` }}
+                      />
+                    </div>
+                    <span className="text-muted-foreground w-10 text-right">{market.outcomes[1].price}%</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 opacity-60">
+                    {market.outcomes.map((outcome: any, index: number) => {
+                      const isYes = outcome.label.toLowerCase() === "yes";
+                      return (
+                        <div
+                          key={index}
+                          className={`rounded-lg py-2 text-center border ${
+                            isYes
+                              ? 'border-success/30 bg-success/10 text-success'
+                              : 'border-destructive/30 bg-destructive/10 text-destructive'
+                          }`}
+                        >
+                          <span className="text-sm font-bold uppercase">{outcome.label}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
             </div>
           ) : (
-            <div className="flex gap-2 overflow-x-auto scrollbar-hide -mx-3 px-3 pb-1">
-              {market.outcomes.map((outcome: any, index: number) => {
-                const isSelected = selectedOutcome?.label === outcome.label;
-                
-                return (
-                  <button
-                    key={index}
-                    onClick={() => setSelectedOutcome(outcome)}
-                    className={`flex-shrink-0 flex items-center gap-2 rounded-xl px-4 py-2.5 transition-all active:scale-[0.98] border ${
-                      isSelected
-                        ? 'border-primary bg-primary/10'
-                        : 'border-border/40 bg-secondary/60 hover:bg-secondary'
-                    }`}
-                  >
-                    {outcome.logo ? (
-                      <img src={outcome.logo} alt={outcome.label} className="h-5 w-5 object-contain rounded-sm" />
-                    ) : (
-                      <div className="h-5 w-5 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary">
-                        {outcome.label.charAt(0)}
-                      </div>
-                    )}
-                    <span className="text-sm font-semibold whitespace-nowrap">{outcome.label}</span>
-                    <span className="text-sm font-bold text-primary">{outcome.price}%</span>
-                  </button>
-                );
-              })}
-            </div>
+            <>
+              {/* Outcome Selection */}
+              {isBinary ? (
+                <div className="space-y-2">
+                  {/* Probability bar */}
+                  <div className="flex items-center gap-2 text-xs font-bold">
+                    <span className="text-success w-10">{market.outcomes[0].price}%</span>
+                    <div className="flex-1 h-2 rounded-full bg-muted overflow-hidden">
+                      <div 
+                        className="h-full rounded-full bg-gradient-to-r from-success to-success/80"
+                        style={{ width: `${market.outcomes[0].price}%` }}
+                      />
+                    </div>
+                    <span className="text-muted-foreground w-10 text-right">{market.outcomes[1].price}%</span>
+                  </div>
+                  
+                  {/* Outcome buttons */}
+                  <div className="grid grid-cols-2 gap-2">
+                    {market.outcomes.map((outcome: any, index: number) => {
+                      const isYes = outcome.label.toLowerCase() === "yes";
+                      const isSelected = selectedOutcome?.label === outcome.label;
+                      
+                      return (
+                        <button
+                          key={index}
+                          onClick={() => setSelectedOutcome(outcome)}
+                          className={`rounded-lg py-2.5 text-center transition-all active:scale-[0.98] border ${
+                            isSelected
+                              ? isYes 
+                                ? 'border-success bg-success/20 text-success' 
+                                : 'border-destructive bg-destructive/20 text-destructive'
+                              : isYes
+                                ? 'border-success/30 bg-success/10 text-success hover:bg-success/15'
+                                : 'border-destructive/30 bg-destructive/10 text-destructive hover:bg-destructive/15'
+                          }`}
+                        >
+                          <span className="text-sm font-bold uppercase">{outcome.label}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              ) : (
+                <div className="flex gap-2 overflow-x-auto scrollbar-hide -mx-3 px-3 pb-1">
+                  {market.outcomes.map((outcome: any, index: number) => {
+                    const isSelected = selectedOutcome?.label === outcome.label;
+                    
+                    return (
+                      <button
+                        key={index}
+                        onClick={() => setSelectedOutcome(outcome)}
+                        className={`flex-shrink-0 flex items-center gap-2 rounded-xl px-4 py-2.5 transition-all active:scale-[0.98] border ${
+                          isSelected
+                            ? 'border-primary bg-primary/10'
+                            : 'border-border/40 bg-secondary/60 hover:bg-secondary'
+                        }`}
+                      >
+                        {outcome.logo ? (
+                          <img src={outcome.logo} alt={outcome.label} className="h-5 w-5 object-contain rounded-sm" />
+                        ) : (
+                          <div className="h-5 w-5 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary">
+                            {outcome.label.charAt(0)}
+                          </div>
+                        )}
+                        <span className="text-sm font-semibold whitespace-nowrap">{outcome.label}</span>
+                        <span className="text-sm font-bold text-primary">{outcome.price}%</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+
+              {/* Amount & Buy */}
+              <div className="flex items-center gap-2">
+                <div className="relative flex-1">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground font-medium text-sm">$</span>
+                  <Input
+                    type="number"
+                    inputMode="decimal"
+                    placeholder="0.00"
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
+                    className="pl-7 pr-3 h-10 text-base font-semibold bg-muted/30 border-border/50 focus:border-primary"
+                  />
+                </div>
+                <Button
+                  className="h-10 px-5 font-semibold text-sm min-w-[110px]"
+                  onClick={handleBuy}
+                  disabled={!selectedOutcome || isSubmitting || amountNum < 1}
+                >
+                  {isSubmitting 
+                    ? "..." 
+                    : selectedOutcome 
+                      ? `Buy $${amountNum}`
+                      : "Select"
+                  }
+                </Button>
+              </div>
+
+              {/* Order Summary - always visible with key info */}
+              <div className="flex items-center justify-between text-xs bg-muted/30 rounded-lg px-3 py-2">
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-1">
+                    <span className="text-muted-foreground">Shares</span>
+                    <span className="font-semibold">{selectedOutcome ? shares : '-'}</span>
+                  </div>
+                  <div className="w-px h-3 bg-border" />
+                  <div className="flex items-center gap-1">
+                    <span className="text-muted-foreground">Avg</span>
+                    <span className="font-semibold">{selectedOutcome ? `${selectedOutcome.price}¢` : '-'}</span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-1">
+                  <span className="text-muted-foreground">Profit</span>
+                  <span className={`font-semibold ${selectedOutcome && potentialProfit > 0 ? 'text-success' : ''}`}>
+                    {selectedOutcome ? `+$${potentialProfit.toFixed(2)}` : '-'}
+                  </span>
+                </div>
+              </div>
+            </>
           )}
-
-          {/* Amount & Buy */}
-          <div className="flex items-center gap-2">
-            <div className="relative flex-1">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground font-medium text-sm">$</span>
-              <Input
-                type="number"
-                inputMode="decimal"
-                placeholder="0.00"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-                className="pl-7 pr-3 h-10 text-base font-semibold bg-muted/30 border-border/50 focus:border-primary"
-              />
-            </div>
-            <Button
-              className="h-10 px-5 font-semibold text-sm min-w-[110px]"
-              onClick={handleBuy}
-              disabled={!selectedOutcome || isSubmitting || amountNum < 1}
-            >
-              {isSubmitting 
-                ? "..." 
-                : selectedOutcome 
-                  ? `Buy $${amountNum}`
-                  : "Select"
-              }
-            </Button>
-          </div>
-
-          {/* Order Summary - always visible with key info */}
-          <div className="flex items-center justify-between text-xs bg-muted/30 rounded-lg px-3 py-2">
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-1">
-                <span className="text-muted-foreground">Shares</span>
-                <span className="font-semibold">{selectedOutcome ? shares : '-'}</span>
-              </div>
-              <div className="w-px h-3 bg-border" />
-              <div className="flex items-center gap-1">
-                <span className="text-muted-foreground">Avg</span>
-                <span className="font-semibold">{selectedOutcome ? `${selectedOutcome.price}¢` : '-'}</span>
-              </div>
-            </div>
-            <div className="flex items-center gap-1">
-              <span className="text-muted-foreground">Profit</span>
-              <span className={`font-semibold ${selectedOutcome && potentialProfit > 0 ? 'text-success' : ''}`}>
-                {selectedOutcome ? `+$${potentialProfit.toFixed(2)}` : '-'}
-              </span>
-            </div>
-          </div>
         </div>
       </div>
 

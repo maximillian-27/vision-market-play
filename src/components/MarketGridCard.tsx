@@ -12,7 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { QuoteRepostDialog } from "@/components/QuoteRepostDialog";
 
-type MarketStatus = "open" | "closing" | "closed" | "resolved";
+type MarketStatus = "open" | "closing" | "awaiting_resolution" | "closed" | "resolved";
 
 interface Outcome {
   label: string;
@@ -40,6 +40,7 @@ interface MarketGridCardProps {
   resolution?: string;
   disputeEndsIn?: string;
   resolvedAt?: string;
+  resolutionDate?: string;
 }
 
 export function MarketGridCard({ 
@@ -56,6 +57,7 @@ export function MarketGridCard({
   resolution,
   disputeEndsIn,
   resolvedAt,
+  resolutionDate,
 }: MarketGridCardProps) {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -71,6 +73,8 @@ export function MarketGridCard({
   ];
 
   const isClosedOrResolved = status === "closed" || status === "resolved";
+  const isAwaitingResolution = status === "awaiting_resolution";
+  const isBettingDisabled = isClosedOrResolved || isAwaitingResolution;
   const isBinary = displayOutcomes.length === 2 && !outcomes;
 
   const handleCardClick = () => {
@@ -87,7 +91,7 @@ export function MarketGridCard({
 
   const handleOutcomeClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (isClosedOrResolved) return;
+    if (isBettingDisabled) return;
     if (isMobile) {
       setShowQuickTrade(true);
     } else {
@@ -102,6 +106,13 @@ export function MarketGridCard({
           <span className="flex items-center gap-1 text-amber-500 text-[10px] font-medium whitespace-nowrap">
             <Timer className="h-2.5 w-2.5 flex-shrink-0" />
             Closing
+          </span>
+        );
+      case "awaiting_resolution":
+        return (
+          <span className="flex items-center gap-1 text-blue-500 text-[10px] font-medium whitespace-nowrap">
+            <Clock className="h-2.5 w-2.5 flex-shrink-0" />
+            Awaiting Resolution
           </span>
         );
       case "closed":
@@ -131,6 +142,8 @@ export function MarketGridCard({
     outcomes: displayOutcomes,
     volume,
     endsIn,
+    status,
+    resolutionDate,
   };
 
   const yesPercent = isBinary ? displayOutcomes[0].price : 50;
@@ -189,8 +202,11 @@ export function MarketGridCard({
                 <h3 className="text-sm font-semibold leading-snug line-clamp-2 group-hover:text-primary transition-colors flex-1">
                   {title}
                 </h3>
-                {isBinary && !isClosedOrResolved && (
+                {isBinary && !isClosedOrResolved && !isAwaitingResolution && (
                   <span className="text-sm font-bold text-primary flex-shrink-0">{yesPercent}%</span>
+                )}
+                {isAwaitingResolution && (
+                  <span className="text-xs font-medium text-blue-500 flex-shrink-0">Pending</span>
                 )}
               </div>
             </div>
@@ -225,6 +241,24 @@ export function MarketGridCard({
                     <AlertTriangle className="h-3 w-3 mr-1" />
                     Dispute
                   </Button>
+                )}
+              </div>
+            ) : isAwaitingResolution ? (
+              <div className="space-y-2">
+                {/* Show final prices but disabled */}
+                <div className="flex items-center justify-between py-1.5 px-2 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                  <span className="text-xs text-blue-600 dark:text-blue-400">Betting Closed</span>
+                  <span className="text-xs text-muted-foreground">{resolutionDate || 'Pending'}</span>
+                </div>
+                {isBinary && (
+                  <div className="flex items-center gap-2 opacity-60">
+                    <div className="flex-1 rounded-md py-1.5 text-center bg-yes/10 text-yes border border-yes/20">
+                      <span className="text-xs font-bold">Yes {yesPercent}%</span>
+                    </div>
+                    <div className="flex-1 rounded-md py-1.5 text-center bg-no/10 text-no border border-no/20">
+                      <span className="text-xs font-bold">No {noPercent}%</span>
+                    </div>
+                  </div>
                 )}
               </div>
             ) : isBinary ? (
@@ -369,6 +403,19 @@ export function MarketGridCard({
                       Dispute
                     </button>
                   )}
+                </div>
+              ) : isAwaitingResolution ? (
+                <div className="flex items-center gap-2 mt-auto">
+                  <span className="text-xs font-bold text-yes">{yesPercent}%</span>
+                  <div className="flex-1 h-1.5 rounded-full bg-no-muted overflow-hidden">
+                    <div 
+                      className="h-full rounded-full bg-yes"
+                      style={{ width: `${yesPercent}%` }}
+                    />
+                  </div>
+                  <span className="px-2 py-1 rounded-md bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 text-[10px] font-medium whitespace-nowrap">
+                    Betting Closed
+                  </span>
                 </div>
               ) : isBinary ? (
                 <div className="flex items-center gap-2 mt-auto">

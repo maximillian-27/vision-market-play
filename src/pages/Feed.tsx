@@ -10,7 +10,7 @@ import iphoneImage from "@/assets/foldable-iphone.jpg";
 import fedImage from "@/assets/federal-reserve.jpg";
 import aiImage from "@/assets/ai-customer-service.jpg";
 
-type MarketStatus = "open" | "closing" | "closed" | "resolved";
+type MarketStatus = "open" | "closing" | "awaiting_resolution" | "closed" | "resolved";
 
 interface Market {
   id: string;
@@ -36,6 +36,7 @@ interface Market {
   resolution?: "yes" | "no" | string;
   disputeEndsIn?: string;
   resolvedAt?: string;
+  resolutionDate?: string;
 }
 
 const mockMarkets: Market[] = [
@@ -116,11 +117,12 @@ const mockMarkets: Market[] = [
     yesPrice: 71,
     noPrice: 29,
     volume: "$1.8M",
-    endsIn: "1 year",
+    endsIn: "Ended",
     likes: 176,
     comments: 52,
     category: "Tech",
-    status: "open",
+    status: "awaiting_resolution",
+    resolutionDate: "Jan 15, 2026",
   },
   // Closing Soon
   {
