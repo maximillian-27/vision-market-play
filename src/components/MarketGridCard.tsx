@@ -205,8 +205,8 @@ export function MarketGridCard({
                 {isBinary && !isClosedOrResolved && !isAwaitingResolution && (
                   <span className="text-sm font-bold text-primary flex-shrink-0">{yesPercent}%</span>
                 )}
-                {isAwaitingResolution && (
-                  <span className="text-xs font-medium text-blue-500 flex-shrink-0">Pending</span>
+                {isAwaitingResolution && isBinary && (
+                  <span className="text-sm font-bold text-primary/70 flex-shrink-0">{yesPercent}%</span>
                 )}
               </div>
             </div>
@@ -244,22 +244,13 @@ export function MarketGridCard({
                 )}
               </div>
             ) : isAwaitingResolution ? (
-              <div className="space-y-2">
-                {/* Show final prices but disabled */}
-                <div className="flex items-center justify-between py-1.5 px-2 rounded-lg bg-blue-500/10 border border-blue-500/20">
-                  <span className="text-xs text-blue-600 dark:text-blue-400">Betting Closed</span>
-                  <span className="text-xs text-muted-foreground">{resolutionDate || 'Pending'}</span>
+              <div className="flex items-center gap-2">
+                <div className="flex-1 rounded-md py-1.5 text-center bg-yes/10 text-yes/70 border border-yes/20 cursor-default">
+                  <span className="text-xs font-bold">Yes {yesPercent}%</span>
                 </div>
-                {isBinary && (
-                  <div className="flex items-center gap-2 opacity-60">
-                    <div className="flex-1 rounded-md py-1.5 text-center bg-yes/10 text-yes border border-yes/20">
-                      <span className="text-xs font-bold">Yes {yesPercent}%</span>
-                    </div>
-                    <div className="flex-1 rounded-md py-1.5 text-center bg-no/10 text-no border border-no/20">
-                      <span className="text-xs font-bold">No {noPercent}%</span>
-                    </div>
-                  </div>
-                )}
+                <div className="flex-1 rounded-md py-1.5 text-center bg-no/10 text-no/70 border border-no/20 cursor-default">
+                  <span className="text-xs font-bold">No {noPercent}%</span>
+                </div>
               </div>
             ) : isBinary ? (
               <div className="flex items-center gap-2">
@@ -406,16 +397,21 @@ export function MarketGridCard({
                 </div>
               ) : isAwaitingResolution ? (
                 <div className="flex items-center gap-2 mt-auto">
-                  <span className="text-xs font-bold text-yes">{yesPercent}%</span>
-                  <div className="flex-1 h-1.5 rounded-full bg-no-muted overflow-hidden">
+                  <span className="text-xs font-bold text-yes/70">{yesPercent}%</span>
+                  <div className="flex-1 h-1.5 rounded-full bg-no-muted/50 overflow-hidden">
                     <div 
-                      className="h-full rounded-full bg-yes"
+                      className="h-full rounded-full bg-yes/60"
                       style={{ width: `${yesPercent}%` }}
                     />
                   </div>
-                  <span className="px-2 py-1 rounded-md bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 text-[10px] font-medium whitespace-nowrap">
-                    Betting Closed
-                  </span>
+                  <div className="flex gap-1.5">
+                    <span className="px-2.5 py-1 rounded-md bg-yes/10 text-yes/60 border border-yes/20 text-[11px] font-bold">
+                      Yes
+                    </span>
+                    <span className="px-2.5 py-1 rounded-md bg-no/10 text-no/60 border border-no/20 text-[11px] font-bold">
+                      No
+                    </span>
+                  </div>
                 </div>
               ) : isBinary ? (
                 <div className="flex items-center gap-2 mt-auto">
