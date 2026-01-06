@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Globe, LogOut, Settings, Search, Home, Newspaper, Users, MessageSquare, Briefcase, Sparkles, Shield, Plus, Moon, Sun, HelpCircle, FileText, Twitter, Instagram, Linkedin } from "lucide-react";
+import { Globe, LogOut, Settings, Search, Home, Newspaper, Users, MessageSquare, Briefcase, Sparkles, Shield, Plus, Moon, Sun, HelpCircle, FileText, Twitter, Instagram, Linkedin, Gift } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import pollgyLogo from "@/assets/pollgy-logo-new.png";
 import { useNavigate } from "react-router-dom";
@@ -20,6 +20,7 @@ import { CreateMarketButton } from "@/components/CreateMarketButton";
 import { HowItWorksDialog } from "@/components/HowItWorksDialog";
 import { DepositDialog } from "@/components/DepositDialog";
 import { NotificationsDropdown } from "@/components/NotificationsDropdown";
+import { AffiliateDialog } from "@/components/AffiliateDialog";
 
 export function Header() {
   const isMobile = useIsMobile();
@@ -31,8 +32,10 @@ export function Header() {
   const [showDepositDialog, setShowDepositDialog] = useState(false);
   const [showCreatorDialog, setShowCreatorDialog] = useState(false);
   const [showHowItWorks, setShowHowItWorks] = useState(false);
+  const [showAffiliateDialog, setShowAffiliateDialog] = useState(false);
   const [portfolioValue] = useState(12450);
   const [cashBalance] = useState(5230);
+  const [affiliateEarnings] = useState(1847.50);
   
   const toggleTheme = () => {
     setTheme(theme === "dark" ? "light" : "dark");
@@ -242,6 +245,14 @@ export function Header() {
                     Settings
                   </DropdownMenuItem>
                   
+                  <DropdownMenuItem onClick={() => setShowAffiliateDialog(true)} className="gap-2.5 py-2 cursor-pointer rounded-md">
+                    <Gift className="h-4 w-4 text-muted-foreground" />
+                    <div className="flex items-center justify-between flex-1">
+                      <span>Affiliate</span>
+                      <span className="text-xs text-primary font-medium">${affiliateEarnings.toLocaleString()}</span>
+                    </div>
+                  </DropdownMenuItem>
+                  
                   {isCreator ? (
                     <DropdownMenuItem onClick={() => navigate("/creator-dashboard")} className="gap-2.5 py-2 cursor-pointer rounded-md">
                       <Sparkles className="h-4 w-4 text-primary" />
@@ -332,6 +343,9 @@ export function Header() {
 
       {/* Deposit Dialog */}
       <DepositDialog open={showDepositDialog} onOpenChange={setShowDepositDialog} />
+
+      {/* Affiliate Dialog */}
+      <AffiliateDialog open={showAffiliateDialog} onOpenChange={setShowAffiliateDialog} />
     </>
   );
 }
