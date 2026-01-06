@@ -34,7 +34,7 @@ export function AffiliateDialog({ open, onOpenChange }: AffiliateDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="max-w-[calc(100%-2rem)] sm:max-w-md max-h-[85vh] overflow-y-auto rounded-xl">
         <DialogHeader>
           <DialogTitle className="text-lg font-semibold">Affiliate Program</DialogTitle>
         </DialogHeader>
