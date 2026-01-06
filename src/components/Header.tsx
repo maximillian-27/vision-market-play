@@ -248,7 +248,7 @@ export function Header() {
                   <DropdownMenuItem onClick={() => setShowAffiliateDialog(true)} className="gap-2.5 py-2 cursor-pointer rounded-md">
                     <Gift className="h-4 w-4 text-muted-foreground" />
                     <div className="flex items-center justify-between flex-1">
-                      <span>Affiliate</span>
+                      <span>Refer a Friend</span>
                       <span className="text-xs text-primary font-medium">${affiliateEarnings.toLocaleString()}</span>
                     </div>
                   </DropdownMenuItem>

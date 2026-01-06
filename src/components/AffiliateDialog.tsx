@@ -36,7 +36,7 @@ export function AffiliateDialog({ open, onOpenChange }: AffiliateDialogProps) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md max-h-[85vh] overflow-hidden">
         <DialogHeader className="pb-2 sm:pb-4">
-          <DialogTitle className="text-base sm:text-lg font-semibold">Affiliate Program</DialogTitle>
+          <DialogTitle className="text-base sm:text-lg font-semibold">Refer a Friend</DialogTitle>
         </DialogHeader>
         
         <div className="space-y-3 sm:space-y-5">
