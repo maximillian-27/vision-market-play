@@ -7,8 +7,6 @@ import { ThemeProvider } from "next-themes";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { MobileNav } from "@/components/MobileNav";
-import { InstallPrompt } from "@/components/InstallPrompt";
-import { OfflineIndicator } from "@/components/OfflineIndicator";
 import { useIsMobile } from "@/hooks/use-mobile";
 import Feed from "./pages/Feed";
 import CommunityFeed from "./pages/CommunityFeed";
@@ -23,19 +21,8 @@ import Settings from "./pages/Settings";
 import CreatorDashboard from "./pages/CreatorDashboard";
 import Admin from "./pages/Admin";
 import Search from "./pages/Search";
-import Install from "./pages/Install";
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      // Optimize for slow networks
-      staleTime: 1000 * 60 * 5, // 5 minutes
-      gcTime: 1000 * 60 * 30, // 30 minutes (formerly cacheTime)
-      retry: 2,
-      refetchOnWindowFocus: false, // Save data on mobile
-    },
-  },
-});
+const queryClient = new QueryClient();
 
 function AppContent() {
   const isMobile = useIsMobile();
@@ -44,7 +31,6 @@ function AppContent() {
     <div className="min-h-screen flex w-full relative">
       <main className={`flex-1 w-full ${isMobile ? 'pb-16 overflow-x-hidden pt-14' : 'pt-14 pb-10'}`}>
         <Header />
-        <OfflineIndicator />
         <Routes>
           <Route path="/" element={<Feed />} />
           <Route path="/market/:id" element={<MarketDetail />} />
@@ -59,12 +45,10 @@ function AppContent() {
           <Route path="/creator-dashboard" element={<CreatorDashboard />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/search" element={<Search />} />
-          <Route path="/install" element={<Install />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
       {isMobile ? <MobileNav /> : <Footer />}
-      <InstallPrompt />
     </div>
   );
 }

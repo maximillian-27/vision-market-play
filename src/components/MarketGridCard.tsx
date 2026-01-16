@@ -180,7 +180,7 @@ export function MarketGridCard({
       )}
       
       <Card 
-        className="group overflow-hidden cursor-pointer border-border bg-card h-full tap-scale"
+        className={`group overflow-hidden cursor-pointer border-border bg-card card-hover h-full`}
         onClick={handleCardClick}
       >
         {/* Desktop Layout - Compact with small image */}
@@ -192,8 +192,6 @@ export function MarketGridCard({
               <img 
                 src={image} 
                 alt={title}
-                loading="lazy"
-                decoding="async"
                 className="h-full w-full object-cover"
               />
             </div>

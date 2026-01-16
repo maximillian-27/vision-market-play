@@ -17,7 +17,7 @@ export function Footer() {
   ];
 
   return (
-    <footer className="fixed bottom-0 left-0 right-0 z-40 bg-background border-t border-border/50 py-2 px-4 hidden md:block">
+    <footer className="fixed bottom-0 left-0 right-0 z-40 bg-background/80 backdrop-blur-sm border-t border-border/50 py-2 px-4 hidden md:block">
       <div className="max-w-[1600px] mx-auto flex items-center justify-between text-xs text-muted-foreground">
         <span>© {currentYear} Pollgy LLC</span>
         

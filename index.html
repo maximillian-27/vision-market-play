@@ -2,68 +2,23 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover" />
-    
-    <!-- PWA Meta Tags -->
-    <meta name="theme-color" content="#22c55e" />
-    <meta name="mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-    <meta name="apple-mobile-web-app-title" content="Pollgy" />
-    <meta name="application-name" content="Pollgy" />
-    <meta name="format-detection" content="telephone=no" />
-    <meta name="msapplication-TileColor" content="#22c55e" />
-    <meta name="msapplication-tap-highlight" content="no" />
-    
-    <!-- Preconnect for performance -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="preconnect" href="https://api.dicebear.com" />
-    
-    <!-- PWA Manifest -->
-    <link rel="manifest" href="/manifest.json" />
-    
-    <!-- Icons -->
-    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-    <link rel="apple-touch-icon" href="/pwa-192x192.png" />
-    <link rel="apple-touch-icon" sizes="192x192" href="/pwa-192x192.png" />
-    <link rel="apple-touch-icon" sizes="512x512" href="/pwa-512x512.png" />
-    
-    <title>Pollgy - African Prediction Markets</title>
-    <meta name="description" content="Trade on the outcome of future events. Low data usage, fast on any phone. Made for Africa." />
-    <meta name="author" content="Pollgy" />
-    <meta name="keywords" content="prediction market, betting, sports, politics, Africa, Nigeria, Kenya, South Africa, low data" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PredictX - Prediction Market Platform</title>
+    <meta name="description" content="Trade on the outcome of future events. Make predictions, earn rewards." />
+    <meta name="author" content="PredictX" />
 
-    <!-- Open Graph / Social -->
-    <meta property="og:title" content="Pollgy - African Prediction Markets" />
-    <meta property="og:description" content="Trade on the outcome of future events. Low data usage, fast on any phone. Made for Africa." />
+    <meta property="og:title" content="PredictX - Prediction Market Platform" />
+    <meta property="og:description" content="Trade on the outcome of future events. Make predictions, earn rewards." />
     <meta property="og:type" content="website" />
     <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
-    <meta property="og:site_name" content="Pollgy" />
-    <meta property="og:locale" content="en_NG" />
 
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@Pollgy" />
+    <meta name="twitter:site" content="@Lovable" />
     <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
-    
-    <!-- DNS Prefetch for faster loading -->
-    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
-    <link rel="dns-prefetch" href="https://api.dicebear.com" />
   </head>
 
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
-    
-    <!-- Register Service Worker for older browsers -->
-    <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', function() {
-          navigator.serviceWorker.register('/sw.js').catch(function() {
-            // Service worker registration failed silently
-          });
-        });
-      }
-    </script>
   </body>
 </html>
