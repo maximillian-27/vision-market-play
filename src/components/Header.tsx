@@ -38,13 +38,17 @@ export function Header() {
   const [affiliateEarnings] = useState(1847.50);
   const [localCurrency, setLocalCurrency] = useState<string>("USD");
   
-  const exchangeRates: Record<string, { rate: number; symbol: string }> = {
-    USD: { rate: 1, symbol: "$" },
-    NGN: { rate: 1550, symbol: "₦" },
-    ZAR: { rate: 18.5, symbol: "R" },
-    KES: { rate: 153, symbol: "KSh" },
-    EGP: { rate: 49, symbol: "E£" },
-    GHS: { rate: 15.5, symbol: "₵" },
+  const exchangeRates: Record<string, { rate: number; symbol: string; name: string }> = {
+    USD: { rate: 1, symbol: "$", name: "US Dollar" },
+    NGN: { rate: 1550, symbol: "₦", name: "Nigerian Naira" },
+    ZAR: { rate: 18.5, symbol: "R", name: "South African Rand" },
+    KES: { rate: 153, symbol: "KSh", name: "Kenyan Shilling" },
+    EGP: { rate: 49, symbol: "E£", name: "Egyptian Pound" },
+    GHS: { rate: 15.5, symbol: "₵", name: "Ghanaian Cedi" },
+    UGX: { rate: 3750, symbol: "USh", name: "Ugandan Shilling" },
+    TZS: { rate: 2650, symbol: "TSh", name: "Tanzanian Shilling" },
+    XOF: { rate: 620, symbol: "CFA", name: "West African CFA" },
+    MAD: { rate: 10, symbol: "DH", name: "Moroccan Dirham" },
   };
   
   const convertToLocal = (usdAmount: number) => {
@@ -80,7 +84,7 @@ export function Header() {
 
   return (
     <>
-      <header className="border-b border-border bg-background/95 backdrop-blur-xl supports-[backdrop-filter]:bg-background/80 fixed top-0 z-50 w-full">
+      <header className="border-b border-border bg-background fixed top-0 z-50 w-full">
         <div className="flex h-14 items-center px-4 lg:px-6 gap-4 max-w-[1600px] mx-auto">
           {/* Logo */}
           <button 

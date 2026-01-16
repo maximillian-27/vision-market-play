@@ -48,7 +48,7 @@ export function MobileNav() {
         </DialogContent>
       </Dialog>
 
-      <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-border/50 bg-background/95 backdrop-blur-xl supports-[backdrop-filter]:bg-background/80">
+      <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-border/50 bg-background safe-area-pb">
         <div className="flex items-center justify-around h-14 max-w-lg mx-auto">
           {items.map((item) => {
             const isActive = location.pathname === item.url;
@@ -57,13 +57,13 @@ export function MobileNav() {
                 key={item.url}
                 to={item.url}
                 end
-                className="flex flex-col items-center justify-center flex-1 h-full gap-0.5 transition-colors active:scale-95"
+                className="flex flex-col items-center justify-center flex-1 h-full gap-0.5 tap-scale"
               >
                 <item.icon 
-                  className={`h-5 w-5 transition-colors ${isActive ? 'text-primary' : 'text-muted-foreground'}`} 
+                  className={`h-5 w-5 ${isActive ? 'text-primary' : 'text-muted-foreground'}`} 
                   strokeWidth={isActive ? 2.5 : 2}
                 />
-                <span className={`text-[10px] ${isActive ? 'text-primary font-medium' : 'text-muted-foreground'}`}>
+                <span className={`text-[10px] ${isActive ? 'text-primary font-semibold' : 'text-muted-foreground'}`}>
                   {item.title}
                 </span>
               </NavLink>
@@ -73,7 +73,7 @@ export function MobileNav() {
           {/* Search Button */}
           <button
             onClick={() => setShowSearch(true)}
-            className="flex flex-col items-center justify-center flex-1 h-full gap-0.5 transition-colors active:scale-95"
+            className="flex flex-col items-center justify-center flex-1 h-full gap-0.5 tap-scale"
           >
             <Search className="h-5 w-5 text-muted-foreground" strokeWidth={2} />
             <span className="text-[10px] text-muted-foreground">Search</span>
