@@ -40,9 +40,11 @@ export function Header() {
   
   const exchangeRates: Record<string, { rate: number; symbol: string }> = {
     USD: { rate: 1, symbol: "$" },
-    EUR: { rate: 0.92, symbol: "€" },
-    GBP: { rate: 0.79, symbol: "£" },
-    JPY: { rate: 149.50, symbol: "¥" },
+    NGN: { rate: 1550, symbol: "₦" },
+    ZAR: { rate: 18.5, symbol: "R" },
+    KES: { rate: 153, symbol: "KSh" },
+    EGP: { rate: 49, symbol: "E£" },
+    GHS: { rate: 15.5, symbol: "₵" },
   };
   
   const convertToLocal = (usdAmount: number) => {
