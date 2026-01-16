@@ -48,7 +48,8 @@ export function Header() {
   };
   
   const convertToLocal = (usdAmount: number) => {
-    const { rate, symbol } = exchangeRates[localCurrency];
+    const currencyData = exchangeRates[localCurrency] || exchangeRates.USD;
+    const { rate, symbol } = currencyData;
     const converted = usdAmount * rate;
     return `${symbol}${converted.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
   };
