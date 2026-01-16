@@ -36,6 +36,20 @@ export function Header() {
   const [portfolioValue] = useState(12450);
   const [cashBalance] = useState(5230);
   const [affiliateEarnings] = useState(1847.50);
+  const [localCurrency, setLocalCurrency] = useState<string>("USD");
+  
+  const exchangeRates: Record<string, { rate: number; symbol: string }> = {
+    USD: { rate: 1, symbol: "$" },
+    EUR: { rate: 0.92, symbol: "€" },
+    GBP: { rate: 0.79, symbol: "£" },
+    JPY: { rate: 149.50, symbol: "¥" },
+  };
+  
+  const convertToLocal = (usdAmount: number) => {
+    const { rate, symbol } = exchangeRates[localCurrency];
+    const converted = usdAmount * rate;
+    return `${symbol}${converted.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+  };
   
   const toggleTheme = () => {
     setTheme(theme === "dark" ? "light" : "dark");
@@ -228,11 +242,44 @@ export function Header() {
                   <div className="px-2 py-2.5 space-y-2 bg-secondary rounded-lg mb-1.5">
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-muted-foreground">Portfolio</span>
-                      <span className="font-semibold text-primary">${portfolioValue.toLocaleString()}</span>
+                      <div className="text-right">
+                        <span className="font-semibold text-primary">${portfolioValue.toLocaleString()}</span>
+                        {localCurrency !== "USD" && (
+                          <span className="text-xs text-muted-foreground ml-1">≈ {convertToLocal(portfolioValue)}</span>
+                        )}
+                      </div>
                     </div>
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-muted-foreground">Cash</span>
-                      <span className="font-semibold">${cashBalance.toLocaleString()}</span>
+                      <div className="text-right">
+                        <span className="font-semibold">${cashBalance.toLocaleString()}</span>
+                        {localCurrency !== "USD" && (
+                          <span className="text-xs text-muted-foreground ml-1">≈ {convertToLocal(cashBalance)}</span>
+                        )}
+                      </div>
+                    </div>
+                    {/* Currency Selector */}
+                    <div className="flex items-center justify-between pt-1 border-t border-border/50">
+                      <span className="text-[10px] text-muted-foreground">Local currency</span>
+                      <div className="flex gap-1">
+                        {Object.keys(exchangeRates).map((currency) => (
+                          <button
+                            key={currency}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              setLocalCurrency(currency);
+                            }}
+                            className={`text-[10px] px-1.5 py-0.5 rounded transition-colors ${
+                              localCurrency === currency
+                                ? "bg-primary text-primary-foreground font-medium"
+                                : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                            }`}
+                          >
+                            {currency}
+                          </button>
+                        ))}
+                      </div>
                     </div>
                   </div>
                   
