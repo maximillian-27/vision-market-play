@@ -1,9 +1,9 @@
 import { useState, useMemo } from "react";
 import { FeedFilters, FilterState } from "@/components/FeedFilters";
 import { MarketGridCard } from "@/components/MarketGridCard";
-import { PageHeader } from "@/components/PageHeader";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { FeaturedMarketSection } from "@/components/FeaturedMarketSection";
+import { GradientDivider } from "@/components/GradientDivider";
 import bitcoinImage from "@/assets/bitcoin-market.jpg";
 import nbaImage from "@/assets/nba-championship.jpg";
 import iphoneImage from "@/assets/foldable-iphone.jpg";
@@ -311,8 +311,18 @@ export default function Feed() {
   return (
     <div className="w-full max-w-[1600px] mx-auto px-4 md:px-6 lg:px-8">
       <div className="space-y-4">
+        {/* Featured Market Section */}
+        <div className="pt-4">
+          <FeaturedMarketSection />
+        </div>
+
+        {/* Gradient Divider */}
+        <GradientDivider />
+
+        {/* Filters */}
         <FeedFilters filters={filters} onFiltersChange={setFilters} />
         
+        {/* Markets Grid */}
         {filteredMarkets.length === 0 ? (
           <div className="text-center py-16">
             <p className="text-muted-foreground">No markets found matching your filters</p>
