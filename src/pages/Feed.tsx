@@ -309,55 +309,57 @@ export default function Feed() {
   }, [filters]);
 
   return (
-    <div className="w-full max-w-[1600px] mx-auto px-4 md:px-6 lg:px-8">
-      <div className="space-y-2">
+    <div className="w-full max-w-[1400px] mx-auto px-4 md:px-6 lg:px-8">
+      <div className="space-y-0">
+        {/* Filters — top of page */}
+        <FeedFilters filters={filters} onFiltersChange={setFilters} />
+
         {/* Featured Market Section */}
-        <div className="pt-2">
+        <div className="py-4">
           <FeaturedMarketSection />
         </div>
 
         {/* Gradient Divider */}
         <GradientDivider />
-
-        {/* Filters */}
-        <FeedFilters filters={filters} onFiltersChange={setFilters} />
         
         {/* Markets Grid */}
-        {filteredMarkets.length === 0 ? (
-          <div className="text-center py-16">
-            <p className="text-muted-foreground">No markets found matching your filters</p>
-            <Button 
-              variant="link" 
-              onClick={() => setFilters({ ...filters, status: "all", category: "All" })}
-            >
-              Clear filters
-            </Button>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-3 stagger-animate">
-            {filteredMarkets.map((market) => (
-              <MarketGridCard 
-                key={market.id} 
-                id={market.id}
-                creator={market.creator}
-                title={market.title}
-                image={market.image}
-                outcomes={market.outcomes}
-                yesPrice={market.yesPrice}
-                noPrice={market.noPrice}
-                volume={market.volume}
-                endsIn={market.endsIn}
-                status={market.status}
-                resolution={market.resolution}
-                disputeEndsIn={market.disputeEndsIn}
-                resolvedAt={market.resolvedAt}
-                isHot={market.isHot}
-                isLive={market.isLive}
-                volumeChange={market.volumeChange}
-              />
-            ))}
-          </div>
-        )}
+        <div className="pt-4 pb-8">
+          {filteredMarkets.length === 0 ? (
+            <div className="text-center py-16">
+              <p className="text-muted-foreground">No markets found matching your filters</p>
+              <Button 
+                variant="link" 
+                onClick={() => setFilters({ ...filters, status: "all", category: "All" })}
+              >
+                Clear filters
+              </Button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 stagger-animate">
+              {filteredMarkets.map((market) => (
+                <MarketGridCard 
+                  key={market.id} 
+                  id={market.id}
+                  creator={market.creator}
+                  title={market.title}
+                  image={market.image}
+                  outcomes={market.outcomes}
+                  yesPrice={market.yesPrice}
+                  noPrice={market.noPrice}
+                  volume={market.volume}
+                  endsIn={market.endsIn}
+                  status={market.status}
+                  resolution={market.resolution}
+                  disputeEndsIn={market.disputeEndsIn}
+                  resolvedAt={market.resolvedAt}
+                  isHot={market.isHot}
+                  isLive={market.isLive}
+                  volumeChange={market.volumeChange}
+                />
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
