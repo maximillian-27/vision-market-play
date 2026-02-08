@@ -310,9 +310,9 @@ export default function Feed() {
 
   return (
     <div className="w-full max-w-[1600px] mx-auto px-4 md:px-6 lg:px-8">
-      <div className="space-y-4">
+      <div className="space-y-2">
         {/* Featured Market Section */}
-        <div className="pt-4">
+        <div className="pt-2">
           <FeaturedMarketSection />
         </div>
 
