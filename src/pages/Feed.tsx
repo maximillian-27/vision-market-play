@@ -324,7 +324,7 @@ export default function Feed() {
 
         {/* Other Markets + Markets Grid — unified grid */}
         <div className="pt-4 pb-8">
-          <h3 className="text-sm font-display font-bold text-muted-foreground mb-3">Other markets</h3>
+          
           {filteredMarkets.length === 0 ? (
             <div className="text-center py-16">
               <p className="text-muted-foreground">No markets found matching your filters</p>
