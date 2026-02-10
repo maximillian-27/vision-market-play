@@ -321,6 +321,39 @@ export default function Feed() {
 
         {/* Gradient Divider */}
         <GradientDivider />
+
+        {/* Other Markets (formerly sidebar) */}
+        <div className="pt-4">
+          <h3 className="text-sm font-display font-bold text-muted-foreground mb-3">Other markets</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <MarketGridCard
+              id="4"
+              creator={{ name: "Alex Rodriguez", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Alex", id: "alex-rodriguez", isCreator: true, tier: "silver" as const }}
+              title="Next US Federal Reserve interest rate decision?"
+              image={fedImage}
+              outcomes={[
+                { label: "Cut", price: 45, color: "success" },
+                { label: "Hold", price: 38 },
+                { label: "Raise", price: 17, color: "destructive" },
+              ]}
+              volume="$3.1M"
+              endsIn="1 month"
+              status="open"
+            />
+            <MarketGridCard
+              id="3"
+              creator={{ name: "Emma Wilson", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Emma", id: "emma-wilson", isCreator: true, tier: "diamond" as const }}
+              title="Will Apple release a foldable iPhone in 2025?"
+              image={iphoneImage}
+              yesPrice={23}
+              noPrice={77}
+              volume="$1.2M"
+              endsIn="11 months"
+              status="open"
+              isHot={true}
+            />
+          </div>
+        </div>
         
         {/* Markets Grid */}
         <div className="pt-4 pb-8">
