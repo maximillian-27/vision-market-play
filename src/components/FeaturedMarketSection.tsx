@@ -4,7 +4,20 @@ import { useNavigate } from "react-router-dom";
 import { useBetSlipContext } from "@/contexts/BetSlipContext";
 import { useToast } from "@/hooks/use-toast";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { LineChart, Line, ResponsiveContainer } from "recharts";
 import bitcoinImage from "@/assets/bitcoin-market.jpg";
+
+// Mock probability history per outcome
+const mockHistory: Record<string, { v: number }[]> = {
+  "85,000 to 100,000": [
+    { v: 52 }, { v: 55 }, { v: 58 }, { v: 54 }, { v: 60 }, { v: 57 },
+    { v: 63 }, { v: 61 }, { v: 65 }, { v: 64 }, { v: 68 },
+  ],
+  "100,000 to 120,000": [
+    { v: 30 }, { v: 28 }, { v: 32 }, { v: 29 }, { v: 26 }, { v: 25 },
+    { v: 27 }, { v: 24 }, { v: 22 }, { v: 23 }, { v: 23 },
+  ],
+};
 
 const featuredMain = {
   id: "1",
@@ -54,34 +67,56 @@ export function FeaturedMarketSection() {
         </div>
 
         <div className="space-y-3">
-          {market.outcomes.map((outcome, idx) => (
-            <div key={idx} className="flex items-center gap-3">
-              <span className="text-sm text-foreground font-medium min-w-[140px]">{outcome.label}</span>
-              <span className="text-sm font-bold text-foreground w-12 text-right">{outcome.price} %</span>
-              <div className="flex items-center gap-2 ml-auto">
-                <button
-                  className={`px-5 py-1.5 rounded-lg text-xs font-semibold transition-all active:scale-[0.97] ${
-                    isInBetSlip(market.id, `${outcome.label}-Yes`)
-                      ? "bg-bet text-bet-foreground"
-                      : "bg-bet/10 text-bet hover:bg-bet/20 border border-bet/20"
-                  }`}
-                  onClick={(e) => handleBet(e, `${outcome.label}-Yes`, outcome.price)}
-                >
-                  Yes
-                </button>
-                <button
-                  className={`px-5 py-1.5 rounded-lg text-xs font-semibold transition-all active:scale-[0.97] ${
-                    isInBetSlip(market.id, `${outcome.label}-No`)
-                      ? "bg-against text-against-foreground"
-                      : "bg-against/10 text-against hover:bg-against/20 border border-against/20"
-                  }`}
-                  onClick={(e) => handleBet(e, `${outcome.label}-No`, 100 - outcome.price)}
-                >
-                  No
-                </button>
+          {market.outcomes.map((outcome, idx) => {
+            const history = mockHistory[outcome.label] || [];
+            const isUp = history.length >= 2 && history[history.length - 1].v >= history[0].v;
+            const strokeColor = isUp ? "hsl(145, 72%, 44%)" : "hsl(0, 72%, 50%)";
+
+            return (
+              <div key={idx} className="flex items-center gap-3">
+                <span className="text-sm text-foreground font-medium min-w-[140px]">{outcome.label}</span>
+                <span className="text-sm font-bold text-foreground w-12 text-right">{outcome.price} %</span>
+
+                {/* Mini sparkline */}
+                <div className="flex-1 h-8 min-w-[80px] max-w-[200px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={history}>
+                      <Line
+                        type="monotone"
+                        dataKey="v"
+                        stroke={strokeColor}
+                        strokeWidth={1.5}
+                        dot={false}
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+
+                <div className="flex items-center gap-2 ml-auto">
+                  <button
+                    className={`px-5 py-1.5 rounded-lg text-xs font-semibold transition-all active:scale-[0.97] ${
+                      isInBetSlip(market.id, `${outcome.label}-Yes`)
+                        ? "bg-bet text-bet-foreground"
+                        : "bg-bet/10 text-bet hover:bg-bet/20 border border-bet/20"
+                    }`}
+                    onClick={(e) => handleBet(e, `${outcome.label}-Yes`, outcome.price)}
+                  >
+                    Yes
+                  </button>
+                  <button
+                    className={`px-5 py-1.5 rounded-lg text-xs font-semibold transition-all active:scale-[0.97] ${
+                      isInBetSlip(market.id, `${outcome.label}-No`)
+                        ? "bg-against text-against-foreground"
+                        : "bg-against/10 text-against hover:bg-against/20 border border-against/20"
+                    }`}
+                    onClick={(e) => handleBet(e, `${outcome.label}-No`, 100 - outcome.price)}
+                  >
+                    No
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         <div className="flex items-center justify-between mt-5 pt-3 border-t border-border">
