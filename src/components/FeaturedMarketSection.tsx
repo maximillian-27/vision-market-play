@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Share2, Bookmark } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -42,7 +41,7 @@ const featuredMain: FeaturedMarket = {
   volume: "$2.4M",
 };
 
-const featuredSide: FeaturedMarket[] = [
+const otherMarkets: FeaturedMarket[] = [
   {
     id: "4",
     creator: { name: "Pollgy_Alex", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Alex", id: "alex-rodriguez", tier: "silver" },
@@ -69,8 +68,8 @@ const featuredSide: FeaturedMarket[] = [
   },
 ];
 
-/* ── Side card (right column) ────────────────────────────── */
-function SideCard({ market }: { market: FeaturedMarket }) {
+/* ── Small card for "Other markets" ─────────────────────── */
+function OtherCard({ market }: { market: FeaturedMarket }) {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { addToBetSlip, isInBetSlip, setIsOpen: setBetSlipOpen } = useBetSlipContext();
@@ -91,7 +90,6 @@ function SideCard({ market }: { market: FeaturedMarket }) {
       onClick={() => navigate(`/market/${market.id}`)}
     >
       <div className="p-4">
-        {/* Header: avatar + title + chance */}
         <div className="flex items-start gap-3 mb-4">
           <Avatar className="h-10 w-10 flex-shrink-0">
             <AvatarImage src={market.image} />
@@ -111,7 +109,6 @@ function SideCard({ market }: { market: FeaturedMarket }) {
           )}
         </div>
 
-        {/* Yes / No buttons */}
         <div className="flex items-center gap-2 mb-3">
           <button
             className={`flex-1 rounded-lg py-2.5 text-center text-sm font-semibold transition-all active:scale-[0.97] ${
@@ -135,7 +132,6 @@ function SideCard({ market }: { market: FeaturedMarket }) {
           </button>
         </div>
 
-        {/* Footer: Vol + actions */}
         <div className="flex items-center justify-between text-xs text-muted-foreground">
           <span className="font-medium">Vol. {market.volume}</span>
           <div className="flex items-center gap-2">
@@ -165,13 +161,11 @@ function SideCard({ market }: { market: FeaturedMarket }) {
   );
 }
 
-/* ── Main featured card (left column) ────────────────────── */
+/* ── Main featured card (full width) ─────────────────────── */
 function MainCard({ market }: { market: FeaturedMarket }) {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { addToBetSlip, isInBetSlip, setIsOpen: setBetSlipOpen } = useBetSlipContext();
-  const [activeSlide] = useState(0);
-  const totalSlides = 4;
 
   const handleBet = (e: React.MouseEvent, outcome: string, price: number) => {
     e.stopPropagation();
@@ -185,11 +179,10 @@ function MainCard({ market }: { market: FeaturedMarket }) {
 
   return (
     <Card
-      className="group overflow-hidden cursor-pointer border-border bg-card card-hover h-full"
+      className="group overflow-hidden cursor-pointer border-border bg-card card-hover"
       onClick={() => navigate(`/market/${market.id}`)}
     >
-      <div className="p-5 flex flex-col h-full">
-        {/* Header: avatar + title */}
+      <div className="p-5 flex flex-col">
         <div className="flex items-start gap-4 mb-6">
           <Avatar className="h-14 w-14 flex-shrink-0 ring-2 ring-border">
             <AvatarImage src={market.image} />
@@ -203,8 +196,7 @@ function MainCard({ market }: { market: FeaturedMarket }) {
           </div>
         </div>
 
-        {/* Outcome rows */}
-        <div className="space-y-3 flex-1">
+        <div className="space-y-3">
           {market.outcomes.map((outcome, idx) => (
             <div key={idx} className="flex items-center gap-3">
               <span className="text-sm text-foreground font-medium min-w-[140px]">{outcome.label}</span>
@@ -235,22 +227,8 @@ function MainCard({ market }: { market: FeaturedMarket }) {
           ))}
         </div>
 
-        {/* Footer: Vol + actions + dots */}
-        <div className="flex items-center justify-between mt-5 pt-3">
+        <div className="flex items-center justify-between mt-5 pt-3 border-t border-border">
           <span className="text-xs text-muted-foreground font-medium">Vol. {market.volume}</span>
-
-          {/* Carousel dots */}
-          <div className="flex items-center gap-1.5">
-            {Array.from({ length: totalSlides }).map((_, i) => (
-              <span
-                key={i}
-                className={`h-1.5 w-1.5 rounded-full transition-colors ${
-                  i === activeSlide ? "bg-primary" : "bg-muted-foreground/30"
-                }`}
-              />
-            ))}
-          </div>
-
           <div className="flex items-center gap-2">
             <button
               className="p-1 rounded hover:bg-secondary transition-colors text-muted-foreground"
@@ -281,15 +259,18 @@ function MainCard({ market }: { market: FeaturedMarket }) {
 /* ── Export ───────────────────────────────────────────────── */
 export function FeaturedMarketSection() {
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-3">
-      {/* Main featured card */}
+    <div className="space-y-4">
+      {/* Single full-width featured market */}
       <MainCard market={featuredMain} />
 
-      {/* Stacked side cards */}
-      <div className="flex flex-col gap-3">
-        {featuredSide.map((m) => (
-          <SideCard key={m.id} market={m} />
-        ))}
+      {/* Other markets section */}
+      <div>
+        <h3 className="text-sm font-display font-bold text-muted-foreground mb-3">Other markets</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {otherMarkets.map((m) => (
+            <OtherCard key={m.id} market={m} />
+          ))}
+        </div>
       </div>
     </div>
   );
