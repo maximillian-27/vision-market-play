@@ -71,7 +71,7 @@ export function FeaturedMarketSection() {
     <div className="flex flex-col md:flex-row gap-4">
       {/* Left – Main featured card */}
       <Card
-        className="group overflow-hidden cursor-pointer border-border bg-card card-hover md:w-[65%] self-start"
+        className="group overflow-hidden cursor-pointer border-border bg-card card-hover md:w-[65%]"
         onClick={() => navigate(`/market/${market.id}`)}
       >
         <div className="p-6 flex flex-col">
