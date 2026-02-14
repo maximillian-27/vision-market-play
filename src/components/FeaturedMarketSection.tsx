@@ -74,21 +74,21 @@ export function FeaturedMarketSection() {
         className="group overflow-hidden cursor-pointer border-border bg-card card-hover md:w-[65%]"
         onClick={() => navigate(`/market/${market.id}`)}
       >
-        <div className="p-6 flex flex-col">
+        <div className="p-6 flex flex-col h-full justify-between">
           <div className="flex items-start gap-4 mb-6">
-            <Avatar className="h-16 w-16 flex-shrink-0 ring-2 ring-border">
+            <Avatar className="h-20 w-20 flex-shrink-0 ring-2 ring-border">
               <AvatarImage src={market.image} />
               <AvatarFallback>{market.creator.name.slice(0, 2)}</AvatarFallback>
             </Avatar>
             <div className="flex-1 min-w-0">
-              <h3 className="text-xl font-display font-bold leading-snug group-hover:text-primary transition-colors">
+              <h3 className="text-2xl font-display font-bold leading-snug group-hover:text-primary transition-colors">
                 {market.title}
               </h3>
-              <p className="text-xs text-muted-foreground mt-1">by {market.creator.name}</p>
+              <p className="text-sm text-muted-foreground mt-1.5">by {market.creator.name}</p>
             </div>
           </div>
 
-          <div className="space-y-3">
+          <div className="space-y-4 flex-1 flex flex-col justify-center">
             {market.outcomes.map((outcome, idx) => {
               const history = mockHistory[outcome.label] || [];
               const isUp = history.length >= 2 && history[history.length - 1].v >= history[0].v;
@@ -96,10 +96,10 @@ export function FeaturedMarketSection() {
 
               return (
                 <div key={idx} className="flex items-center gap-3">
-                  <span className="text-sm text-foreground font-medium min-w-[140px]">{outcome.label}</span>
-                  <span className="text-sm font-bold text-foreground w-12 text-right">{outcome.price} %</span>
+                  <span className="text-base text-foreground font-medium min-w-[160px]">{outcome.label}</span>
+                  <span className="text-base font-bold text-foreground w-14 text-right">{outcome.price} %</span>
 
-                  <div className="flex-1 h-8 min-w-[80px] max-w-[200px]">
+                  <div className="flex-1 h-10 min-w-[80px] max-w-[200px]">
                     <ResponsiveContainer width="100%" height="100%">
                       <LineChart data={history}>
                         <Line type="monotone" dataKey="v" stroke={strokeColor} strokeWidth={1.5} dot={false} />
@@ -109,7 +109,7 @@ export function FeaturedMarketSection() {
 
                   <div className="flex items-center gap-2 ml-auto">
                     <button
-                      className={`px-8 py-2 rounded-lg text-xs font-semibold transition-all active:scale-[0.97] ${
+                      className={`px-10 py-2.5 rounded-lg text-sm font-semibold transition-all active:scale-[0.97] ${
                         isInBetSlip(market.id, `${outcome.label}-Yes`)
                           ? "bg-bet text-bet-foreground"
                           : "bg-bet/10 text-bet hover:bg-bet/20 border border-bet/20"
@@ -119,7 +119,7 @@ export function FeaturedMarketSection() {
                       Yes
                     </button>
                     <button
-                      className={`px-8 py-2 rounded-lg text-xs font-semibold transition-all active:scale-[0.97] ${
+                      className={`px-10 py-2.5 rounded-lg text-sm font-semibold transition-all active:scale-[0.97] ${
                         isInBetSlip(market.id, `${outcome.label}-No`)
                           ? "bg-against text-against-foreground"
                           : "bg-against/10 text-against hover:bg-against/20 border border-against/20"
@@ -137,7 +137,6 @@ export function FeaturedMarketSection() {
           <div className="flex items-center justify-between mt-5 pt-3 border-t border-border">
             <div className="flex items-center gap-3">
               <span className="text-xs text-muted-foreground font-medium">Vol. {market.volume}</span>
-              {/* Decorative dots */}
               <div className="flex items-center gap-1.5 ml-2">
                 <span className="h-1.5 w-1.5 rounded-full bg-primary" />
                 <span className="h-1.5 w-1.5 rounded-full bg-muted-foreground/30" />
