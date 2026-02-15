@@ -78,7 +78,7 @@ export function Header() {
   return (
     <>
       <header className="border-b border-border bg-background/95 backdrop-blur-xl supports-[backdrop-filter]:bg-background/80 fixed top-0 z-50 w-full">
-        <div className="flex h-14 sm:h-12 items-center px-2 lg:px-6 gap-1.5 lg:gap-3 max-w-[1600px] mx-auto">
+        <div className="flex h-14 items-center px-4 lg:px-6 gap-4 max-w-[1600px] mx-auto">
           {/* Logo */}
           <button 
             onClick={() => navigate("/")}
@@ -93,12 +93,12 @@ export function Header() {
 
           {/* Desktop Navigation */}
           {!isMobile && (
-            <nav className="flex items-center gap-0.5 ml-4 lg:ml-8">
+            <nav className="flex items-center gap-1 ml-8">
               {navItems.map((item) => (
                 <NavLink
                   key={item.title}
                   to={item.url}
-                  className="px-2 lg:px-3 py-1.5 text-xs lg:text-sm font-medium text-muted-foreground hover:text-foreground transition-colors rounded-md hover:bg-secondary"
+                  className="px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors rounded-md hover:bg-secondary"
                   activeClassName="text-primary bg-primary-muted"
                 >
                   {item.title}
@@ -127,34 +127,22 @@ export function Header() {
             />
           </form>
 
-          {/* Search icon - visible below md where search bar is hidden */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="md:hidden h-8 w-8 text-muted-foreground hover:text-foreground ml-auto flex-shrink-0"
-            onClick={() => navigate("/search")}
-          >
-            <Search className="h-4 w-4" />
-          </Button>
-
           {/* Right Actions */}
-          <div className="flex items-center gap-3 md:ml-0 flex-shrink-0">
-            {/* Language Selector - hidden on mobile */}
-            {!isMobile && (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
-                    <Globe className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="z-50 bg-popover rounded-lg border-border">
-                  <DropdownMenuItem className="cursor-pointer">English</DropdownMenuItem>
-                  <DropdownMenuItem className="cursor-pointer">Español</DropdownMenuItem>
-                  <DropdownMenuItem className="cursor-pointer">Français</DropdownMenuItem>
-                  <DropdownMenuItem className="cursor-pointer">Deutsch</DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            )}
+          <div className="flex items-center gap-2 ml-auto md:ml-0">
+            {/* Language Selector */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
+                  <Globe className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="z-50 bg-popover rounded-lg border-border">
+                <DropdownMenuItem className="cursor-pointer">English</DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer">Español</DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer">Français</DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer">Deutsch</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           
             {isLoggedIn && (
               <>
@@ -174,55 +162,28 @@ export function Header() {
             )}
 
             {!isLoggedIn ? (
-              <div className="flex items-center gap-1.5 lg:gap-3 flex-nowrap">
-                {/* "How it works?" as text link on mobile, ghost button on desktop */}
-                <button 
+              <div className="flex items-center gap-2">
+                <Button 
+                  variant="ghost" 
+                  size="sm"
                   onClick={() => setShowHowItWorks(true)}
-                  className="text-muted-foreground text-xs lg:text-sm font-medium hover:text-foreground transition-colors whitespace-nowrap hidden sm:block"
+                  className="hidden md:flex text-muted-foreground text-xs font-medium hover:text-foreground"
                 >
                   How it works?
-                </button>
-                {isMobile && (
-                  <button 
-                    onClick={() => setShowHowItWorks(true)}
-                    className="text-muted-foreground text-[14px] font-medium hover:text-foreground transition-colors whitespace-nowrap"
-                  >
-                    How it works?
-                  </button>
-                )}
+                </Button>
                 
-                <Button 
-                  variant="outline"
-                  size="sm" 
-                  onClick={handleLogin}
-                  className="h-7 text-[11px] px-3 lg:h-8 lg:text-xs lg:px-4 font-semibold whitespace-nowrap min-w-[60px] lg:min-w-[70px]"
-                >
-                  Log in
-                </Button>
-                <Button 
-                  size="sm" 
-                  onClick={handleLogin}
-                  className="h-7 text-[11px] px-3 lg:h-8 lg:text-xs lg:px-4 font-semibold whitespace-nowrap min-w-[60px] lg:min-w-[70px]"
-                >
-                  Sign up
-                </Button>
-
-                {/* Mobile: Hamburger menu */}
+                {/* Mobile: Info dropdown when not logged in */}
                 {isMobile && (
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <button className="flex items-center justify-center h-8 w-8 text-muted-foreground hover:text-foreground transition-colors flex-shrink-0">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <line x1="3" y1="6" x2="21" y2="6" />
-                          <line x1="3" y1="12" x2="21" y2="12" />
-                          <line x1="3" y1="18" x2="21" y2="18" />
-                        </svg>
-                      </button>
+                      <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
+                        <FileText className="h-4 w-4" />
+                      </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-48 z-50 bg-popover rounded-lg border-border p-2">
-                      <DropdownMenuItem onClick={toggleTheme} className="gap-2.5 py-2 cursor-pointer rounded-md">
-                        {theme === "dark" ? <Sun className="h-4 w-4 text-muted-foreground" /> : <Moon className="h-4 w-4 text-muted-foreground" />}
-                        {theme === "dark" ? "Light Mode" : "Dark Mode"}
+                      <DropdownMenuItem onClick={() => setShowHowItWorks(true)} className="gap-2.5 py-2 cursor-pointer rounded-md">
+                        <HelpCircle className="h-4 w-4 text-muted-foreground" />
+                        How it works?
                       </DropdownMenuItem>
                       <DropdownMenuSeparator className="my-1" />
                       <div className="px-2 py-1.5">
@@ -234,15 +195,37 @@ export function Header() {
                           <a href="/press" className="text-muted-foreground hover:text-foreground">Press</a>
                         </div>
                         <div className="flex items-center gap-3 mt-2">
-                          <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground"><Twitter className="h-3.5 w-3.5" /></a>
-                          <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground"><Instagram className="h-3.5 w-3.5" /></a>
-                          <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground"><Linkedin className="h-3.5 w-3.5" /></a>
+                          <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground">
+                            <Twitter className="h-3.5 w-3.5" />
+                          </a>
+                          <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground">
+                            <Instagram className="h-3.5 w-3.5" />
+                          </a>
+                          <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground">
+                            <Linkedin className="h-3.5 w-3.5" />
+                          </a>
                         </div>
                         <p className="text-[10px] text-muted-foreground/60 mt-2">© {new Date().getFullYear()} Pollgy LLC</p>
                       </div>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 )}
+                
+                <Button 
+                  variant="outline"
+                  size="sm" 
+                  onClick={handleLogin}
+                  className="h-8 text-xs font-medium"
+                >
+                  Log in
+                </Button>
+                <Button 
+                  size="sm" 
+                  onClick={handleLogin}
+                  className="h-8 text-xs font-semibold"
+                >
+                  Sign up
+                </Button>
               </div>
             ) : (
               <DropdownMenu>

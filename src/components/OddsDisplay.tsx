@@ -93,6 +93,19 @@ export function OddsDisplay({
             LIVE
           </Badge>
         )}
+        {isHot && !isLive && (
+          <Tooltip>
+            <TooltipTrigger>
+              <Badge className="badge-hot gap-0.5 px-1.5 py-0.5">
+                <Flame className="h-2.5 w-2.5" />
+                HOT
+              </Badge>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p className="text-xs">High volume in last hour</p>
+            </TooltipContent>
+          </Tooltip>
+        )}
 
         {/* Odds value */}
         <span className={`font-bold ${sizeClasses[size]}`}>

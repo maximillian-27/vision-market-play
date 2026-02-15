@@ -172,48 +172,39 @@ const allNews = [
 ];
 
 export default function Search() {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const query = searchParams.get("q") || "";
-  const [inputValue, setInputValue] = useState(query);
   
   const [usersOpen, setUsersOpen] = useState(false);
   const [postsOpen, setPostsOpen] = useState(false);
   const [newsOpen, setNewsOpen] = useState(false);
 
   // Filter results based on query
-  const filteredMarkets = query
-    ? allMarkets.filter(
-        (market) =>
-          market.title.toLowerCase().includes(query.toLowerCase()) ||
-          market.creator.name.toLowerCase().includes(query.toLowerCase())
-      )
-    : [];
+  const filteredMarkets = allMarkets.filter(
+    (market) =>
+      market.title.toLowerCase().includes(query.toLowerCase()) ||
+      market.creator.name.toLowerCase().includes(query.toLowerCase())
+  );
 
-  const filteredUsers = query
-    ? allUsers.filter(
-        (user) =>
-          user.name.toLowerCase().includes(query.toLowerCase()) ||
-          user.username.toLowerCase().includes(query.toLowerCase())
-      )
-    : [];
+  const filteredUsers = allUsers.filter(
+    (user) =>
+      user.name.toLowerCase().includes(query.toLowerCase()) ||
+      user.username.toLowerCase().includes(query.toLowerCase())
+  );
 
-  const filteredPosts = query
-    ? allPosts.filter(
-        (post) =>
-          post.thoughts.toLowerCase().includes(query.toLowerCase()) ||
-          post.user.name.toLowerCase().includes(query.toLowerCase()) ||
-          post.market?.title.toLowerCase().includes(query.toLowerCase())
-      )
-    : [];
+  const filteredPosts = allPosts.filter(
+    (post) =>
+      post.thoughts.toLowerCase().includes(query.toLowerCase()) ||
+      post.user.name.toLowerCase().includes(query.toLowerCase()) ||
+      post.market?.title.toLowerCase().includes(query.toLowerCase())
+  );
 
-  const filteredNews = query
-    ? allNews.filter(
-        (news) =>
-          news.title.toLowerCase().includes(query.toLowerCase()) ||
-          news.source.toLowerCase().includes(query.toLowerCase())
-      )
-    : [];
+  const filteredNews = allNews.filter(
+    (news) =>
+      news.title.toLowerCase().includes(query.toLowerCase()) ||
+      news.source.toLowerCase().includes(query.toLowerCase())
+  );
 
   const formatNumber = (num: number): string => {
     if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
@@ -221,46 +212,26 @@ export default function Search() {
     return num.toString();
   };
 
-  const handleSearch = (value: string) => {
-    setInputValue(value);
-    if (value.trim()) {
-      setSearchParams({ q: value.trim() });
-    } else {
-      setSearchParams({});
-    }
-  };
+  if (!query) {
+    return (
+      <div className="min-h-[60vh] flex items-center justify-center px-4">
+        <div className="text-center space-y-3">
+          <SearchIcon className="h-10 w-10 text-muted-foreground/30 mx-auto" />
+          <p className="text-muted-foreground text-sm">Search for markets, users, posts, and news</p>
+        </div>
+      </div>
+    );
+  }
 
   const totalResults = filteredMarkets.length + filteredUsers.length + filteredPosts.length + filteredNews.length;
 
   return (
     <div className="w-full max-w-[1600px] mx-auto px-4 md:px-6 lg:px-8 py-4 lg:py-6 space-y-6">
-      {/* Search Input */}
-      <div className="relative">
-        <SearchIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-        <input
-          type="text"
-          value={inputValue}
-          onChange={(e) => handleSearch(e.target.value)}
-          placeholder="Search markets, users, news..."
-          autoFocus
-          className="w-full h-11 pl-10 pr-4 rounded-xl bg-secondary border-transparent text-sm outline-none focus:ring-2 focus:ring-primary/30 transition-all"
-        />
+      {/* Header */}
+      <div>
+        <h1 className="text-lg font-semibold">"{query}"</h1>
+        <p className="text-xs text-muted-foreground">{totalResults} results</p>
       </div>
-
-      {!query ? (
-        <div className="min-h-[40vh] flex items-center justify-center">
-          <div className="text-center space-y-3">
-            <SearchIcon className="h-10 w-10 text-muted-foreground/30 mx-auto" />
-            <p className="text-muted-foreground text-sm">Search for markets, users, posts, and news</p>
-          </div>
-        </div>
-      ) : (
-        <>
-          {/* Header */}
-          <div>
-            <h1 className="text-lg font-semibold">"{query}"</h1>
-            <p className="text-xs text-muted-foreground">{totalResults} results</p>
-          </div>
 
       {/* Markets - Primary Results (Grid like Feed) */}
       {filteredMarkets.length > 0 && (
@@ -446,8 +417,6 @@ export default function Search() {
           <p className="text-muted-foreground text-sm">No results found for "{query}"</p>
           <p className="text-xs text-muted-foreground/70">Try different keywords</p>
         </div>
-      )}
-        </>
       )}
     </div>
   );

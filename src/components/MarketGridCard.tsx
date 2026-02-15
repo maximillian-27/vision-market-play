@@ -11,8 +11,8 @@ import { QuickTradeSheet } from "@/components/QuickTradeSheet";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { QuoteRepostDialog } from "@/components/QuoteRepostDialog";
-
-
+import { useBetSlipContext } from "@/contexts/BetSlipContext";
+import { CreatorTierBadge, CreatorTier } from "@/components/CreatorTierBadge";
 
 type MarketStatus = "open" | "closing" | "awaiting_resolution" | "closed" | "resolved";
 
@@ -31,7 +31,7 @@ interface MarketGridCardProps {
     avatar: string;
     id?: string;
     isCreator?: boolean;
-    
+    tier?: CreatorTier;
   };
   title: string;
   image: string;
@@ -72,7 +72,7 @@ export function MarketGridCard({
   const navigate = useNavigate();
   const { toast } = useToast();
   const isMobile = useIsMobile();
-  
+  const { addToBetSlip, isInBetSlip, setIsOpen: setBetSlipOpen } = useBetSlipContext();
   const [showMarketDialog, setShowMarketDialog] = useState(false);
   const [showQuickTrade, setShowQuickTrade] = useState(false);
   const [showResolvedDialog, setShowResolvedDialog] = useState(false);
@@ -100,9 +100,20 @@ export function MarketGridCard({
     }
   };
 
-  const handleBetClick = (e: React.MouseEvent) => {
+  const handleBetClick = (e: React.MouseEvent, outcome: Outcome) => {
     e.stopPropagation();
-    navigate(`/market/${id}`);
+    if (isBettingDisabled) return;
+    
+    addToBetSlip(id, title, outcome.label, outcome.price);
+    
+    if (!isMobile) {
+      setBetSlipOpen(true);
+    }
+    
+    toast({
+      title: isInBetSlip(id, outcome.label) ? "Removed from bet slip" : "Added to bet slip",
+      description: `${outcome.label} @ ${outcome.price}%`,
+    });
   };
 
   const getStatusBadge = () => {
@@ -186,15 +197,17 @@ export function MarketGridCard({
       )}
       
       <Card 
-        className={`group overflow-hidden cursor-pointer border-border bg-card card-hover h-full ${isLive ? 'ring-1 ring-live/40' : ''}`}
+        className={`group overflow-hidden cursor-pointer border-border bg-card card-hover h-full ${
+          isHot ? 'ring-1 ring-accent/30' : ''
+        } ${isLive ? 'ring-1 ring-live/40' : ''}`}
         onClick={handleCardClick}
       >
         {/* Desktop Layout - Compact with small image */}
-        <div className="sm:flex hidden flex-col p-2 h-full">
+        <div className="sm:flex hidden flex-col p-3 h-full">
           {/* Header with image, title, indicators */}
-          <div className="flex items-start gap-2 mb-1.5">
+          <div className="flex items-start gap-3 mb-2.5">
             {/* Small square image */}
-            <div className="relative w-9 h-9 rounded-md overflow-hidden bg-secondary flex-shrink-0">
+            <div className="relative w-10 h-10 rounded-lg overflow-hidden bg-secondary flex-shrink-0">
               <img 
                 src={image} 
                 alt={title}
@@ -217,7 +230,24 @@ export function MarketGridCard({
                 <h3 className="text-sm font-display font-bold leading-snug line-clamp-2 group-hover:text-primary transition-colors flex-1">
                   {title}
                 </h3>
+                {isBinary && !isClosedOrResolved && !isAwaitingResolution && (
+                  <div className="flex items-center gap-1 flex-shrink-0">
+                    <span className="text-sm font-bold text-primary">{yesPercent}%</span>
+                    {volumeChange !== 0 && (
+                      <span className={`text-[10px] flex items-center ${volumeChange > 0 ? 'text-bet' : 'text-against'}`}>
+                        {volumeChange > 0 ? <TrendingUp className="h-2.5 w-2.5" /> : <TrendingDown className="h-2.5 w-2.5" />}
+                      </span>
+                    )}
+                  </div>
+                )}
               </div>
+              {/* Hot indicator */}
+              {isHot && !isLive && (
+                <span className="badge-hot text-[8px] px-1 py-0.5 mt-1 inline-flex">
+                  <Flame className="h-2 w-2" />
+                  HOT
+                </span>
+              )}
             </div>
           </div>
 
@@ -264,14 +294,22 @@ export function MarketGridCard({
             ) : isBinary ? (
               <div className="flex items-center gap-2">
                 <button 
-                  className="flex-1 rounded-lg py-1.5 text-center transition-all active:scale-[0.97] bg-bet/15 dark:bg-bet/25 hover:bg-bet text-bet hover:text-bet-foreground border border-bet/30 dark:border-bet/40 hover:border-bet"
-                  onClick={(e) => handleBetClick(e)}
+                  className={`flex-1 rounded-lg py-2 text-center transition-all active:scale-[0.97] ${
+                    isInBetSlip(id, "Yes")
+                      ? "bg-bet text-bet-foreground border-2 border-bet"
+                      : "bg-bet/15 dark:bg-bet/25 hover:bg-bet text-bet hover:text-bet-foreground border border-bet/30 dark:border-bet/40 hover:border-bet"
+                  }`}
+                  onClick={(e) => handleBetClick(e, displayOutcomes[0])}
                 >
                   <span className="text-xs font-bold">Bet Yes</span>
                 </button>
                 <button 
-                  className="flex-1 rounded-lg py-1.5 text-center transition-all active:scale-[0.97] bg-against/15 dark:bg-against/25 hover:bg-against text-against hover:text-against-foreground border border-against/30 dark:border-against/40 hover:border-against"
-                  onClick={(e) => handleBetClick(e)}
+                  className={`flex-1 rounded-lg py-2 text-center transition-all active:scale-[0.97] ${
+                    isInBetSlip(id, "No")
+                      ? "bg-against text-against-foreground border-2 border-against"
+                      : "bg-against/15 dark:bg-against/25 hover:bg-against text-against hover:text-against-foreground border border-against/30 dark:border-against/40 hover:border-against"
+                  }`}
+                  onClick={(e) => handleBetClick(e, displayOutcomes[1])}
                 >
                   <span className="text-xs font-bold">Bet No</span>
                 </button>
@@ -281,8 +319,12 @@ export function MarketGridCard({
                 {displayOutcomes.slice(0, 2).map((outcome, index) => (
                   <button 
                     key={index}
-                    className="w-full flex items-center justify-between text-xs py-1.5 px-2 rounded-lg transition-all bg-secondary/50 hover:bg-secondary"
-                    onClick={(e) => handleBetClick(e)}
+                    className={`w-full flex items-center justify-between text-xs py-1.5 px-2 rounded-lg transition-all ${
+                      isInBetSlip(id, outcome.label)
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-secondary/50 hover:bg-secondary"
+                    }`}
+                    onClick={(e) => handleBetClick(e, outcome)}
                   >
                     <span className="font-medium truncate flex-1 text-left">{outcome.label}</span>
                     <span className="font-bold">{outcome.price}%</span>
@@ -296,7 +338,7 @@ export function MarketGridCard({
           </div>
           
           {/* Stats footer */}
-          <div className="flex items-center gap-3 text-[10px] text-muted-foreground mt-1 pt-1 border-t border-border">
+          <div className="flex items-center gap-3 text-[10px] text-muted-foreground mt-2 pt-2 border-t border-border">
             <span className="font-semibold">{volume} Vol.</span>
             {getStatusBadge() ? (
               getStatusBadge()
@@ -306,27 +348,43 @@ export function MarketGridCard({
                 {endsIn}
               </span>
             )}
-            <div className="ml-auto flex items-center gap-1">
-              <button 
-                className="p-1 rounded hover:bg-secondary transition-colors"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  navigator.clipboard.writeText(`${window.location.origin}/market/${id}`);
-                  toast({ title: "Link copied!" });
-                }}
-              >
-                <Share2 className="h-3 w-3" />
-              </button>
-              <button 
-                className="p-1 rounded hover:bg-secondary transition-colors"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  toast({ title: "Saved to watchlist" });
-                }}
-              >
-                <Bookmark className="h-3 w-3" />
-              </button>
-            </div>
+            {/* Creator tier */}
+            {creator.tier && (
+              <CreatorTierBadge tier={creator.tier} size="sm" showLabel={false} />
+            )}
+            {/* Action buttons */}
+            {!isClosedOrResolved && (
+              <div className="ml-auto flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                <button 
+                  className="p-1 rounded hover:bg-secondary transition-colors"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigator.clipboard.writeText(`${window.location.origin}/market/${id}`);
+                    toast({ title: "Link copied!" });
+                  }}
+                >
+                  <Share2 className="h-3 w-3" />
+                </button>
+                <button 
+                  className="p-1 rounded hover:bg-secondary transition-colors"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowRepostDialog(true);
+                  }}
+                >
+                  <Repeat2 className="h-3 w-3" />
+                </button>
+                <button 
+                  className="p-1 rounded hover:bg-secondary transition-colors"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toast({ title: "Saved to watchlist" });
+                  }}
+                >
+                  <Bookmark className="h-3 w-3" />
+                </button>
+              </div>
+            )}
           </div>
         </div>
 
@@ -346,6 +404,12 @@ export function MarketGridCard({
                   <span className="badge-live text-[8px] px-1 py-0.5">
                     <span className="h-1 w-1 rounded-full bg-current animate-pulse" />
                     LIVE
+                  </span>
+                </div>
+              ) : isHot ? (
+                <div className="absolute top-1 left-1">
+                  <span className="badge-hot text-[8px] px-1 py-0.5">
+                    <Flame className="h-2 w-2" />
                   </span>
                 </div>
               ) : getStatusBadge() && (
@@ -373,6 +437,7 @@ export function MarketGridCard({
                   <AvatarFallback className="text-[6px]">{creator.name.slice(0, 2)}</AvatarFallback>
                 </Avatar>
                 <span className="text-[11px] text-muted-foreground font-medium truncate max-w-[140px]">{creator.name}</span>
+                {creator.tier && <CreatorTierBadge tier={creator.tier} size="sm" showLabel={false} />}
               </button>
               
               <h3 className="text-[13px] font-display font-bold leading-snug line-clamp-2 group-hover:text-primary transition-colors">
@@ -429,14 +494,22 @@ export function MarketGridCard({
                   </div>
                   <div className="flex gap-1.5">
                     <button 
-                      className="px-2.5 py-1 rounded-md text-[11px] font-bold active:scale-95 transition-all bg-bet/15 dark:bg-bet/25 text-bet border border-bet/30 dark:border-bet/40"
-                      onClick={(e) => handleBetClick(e)}
+                      className={`px-2.5 py-1 rounded-md text-[11px] font-bold active:scale-95 transition-all ${
+                        isInBetSlip(id, "Yes")
+                          ? "bg-bet text-bet-foreground border-2 border-bet"
+                          : "bg-bet/15 dark:bg-bet/25 text-bet border border-bet/30 dark:border-bet/40"
+                      }`}
+                      onClick={(e) => handleBetClick(e, displayOutcomes[0])}
                     >
                       Yes
                     </button>
                     <button 
-                      className="px-2.5 py-1 rounded-md text-[11px] font-bold active:scale-95 transition-all bg-against/15 dark:bg-against/25 text-against border border-against/30 dark:border-against/40"
-                      onClick={(e) => handleBetClick(e)}
+                      className={`px-2.5 py-1 rounded-md text-[11px] font-bold active:scale-95 transition-all ${
+                        isInBetSlip(id, "No")
+                          ? "bg-against text-against-foreground border-2 border-against"
+                          : "bg-against/15 dark:bg-against/25 text-against border border-against/30 dark:border-against/40"
+                      }`}
+                      onClick={(e) => handleBetClick(e, displayOutcomes[1])}
                     >
                       No
                     </button>
@@ -447,9 +520,13 @@ export function MarketGridCard({
                   {displayOutcomes.slice(0, 2).map((outcome, index) => (
                     <button 
                       key={index}
-                      className="flex items-center gap-1.5 rounded-md px-2 py-1.5 text-[11px] active:scale-95 transition-all flex-shrink-0 bg-secondary border border-border"
+                      className={`flex items-center gap-1.5 rounded-md px-2 py-1.5 text-[11px] active:scale-95 transition-all flex-shrink-0 ${
+                        isInBetSlip(id, outcome.label)
+                          ? "bg-primary text-primary-foreground border-2 border-primary"
+                          : "bg-secondary border border-border"
+                      }`}
                       style={{ maxWidth: index === 0 ? '55%' : '45%' }}
-                      onClick={(e) => handleBetClick(e)}
+                      onClick={(e) => handleBetClick(e, outcome)}
                     >
                       {outcome.logo && (
                         <img src={outcome.logo} alt={outcome.label} className="h-4 w-4 object-contain rounded-sm flex-shrink-0" />
@@ -472,31 +549,10 @@ export function MarketGridCard({
               <TrendingUp className="h-3 w-3" />
               {volume}
             </span>
-            <div className="flex items-center gap-2">
-              <span className="flex items-center gap-1">
-                <Clock className="h-3 w-3" />
-                {endsIn}
-              </span>
-              <button 
-                className="p-1 rounded hover:bg-secondary transition-colors"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  navigator.clipboard.writeText(`${window.location.origin}/market/${id}`);
-                  toast({ title: "Link copied!" });
-                }}
-              >
-                <Share2 className="h-3 w-3" />
-              </button>
-              <button 
-                className="p-1 rounded hover:bg-secondary transition-colors"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  toast({ title: "Saved to watchlist" });
-                }}
-              >
-                <Bookmark className="h-3 w-3" />
-              </button>
-            </div>
+            <span className="flex items-center gap-1">
+              <Clock className="h-3 w-3" />
+              {endsIn}
+            </span>
           </div>
         </div>
       </Card>

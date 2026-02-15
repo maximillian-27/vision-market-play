@@ -1,18 +1,16 @@
 import { useState, useMemo } from "react";
 import { FeedFilters, FilterState } from "@/components/FeedFilters";
 import { MarketGridCard } from "@/components/MarketGridCard";
+import { PageHeader } from "@/components/PageHeader";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Search, SlidersHorizontal, Bookmark } from "lucide-react";
-import { FeaturedMarketSection } from "@/components/FeaturedMarketSection";
-import { GradientDivider } from "@/components/GradientDivider";
+import { Plus } from "lucide-react";
 import bitcoinImage from "@/assets/bitcoin-market.jpg";
 import nbaImage from "@/assets/nba-championship.jpg";
 import iphoneImage from "@/assets/foldable-iphone.jpg";
 import fedImage from "@/assets/federal-reserve.jpg";
 import aiImage from "@/assets/ai-customer-service.jpg";
 
-
+import { CreatorTier } from "@/components/CreatorTierBadge";
 
 type MarketStatus = "open" | "closing" | "awaiting_resolution" | "closed" | "resolved";
 
@@ -23,7 +21,7 @@ interface Market {
     avatar: string;
     id: string;
     isCreator: boolean;
-    
+    tier?: CreatorTier;
   };
   title: string;
   subtitle?: string;
@@ -52,7 +50,7 @@ const mockMarkets: Market[] = [
   // Open Markets - with gambling features
   {
     id: "1",
-    creator: { name: "Sarah Chen", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah", id: "sarah-chen", isCreator: true },
+    creator: { name: "Sarah Chen", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah", id: "sarah-chen", isCreator: true, tier: "gold" as const },
     title: "Will Bitcoin reach $100,000 by end of 2025?",
     subtitle: "The ultimate crypto milestone - will BTC finally break six figures?",
     image: bitcoinImage,
@@ -69,7 +67,7 @@ const mockMarkets: Market[] = [
   },
   {
     id: "2",
-    creator: { name: "Mike Johnson", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Mike", id: "mike-johnson", isCreator: true },
+    creator: { name: "Mike Johnson", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Mike", id: "mike-johnson", isCreator: true, tier: "platinum" as const },
     title: "Who will win the NBA Championship this season?",
     subtitle: "The race for the championship is heating up.",
     image: nbaImage,
@@ -89,7 +87,7 @@ const mockMarkets: Market[] = [
   },
   {
     id: "3",
-    creator: { name: "Emma Wilson", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Emma", id: "emma-wilson", isCreator: true },
+    creator: { name: "Emma Wilson", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Emma", id: "emma-wilson", isCreator: true, tier: "diamond" as const },
     title: "Will Apple release a foldable iPhone in 2025?",
     subtitle: "Apple's been quiet on foldables. Will they finally join the trend?",
     image: iphoneImage,
@@ -105,7 +103,7 @@ const mockMarkets: Market[] = [
   },
   {
     id: "4",
-    creator: { name: "Alex Rodriguez", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Alex", id: "alex-rodriguez", isCreator: true },
+    creator: { name: "Alex Rodriguez", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Alex", id: "alex-rodriguez", isCreator: true, tier: "silver" as const },
     title: "Next US Federal Reserve interest rate decision?",
     subtitle: "Fed's next move could shake the markets.",
     image: fedImage,
@@ -310,97 +308,46 @@ export default function Feed() {
     return result;
   }, [filters]);
 
-    return (
-    <div className="w-full max-w-[1400px] mx-auto px-4 md:px-6 lg:px-8">
-      <div className="space-y-0">
-        {/* Mobile Search + Filter icons row */}
-        <div className="sm:hidden mt-3 flex items-center gap-3">
-          <form
-            className="flex-1 min-w-0"
-            onSubmit={(e) => {
-              e.preventDefault();
-              const formData = new FormData(e.currentTarget);
-              const query = formData.get("search") as string;
-              if (query.trim()) {
-                window.location.href = `/search?q=${encodeURIComponent(query.trim())}`;
-              }
-            }}
-          >
-            <div className="relative">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                name="search"
-                placeholder="Search markets..."
-                className="w-full h-11 pl-10 pr-4 rounded-xl bg-secondary border-transparent text-sm"
-              />
-            </div>
-          </form>
-          <button
-            className="flex-shrink-0 p-2 text-muted-foreground hover:text-foreground transition-colors"
-            aria-label="Filters"
-          >
-            <SlidersHorizontal className="h-5 w-5" />
-          </button>
-          <button
-            className="flex-shrink-0 p-2 text-muted-foreground hover:text-foreground transition-colors"
-            aria-label="Saved"
-          >
-            <Bookmark className="h-5 w-5" />
-          </button>
-        </div>
-
-        {/* Filters — top of page */}
+  return (
+    <div className="w-full max-w-[1600px] mx-auto px-4 md:px-6 lg:px-8">
+      <div className="space-y-4">
         <FeedFilters filters={filters} onFiltersChange={setFilters} />
-
-        {/* Featured Market Section */}
-        <div className="pt-4 sm:pt-1.5 sm:pb-1.5">
-          <FeaturedMarketSection />
-        </div>
-
-        {/* Gradient Divider - hidden on mobile */}
-        <div className="hidden sm:block">
-          <GradientDivider />
-        </div>
-
-        {/* Other Markets + Markets Grid — unified grid */}
-        <div className="pt-4 sm:pt-1.5 pb-8">
-          
-          {filteredMarkets.length === 0 ? (
-            <div className="text-center py-16">
-              <p className="text-muted-foreground">No markets found matching your filters</p>
-              <Button 
-                variant="link" 
-                onClick={() => setFilters({ ...filters, status: "all", category: "All" })}
-              >
-                Clear filters
-              </Button>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5 sm:gap-2 stagger-animate">
-              {filteredMarkets.map((market) => (
-                <MarketGridCard 
-                  key={market.id} 
-                  id={market.id}
-                  creator={market.creator}
-                  title={market.title}
-                  image={market.image}
-                  outcomes={market.outcomes}
-                  yesPrice={market.yesPrice}
-                  noPrice={market.noPrice}
-                  volume={market.volume}
-                  endsIn={market.endsIn}
-                  status={market.status}
-                  resolution={market.resolution}
-                  disputeEndsIn={market.disputeEndsIn}
-                  resolvedAt={market.resolvedAt}
-                  isHot={market.isHot}
-                  isLive={market.isLive}
-                  volumeChange={market.volumeChange}
-                />
-              ))}
-            </div>
-          )}
-        </div>
+        
+        {filteredMarkets.length === 0 ? (
+          <div className="text-center py-16">
+            <p className="text-muted-foreground">No markets found matching your filters</p>
+            <Button 
+              variant="link" 
+              onClick={() => setFilters({ ...filters, status: "all", category: "All" })}
+            >
+              Clear filters
+            </Button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-3 stagger-animate">
+            {filteredMarkets.map((market) => (
+              <MarketGridCard 
+                key={market.id} 
+                id={market.id}
+                creator={market.creator}
+                title={market.title}
+                image={market.image}
+                outcomes={market.outcomes}
+                yesPrice={market.yesPrice}
+                noPrice={market.noPrice}
+                volume={market.volume}
+                endsIn={market.endsIn}
+                status={market.status}
+                resolution={market.resolution}
+                disputeEndsIn={market.disputeEndsIn}
+                resolvedAt={market.resolvedAt}
+                isHot={market.isHot}
+                isLive={market.isLive}
+                volumeChange={market.volumeChange}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
