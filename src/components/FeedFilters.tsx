@@ -57,7 +57,7 @@ export function FeedFilters({ filters, onFiltersChange }: FeedFiltersProps) {
                   : "text-muted-foreground hover:text-foreground hover:bg-secondary"
               }`}
             >
-              {Icon && <Icon className="h-3.5 w-3.5" />}
+              {Icon && <Icon className="h-3.5 w-3.5 text-orange-500 fill-orange-500" />}
               {label}
             </button>
           ))}
