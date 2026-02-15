@@ -48,28 +48,28 @@ export function FeaturedMarketSection() {
   };
 
     return (
-    <div className="flex flex-col md:flex-row gap-3 md:gap-2.5">
+    <div className="flex flex-col md:flex-row gap-3 md:gap-2">
       {/* Left – Main featured card */}
       <Card
         className="group overflow-hidden cursor-pointer border-border bg-card card-hover md:w-[65%] shadow-card"
         onClick={() => navigate(`/market/${market.id}`)}
       >
-        <div className="p-3 sm:p-3 flex flex-col h-full justify-between">
+        <div className="p-3 sm:p-2.5 flex flex-col h-full justify-between">
           {/* Mobile: thumbnail + title row */}
-          <div className="flex items-start gap-3 sm:gap-2.5 mb-3 sm:mb-2">
-            <Avatar className="h-12 w-12 sm:h-14 sm:w-14 flex-shrink-0 ring-2 ring-border rounded-lg overflow-hidden">
+          <div className="flex items-start gap-3 sm:gap-2 mb-3 sm:mb-1.5">
+            <Avatar className="h-12 w-12 sm:h-12 sm:w-12 flex-shrink-0 ring-2 ring-border rounded-lg overflow-hidden">
               <AvatarImage src={market.image} />
               <AvatarFallback>{market.creator.name.slice(0, 2)}</AvatarFallback>
             </Avatar>
             <div className="flex-1 min-w-0">
-              <h3 className="text-base sm:text-xl font-display font-bold leading-snug group-hover:text-primary transition-colors">
+              <h3 className="text-base sm:text-lg font-display font-bold leading-snug group-hover:text-primary transition-colors">
                 {market.title}
               </h3>
               <p className="text-xs sm:text-sm text-muted-foreground mt-1">by {market.creator.name}</p>
             </div>
           </div>
 
-          <div className="space-y-3 sm:space-y-2 flex-1 flex flex-col justify-center">
+          <div className="space-y-3 sm:space-y-1.5 flex-1 flex flex-col justify-center">
             {market.outcomes.map((outcome, idx) => {
               return (
                 <div key={idx} className="space-y-2 sm:space-y-0 sm:flex sm:items-center sm:gap-4">
@@ -80,13 +80,13 @@ export function FeaturedMarketSection() {
 
                   <div className="flex items-center gap-2 sm:ml-auto">
                     <button
-                      className="flex-1 sm:flex-none h-10 sm:h-auto px-8 py-2.5 sm:py-2 rounded-[10px] sm:rounded-lg text-sm font-semibold transition-all active:scale-[0.97] bg-bet/10 text-bet hover:bg-bet/20 border border-bet/20"
+                      className="flex-1 sm:flex-none h-10 sm:h-auto px-8 py-2.5 sm:py-1.5 rounded-[10px] sm:rounded-lg text-sm font-semibold transition-all active:scale-[0.97] bg-bet/10 text-bet hover:bg-bet/20 border border-bet/20"
                       onClick={(e) => handleBet(e, market.id)}
                     >
                       Yes
                     </button>
                     <button
-                      className="flex-1 sm:flex-none h-10 sm:h-auto px-8 py-2.5 sm:py-2 rounded-[10px] sm:rounded-lg text-sm font-semibold transition-all active:scale-[0.97] bg-against/10 text-against hover:bg-against/20 border border-against/20"
+                      className="flex-1 sm:flex-none h-10 sm:h-auto px-8 py-2.5 sm:py-1.5 rounded-[10px] sm:rounded-lg text-sm font-semibold transition-all active:scale-[0.97] bg-against/10 text-against hover:bg-against/20 border border-against/20"
                       onClick={(e) => handleBet(e, market.id)}
                     >
                       No
@@ -97,7 +97,7 @@ export function FeaturedMarketSection() {
             })}
           </div>
 
-          <div className="flex items-center justify-between mt-3 sm:mt-2 pt-2 sm:pt-1.5 border-t border-border">
+          <div className="flex items-center justify-between mt-3 sm:mt-1.5 pt-2 sm:pt-1 border-t border-border">
             <div className="flex items-center gap-3">
               <span className="text-xs text-muted-foreground font-medium">Vol. {market.volume}</span>
               <div className="flex items-center gap-1.5 ml-2">
@@ -132,7 +132,7 @@ export function FeaturedMarketSection() {
       </Card>
 
       {/* Right – Two stacked compact cards */}
-      <div className="flex flex-col gap-2.5 md:gap-2 md:w-[35%]">
+      <div className="flex flex-col gap-2.5 md:gap-1.5 md:w-[35%]">
         {sideMarkets.map((sm) => (
           <Card
             key={sm.id}
@@ -140,7 +140,7 @@ export function FeaturedMarketSection() {
             onClick={() => navigate(`/market/${sm.id}`)}
           >
             {/* Desktop layout */}
-            <div className="hidden sm:flex flex-col h-full p-2.5">
+            <div className="hidden sm:flex flex-col h-full p-2">
               <div className="flex items-start gap-2.5 mb-1.5">
                 <Avatar className="h-9 w-9 flex-shrink-0 ring-1 ring-border">
                   <AvatarImage src={sm.image} />
