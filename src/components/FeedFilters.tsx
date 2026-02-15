@@ -42,7 +42,7 @@ export function FeedFilters({ filters, onFiltersChange }: FeedFiltersProps) {
   const hasActiveFilters = filters.sortBy !== "trending" || filters.region !== "global" || filters.status !== "all" || filters.timeframe !== "all";
 
   return (
-    <div className="space-y-3 sticky top-14 z-10 bg-background/95 backdrop-blur-xl border-b border-border py-3 sm:py-2 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8 mt-3 sm:mt-0">
+    <div className="space-y-3 sticky top-14 sm:top-12 z-10 bg-background/95 backdrop-blur-xl border-b border-border py-3 sm:py-1.5 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8 mt-3 sm:mt-0">
       {/* Category Tabs row */}
       <div className="flex items-center gap-2">
         {/* Category pills */}
@@ -51,7 +51,7 @@ export function FeedFilters({ filters, onFiltersChange }: FeedFiltersProps) {
             <button
               key={label}
               onClick={() => updateFilter('category', label === "Hot" ? "Hot" : label)}
-              className={`whitespace-nowrap font-medium px-3.5 py-1.5 text-sm rounded-full transition-all flex items-center gap-1.5 ${
+              className={`whitespace-nowrap font-medium px-3.5 py-1.5 sm:py-1 text-sm rounded-full transition-all flex items-center gap-1.5 ${
                 label === filters.category 
                   ? "bg-primary text-primary-foreground" 
                   : "text-muted-foreground hover:text-foreground hover:bg-secondary"

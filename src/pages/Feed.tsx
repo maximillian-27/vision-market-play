@@ -353,7 +353,7 @@ export default function Feed() {
         <FeedFilters filters={filters} onFiltersChange={setFilters} />
 
         {/* Featured Market Section */}
-        <div className="pt-4 sm:pt-2 sm:pb-2">
+        <div className="pt-4 sm:pt-1.5 sm:pb-1.5">
           <FeaturedMarketSection />
         </div>
 
@@ -363,7 +363,7 @@ export default function Feed() {
         </div>
 
         {/* Other Markets + Markets Grid — unified grid */}
-        <div className="pt-4 sm:pt-2 pb-8">
+        <div className="pt-4 sm:pt-1.5 pb-8">
           
           {filteredMarkets.length === 0 ? (
             <div className="text-center py-16">
@@ -376,7 +376,7 @@ export default function Feed() {
               </Button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5 sm:gap-2.5 stagger-animate">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5 sm:gap-2 stagger-animate">
               {filteredMarkets.map((market) => (
                 <MarketGridCard 
                   key={market.id} 
