@@ -190,11 +190,11 @@ export function MarketGridCard({
         onClick={handleCardClick}
       >
         {/* Desktop Layout - Compact with small image */}
-        <div className="sm:flex hidden flex-col p-1.5 h-full">
+        <div className="sm:flex hidden flex-col p-1 h-full">
           {/* Header with image, title, indicators */}
-          <div className="flex items-start gap-1.5 mb-1">
+          <div className="flex items-start gap-1 mb-0.5">
             {/* Small square image */}
-            <div className="relative w-8 h-8 rounded-md overflow-hidden bg-secondary flex-shrink-0">
+            <div className="relative w-7 h-7 rounded-md overflow-hidden bg-secondary flex-shrink-0">
               <img 
                 src={image} 
                 alt={title}
@@ -214,7 +214,7 @@ export function MarketGridCard({
             {/* Title */}
             <div className="flex-1 min-w-0">
               <div className="flex items-start justify-between gap-2">
-                <h3 className="text-sm font-display font-bold leading-snug line-clamp-2 group-hover:text-primary transition-colors flex-1">
+                <h3 className="text-xs font-display font-bold leading-snug line-clamp-2 group-hover:text-primary transition-colors flex-1">
                   {title}
                 </h3>
               </div>
@@ -296,7 +296,7 @@ export function MarketGridCard({
           </div>
           
           {/* Stats footer */}
-          <div className="flex items-center gap-2 text-[9px] text-muted-foreground mt-0.5 pt-0.5 border-t border-border">
+          <div className="flex items-center gap-1.5 text-[8px] text-muted-foreground mt-0.5 pt-0.5 border-t border-border">
             <span className="font-semibold">{volume} Vol.</span>
             {getStatusBadge() ? (
               getStatusBadge()

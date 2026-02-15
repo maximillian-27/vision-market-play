@@ -311,7 +311,7 @@ export default function Feed() {
   }, [filters]);
 
     return (
-    <div className="w-full max-w-[1280px] mx-auto px-4 md:px-5 lg:px-6">
+    <div className="w-full max-w-[1180px] mx-auto px-4 md:px-4 lg:px-5">
       <div className="space-y-0">
         {/* Mobile Search + Filter icons row */}
         <div className="sm:hidden mt-3 flex items-center gap-3">
@@ -363,7 +363,7 @@ export default function Feed() {
         </div>
 
         {/* Other Markets + Markets Grid — unified grid */}
-        <div className="pt-4 sm:pt-1 pb-8">
+        <div className="pt-3 sm:pt-1 pb-6">
           
           {filteredMarkets.length === 0 ? (
             <div className="text-center py-16">
@@ -376,7 +376,7 @@ export default function Feed() {
               </Button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5 sm:gap-1.5 stagger-animate">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5 sm:gap-1 stagger-animate">
               {filteredMarkets.map((market) => (
                 <MarketGridCard 
                   key={market.id} 
