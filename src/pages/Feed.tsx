@@ -3,7 +3,7 @@ import { FeedFilters, FilterState } from "@/components/FeedFilters";
 import { MarketGridCard } from "@/components/MarketGridCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search } from "lucide-react";
+import { Search, SlidersHorizontal, Bookmark } from "lucide-react";
 import { FeaturedMarketSection } from "@/components/FeaturedMarketSection";
 import { GradientDivider } from "@/components/GradientDivider";
 import bitcoinImage from "@/assets/bitcoin-market.jpg";
@@ -313,9 +313,10 @@ export default function Feed() {
     return (
     <div className="w-full max-w-[1400px] mx-auto px-4 md:px-6 lg:px-8">
       <div className="space-y-0">
-        {/* Mobile Search Bar */}
-        <div className="sm:hidden mt-3">
+        {/* Mobile Search + Filter icons row */}
+        <div className="sm:hidden mt-3 flex items-center gap-3">
           <form
+            className="flex-1 min-w-0"
             onSubmit={(e) => {
               e.preventDefault();
               const formData = new FormData(e.currentTarget);
@@ -334,6 +335,18 @@ export default function Feed() {
               />
             </div>
           </form>
+          <button
+            className="flex-shrink-0 p-2 text-muted-foreground hover:text-foreground transition-colors"
+            aria-label="Filters"
+          >
+            <SlidersHorizontal className="h-5 w-5" />
+          </button>
+          <button
+            className="flex-shrink-0 p-2 text-muted-foreground hover:text-foreground transition-colors"
+            aria-label="Saved"
+          >
+            <Bookmark className="h-5 w-5" />
+          </button>
         </div>
 
         {/* Filters — top of page */}

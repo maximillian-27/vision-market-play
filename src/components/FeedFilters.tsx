@@ -63,8 +63,8 @@ export function FeedFilters({ filters, onFiltersChange }: FeedFiltersProps) {
           ))}
         </div>
 
-        {/* Right-side buttons */}
-        <div className="flex items-center gap-2 flex-shrink-0">
+        {/* Right-side buttons - desktop only */}
+        <div className="hidden sm:flex items-center gap-2 flex-shrink-0">
           <Button
             variant={showFilters ? "default" : "outline"}
             size="sm"
