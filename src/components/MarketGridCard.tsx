@@ -12,7 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { QuoteRepostDialog } from "@/components/QuoteRepostDialog";
 
-import { CreatorTierBadge, CreatorTier } from "@/components/CreatorTierBadge";
+
 
 type MarketStatus = "open" | "closing" | "awaiting_resolution" | "closed" | "resolved";
 
@@ -31,7 +31,7 @@ interface MarketGridCardProps {
     avatar: string;
     id?: string;
     isCreator?: boolean;
-    tier?: CreatorTier;
+    
   };
   title: string;
   image: string;
@@ -325,10 +325,6 @@ export function MarketGridCard({
                 {endsIn}
               </span>
             )}
-            {/* Creator tier */}
-            {creator.tier && (
-              <CreatorTierBadge tier={creator.tier} size="sm" showLabel={false} />
-            )}
             {/* Action buttons */}
             {!isClosedOrResolved && (
               <div className="ml-auto flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -414,7 +410,6 @@ export function MarketGridCard({
                   <AvatarFallback className="text-[6px]">{creator.name.slice(0, 2)}</AvatarFallback>
                 </Avatar>
                 <span className="text-[11px] text-muted-foreground font-medium truncate max-w-[140px]">{creator.name}</span>
-                {creator.tier && <CreatorTierBadge tier={creator.tier} size="sm" showLabel={false} />}
               </button>
               
               <h3 className="text-[13px] font-display font-bold leading-snug line-clamp-2 group-hover:text-primary transition-colors">
