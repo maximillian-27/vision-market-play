@@ -192,11 +192,11 @@ export function MarketGridCard({
         onClick={handleCardClick}
       >
         {/* Desktop Layout - Compact with small image */}
-        <div className="sm:flex hidden flex-col p-2.5 h-full">
+        <div className="sm:flex hidden flex-col p-2 h-full">
           {/* Header with image, title, indicators */}
-          <div className="flex items-start gap-2.5 mb-2">
+          <div className="flex items-start gap-2 mb-1.5">
             {/* Small square image */}
-            <div className="relative w-10 h-10 rounded-lg overflow-hidden bg-secondary flex-shrink-0">
+            <div className="relative w-9 h-9 rounded-md overflow-hidden bg-secondary flex-shrink-0">
               <img 
                 src={image} 
                 alt={title}
@@ -283,13 +283,13 @@ export function MarketGridCard({
             ) : isBinary ? (
               <div className="flex items-center gap-2">
                 <button 
-                  className="flex-1 rounded-lg py-2 text-center transition-all active:scale-[0.97] bg-bet/15 dark:bg-bet/25 hover:bg-bet text-bet hover:text-bet-foreground border border-bet/30 dark:border-bet/40 hover:border-bet"
+                  className="flex-1 rounded-lg py-1.5 text-center transition-all active:scale-[0.97] bg-bet/15 dark:bg-bet/25 hover:bg-bet text-bet hover:text-bet-foreground border border-bet/30 dark:border-bet/40 hover:border-bet"
                   onClick={(e) => handleBetClick(e)}
                 >
                   <span className="text-xs font-bold">Bet Yes</span>
                 </button>
                 <button 
-                  className="flex-1 rounded-lg py-2 text-center transition-all active:scale-[0.97] bg-against/15 dark:bg-against/25 hover:bg-against text-against hover:text-against-foreground border border-against/30 dark:border-against/40 hover:border-against"
+                  className="flex-1 rounded-lg py-1.5 text-center transition-all active:scale-[0.97] bg-against/15 dark:bg-against/25 hover:bg-against text-against hover:text-against-foreground border border-against/30 dark:border-against/40 hover:border-against"
                   onClick={(e) => handleBetClick(e)}
                 >
                   <span className="text-xs font-bold">Bet No</span>
@@ -315,7 +315,7 @@ export function MarketGridCard({
           </div>
           
           {/* Stats footer */}
-          <div className="flex items-center gap-3 text-[10px] text-muted-foreground mt-1.5 pt-1.5 border-t border-border">
+          <div className="flex items-center gap-3 text-[10px] text-muted-foreground mt-1 pt-1 border-t border-border">
             <span className="font-semibold">{volume} Vol.</span>
             {getStatusBadge() ? (
               getStatusBadge()
