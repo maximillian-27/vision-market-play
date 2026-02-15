@@ -67,13 +67,6 @@ function AppContent() {
     <div className="min-h-screen flex w-full relative">
       <main className={`flex-1 w-full ${isMobile ? 'pb-[76px] overflow-x-hidden pt-14' : 'pt-14 pb-10'} ${!isMobile && betSlipOpen ? 'mr-80' : ''}`}>
         <Header />
-        {showResponsibleBanner && !isMobile && (
-          <ResponsibleGamblingBanner 
-            sessionStartTime={sessionStart}
-            dailyLimit={500}
-            dailySpent={125}
-          />
-        )}
         <Routes>
           <Route path="/" element={<Feed />} />
           <Route path="/market/:id" element={<MarketDetail />} />
