@@ -54,10 +54,10 @@ export function FeaturedMarketSection() {
         className="group overflow-hidden cursor-pointer border-border bg-card card-hover md:w-[65%] shadow-card"
         onClick={() => navigate(`/market/${market.id}`)}
       >
-        <div className="p-4 sm:p-3 flex flex-col h-full justify-between">
+        <div className="p-3 sm:p-3 flex flex-col h-full justify-between">
           {/* Mobile: thumbnail + title row */}
           <div className="flex items-start gap-3 sm:gap-2.5 mb-3 sm:mb-2">
-            <Avatar className="h-12 w-12 sm:h-14 sm:w-14 flex-shrink-0 ring-2 ring-border">
+            <Avatar className="h-12 w-12 sm:h-14 sm:w-14 flex-shrink-0 ring-2 ring-border rounded-lg overflow-hidden">
               <AvatarImage src={market.image} />
               <AvatarFallback>{market.creator.name.slice(0, 2)}</AvatarFallback>
             </Avatar>
@@ -237,6 +237,27 @@ export function FeaturedMarketSection() {
               </div>
               <div className="flex items-center justify-between px-3 py-2 border-t border-border text-[11px] text-muted-foreground">
                 <span className="flex items-center gap-1 font-semibold">Vol. {sm.volume}</span>
+                <div className="flex items-center gap-2">
+                  <button
+                    className="p-1 rounded hover:bg-secondary transition-colors"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigator.clipboard.writeText(`${window.location.origin}/market/${sm.id}`);
+                      toast({ title: "Link copied!" });
+                    }}
+                  >
+                    <Share2 className="h-3 w-3" />
+                  </button>
+                  <button
+                    className="p-1 rounded hover:bg-secondary transition-colors"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toast({ title: "Saved to watchlist" });
+                    }}
+                  >
+                    <Bookmark className="h-3 w-3" />
+                  </button>
+                </div>
               </div>
             </div>
           </Card>
