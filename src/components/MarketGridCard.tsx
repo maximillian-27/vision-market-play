@@ -217,16 +217,6 @@ export function MarketGridCard({
                 <h3 className="text-sm font-display font-bold leading-snug line-clamp-2 group-hover:text-primary transition-colors flex-1">
                   {title}
                 </h3>
-                {isBinary && !isClosedOrResolved && !isAwaitingResolution && (
-                  <div className="flex items-center gap-1 flex-shrink-0">
-                    <span className="text-sm font-bold text-primary">{yesPercent}%</span>
-                    {volumeChange !== 0 && (
-                      <span className={`text-[10px] flex items-center ${volumeChange > 0 ? 'text-bet' : 'text-against'}`}>
-                        {volumeChange > 0 ? <TrendingUp className="h-2.5 w-2.5" /> : <TrendingDown className="h-2.5 w-2.5" />}
-                      </span>
-                    )}
-                  </div>
-                )}
               </div>
             </div>
           </div>
