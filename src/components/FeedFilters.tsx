@@ -1,23 +1,10 @@
 import { useState } from "react";
-import { SlidersHorizontal, X, Bookmark, Flame } from "lucide-react";
+import { SlidersHorizontal, X, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-const categories = [
-  { label: "All", icon: null },
-  { label: "Following", icon: null },
-  { label: "Hot", icon: Flame },
-  { label: "Sports", icon: null },
-  { label: "Politics", icon: null },
-  { label: "Crypto", icon: null },
-  { label: "Climate", icon: null },
-  { label: "Economics", icon: null },
-  { label: "Mentions", icon: null },
-  { label: "Companies", icon: null },
-  { label: "Financials", icon: null },
-  { label: "Tech & Science", icon: null },
-];
+const categories = ["All", "Following", "Hot", "Politics", "Sports", "Crypto", "Tech", "Entertainment", "Finance"];
 
 export interface FilterState {
   category: string;
@@ -42,49 +29,38 @@ export function FeedFilters({ filters, onFiltersChange }: FeedFiltersProps) {
   const hasActiveFilters = filters.sortBy !== "trending" || filters.region !== "global" || filters.status !== "all" || filters.timeframe !== "all";
 
   return (
-    <div className="space-y-3 sticky top-14 z-10 bg-background/95 backdrop-blur-xl border-b border-border py-3 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8 mt-3 sm:mt-0">
-      {/* Category Tabs row */}
-      <div className="flex items-center gap-2">
+    <div className="space-y-3 sticky top-14 z-10 bg-background/95 backdrop-blur-xl border-b border-border py-3 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+      {/* Category Tabs + Filter */}
+      <div className="flex gap-3 items-center">
+        {/* Filter Button */}
+        <Button 
+          variant={showFilters ? "default" : "outline"} 
+          size="sm"
+          className="h-8 px-3 flex-shrink-0 gap-1.5 font-medium"
+          onClick={() => setShowFilters(!showFilters)}
+        >
+          <SlidersHorizontal className="h-3.5 w-3.5" />
+          <span className="hidden sm:inline">Filters</span>
+          {hasActiveFilters && (
+            <span className="h-1.5 w-1.5 rounded-full bg-primary-foreground ml-0.5" />
+          )}
+        </Button>
+
         {/* Category pills */}
-        <div className="flex gap-1 overflow-x-auto pb-0.5 scrollbar-hide flex-1">
-          {categories.map(({ label, icon: Icon }) => (
+        <div className="flex gap-1 overflow-x-auto pb-0.5 scrollbar-hide">
+          {categories.map((category) => (
             <button
-              key={label}
-              onClick={() => updateFilter('category', label === "Hot" ? "Hot" : label)}
-              className={`whitespace-nowrap font-medium px-3.5 py-1.5 text-sm rounded-full transition-all flex items-center gap-1.5 ${
-                label === filters.category 
+              key={category}
+              onClick={() => updateFilter('category', category)}
+              className={`whitespace-nowrap font-medium px-3 py-1.5 text-sm rounded-full transition-all ${
+                category === filters.category 
                   ? "bg-primary text-primary-foreground" 
                   : "text-muted-foreground hover:text-foreground hover:bg-secondary"
               }`}
             >
-              {Icon && <Icon className="h-3.5 w-3.5 text-orange-500 fill-orange-500" />}
-              {label}
+              {category}
             </button>
           ))}
-        </div>
-
-        {/* Right-side buttons - desktop only */}
-        <div className="hidden sm:flex items-center gap-2 flex-shrink-0">
-          <Button
-            variant={showFilters ? "default" : "outline"}
-            size="sm"
-            className="h-8 px-3.5 gap-1.5 font-medium rounded-full"
-            onClick={() => setShowFilters(!showFilters)}
-          >
-            <SlidersHorizontal className="h-3.5 w-3.5" />
-            Filters
-            {hasActiveFilters && (
-              <span className="h-1.5 w-1.5 rounded-full bg-primary-foreground ml-0.5" />
-            )}
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            className="h-8 px-3.5 gap-1.5 font-medium rounded-full"
-          >
-            <Bookmark className="h-3.5 w-3.5" />
-            Saved
-          </Button>
         </div>
       </div>
 
