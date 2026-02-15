@@ -127,8 +127,18 @@ export function Header() {
             />
           </form>
 
+          {/* Search icon - visible below md where search bar is hidden */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="md:hidden h-8 w-8 text-muted-foreground hover:text-foreground ml-auto flex-shrink-0"
+            onClick={() => navigate("/search")}
+          >
+            <Search className="h-4 w-4" />
+          </Button>
+
           {/* Right Actions */}
-          <div className="flex items-center gap-3 ml-auto md:ml-0 flex-shrink-0">
+          <div className="flex items-center gap-3 md:ml-0 flex-shrink-0">
             {/* Language Selector - hidden on mobile */}
             {!isMobile && (
               <DropdownMenu>
