@@ -78,7 +78,7 @@ export function Header() {
   return (
     <>
       <header className="border-b border-border bg-background/95 backdrop-blur-xl supports-[backdrop-filter]:bg-background/80 fixed top-0 z-50 w-full">
-        <div className="flex h-14 sm:h-12 items-center px-3 lg:px-6 gap-2 lg:gap-3 max-w-[1600px] mx-auto">
+        <div className="flex h-14 sm:h-12 items-center px-2 lg:px-6 gap-1.5 lg:gap-3 max-w-[1600px] mx-auto">
           {/* Logo */}
           <button 
             onClick={() => navigate("/")}
@@ -98,7 +98,7 @@ export function Header() {
                 <NavLink
                   key={item.title}
                   to={item.url}
-                  className="px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors rounded-md hover:bg-secondary"
+                  className="px-2 lg:px-3 py-1.5 text-xs lg:text-sm font-medium text-muted-foreground hover:text-foreground transition-colors rounded-md hover:bg-secondary"
                   activeClassName="text-primary bg-primary-muted"
                 >
                   {item.title}
@@ -174,11 +174,11 @@ export function Header() {
             )}
 
             {!isLoggedIn ? (
-              <div className="flex items-center gap-3 flex-nowrap">
+              <div className="flex items-center gap-1.5 lg:gap-3 flex-nowrap">
                 {/* "How it works?" as text link on mobile, ghost button on desktop */}
                 <button 
                   onClick={() => setShowHowItWorks(true)}
-                  className="text-muted-foreground text-sm font-medium hover:text-foreground transition-colors whitespace-nowrap hidden sm:block"
+                  className="text-muted-foreground text-xs lg:text-sm font-medium hover:text-foreground transition-colors whitespace-nowrap hidden sm:block"
                 >
                   How it works?
                 </button>
@@ -195,14 +195,14 @@ export function Header() {
                   variant="outline"
                   size="sm" 
                   onClick={handleLogin}
-                  className="h-8 text-xs font-medium whitespace-nowrap"
+                  className="h-7 text-[11px] px-2 lg:h-8 lg:text-xs lg:px-3 font-medium whitespace-nowrap"
                 >
                   Log in
                 </Button>
                 <Button 
                   size="sm" 
                   onClick={handleLogin}
-                  className="h-8 text-xs font-semibold whitespace-nowrap"
+                  className="h-7 text-[11px] px-2 lg:h-8 lg:text-xs lg:px-3 font-semibold whitespace-nowrap"
                 >
                   Sign up
                 </Button>
