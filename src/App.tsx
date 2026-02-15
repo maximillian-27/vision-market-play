@@ -8,10 +8,6 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { MobileNav } from "@/components/MobileNav";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { BetSlipProvider, useBetSlipContext } from "@/contexts/BetSlipContext";
-import { BetSlip, BetSlipButton } from "@/components/BetSlip";
-import { ResponsibleGamblingBanner } from "@/components/ResponsibleGamblingBanner";
-import { useState } from "react";
 import Feed from "./pages/Feed";
 import CommunityFeed from "./pages/CommunityFeed";
 import News from "./pages/News";
@@ -28,44 +24,12 @@ import Search from "./pages/Search";
 
 const queryClient = new QueryClient();
 
-function BetSlipContainer() {
-  const { items, isOpen, setIsOpen, removeFromBetSlip, updateStake, clearBetSlip, itemCount } = useBetSlipContext();
-  const isMobile = useIsMobile();
-  const [balance] = useState(5230);
-
-  const handlePlaceBets = () => {
-    clearBetSlip();
-    setIsOpen(false);
-  };
-
-  return (
-    <>
-      <BetSlip
-        open={isOpen}
-        onOpenChange={setIsOpen}
-        items={items}
-        onRemoveItem={removeFromBetSlip}
-        onUpdateStake={updateStake}
-        onClearAll={clearBetSlip}
-        onPlaceBets={handlePlaceBets}
-        balance={balance}
-      />
-      {isMobile && (
-        <BetSlipButton itemCount={itemCount} onClick={() => setIsOpen(true)} />
-      )}
-    </>
-  );
-}
-
 function AppContent() {
   const isMobile = useIsMobile();
-  const { isOpen: betSlipOpen } = useBetSlipContext();
-  const [sessionStart] = useState(new Date());
-  const [showResponsibleBanner] = useState(true);
 
   return (
     <div className="min-h-screen flex w-full relative">
-      <main className={`flex-1 w-full ${isMobile ? 'pb-[76px] overflow-x-hidden pt-14' : 'pt-14 pb-10'} ${!isMobile && betSlipOpen ? 'mr-80' : ''}`}>
+      <main className={`flex-1 w-full ${isMobile ? 'pb-[76px] overflow-x-hidden pt-14' : 'pt-14 pb-10'}`}>
         <Header />
         <Routes>
           <Route path="/" element={<Feed />} />
@@ -85,7 +49,6 @@ function AppContent() {
         </Routes>
       </main>
       {isMobile ? <MobileNav /> : <Footer />}
-      <BetSlipContainer />
     </div>
   );
 }
@@ -94,13 +57,11 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
       <TooltipProvider>
-        <BetSlipProvider>
           <Toaster />
           <Sonner />
           <BrowserRouter>
             <AppContent />
           </BrowserRouter>
-        </BetSlipProvider>
       </TooltipProvider>
     </ThemeProvider>
   </QueryClientProvider>

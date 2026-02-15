@@ -1,7 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Share2, Bookmark } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useBetSlipContext } from "@/contexts/BetSlipContext";
 import { useToast } from "@/hooks/use-toast";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import bitcoinImage from "@/assets/bitcoin-market.jpg";
@@ -42,17 +41,10 @@ const sideMarkets = [
 export function FeaturedMarketSection() {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { addToBetSlip, isInBetSlip, setIsOpen: setBetSlipOpen } = useBetSlipContext();
   const market = featuredMain;
-
-  const handleBet = (e: React.MouseEvent, marketId: string, marketTitle: string, outcome: string, price: number) => {
+  const handleBet = (e: React.MouseEvent, marketId: string) => {
     e.stopPropagation();
-    addToBetSlip(marketId, marketTitle, outcome, price);
-    setBetSlipOpen(true);
-    toast({
-      title: isInBetSlip(marketId, outcome) ? "Removed from bet slip" : "Added to bet slip",
-      description: `${outcome} @ ${price}%`,
-    });
+    navigate(`/market/${marketId}`);
   };
 
     return (
@@ -88,22 +80,14 @@ export function FeaturedMarketSection() {
 
                   <div className="flex items-center gap-2 sm:ml-auto">
                     <button
-                      className={`flex-1 sm:flex-none h-10 sm:h-auto px-8 py-2.5 rounded-[10px] sm:rounded-lg text-sm font-semibold transition-all active:scale-[0.97] ${
-                        isInBetSlip(market.id, `${outcome.label}-Yes`)
-                          ? "bg-bet text-bet-foreground"
-                          : "bg-bet/10 text-bet hover:bg-bet/20 border border-bet/20"
-                      }`}
-                      onClick={(e) => handleBet(e, market.id, market.title, `${outcome.label}-Yes`, outcome.price)}
+                      className="flex-1 sm:flex-none h-10 sm:h-auto px-8 py-2.5 rounded-[10px] sm:rounded-lg text-sm font-semibold transition-all active:scale-[0.97] bg-bet/10 text-bet hover:bg-bet/20 border border-bet/20"
+                      onClick={(e) => handleBet(e, market.id)}
                     >
                       Yes
                     </button>
                     <button
-                      className={`flex-1 sm:flex-none h-10 sm:h-auto px-8 py-2.5 rounded-[10px] sm:rounded-lg text-sm font-semibold transition-all active:scale-[0.97] ${
-                        isInBetSlip(market.id, `${outcome.label}-No`)
-                          ? "bg-against text-against-foreground"
-                          : "bg-against/10 text-against hover:bg-against/20 border border-against/20"
-                      }`}
-                      onClick={(e) => handleBet(e, market.id, market.title, `${outcome.label}-No`, 100 - outcome.price)}
+                      className="flex-1 sm:flex-none h-10 sm:h-auto px-8 py-2.5 rounded-[10px] sm:rounded-lg text-sm font-semibold transition-all active:scale-[0.97] bg-against/10 text-against hover:bg-against/20 border border-against/20"
+                      onClick={(e) => handleBet(e, market.id)}
                     >
                       No
                     </button>
@@ -172,22 +156,14 @@ export function FeaturedMarketSection() {
 
               <div className="flex items-center gap-2 mt-auto">
                 <button
-                  className={`flex-1 py-2 rounded-lg text-xs font-semibold transition-all active:scale-[0.97] ${
-                    isInBetSlip(sm.id, "Yes")
-                      ? "bg-bet text-bet-foreground"
-                      : "bg-bet/10 text-bet hover:bg-bet/20 border border-bet/20"
-                  }`}
-                  onClick={(e) => handleBet(e, sm.id, sm.title, "Yes", sm.chance)}
+                  className="flex-1 py-2 rounded-lg text-xs font-semibold transition-all active:scale-[0.97] bg-bet/10 text-bet hover:bg-bet/20 border border-bet/20"
+                  onClick={(e) => handleBet(e, sm.id)}
                 >
                   Yes
                 </button>
                 <button
-                  className={`flex-1 py-2 rounded-lg text-xs font-semibold transition-all active:scale-[0.97] ${
-                    isInBetSlip(sm.id, "No")
-                      ? "bg-against text-against-foreground"
-                      : "bg-against/10 text-against hover:bg-against/20 border border-against/20"
-                  }`}
-                  onClick={(e) => handleBet(e, sm.id, sm.title, "No", 100 - sm.chance)}
+                  className="flex-1 py-2 rounded-lg text-xs font-semibold transition-all active:scale-[0.97] bg-against/10 text-against hover:bg-against/20 border border-against/20"
+                  onClick={(e) => handleBet(e, sm.id)}
                 >
                   No
                 </button>
