@@ -78,7 +78,7 @@ export function Header() {
   return (
     <>
       <header className="border-b border-border bg-background/95 backdrop-blur-xl supports-[backdrop-filter]:bg-background/80 fixed top-0 z-50 w-full">
-        <div className="flex h-14 sm:h-12 items-center px-4 lg:px-6 gap-3 max-w-[1600px] mx-auto">
+        <div className="flex h-14 sm:h-12 items-center px-3 lg:px-6 gap-2 lg:gap-3 max-w-[1600px] mx-auto">
           {/* Logo */}
           <button 
             onClick={() => navigate("/")}
@@ -93,7 +93,7 @@ export function Header() {
 
           {/* Desktop Navigation */}
           {!isMobile && (
-            <nav className="flex items-center gap-1 ml-8">
+            <nav className="flex items-center gap-0.5 ml-4 lg:ml-8">
               {navItems.map((item) => (
                 <NavLink
                   key={item.title}
