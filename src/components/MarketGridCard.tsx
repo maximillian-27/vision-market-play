@@ -296,7 +296,7 @@ export function MarketGridCard({
           </div>
           
           {/* Stats footer */}
-          <div className="flex items-center gap-1.5 text-[8px] text-muted-foreground mt-0.5 pt-0.5 border-t border-border">
+          <div className="flex items-center gap-1.5 text-[9px] text-muted-foreground mt-0.5 pt-0.5 px-0.5 border-t border-border">
             <span className="font-semibold">{volume} Vol.</span>
             {getStatusBadge() ? (
               getStatusBadge()
