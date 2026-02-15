@@ -316,39 +316,27 @@ export function MarketGridCard({
                 {endsIn}
               </span>
             )}
-            {/* Action buttons */}
-            {!isClosedOrResolved && (
-              <div className="ml-auto flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                <button 
-                  className="p-1 rounded hover:bg-secondary transition-colors"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    navigator.clipboard.writeText(`${window.location.origin}/market/${id}`);
-                    toast({ title: "Link copied!" });
-                  }}
-                >
-                  <Share2 className="h-3 w-3" />
-                </button>
-                <button 
-                  className="p-1 rounded hover:bg-secondary transition-colors"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setShowRepostDialog(true);
-                  }}
-                >
-                  <Repeat2 className="h-3 w-3" />
-                </button>
-                <button 
-                  className="p-1 rounded hover:bg-secondary transition-colors"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    toast({ title: "Saved to watchlist" });
-                  }}
-                >
-                  <Bookmark className="h-3 w-3" />
-                </button>
-              </div>
-            )}
+            <div className="ml-auto flex items-center gap-1">
+              <button 
+                className="p-1 rounded hover:bg-secondary transition-colors"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigator.clipboard.writeText(`${window.location.origin}/market/${id}`);
+                  toast({ title: "Link copied!" });
+                }}
+              >
+                <Share2 className="h-3 w-3" />
+              </button>
+              <button 
+                className="p-1 rounded hover:bg-secondary transition-colors"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toast({ title: "Saved to watchlist" });
+                }}
+              >
+                <Bookmark className="h-3 w-3" />
+              </button>
+            </div>
           </div>
         </div>
 
@@ -494,10 +482,31 @@ export function MarketGridCard({
               <TrendingUp className="h-3 w-3" />
               {volume}
             </span>
-            <span className="flex items-center gap-1">
-              <Clock className="h-3 w-3" />
-              {endsIn}
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="flex items-center gap-1">
+                <Clock className="h-3 w-3" />
+                {endsIn}
+              </span>
+              <button 
+                className="p-1 rounded hover:bg-secondary transition-colors"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigator.clipboard.writeText(`${window.location.origin}/market/${id}`);
+                  toast({ title: "Link copied!" });
+                }}
+              >
+                <Share2 className="h-3 w-3" />
+              </button>
+              <button 
+                className="p-1 rounded hover:bg-secondary transition-colors"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toast({ title: "Saved to watchlist" });
+                }}
+              >
+                <Bookmark className="h-3 w-3" />
+              </button>
+            </div>
           </div>
         </div>
       </Card>
