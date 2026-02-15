@@ -344,8 +344,10 @@ export default function Feed() {
           <FeaturedMarketSection />
         </div>
 
-        {/* Gradient Divider */}
-        <GradientDivider />
+        {/* Gradient Divider - hidden on mobile */}
+        <div className="hidden sm:block">
+          <GradientDivider />
+        </div>
 
         {/* Other Markets + Markets Grid — unified grid */}
         <div className="pt-4 pb-8">
