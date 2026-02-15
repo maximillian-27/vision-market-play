@@ -195,14 +195,14 @@ export function Header() {
                   variant="outline"
                   size="sm" 
                   onClick={handleLogin}
-                  className="h-7 text-[11px] px-2 lg:h-8 lg:text-xs lg:px-3 font-medium whitespace-nowrap"
+                  className="h-7 text-[11px] px-3 lg:h-8 lg:text-xs lg:px-4 font-semibold whitespace-nowrap min-w-[60px] lg:min-w-[70px]"
                 >
                   Log in
                 </Button>
                 <Button 
                   size="sm" 
                   onClick={handleLogin}
-                  className="h-7 text-[11px] px-2 lg:h-8 lg:text-xs lg:px-3 font-semibold whitespace-nowrap"
+                  className="h-7 text-[11px] px-3 lg:h-8 lg:text-xs lg:px-4 font-semibold whitespace-nowrap min-w-[60px] lg:min-w-[70px]"
                 >
                   Sign up
                 </Button>
