@@ -11,7 +11,7 @@ import { QuickTradeSheet } from "@/components/QuickTradeSheet";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { QuoteRepostDialog } from "@/components/QuoteRepostDialog";
-import { useBetSlipContext } from "@/contexts/BetSlipContext";
+
 import { CreatorTierBadge, CreatorTier } from "@/components/CreatorTierBadge";
 
 type MarketStatus = "open" | "closing" | "awaiting_resolution" | "closed" | "resolved";
@@ -72,7 +72,7 @@ export function MarketGridCard({
   const navigate = useNavigate();
   const { toast } = useToast();
   const isMobile = useIsMobile();
-  const { addToBetSlip, isInBetSlip, setIsOpen: setBetSlipOpen } = useBetSlipContext();
+  
   const [showMarketDialog, setShowMarketDialog] = useState(false);
   const [showQuickTrade, setShowQuickTrade] = useState(false);
   const [showResolvedDialog, setShowResolvedDialog] = useState(false);
@@ -100,20 +100,9 @@ export function MarketGridCard({
     }
   };
 
-  const handleBetClick = (e: React.MouseEvent, outcome: Outcome) => {
+  const handleBetClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (isBettingDisabled) return;
-    
-    addToBetSlip(id, title, outcome.label, outcome.price);
-    
-    if (!isMobile) {
-      setBetSlipOpen(true);
-    }
-    
-    toast({
-      title: isInBetSlip(id, outcome.label) ? "Removed from bet slip" : "Added to bet slip",
-      description: `${outcome.label} @ ${outcome.price}%`,
-    });
+    navigate(`/market/${id}`);
   };
 
   const getStatusBadge = () => {
@@ -294,22 +283,14 @@ export function MarketGridCard({
             ) : isBinary ? (
               <div className="flex items-center gap-2">
                 <button 
-                  className={`flex-1 rounded-lg py-2 text-center transition-all active:scale-[0.97] ${
-                    isInBetSlip(id, "Yes")
-                      ? "bg-bet text-bet-foreground border-2 border-bet"
-                      : "bg-bet/15 dark:bg-bet/25 hover:bg-bet text-bet hover:text-bet-foreground border border-bet/30 dark:border-bet/40 hover:border-bet"
-                  }`}
-                  onClick={(e) => handleBetClick(e, displayOutcomes[0])}
+                  className="flex-1 rounded-lg py-2 text-center transition-all active:scale-[0.97] bg-bet/15 dark:bg-bet/25 hover:bg-bet text-bet hover:text-bet-foreground border border-bet/30 dark:border-bet/40 hover:border-bet"
+                  onClick={(e) => handleBetClick(e)}
                 >
                   <span className="text-xs font-bold">Bet Yes</span>
                 </button>
                 <button 
-                  className={`flex-1 rounded-lg py-2 text-center transition-all active:scale-[0.97] ${
-                    isInBetSlip(id, "No")
-                      ? "bg-against text-against-foreground border-2 border-against"
-                      : "bg-against/15 dark:bg-against/25 hover:bg-against text-against hover:text-against-foreground border border-against/30 dark:border-against/40 hover:border-against"
-                  }`}
-                  onClick={(e) => handleBetClick(e, displayOutcomes[1])}
+                  className="flex-1 rounded-lg py-2 text-center transition-all active:scale-[0.97] bg-against/15 dark:bg-against/25 hover:bg-against text-against hover:text-against-foreground border border-against/30 dark:border-against/40 hover:border-against"
+                  onClick={(e) => handleBetClick(e)}
                 >
                   <span className="text-xs font-bold">Bet No</span>
                 </button>
@@ -319,12 +300,8 @@ export function MarketGridCard({
                 {displayOutcomes.slice(0, 2).map((outcome, index) => (
                   <button 
                     key={index}
-                    className={`w-full flex items-center justify-between text-xs py-1.5 px-2 rounded-lg transition-all ${
-                      isInBetSlip(id, outcome.label)
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-secondary/50 hover:bg-secondary"
-                    }`}
-                    onClick={(e) => handleBetClick(e, outcome)}
+                    className="w-full flex items-center justify-between text-xs py-1.5 px-2 rounded-lg transition-all bg-secondary/50 hover:bg-secondary"
+                    onClick={(e) => handleBetClick(e)}
                   >
                     <span className="font-medium truncate flex-1 text-left">{outcome.label}</span>
                     <span className="font-bold">{outcome.price}%</span>
@@ -494,22 +471,14 @@ export function MarketGridCard({
                   </div>
                   <div className="flex gap-1.5">
                     <button 
-                      className={`px-2.5 py-1 rounded-md text-[11px] font-bold active:scale-95 transition-all ${
-                        isInBetSlip(id, "Yes")
-                          ? "bg-bet text-bet-foreground border-2 border-bet"
-                          : "bg-bet/15 dark:bg-bet/25 text-bet border border-bet/30 dark:border-bet/40"
-                      }`}
-                      onClick={(e) => handleBetClick(e, displayOutcomes[0])}
+                      className="px-2.5 py-1 rounded-md text-[11px] font-bold active:scale-95 transition-all bg-bet/15 dark:bg-bet/25 text-bet border border-bet/30 dark:border-bet/40"
+                      onClick={(e) => handleBetClick(e)}
                     >
                       Yes
                     </button>
                     <button 
-                      className={`px-2.5 py-1 rounded-md text-[11px] font-bold active:scale-95 transition-all ${
-                        isInBetSlip(id, "No")
-                          ? "bg-against text-against-foreground border-2 border-against"
-                          : "bg-against/15 dark:bg-against/25 text-against border border-against/30 dark:border-against/40"
-                      }`}
-                      onClick={(e) => handleBetClick(e, displayOutcomes[1])}
+                      className="px-2.5 py-1 rounded-md text-[11px] font-bold active:scale-95 transition-all bg-against/15 dark:bg-against/25 text-against border border-against/30 dark:border-against/40"
+                      onClick={(e) => handleBetClick(e)}
                     >
                       No
                     </button>
@@ -520,13 +489,9 @@ export function MarketGridCard({
                   {displayOutcomes.slice(0, 2).map((outcome, index) => (
                     <button 
                       key={index}
-                      className={`flex items-center gap-1.5 rounded-md px-2 py-1.5 text-[11px] active:scale-95 transition-all flex-shrink-0 ${
-                        isInBetSlip(id, outcome.label)
-                          ? "bg-primary text-primary-foreground border-2 border-primary"
-                          : "bg-secondary border border-border"
-                      }`}
+                      className="flex items-center gap-1.5 rounded-md px-2 py-1.5 text-[11px] active:scale-95 transition-all flex-shrink-0 bg-secondary border border-border"
                       style={{ maxWidth: index === 0 ? '55%' : '45%' }}
-                      onClick={(e) => handleBetClick(e, outcome)}
+                      onClick={(e) => handleBetClick(e)}
                     >
                       {outcome.logo && (
                         <img src={outcome.logo} alt={outcome.label} className="h-4 w-4 object-contain rounded-sm flex-shrink-0" />
