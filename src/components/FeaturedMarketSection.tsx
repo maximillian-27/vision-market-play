@@ -139,7 +139,8 @@ export function FeaturedMarketSection() {
             className="group overflow-hidden cursor-pointer border-border bg-card card-hover flex-1"
             onClick={() => navigate(`/market/${sm.id}`)}
           >
-            <div className="p-4 flex flex-col h-full">
+            {/* Desktop layout */}
+            <div className="hidden sm:flex flex-col h-full p-4">
               <div className="flex items-start gap-3 mb-3">
                 <Avatar className="h-10 w-10 flex-shrink-0 ring-1 ring-border">
                   <AvatarImage src={sm.image} />
@@ -192,6 +193,50 @@ export function FeaturedMarketSection() {
                     <Bookmark className="h-3 w-3" />
                   </button>
                 </div>
+              </div>
+            </div>
+
+            {/* Mobile layout — matches MarketGridCard binary mobile structure */}
+            <div className="sm:hidden flex flex-col">
+              <div className="flex gap-3 p-3 pb-2">
+                <div className="relative w-20 h-20 rounded-lg overflow-hidden bg-secondary flex-shrink-0">
+                  <img src={sm.image} alt={sm.title} className="h-full w-full object-cover" />
+                </div>
+                <div className="flex-1 min-w-0 flex flex-col gap-1.5">
+                  <div className="flex items-center gap-1.5">
+                    <Avatar className="h-4 w-4">
+                      <AvatarImage src={sm.creator.avatar} alt={sm.creator.name} />
+                      <AvatarFallback className="text-[6px]">{sm.creator.name.slice(0, 2)}</AvatarFallback>
+                    </Avatar>
+                    <span className="text-[11px] text-muted-foreground font-medium truncate max-w-[140px]">{sm.creator.name}</span>
+                  </div>
+                  <h3 className="text-[13px] font-display font-bold leading-snug line-clamp-2 group-hover:text-primary transition-colors">
+                    {sm.title}
+                  </h3>
+                  <div className="flex items-center gap-2 mt-auto">
+                    <span className="text-xs font-bold text-bet">{sm.chance}%</span>
+                    <div className="flex-1 h-1.5 rounded-full bg-against-muted overflow-hidden">
+                      <div className="h-full rounded-full bg-bet" style={{ width: `${sm.chance}%` }} />
+                    </div>
+                    <div className="flex gap-1.5">
+                      <button
+                        className="px-2.5 py-1 rounded-md text-[11px] font-bold active:scale-95 transition-all bg-bet/15 dark:bg-bet/25 text-bet border border-bet/30 dark:border-bet/40"
+                        onClick={(e) => handleBet(e, sm.id)}
+                      >
+                        Yes
+                      </button>
+                      <button
+                        className="px-2.5 py-1 rounded-md text-[11px] font-bold active:scale-95 transition-all bg-against/15 dark:bg-against/25 text-against border border-against/30 dark:border-against/40"
+                        onClick={(e) => handleBet(e, sm.id)}
+                      >
+                        No
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-center justify-between px-3 py-2 border-t border-border text-[11px] text-muted-foreground">
+                <span className="flex items-center gap-1 font-semibold">Vol. {sm.volume}</span>
               </div>
             </div>
           </Card>
