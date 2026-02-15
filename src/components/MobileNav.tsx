@@ -14,7 +14,7 @@ export function MobileNav() {
 
   return (
     <nav className="fixed bottom-1 left-4 right-4 z-50 bg-background rounded-2xl border border-border shadow-lg">
-      <div className="flex items-stretch justify-around pt-3.5 pb-[env(safe-area-inset-bottom,6px)]">
+      <div className="flex items-stretch justify-around pt-2.5 pb-[env(safe-area-inset-bottom,6px)] -translate-y-1">
         {items.map((item) => {
           const isActive = location.pathname === item.url;
           return (
