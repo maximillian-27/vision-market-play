@@ -152,7 +152,7 @@ export function FeaturedMarketSection() {
                   </h4>
                   <p className="text-[10px] text-muted-foreground mt-0.5">by {sm.creator.name}</p>
                 </div>
-                <span className="text-xs font-bold text-primary flex-shrink-0">{sm.chance}%</span>
+                
               </div>
 
               <div className="flex items-center gap-2 mt-auto">
