@@ -13,8 +13,8 @@ export function MobileNav() {
   const location = useLocation();
 
   return (
-    <nav className="fixed bottom-px left-4 right-4 z-50 bg-background rounded-2xl border border-border shadow-lg">
-      <div className="flex items-stretch justify-around pt-2.5 pb-[env(safe-area-inset-bottom,6px)] -translate-y-1">
+    <nav className="fixed bottom-px left-4 right-4 z-50 bg-background rounded-2xl border border-border shadow-lg h-[60px] min-h-[60px] max-h-[60px] overflow-hidden">
+      <div className="flex items-stretch justify-around pt-2.5 pb-[env(safe-area-inset-bottom,6px)] -translate-y-1 h-full">
         {items.map((item) => {
           const isActive = location.pathname === item.url;
           return (
