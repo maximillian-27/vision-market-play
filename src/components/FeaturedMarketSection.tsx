@@ -55,37 +55,40 @@ export function FeaturedMarketSection() {
     });
   };
 
-  return (
+    return (
     <div className="flex flex-col md:flex-row gap-4">
       {/* Left – Main featured card */}
       <Card
-        className="group overflow-hidden cursor-pointer border-border bg-card card-hover md:w-[65%]"
+        className="group overflow-hidden cursor-pointer border-border bg-card card-hover md:w-[65%] shadow-card"
         onClick={() => navigate(`/market/${market.id}`)}
       >
-        <div className="p-6 flex flex-col h-full justify-between">
-          <div className="flex items-start gap-4 mb-6">
-            <Avatar className="h-20 w-20 flex-shrink-0 ring-2 ring-border">
+        <div className="p-4 sm:p-6 flex flex-col h-full justify-between">
+          {/* Mobile: thumbnail + title row */}
+          <div className="flex items-start gap-3 sm:gap-4 mb-3 sm:mb-6">
+            <Avatar className="h-12 w-12 sm:h-20 sm:w-20 flex-shrink-0 ring-2 ring-border">
               <AvatarImage src={market.image} />
               <AvatarFallback>{market.creator.name.slice(0, 2)}</AvatarFallback>
             </Avatar>
             <div className="flex-1 min-w-0">
-              <h3 className="text-2xl font-display font-bold leading-snug group-hover:text-primary transition-colors">
+              <h3 className="text-base sm:text-2xl font-display font-bold leading-snug group-hover:text-primary transition-colors">
                 {market.title}
               </h3>
-              <p className="text-sm text-muted-foreground mt-1.5">by {market.creator.name}</p>
+              <p className="text-xs sm:text-sm text-muted-foreground mt-1">by {market.creator.name}</p>
             </div>
           </div>
 
-          <div className="space-y-5 flex-1 flex flex-col justify-center">
+          <div className="space-y-3 sm:space-y-5 flex-1 flex flex-col justify-center">
             {market.outcomes.map((outcome, idx) => {
               return (
-                <div key={idx} className="flex items-center gap-4 flex-wrap sm:flex-nowrap">
-                  <span className="text-lg text-foreground font-medium min-w-[160px]">{outcome.label}</span>
-                  <span className="text-lg font-bold text-foreground">{outcome.price}%</span>
+                <div key={idx} className="space-y-2 sm:space-y-0 sm:flex sm:items-center sm:gap-4">
+                  <div className="flex items-center justify-between sm:justify-start sm:gap-4">
+                    <span className="text-sm sm:text-lg text-foreground font-medium sm:min-w-[160px]">{outcome.label}</span>
+                    <span className="text-sm sm:text-lg font-bold text-foreground">{outcome.price}%</span>
+                  </div>
 
-                  <div className="flex items-center gap-2 ml-auto">
+                  <div className="flex items-center gap-2 sm:ml-auto">
                     <button
-                      className={`px-8 py-2.5 rounded-lg text-sm font-semibold transition-all active:scale-[0.97] ${
+                      className={`flex-1 sm:flex-none h-10 sm:h-auto px-8 py-2.5 rounded-[10px] sm:rounded-lg text-sm font-semibold transition-all active:scale-[0.97] ${
                         isInBetSlip(market.id, `${outcome.label}-Yes`)
                           ? "bg-bet text-bet-foreground"
                           : "bg-bet/10 text-bet hover:bg-bet/20 border border-bet/20"
@@ -95,7 +98,7 @@ export function FeaturedMarketSection() {
                       Yes
                     </button>
                     <button
-                      className={`px-8 py-2.5 rounded-lg text-sm font-semibold transition-all active:scale-[0.97] ${
+                      className={`flex-1 sm:flex-none h-10 sm:h-auto px-8 py-2.5 rounded-[10px] sm:rounded-lg text-sm font-semibold transition-all active:scale-[0.97] ${
                         isInBetSlip(market.id, `${outcome.label}-No`)
                           ? "bg-against text-against-foreground"
                           : "bg-against/10 text-against hover:bg-against/20 border border-against/20"
