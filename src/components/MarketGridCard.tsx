@@ -190,11 +190,11 @@ export function MarketGridCard({
         onClick={handleCardClick}
       >
         {/* Desktop Layout - Compact with small image */}
-        <div className="sm:flex hidden flex-col p-2 h-full">
+        <div className="sm:flex hidden flex-col p-1.5 h-full">
           {/* Header with image, title, indicators */}
-          <div className="flex items-start gap-2 mb-1.5">
+          <div className="flex items-start gap-1.5 mb-1">
             {/* Small square image */}
-            <div className="relative w-9 h-9 rounded-md overflow-hidden bg-secondary flex-shrink-0">
+            <div className="relative w-8 h-8 rounded-md overflow-hidden bg-secondary flex-shrink-0">
               <img 
                 src={image} 
                 alt={title}
@@ -253,27 +253,27 @@ export function MarketGridCard({
                 )}
               </div>
             ) : isAwaitingResolution ? (
-              <div className="flex items-center gap-2">
-                <div className="flex-1 rounded-md py-1.5 text-center bg-bet/10 text-bet/70 border border-bet/20 cursor-default">
-                  <span className="text-xs font-bold">Yes {yesPercent}%</span>
+              <div className="flex items-center gap-1.5">
+                <div className="flex-1 rounded-md py-1 text-center bg-bet/10 text-bet/70 border border-bet/20 cursor-default">
+                  <span className="text-[11px] font-bold">Yes {yesPercent}%</span>
                 </div>
-                <div className="flex-1 rounded-md py-1.5 text-center bg-against/10 text-against/70 border border-against/20 cursor-default">
-                  <span className="text-xs font-bold">No {noPercent}%</span>
+                <div className="flex-1 rounded-md py-1 text-center bg-against/10 text-against/70 border border-against/20 cursor-default">
+                  <span className="text-[11px] font-bold">No {noPercent}%</span>
                 </div>
               </div>
             ) : isBinary ? (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5">
                 <button 
-                  className="flex-1 rounded-lg py-1.5 text-center transition-all active:scale-[0.97] bg-bet/15 dark:bg-bet/25 hover:bg-bet text-bet hover:text-bet-foreground border border-bet/30 dark:border-bet/40 hover:border-bet"
+                  className="flex-1 rounded-md py-1 text-center transition-all active:scale-[0.97] bg-bet/15 dark:bg-bet/25 hover:bg-bet text-bet hover:text-bet-foreground border border-bet/30 dark:border-bet/40 hover:border-bet"
                   onClick={(e) => handleBetClick(e)}
                 >
-                  <span className="text-xs font-bold">Bet Yes</span>
+                  <span className="text-[11px] font-bold">Bet Yes</span>
                 </button>
                 <button 
-                  className="flex-1 rounded-lg py-1.5 text-center transition-all active:scale-[0.97] bg-against/15 dark:bg-against/25 hover:bg-against text-against hover:text-against-foreground border border-against/30 dark:border-against/40 hover:border-against"
+                  className="flex-1 rounded-md py-1 text-center transition-all active:scale-[0.97] bg-against/15 dark:bg-against/25 hover:bg-against text-against hover:text-against-foreground border border-against/30 dark:border-against/40 hover:border-against"
                   onClick={(e) => handleBetClick(e)}
                 >
-                  <span className="text-xs font-bold">Bet No</span>
+                  <span className="text-[11px] font-bold">Bet No</span>
                 </button>
               </div>
             ) : (
@@ -281,7 +281,7 @@ export function MarketGridCard({
                 {displayOutcomes.slice(0, 2).map((outcome, index) => (
                   <button 
                     key={index}
-                    className="w-full flex items-center justify-between text-xs py-1.5 px-2 rounded-lg transition-all bg-secondary/50 hover:bg-secondary"
+                    className="w-full flex items-center justify-between text-[11px] py-1 px-1.5 rounded-md transition-all bg-secondary/50 hover:bg-secondary"
                     onClick={(e) => handleBetClick(e)}
                   >
                     <span className="font-medium truncate flex-1 text-left">{outcome.label}</span>
@@ -296,7 +296,7 @@ export function MarketGridCard({
           </div>
           
           {/* Stats footer */}
-          <div className="flex items-center gap-3 text-[10px] text-muted-foreground mt-1 pt-1 border-t border-border">
+          <div className="flex items-center gap-2 text-[9px] text-muted-foreground mt-0.5 pt-0.5 border-t border-border">
             <span className="font-semibold">{volume} Vol.</span>
             {getStatusBadge() ? (
               getStatusBadge()
