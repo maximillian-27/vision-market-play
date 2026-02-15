@@ -192,9 +192,9 @@ export function MarketGridCard({
         onClick={handleCardClick}
       >
         {/* Desktop Layout - Compact with small image */}
-        <div className="sm:flex hidden flex-col p-3 h-full">
+        <div className="sm:flex hidden flex-col p-2.5 h-full">
           {/* Header with image, title, indicators */}
-          <div className="flex items-start gap-3 mb-2.5">
+          <div className="flex items-start gap-2.5 mb-2">
             {/* Small square image */}
             <div className="relative w-10 h-10 rounded-lg overflow-hidden bg-secondary flex-shrink-0">
               <img 
@@ -315,7 +315,7 @@ export function MarketGridCard({
           </div>
           
           {/* Stats footer */}
-          <div className="flex items-center gap-3 text-[10px] text-muted-foreground mt-2 pt-2 border-t border-border">
+          <div className="flex items-center gap-3 text-[10px] text-muted-foreground mt-1.5 pt-1.5 border-t border-border">
             <span className="font-semibold">{volume} Vol.</span>
             {getStatusBadge() ? (
               getStatusBadge()
