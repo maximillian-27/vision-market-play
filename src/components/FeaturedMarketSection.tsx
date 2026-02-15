@@ -4,21 +4,9 @@ import { useNavigate } from "react-router-dom";
 import { useBetSlipContext } from "@/contexts/BetSlipContext";
 import { useToast } from "@/hooks/use-toast";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { LineChart, Line, ResponsiveContainer } from "recharts";
 import bitcoinImage from "@/assets/bitcoin-market.jpg";
 import federalReserveImage from "@/assets/federal-reserve.jpg";
 import foldableIphoneImage from "@/assets/foldable-iphone.jpg";
-
-const mockHistory: Record<string, { v: number }[]> = {
-  "85,000 to 100,000": [
-    { v: 52 }, { v: 55 }, { v: 58 }, { v: 54 }, { v: 60 }, { v: 57 },
-    { v: 63 }, { v: 61 }, { v: 65 }, { v: 64 }, { v: 68 },
-  ],
-  "100,000 to 120,000": [
-    { v: 30 }, { v: 28 }, { v: 32 }, { v: 29 }, { v: 26 }, { v: 25 },
-    { v: 27 }, { v: 24 }, { v: 22 }, { v: 23 }, { v: 23 },
-  ],
-};
 
 const featuredMain = {
   id: "1",
@@ -88,28 +76,16 @@ export function FeaturedMarketSection() {
             </div>
           </div>
 
-          <div className="space-y-4 flex-1 flex flex-col justify-center">
+          <div className="space-y-5 flex-1 flex flex-col justify-center">
             {market.outcomes.map((outcome, idx) => {
-              const history = mockHistory[outcome.label] || [];
-              const isUp = history.length >= 2 && history[history.length - 1].v >= history[0].v;
-              const strokeColor = isUp ? "hsl(145, 72%, 44%)" : "hsl(0, 72%, 50%)";
-
               return (
-                <div key={idx} className="flex items-center gap-3">
-                  <span className="text-base text-foreground font-medium min-w-[160px]">{outcome.label}</span>
-                  <span className="text-base font-bold text-foreground w-14 text-right">{outcome.price} %</span>
-
-                  <div className="flex-1 h-10 min-w-[80px] max-w-[200px]">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <LineChart data={history}>
-                        <Line type="monotone" dataKey="v" stroke={strokeColor} strokeWidth={1.5} dot={false} />
-                      </LineChart>
-                    </ResponsiveContainer>
-                  </div>
+                <div key={idx} className="flex items-center gap-4 flex-wrap sm:flex-nowrap">
+                  <span className="text-lg text-foreground font-medium min-w-[160px]">{outcome.label}</span>
+                  <span className="text-lg font-bold text-foreground">{outcome.price}%</span>
 
                   <div className="flex items-center gap-2 ml-auto">
                     <button
-                      className={`px-10 py-2.5 rounded-lg text-sm font-semibold transition-all active:scale-[0.97] ${
+                      className={`px-8 py-2.5 rounded-lg text-sm font-semibold transition-all active:scale-[0.97] ${
                         isInBetSlip(market.id, `${outcome.label}-Yes`)
                           ? "bg-bet text-bet-foreground"
                           : "bg-bet/10 text-bet hover:bg-bet/20 border border-bet/20"
@@ -119,7 +95,7 @@ export function FeaturedMarketSection() {
                       Yes
                     </button>
                     <button
-                      className={`px-10 py-2.5 rounded-lg text-sm font-semibold transition-all active:scale-[0.97] ${
+                      className={`px-8 py-2.5 rounded-lg text-sm font-semibold transition-all active:scale-[0.97] ${
                         isInBetSlip(market.id, `${outcome.label}-No`)
                           ? "bg-against text-against-foreground"
                           : "bg-against/10 text-against hover:bg-against/20 border border-against/20"
