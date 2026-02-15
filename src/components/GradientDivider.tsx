@@ -6,10 +6,10 @@ export function GradientDivider() {
         background: "linear-gradient(90deg, hsl(145 72% 44%) 0%, hsl(217 85% 55%) 100%)",
       }}
     >
-      <p className="text-white font-display font-bold text-sm leading-snug text-center sm:text-left">
+      <p className="text-white font-bold text-sm leading-snug text-center sm:text-left">
         Pollgy.{" "}
-        <span className="text-white/90">First</span> creator led,{" "}
-        <span className="text-white/90">community owned</span> prediction market platform
+        <span>First</span> creator led,{" "}
+        <span>community owned</span> prediction market platform
       </p>
 
       <div className="flex items-center gap-0 flex-shrink-0">
