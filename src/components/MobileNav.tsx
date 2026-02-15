@@ -13,7 +13,7 @@ export function MobileNav() {
   const location = useLocation();
 
   return (
-    <nav className="fixed bottom-px left-4 right-4 z-50 bg-background rounded-2xl border border-border shadow-lg shrink-0" style={{ height: '60px', minHeight: '60px', maxHeight: '60px', flexShrink: 0, boxSizing: 'border-box', transform: 'none', transition: 'none' }}>
+    <nav className="fixed bottom-px left-4 z-50 bg-background rounded-2xl border border-border shadow-lg shrink-0" style={{ width: 'calc(100vw - 32px)', height: '60px', minHeight: '60px', maxHeight: '60px', flexShrink: 0, boxSizing: 'border-box', transform: 'none', transition: 'none', overflow: 'hidden' }}>
       <div className="flex items-stretch justify-around pt-2.5 pb-[env(safe-area-inset-bottom,6px)] -translate-y-1 h-full overflow-hidden">
         {items.map((item) => {
           const isActive = location.pathname === item.url;
