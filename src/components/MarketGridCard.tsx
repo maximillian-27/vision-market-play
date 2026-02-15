@@ -186,9 +186,7 @@ export function MarketGridCard({
       )}
       
       <Card 
-        className={`group overflow-hidden cursor-pointer border-border bg-card card-hover h-full ${
-          isHot ? 'ring-1 ring-accent/30' : ''
-        } ${isLive ? 'ring-1 ring-live/40' : ''}`}
+        className={`group overflow-hidden cursor-pointer border-border bg-card card-hover h-full ${isLive ? 'ring-1 ring-live/40' : ''}`}
         onClick={handleCardClick}
       >
         {/* Desktop Layout - Compact with small image */}
@@ -230,13 +228,6 @@ export function MarketGridCard({
                   </div>
                 )}
               </div>
-              {/* Hot indicator */}
-              {isHot && !isLive && (
-                <span className="badge-hot text-[8px] px-1 py-0.5 mt-1 inline-flex">
-                  <Flame className="h-2 w-2" />
-                  HOT
-                </span>
-              )}
             </div>
           </div>
 
@@ -377,12 +368,6 @@ export function MarketGridCard({
                   <span className="badge-live text-[8px] px-1 py-0.5">
                     <span className="h-1 w-1 rounded-full bg-current animate-pulse" />
                     LIVE
-                  </span>
-                </div>
-              ) : isHot ? (
-                <div className="absolute top-1 left-1">
-                  <span className="badge-hot text-[8px] px-1 py-0.5">
-                    <Flame className="h-2 w-2" />
                   </span>
                 </div>
               ) : getStatusBadge() && (
