@@ -1,9 +1,11 @@
 import { useState, useMemo } from "react";
 import { FeedFilters, FilterState } from "@/components/FeedFilters";
 import { MarketGridCard } from "@/components/MarketGridCard";
-import { PageHeader } from "@/components/PageHeader";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Search, SlidersHorizontal, Bookmark } from "lucide-react";
+import { FeaturedMarketSection } from "@/components/FeaturedMarketSection";
+import { GradientDivider } from "@/components/GradientDivider";
 import bitcoinImage from "@/assets/bitcoin-market.jpg";
 import nbaImage from "@/assets/nba-championship.jpg";
 import iphoneImage from "@/assets/foldable-iphone.jpg";
@@ -308,46 +310,97 @@ export default function Feed() {
     return result;
   }, [filters]);
 
-  return (
-    <div className="w-full max-w-[1600px] mx-auto px-4 md:px-6 lg:px-8">
-      <div className="space-y-4">
-        <FeedFilters filters={filters} onFiltersChange={setFilters} />
-        
-        {filteredMarkets.length === 0 ? (
-          <div className="text-center py-16">
-            <p className="text-muted-foreground">No markets found matching your filters</p>
-            <Button 
-              variant="link" 
-              onClick={() => setFilters({ ...filters, status: "all", category: "All" })}
-            >
-              Clear filters
-            </Button>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-3 stagger-animate">
-            {filteredMarkets.map((market) => (
-              <MarketGridCard 
-                key={market.id} 
-                id={market.id}
-                creator={market.creator}
-                title={market.title}
-                image={market.image}
-                outcomes={market.outcomes}
-                yesPrice={market.yesPrice}
-                noPrice={market.noPrice}
-                volume={market.volume}
-                endsIn={market.endsIn}
-                status={market.status}
-                resolution={market.resolution}
-                disputeEndsIn={market.disputeEndsIn}
-                resolvedAt={market.resolvedAt}
-                isHot={market.isHot}
-                isLive={market.isLive}
-                volumeChange={market.volumeChange}
+    return (
+    <div className="w-full max-w-[1400px] mx-auto px-4 md:px-6 lg:px-8">
+      <div className="space-y-0">
+        {/* Mobile Search + Filter icons row */}
+        <div className="sm:hidden mt-3 flex items-center gap-3">
+          <form
+            className="flex-1 min-w-0"
+            onSubmit={(e) => {
+              e.preventDefault();
+              const formData = new FormData(e.currentTarget);
+              const query = formData.get("search") as string;
+              if (query.trim()) {
+                window.location.href = `/search?q=${encodeURIComponent(query.trim())}`;
+              }
+            }}
+          >
+            <div className="relative">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                name="search"
+                placeholder="Search markets..."
+                className="w-full h-11 pl-10 pr-4 rounded-xl bg-secondary border-transparent text-sm"
               />
-            ))}
-          </div>
-        )}
+            </div>
+          </form>
+          <button
+            className="flex-shrink-0 p-2 text-muted-foreground hover:text-foreground transition-colors"
+            aria-label="Filters"
+          >
+            <SlidersHorizontal className="h-5 w-5" />
+          </button>
+          <button
+            className="flex-shrink-0 p-2 text-muted-foreground hover:text-foreground transition-colors"
+            aria-label="Saved"
+          >
+            <Bookmark className="h-5 w-5" />
+          </button>
+        </div>
+
+        {/* Filters — top of page */}
+        <FeedFilters filters={filters} onFiltersChange={setFilters} />
+
+        {/* Featured Market Section */}
+        <div className="pt-4 sm:py-4">
+          <FeaturedMarketSection />
+        </div>
+
+        {/* Gradient Divider - hidden on mobile */}
+        <div className="hidden sm:block">
+          <GradientDivider />
+        </div>
+
+        {/* Other Markets + Markets Grid — unified grid */}
+        <div className="pt-4 pb-8">
+          
+          {filteredMarkets.length === 0 ? (
+            <div className="text-center py-16">
+              <p className="text-muted-foreground">No markets found matching your filters</p>
+              <Button 
+                variant="link" 
+                onClick={() => setFilters({ ...filters, status: "all", category: "All" })}
+              >
+                Clear filters
+              </Button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5 sm:gap-3 stagger-animate">
+              {filteredMarkets.map((market) => (
+                <MarketGridCard 
+                  key={market.id} 
+                  id={market.id}
+                  creator={market.creator}
+                  title={market.title}
+                  image={market.image}
+                  outcomes={market.outcomes}
+                  yesPrice={market.yesPrice}
+                  noPrice={market.noPrice}
+                  volume={market.volume}
+                  endsIn={market.endsIn}
+                  status={market.status}
+                  resolution={market.resolution}
+                  disputeEndsIn={market.disputeEndsIn}
+                  resolvedAt={market.resolvedAt}
+                  isHot={market.isHot}
+                  isLive={market.isLive}
+                  volumeChange={market.volumeChange}
+                />
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
