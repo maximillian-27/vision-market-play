@@ -12,7 +12,7 @@ import iphoneImage from "@/assets/foldable-iphone.jpg";
 import fedImage from "@/assets/federal-reserve.jpg";
 import aiImage from "@/assets/ai-customer-service.jpg";
 
-import { CreatorTier } from "@/components/CreatorTierBadge";
+
 
 type MarketStatus = "open" | "closing" | "awaiting_resolution" | "closed" | "resolved";
 
@@ -23,7 +23,7 @@ interface Market {
     avatar: string;
     id: string;
     isCreator: boolean;
-    tier?: CreatorTier;
+    
   };
   title: string;
   subtitle?: string;
@@ -52,7 +52,7 @@ const mockMarkets: Market[] = [
   // Open Markets - with gambling features
   {
     id: "1",
-    creator: { name: "Sarah Chen", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah", id: "sarah-chen", isCreator: true, tier: "gold" as const },
+    creator: { name: "Sarah Chen", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah", id: "sarah-chen", isCreator: true },
     title: "Will Bitcoin reach $100,000 by end of 2025?",
     subtitle: "The ultimate crypto milestone - will BTC finally break six figures?",
     image: bitcoinImage,
@@ -69,7 +69,7 @@ const mockMarkets: Market[] = [
   },
   {
     id: "2",
-    creator: { name: "Mike Johnson", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Mike", id: "mike-johnson", isCreator: true, tier: "platinum" as const },
+    creator: { name: "Mike Johnson", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Mike", id: "mike-johnson", isCreator: true },
     title: "Who will win the NBA Championship this season?",
     subtitle: "The race for the championship is heating up.",
     image: nbaImage,
@@ -89,7 +89,7 @@ const mockMarkets: Market[] = [
   },
   {
     id: "3",
-    creator: { name: "Emma Wilson", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Emma", id: "emma-wilson", isCreator: true, tier: "diamond" as const },
+    creator: { name: "Emma Wilson", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Emma", id: "emma-wilson", isCreator: true },
     title: "Will Apple release a foldable iPhone in 2025?",
     subtitle: "Apple's been quiet on foldables. Will they finally join the trend?",
     image: iphoneImage,
@@ -105,7 +105,7 @@ const mockMarkets: Market[] = [
   },
   {
     id: "4",
-    creator: { name: "Alex Rodriguez", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Alex", id: "alex-rodriguez", isCreator: true, tier: "silver" as const },
+    creator: { name: "Alex Rodriguez", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Alex", id: "alex-rodriguez", isCreator: true },
     title: "Next US Federal Reserve interest rate decision?",
     subtitle: "Fed's next move could shake the markets.",
     image: fedImage,
