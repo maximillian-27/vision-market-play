@@ -15,7 +15,6 @@ export default {
     extend: {
       fontFamily: {
         sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
-        display: ['Space Grotesk', 'Inter', 'sans-serif'],
       },
       colors: {
         border: {
@@ -31,7 +30,6 @@ export default {
           foreground: "hsl(var(--primary-foreground))",
           hover: "hsl(var(--primary-hover))",
           muted: "hsl(var(--primary-muted))",
-          glow: "hsl(var(--primary-glow))",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
@@ -48,20 +46,6 @@ export default {
           foreground: "hsl(var(--success-foreground))",
           muted: "hsl(var(--success-muted))",
         },
-        // Betting colors
-        bet: {
-          DEFAULT: "hsl(var(--bet))",
-          foreground: "hsl(var(--bet-foreground))",
-          muted: "hsl(var(--bet-muted))",
-          hover: "hsl(var(--bet-hover))",
-        },
-        against: {
-          DEFAULT: "hsl(var(--against))",
-          foreground: "hsl(var(--against-foreground))",
-          muted: "hsl(var(--against-muted))",
-          hover: "hsl(var(--against-hover))",
-        },
-        // Legacy yes/no for compatibility
         yes: {
           DEFAULT: "hsl(var(--yes))",
           foreground: "hsl(var(--yes-foreground))",
@@ -74,28 +58,6 @@ export default {
           muted: "hsl(var(--no-muted))",
           hover: "hsl(var(--no-hover))",
         },
-        // Live/Hot/Trending indicators
-        live: {
-          DEFAULT: "hsl(var(--live))",
-          foreground: "hsl(var(--live-foreground))",
-        },
-        hot: {
-          DEFAULT: "hsl(var(--hot))",
-          foreground: "hsl(var(--hot-foreground))",
-        },
-        trending: {
-          DEFAULT: "hsl(var(--trending))",
-          foreground: "hsl(var(--trending-foreground))",
-        },
-        // Creator tier colors
-        tier: {
-          bronze: "hsl(var(--tier-bronze))",
-          silver: "hsl(var(--tier-silver))",
-          gold: "hsl(var(--tier-gold))",
-          platinum: "hsl(var(--tier-platinum))",
-          diamond: "hsl(var(--tier-diamond))",
-        },
-        // Brand colors
         "pollgy-blue": {
           DEFAULT: "hsl(var(--pollgy-blue))",
           foreground: "hsl(var(--pollgy-blue-foreground))",
@@ -111,8 +73,6 @@ export default {
         accent: {
           DEFAULT: "hsl(var(--accent))",
           foreground: "hsl(var(--accent-foreground))",
-          muted: "hsl(var(--accent-muted))",
-          glow: "hsl(var(--accent-glow))",
         },
         popover: {
           DEFAULT: "hsl(var(--popover))",
@@ -139,7 +99,6 @@ export default {
         sm: "calc(var(--radius) - 4px)",
         xl: "calc(var(--radius) + 4px)",
         "2xl": "calc(var(--radius) + 8px)",
-        "3xl": "calc(var(--radius) + 12px)",
       },
       boxShadow: {
         'xs': 'var(--shadow-xs)',
@@ -148,9 +107,6 @@ export default {
         'soft': 'var(--shadow-sm)',
         'medium': 'var(--shadow-md)',
         'elevated': 'var(--shadow-lg)',
-        'glow-primary': 'var(--shadow-glow-primary)',
-        'glow-accent': 'var(--shadow-glow-accent)',
-        'glow-live': 'var(--shadow-glow-live)',
       },
       keyframes: {
         "accordion-down": {
@@ -162,12 +118,12 @@ export default {
           to: { height: "0" },
         },
         "fade-in": {
-          from: { opacity: "0", transform: "translateY(8px)" },
+          from: { opacity: "0", transform: "translateY(6px)" },
           to: { opacity: "1", transform: "translateY(0)" },
         },
         "fade-out": {
           from: { opacity: "1", transform: "translateY(0)" },
-          to: { opacity: "0", transform: "translateY(8px)" },
+          to: { opacity: "0", transform: "translateY(6px)" },
         },
         "scale-in": {
           from: { opacity: "0", transform: "scale(0.96)" },
@@ -177,14 +133,6 @@ export default {
           from: { opacity: "0", transform: "translateY(12px)" },
           to: { opacity: "1", transform: "translateY(0)" },
         },
-        "slide-in-right": {
-          from: { opacity: "0", transform: "translateX(100%)" },
-          to: { opacity: "1", transform: "translateX(0)" },
-        },
-        "pulse-live": {
-          "0%, 100%": { opacity: "1" },
-          "50%": { opacity: "0.5" },
-        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -193,8 +141,6 @@ export default {
         "fade-out": "fade-out 0.25s ease-out",
         "scale-in": "scale-in 0.2s ease-out",
         "slide-up": "slide-up 0.35s ease-out",
-        "slide-in-right": "slide-in-right 0.25s ease-out",
-        "pulse-live": "pulse-live 1.5s ease-in-out infinite",
       },
     },
   },

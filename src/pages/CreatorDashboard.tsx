@@ -14,8 +14,7 @@ import {
   Clock,
   Sparkles,
   Trophy,
-  XCircle,
-  Percent
+  XCircle
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -31,7 +30,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { CreatorTierBadge, CreatorTierProgress, CreatorTier } from "@/components/CreatorTierBadge";
 
 // Mock data
 const creatorStats = {
@@ -44,12 +42,9 @@ const creatorStats = {
   avgMarketVolume: 49787,
   resolvedMarkets: 38,
   accuracy: 84,
-  totalEarnings: 4250,
+  earnings: 4250,
   currentBalance: 1847.32,
-  pendingEarnings: 342.50,
   rank: 24,
-  tier: "gold" as CreatorTier,
-  revenueShareRate: 2, // 2% for gold tier
 };
 
 const marketsByStatus = {
@@ -68,13 +63,6 @@ const recentMarkets = [
   { id: 6, title: "Nvidia stock above $800 by Feb?", status: "Cancelled", volume: 45000, earnings: 0, traders: 650, created: "2023-12-10" },
 ];
 
-const earningsHistory = [
-  { date: "Jan 2025", amount: 847.32, volume: 423660 },
-  { date: "Dec 2024", amount: 1234.50, volume: 617250 },
-  { date: "Nov 2024", amount: 956.80, volume: 478400 },
-  { date: "Oct 2024", amount: 1211.38, volume: 605690 },
-];
-
 const CreatorDashboard = () => {
   const navigate = useNavigate();
   const [timeframe, setTimeframe] = useState("30d");
@@ -87,20 +75,29 @@ const CreatorDashboard = () => {
   useEffect(() => {
     const calculateTimeUntilMidnight = () => {
       const now = new Date();
-      const gmt1Offset = 1 * 60;
+      
+      // Get current time in GMT+1 (CET)
+      const gmt1Offset = 1 * 60; // GMT+1 in minutes
       const localOffset = now.getTimezoneOffset();
       const gmt1Time = new Date(now.getTime() + (localOffset + gmt1Offset) * 60 * 1000);
+      
+      // Calculate midnight GMT+1
       const midnightGMT1 = new Date(gmt1Time);
       midnightGMT1.setHours(24, 0, 0, 0);
+      
+      // Time difference in milliseconds
       const diff = midnightGMT1.getTime() - gmt1Time.getTime();
+      
       const hours = Math.floor(diff / (1000 * 60 * 60));
       const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+      
       setTimeUntilRefresh(`${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`);
     };
 
     calculateTimeUntilMidnight();
     const interval = setInterval(calculateTimeUntilMidnight, 1000);
+    
     return () => clearInterval(interval);
   }, []);
 
@@ -110,11 +107,8 @@ const CreatorDashboard = () => {
         {/* Mobile-optimized header */}
         <div className="flex items-center justify-between gap-3 mb-4 sm:mb-5">
           <div className="min-w-0">
-            <div className="flex items-center gap-2 mb-1">
-              <h1 className="text-lg sm:text-2xl font-display font-bold truncate">Creator Dashboard</h1>
-              <CreatorTierBadge tier={creatorStats.tier} size="md" />
-            </div>
-            <p className="text-xs sm:text-sm text-muted-foreground">Track your performance & earnings</p>
+            <h1 className="text-lg sm:text-2xl font-bold truncate">Creator Dashboard</h1>
+            <p className="text-xs sm:text-sm text-muted-foreground">Track your performance</p>
           </div>
           <div className="flex gap-2 shrink-0">
             <Button variant="outline" size="sm" onClick={() => navigate("/settings")} className="gap-1.5 h-8 sm:h-9 px-2.5 sm:px-3">
@@ -128,8 +122,8 @@ const CreatorDashboard = () => {
           </div>
         </div>
 
-        {/* Balance, Tokens, Revenue Share - 3 columns */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3 mb-4 sm:mb-5">
+        {/* Balance & Tokens - Side by side on mobile too */}
+        <div className="grid grid-cols-2 gap-2 sm:gap-3 mb-4 sm:mb-5">
           {/* Current Balance Card */}
           <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-primary/10">
             <CardContent className="p-3 sm:p-4">
@@ -137,18 +131,15 @@ const CreatorDashboard = () => {
                 <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-lg sm:rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
                   <Wallet className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
                 </div>
-                <div>
-                  <p className="text-[10px] sm:text-xs text-muted-foreground font-medium leading-tight">Available Balance</p>
-                  <p className="text-[9px] text-primary">+${creatorStats.pendingEarnings} pending</p>
-                </div>
+                <p className="text-[10px] sm:text-xs text-muted-foreground font-medium leading-tight">Current Balance</p>
               </div>
-              <p className="text-xl sm:text-2xl lg:text-3xl font-display font-bold text-primary mb-2 sm:mb-3">
+              <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-primary mb-2 sm:mb-3">
                 ${creatorStats.currentBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </p>
               <div className="flex flex-col sm:flex-row sm:items-center gap-2 pt-2 sm:pt-3 border-t border-border/30">
                 <div className="flex items-center gap-1.5 text-[9px] sm:text-[11px] text-muted-foreground">
                   <Clock className="h-2.5 w-2.5 sm:h-3 sm:w-3 shrink-0" />
-                  <span className="leading-tight">Payouts every Friday</span>
+                  <span className="leading-tight">Fridays 12AM EST</span>
                 </div>
                 <Button variant="outline" size="sm" className="text-[10px] sm:text-xs h-6 sm:h-7 px-2 sm:px-3 w-full sm:w-auto sm:ml-auto">
                   Withdraw
@@ -158,21 +149,21 @@ const CreatorDashboard = () => {
           </Card>
 
           {/* Market Tokens Card */}
-          <Card className="border-accent/20 bg-gradient-to-br from-accent/5 to-accent/10">
+          <Card className="border-amber-500/20 bg-gradient-to-br from-amber-500/5 to-amber-500/10">
             <CardContent className="p-3 sm:p-4">
               <div className="flex items-center justify-between gap-1 mb-2 sm:mb-3">
                 <div className="flex items-center gap-2 sm:gap-3">
-                  <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-lg sm:rounded-xl bg-accent/10 flex items-center justify-center shrink-0">
-                    <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 text-accent" />
+                  <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-lg sm:rounded-xl bg-amber-500/10 flex items-center justify-center shrink-0">
+                    <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 text-amber-500" />
                   </div>
                   <p className="text-[10px] sm:text-xs text-muted-foreground font-medium leading-tight">Market Tokens</p>
                 </div>
-                <Badge variant="outline" className={`text-[8px] sm:text-[10px] px-1.5 sm:px-2 shrink-0 ${marketTokens > 0 ? 'border-primary/40 text-primary bg-primary/10' : 'border-muted text-muted-foreground'}`}>
+                <Badge variant="outline" className={`text-[8px] sm:text-[10px] px-1.5 sm:px-2 shrink-0 ${marketTokens > 0 ? 'border-success/40 text-success bg-success/10' : 'border-muted text-muted-foreground'}`}>
                   {marketTokens > 0 ? 'Ready' : 'Used'}
                 </Badge>
               </div>
               <div className="flex items-baseline gap-1 mb-2 sm:mb-3">
-                <span className="text-xl sm:text-2xl lg:text-3xl font-display font-bold text-accent">{marketTokens}</span>
+                <span className="text-xl sm:text-2xl lg:text-3xl font-bold text-amber-500">{marketTokens}</span>
                 <span className="text-sm sm:text-base text-muted-foreground font-medium">/ 1</span>
               </div>
               <div className="flex items-center justify-between pt-2 sm:pt-3 border-t border-border/30 gap-1">
@@ -185,31 +176,6 @@ const CreatorDashboard = () => {
                   <span className="text-[8px] sm:text-[9px] text-muted-foreground uppercase">In</span>
                   <span className="text-[10px] sm:text-xs font-mono font-bold text-foreground">{timeUntilRefresh}</span>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Revenue Share Card */}
-          <Card className="border-border/40">
-            <CardContent className="p-3 sm:p-4">
-              <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
-                <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-lg sm:rounded-xl bg-muted flex items-center justify-center shrink-0">
-                  <Percent className="h-4 w-4 sm:h-5 sm:w-5 text-foreground" />
-                </div>
-                <div>
-                  <p className="text-[10px] sm:text-xs text-muted-foreground font-medium leading-tight">Revenue Share</p>
-                  <p className="text-[9px] text-muted-foreground">Based on tier</p>
-                </div>
-              </div>
-              <div className="flex items-baseline gap-1 mb-2 sm:mb-3">
-                <span className="text-xl sm:text-2xl lg:text-3xl font-display font-bold">{creatorStats.revenueShareRate}%</span>
-                <span className="text-sm sm:text-base text-muted-foreground font-medium">of volume</span>
-              </div>
-              <div className="pt-2 sm:pt-3 border-t border-border/30">
-                <CreatorTierProgress 
-                  currentTier={creatorStats.tier} 
-                  currentVolume={creatorStats.totalVolume}
-                />
               </div>
             </CardContent>
           </Card>
@@ -239,8 +205,8 @@ const CreatorDashboard = () => {
                 <span>Followers</span>
               </div>
               <div className="flex items-center gap-1.5 sm:gap-2">
-                <p className="text-base sm:text-2xl font-display font-bold">{creatorStats.totalFollowers.toLocaleString()}</p>
-                <Badge className="text-[8px] sm:text-xs bg-primary/10 text-primary border-0 px-1 sm:px-1.5">
+                <p className="text-base sm:text-2xl font-bold">{creatorStats.totalFollowers.toLocaleString()}</p>
+                <Badge className="text-[8px] sm:text-xs bg-success/10 text-success border-0 px-1 sm:px-1.5">
                   <ArrowUpRight className="h-2 w-2 sm:h-3 sm:w-3" />
                   {creatorStats.followersGrowth}%
                 </Badge>
@@ -252,9 +218,9 @@ const CreatorDashboard = () => {
             <CardContent className="p-2.5 sm:p-4">
               <div className="flex items-center gap-1 sm:gap-2 text-muted-foreground text-[10px] sm:text-sm mb-0.5 sm:mb-1">
                 <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4" />
-                <span>Total Volume</span>
+                <span>Volume</span>
               </div>
-              <p className="text-base sm:text-2xl font-display font-bold">${(creatorStats.totalVolume / 1000000).toFixed(1)}M</p>
+              <p className="text-base sm:text-2xl font-bold">${(creatorStats.totalVolume / 1000000).toFixed(1)}M</p>
             </CardContent>
           </Card>
           
@@ -262,9 +228,9 @@ const CreatorDashboard = () => {
             <CardContent className="p-2.5 sm:p-4">
               <div className="flex items-center gap-1 sm:gap-2 text-muted-foreground text-[10px] sm:text-sm mb-0.5 sm:mb-1">
                 <DollarSign className="h-3 w-3 sm:h-4 sm:w-4" />
-                <span>Total Earnings</span>
+                <span>Earnings</span>
               </div>
-              <p className="text-base sm:text-2xl font-display font-bold text-primary">${creatorStats.totalEarnings.toLocaleString()}</p>
+              <p className="text-base sm:text-2xl font-bold text-success">${creatorStats.earnings.toLocaleString()}</p>
             </CardContent>
           </Card>
           
@@ -274,7 +240,7 @@ const CreatorDashboard = () => {
                 <BarChart3 className="h-3 w-3 sm:h-4 sm:w-4" />
                 <span>Avg/Market</span>
               </div>
-              <p className="text-base sm:text-2xl font-display font-bold">${(creatorStats.avgMarketVolume / 1000).toFixed(0)}K</p>
+              <p className="text-base sm:text-2xl font-bold">${(creatorStats.avgMarketVolume / 1000).toFixed(0)}K</p>
             </CardContent>
           </Card>
         </div>
@@ -284,60 +250,37 @@ const CreatorDashboard = () => {
           <Card className="border-border/40 bg-muted/20">
             <CardContent className="p-2 sm:p-4">
               <p className="text-[9px] sm:text-sm text-muted-foreground mb-0.5 truncate">Markets</p>
-              <p className="text-sm sm:text-xl font-display font-semibold">{creatorStats.marketsCreated}</p>
+              <p className="text-sm sm:text-xl font-semibold">{creatorStats.marketsCreated}</p>
             </CardContent>
           </Card>
           <Card className="border-border/40 bg-muted/20">
             <CardContent className="p-2 sm:p-4">
               <p className="text-[9px] sm:text-sm text-muted-foreground mb-0.5 truncate">Resolved</p>
-              <p className="text-sm sm:text-xl font-display font-semibold">{creatorStats.resolvedMarkets}</p>
+              <p className="text-sm sm:text-xl font-semibold">{creatorStats.resolvedMarkets}</p>
             </CardContent>
           </Card>
           <Card className="border-border/40 bg-muted/20">
             <CardContent className="p-2 sm:p-4">
               <p className="text-[9px] sm:text-sm text-muted-foreground mb-0.5 truncate">Views</p>
-              <p className="text-sm sm:text-xl font-display font-semibold">{(creatorStats.totalViews / 1000).toFixed(0)}K</p>
+              <p className="text-sm sm:text-xl font-semibold">{(creatorStats.totalViews / 1000).toFixed(0)}K</p>
             </CardContent>
           </Card>
           <Card className="border-border/40 bg-muted/20">
             <CardContent className="p-2 sm:p-4">
               <p className="text-[9px] sm:text-sm text-muted-foreground mb-0.5 truncate">Rank</p>
               <div className="flex items-center gap-1">
-                <Trophy className="h-3 w-3 sm:h-4 sm:w-4 text-accent" />
-                <p className="text-sm sm:text-xl font-display font-semibold">#{creatorStats.rank}</p>
+                <Trophy className="h-3 w-3 sm:h-4 sm:w-4 text-amber-500" />
+                <p className="text-sm sm:text-xl font-semibold">#{creatorStats.rank}</p>
               </div>
             </CardContent>
           </Card>
         </div>
 
-        {/* Earnings History */}
-        <Card className="border-border/40 mb-4 sm:mb-5">
-          <CardHeader className="p-3 sm:p-4 pb-2">
-            <CardTitle className="text-sm sm:text-lg font-display font-semibold">Earnings History</CardTitle>
-          </CardHeader>
-          <CardContent className="p-3 sm:p-4 pt-0">
-            <div className="space-y-2">
-              {earningsHistory.map((entry, index) => (
-                <div key={index} className="flex items-center justify-between py-2 border-b border-border/30 last:border-0">
-                  <div>
-                    <p className="text-sm font-medium">{entry.date}</p>
-                    <p className="text-xs text-muted-foreground">${entry.volume.toLocaleString()} volume</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-sm font-bold text-primary">+${entry.amount.toFixed(2)}</p>
-                    <p className="text-[10px] text-muted-foreground">{creatorStats.revenueShareRate}% share</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
         {/* Your Markets Section */}
         <Card className="border-border/40">
           <CardHeader className="p-3 sm:p-4 pb-0">
             <div className="flex items-center justify-between mb-3">
-              <CardTitle className="text-sm sm:text-lg font-display font-semibold">Your Markets</CardTitle>
+              <CardTitle className="text-sm sm:text-lg font-semibold">Your Markets</CardTitle>
               <Button size="sm" className="gap-1 h-7 sm:h-8 text-[10px] sm:text-sm px-2 sm:px-3">
                 <Plus className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
                 <span>New</span>
@@ -372,8 +315,8 @@ const CreatorDashboard = () => {
                   onClick={() => setMarketFilter("closed")}
                   className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-md text-[10px] sm:text-xs font-medium transition-colors ${
                     marketFilter === "closed" 
-                      ? "bg-bet text-bet-foreground" 
-                      : "bg-bet/10 text-bet hover:bg-bet/20"
+                      ? "bg-success text-success-foreground" 
+                      : "bg-success/10 text-success hover:bg-success/20"
                   }`}
                 >
                   <span className="hidden sm:inline">Resolved/Disputing</span>
@@ -424,35 +367,65 @@ const CreatorDashboard = () => {
                 .map((market) => (
                 <div 
                   key={market.id} 
-                  className="flex items-center gap-3 p-3 rounded-xl border border-border/50 hover:border-border hover:bg-muted/30 transition-all cursor-pointer"
-                  onClick={() => navigate(`/market/${market.id}`)}
+                  className="group flex items-center gap-3 p-2.5 sm:p-3 rounded-lg border border-border/40 hover:border-border/60 bg-background hover:bg-muted/20 transition-all cursor-pointer"
                 >
+                  {/* Status Indicator */}
+                  <div className={`w-1 sm:w-1.5 h-10 sm:h-12 rounded-full shrink-0 ${
+                    market.status === "Open" ? "bg-primary" :
+                    market.status === "Resolved" ? "bg-success" :
+                    market.status === "Disputing" ? "bg-amber-500" :
+                    "bg-muted-foreground/30"
+                  }`} />
+                  
+                  {/* Market Info */}
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <p className="text-sm font-medium truncate">{market.title}</p>
+                    <p className="font-medium text-xs sm:text-sm line-clamp-1 leading-tight mb-1">{market.title}</p>
+                    <div className="flex items-center gap-2 sm:gap-3 text-[9px] sm:text-[11px] text-muted-foreground">
+                      <span>{market.created}</span>
+                      <span className="hidden sm:inline">•</span>
+                      <span>{market.traders.toLocaleString()} traders</span>
                       <Badge 
-                        variant="secondary" 
-                        className={`text-[9px] shrink-0 ${
-                          market.status === 'Open' ? 'bg-primary/10 text-primary' :
-                          market.status === 'Resolved' ? 'bg-bet/10 text-bet' :
-                          market.status === 'Disputing' ? 'bg-accent/10 text-accent' :
-                          'bg-muted text-muted-foreground'
+                        variant="outline"
+                        className={`text-[7px] sm:text-[9px] px-1 py-0 h-3.5 sm:h-4 ${
+                          market.status === "Open" ? "border-primary/30 text-primary" :
+                          market.status === "Resolved" ? "border-success/30 text-success" :
+                          market.status === "Disputing" ? "border-amber-500/30 text-amber-500" :
+                          "border-muted text-muted-foreground"
                         }`}
                       >
-                        {market.status}
+                        {market.status === "Resolved" && market.resolution ? `✓ ${market.resolution}` : market.status}
                       </Badge>
                     </div>
-                    <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                      <span>${market.volume.toLocaleString()} vol.</span>
-                      <span>{market.traders.toLocaleString()} bettors</span>
-                    </div>
                   </div>
-                  <div className="text-right shrink-0">
-                    <p className="text-sm font-bold text-primary">+${market.earnings}</p>
-                    <p className="text-[10px] text-muted-foreground">earned</p>
+                  
+                  {/* Volume & Earnings */}
+                  <div className="flex items-center gap-3 sm:gap-4 shrink-0">
+                    <div className="text-right">
+                      <p className="font-semibold text-xs sm:text-sm">${(market.volume / 1000).toFixed(0)}K</p>
+                      <p className="text-[8px] sm:text-[10px] text-muted-foreground">volume</p>
+                    </div>
+                    <div className="text-right min-w-[40px] sm:min-w-[50px]">
+                      <p className={`font-semibold text-xs sm:text-sm ${market.earnings > 0 ? 'text-success' : 'text-muted-foreground'}`}>
+                        {market.earnings > 0 ? `+$${market.earnings}` : '$0'}
+                      </p>
+                      <p className="text-[8px] sm:text-[10px] text-muted-foreground">earned</p>
+                    </div>
                   </div>
                 </div>
               ))}
+              
+              {/* Empty State */}
+              {recentMarkets.filter(market => {
+                if (marketFilter === "all") return true;
+                if (marketFilter === "open") return market.status === "Open";
+                if (marketFilter === "closed") return market.status === "Resolved" || market.status === "Disputing";
+                if (marketFilter === "cancelled") return market.status === "Cancelled";
+                return true;
+              }).length === 0 && (
+                <div className="text-center py-8 text-muted-foreground text-sm">
+                  No markets found
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>
