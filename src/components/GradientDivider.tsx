@@ -1,7 +1,7 @@
 export function GradientDivider() {
   return (
     <div
-      className="w-full rounded-xl px-5 py-2.5 flex flex-col sm:flex-row items-center justify-between gap-1.5"
+      className="w-full rounded-xl px-5 py-3.5 flex flex-col sm:flex-row items-center justify-between gap-1.5"
       style={{
         background: "linear-gradient(90deg, hsl(145 72% 44%) 0%, hsl(217 85% 55%) 100%)",
       }}
