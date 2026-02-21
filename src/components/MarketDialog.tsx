@@ -140,11 +140,14 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
   const isAwaitingResolution = market.status === "awaiting_resolution";
 
   const amountNum = parseFloat(amount) || 0;
-  const shares = selectedOutcome && selectedOutcome.price > 0 
-    ? Math.floor((amountNum * 100) / selectedOutcome.price) 
+  const ticketPrice = selectedOutcome ? selectedOutcome.price / 100 : 0;
+  const tickets = selectedOutcome && ticketPrice > 0 
+    ? Math.floor(amountNum / ticketPrice) 
     : 0;
-  const potentialPayout = shares;
-  const potentialProfit = potentialPayout - amountNum;
+  const totalTicketsForOutcome = 15000;
+  const totalPot = 125000;
+  const potShare = tickets > 0 ? (tickets / (totalTicketsForOutcome + tickets)) * 100 : 0;
+  const estPayout = tickets > 0 ? (tickets / (totalTicketsForOutcome + tickets)) * totalPot : 0;
 
   const handleBuy = () => {
     if (!selectedOutcome) {
@@ -164,7 +167,7 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
       setTimeout(() => {
         toast({
           title: "Order placed!",
-          description: `You bought ${shares} shares of "${selectedOutcome.label}" for $${amountNum.toFixed(2)}`,
+          description: `You bought ${tickets} tickets of "${selectedOutcome.label}" for $${amountNum.toFixed(2)}`,
         });
         onOpenChange(false);
         setIsSubmitting(false);
@@ -252,11 +255,11 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
                   <div className="flex items-center gap-1">
                     <TrendingUp className="h-3.5 w-3.5 text-primary" />
                     <span className="font-semibold text-foreground">{market.volume}</span>
-                    <span>volume</span>
+                    <span>pot</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <Users className="h-3.5 w-3.5" />
-                    <span>{market.traders?.toLocaleString() || "1.2K"} traders</span>
+                    <span>{market.traders?.toLocaleString() || "1.2K"} players</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <Clock className="h-3.5 w-3.5" />
@@ -301,7 +304,7 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
                           fontSize: "11px",
                           padding: "6px 10px"
                         }}
-                        formatter={(value: any) => [`${value}%`, "Price"]}
+                        formatter={(value: any) => [`${value}%`, "Ticket Price"]}
                         labelFormatter={(label) => `Date: ${label}`}
                       />
                       <Area 
@@ -409,7 +412,7 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
               {/* Quick Trade Header */}
               <div className="flex items-center gap-2">
                 <Zap className="h-4 w-4 text-primary" />
-                <span className="text-sm font-semibold">Quick Trade</span>
+                <span className="text-sm font-semibold">Buy Tickets</span>
               </div>
 
               {/* Awaiting Resolution State */}
@@ -564,18 +567,22 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
               {!isAwaitingResolution && (
               <div className="p-2.5 rounded-lg bg-background border border-border/50 space-y-1.5">
                 <div className="flex justify-between text-xs">
-                  <span className="text-muted-foreground">Shares</span>
-                  <span className="font-semibold">{selectedOutcome ? shares.toLocaleString() : "—"}</span>
+                  <span className="text-muted-foreground">Tickets</span>
+                  <span className="font-semibold">{selectedOutcome ? tickets.toLocaleString() : "—"}</span>
                 </div>
                 <div className="flex justify-between text-xs">
-                  <span className="text-muted-foreground">Avg price</span>
-                  <span className="font-semibold">{selectedOutcome ? `${selectedOutcome.price}¢` : "—"}</span>
+                  <span className="text-muted-foreground">Ticket price</span>
+                  <span className="font-semibold">{selectedOutcome ? `$${ticketPrice.toFixed(2)}` : "—"}</span>
+                </div>
+                <div className="flex justify-between text-xs">
+                  <span className="text-muted-foreground">Pot share</span>
+                  <span className="font-semibold">{selectedOutcome ? `${potShare.toFixed(1)}%` : "—"}</span>
                 </div>
                 <Separator className="my-1.5" />
                 <div className="flex justify-between text-xs">
-                  <span className="text-muted-foreground">Potential profit</span>
-                  <span className={`font-bold ${selectedOutcome && potentialProfit > 0 ? 'text-success' : ''}`}>
-                    {selectedOutcome ? `+$${potentialProfit.toFixed(2)}` : "—"}
+                  <span className="text-muted-foreground">Est. payout</span>
+                  <span className={`font-bold ${selectedOutcome && estPayout > amountNum ? 'text-success' : ''}`}>
+                    {selectedOutcome ? `$${estPayout.toFixed(2)}` : "—"}
                   </span>
                 </div>
               </div>
@@ -591,10 +598,10 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
                 disabled={!selectedOutcome || isSubmitting || amountNum < 1 || amountNum > 10000}
               >
                 {isSubmitting 
-                  ? "Placing order..." 
+                  ? "Buying..." 
                   : selectedOutcome 
-                    ? `Buy ${selectedOutcome.label} • $${amountNum.toFixed(2)}`
-                    : "Select outcome to trade"
+                    ? `Buy ${tickets} ${selectedOutcome.label} Tickets`
+                    : "Select outcome"
                 }
               </Button>
             </div>
