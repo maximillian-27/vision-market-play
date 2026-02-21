@@ -88,7 +88,7 @@ export const AdminUsers = () => {
         <Button variant="outline" size="sm" className="gap-2" onClick={() => downloadCSV(filteredUsers)}>
           <Download className="h-4 w-4" /> Export
         </Button>
-        <Button size="sm" className="gap-2"><UserPlus className="h-4 w-4" /> Add User</Button>
+        <Button size="sm" className="gap-2" onClick={() => toast("Add user form would open here")}><UserPlus className="h-4 w-4" /> Add User</Button>
       </div>
 
       {/* Desktop Table */}
@@ -130,10 +130,10 @@ export const AdminUsers = () => {
                         <Button variant="ghost" size="icon" className="h-8 w-8"><MoreHorizontal className="h-4 w-4" /></Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="bg-popover">
-                        <DropdownMenuItem className="gap-2"><Eye className="h-4 w-4" /> View Profile</DropdownMenuItem>
-                        <DropdownMenuItem className="gap-2"><Shield className="h-4 w-4" /> Review KYC</DropdownMenuItem>
-                        <DropdownMenuItem className="gap-2"><Mail className="h-4 w-4" /> Send Email</DropdownMenuItem>
-                        <DropdownMenuItem className="gap-2 text-destructive"><Ban className="h-4 w-4" /> Suspend</DropdownMenuItem>
+                        <DropdownMenuItem className="gap-2" onClick={() => toast(`Opening profile for ${user.name}`)}><Eye className="h-4 w-4" /> View Profile</DropdownMenuItem>
+                        <DropdownMenuItem className="gap-2" onClick={() => toast(`Opening KYC review for ${user.name}`)}><Shield className="h-4 w-4" /> Review KYC</DropdownMenuItem>
+                        <DropdownMenuItem className="gap-2" onClick={() => toast(`Opening email composer for ${user.email}`)}><Mail className="h-4 w-4" /> Send Email</DropdownMenuItem>
+                        <DropdownMenuItem className="gap-2 text-destructive" onClick={() => toast.success(`${user.name} has been suspended`)}><Ban className="h-4 w-4" /> Suspend</DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </td>
@@ -173,10 +173,10 @@ export const AdminUsers = () => {
                   <Button variant="ghost" size="icon" className="h-8 w-8"><MoreHorizontal className="h-4 w-4" /></Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="bg-popover">
-                  <DropdownMenuItem className="gap-2"><Eye className="h-4 w-4" /> View Profile</DropdownMenuItem>
-                  <DropdownMenuItem className="gap-2"><Shield className="h-4 w-4" /> Review KYC</DropdownMenuItem>
-                  <DropdownMenuItem className="gap-2"><Mail className="h-4 w-4" /> Send Email</DropdownMenuItem>
-                  <DropdownMenuItem className="gap-2 text-destructive"><Ban className="h-4 w-4" /> Suspend</DropdownMenuItem>
+                  <DropdownMenuItem className="gap-2" onClick={() => toast(`Opening profile for ${user.name}`)}><Eye className="h-4 w-4" /> View Profile</DropdownMenuItem>
+                  <DropdownMenuItem className="gap-2" onClick={() => toast(`Opening KYC review for ${user.name}`)}><Shield className="h-4 w-4" /> Review KYC</DropdownMenuItem>
+                  <DropdownMenuItem className="gap-2" onClick={() => toast(`Opening email composer for ${user.email}`)}><Mail className="h-4 w-4" /> Send Email</DropdownMenuItem>
+                  <DropdownMenuItem className="gap-2 text-destructive" onClick={() => toast.success(`${user.name} has been suspended`)}><Ban className="h-4 w-4" /> Suspend</DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>

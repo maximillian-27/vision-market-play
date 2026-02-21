@@ -191,7 +191,7 @@ export const AdminTransactions = () => {
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild><Button variant="ghost" size="icon" className="h-8 w-8"><MoreHorizontal className="h-4 w-4" /></Button></DropdownMenuTrigger>
                             <DropdownMenuContent align="end" className="bg-popover">
-                              <DropdownMenuItem className="gap-2"><Eye className="h-4 w-4" /> View Details</DropdownMenuItem>
+                              <DropdownMenuItem className="gap-2" onClick={() => toast(`Opening transaction ${txn.id}`)}><Eye className="h-4 w-4" /> View Details</DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>
                         </td>
@@ -234,7 +234,7 @@ export const AdminTransactions = () => {
                     <span className="text-muted-foreground">Transactions</span><span className="text-right font-medium">{psp.txnCount.toLocaleString()}</span>
                     <span className="text-muted-foreground">Volume</span><span className="text-right font-medium">${(psp.volume / 1000000).toFixed(1)}M</span>
                   </div>
-                  <Button variant="outline" size="sm" className="w-full mt-3">Configure</Button>
+                  <Button variant="outline" size="sm" className="w-full mt-3" onClick={() => toast(`Opening ${psp.name} configuration`)}>Configure</Button>
                 </CardContent>
               </Card>
             ))}

@@ -8,6 +8,7 @@ import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Search, MoreHorizontal, Eye, TrendingUp, Users, DollarSign, Link2, Copy, Plus, Handshake } from "lucide-react";
+import { toast } from "sonner";
 
 const partners = [
   { id: 1, name: "BettingInsider", type: "Media", status: "Active", referrals: 3420, volume: 890000, commission: 34500, rate: 20 },
@@ -84,7 +85,7 @@ export const AdminPartners = () => {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input placeholder="Search partners..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-9 h-9" />
             </div>
-            <Button size="sm" className="gap-2"><Plus className="h-4 w-4" /> Add Partner</Button>
+            <Button size="sm" className="gap-2" onClick={() => toast("Partner onboarding form would open here")}><Plus className="h-4 w-4" /> Add Partner</Button>
           </div>
           <Card className="border-border/40">
             <div className="overflow-x-auto">
@@ -117,7 +118,7 @@ export const AdminPartners = () => {
                             <Button variant="ghost" size="icon" className="h-8 w-8"><MoreHorizontal className="h-4 w-4" /></Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end" className="bg-popover">
-                            <DropdownMenuItem className="gap-2"><Eye className="h-4 w-4" /> View</DropdownMenuItem>
+                            <DropdownMenuItem className="gap-2" onClick={() => toast(`Opening partner: ${p.name}`)}><Eye className="h-4 w-4" /> View</DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </td>
@@ -153,7 +154,7 @@ export const AdminPartners = () => {
         <TabsContent value="links" className="space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-semibold">Partner Tracking Links</h3>
-            <Button size="sm" className="gap-2"><Plus className="h-4 w-4" /> Generate Link</Button>
+            <Button size="sm" className="gap-2" onClick={() => toast.success("New partner link generated")}><Plus className="h-4 w-4" /> Generate Link</Button>
           </div>
           <Card className="border-border/40">
             <div className="overflow-x-auto">
@@ -175,7 +176,7 @@ export const AdminPartners = () => {
                       <td className="p-4 text-sm">{(p.referrals * 3).toLocaleString()}</td>
                       <td className="p-4 text-sm">{p.referrals.toLocaleString()}</td>
                       <td className="p-4 text-right">
-                        <Button variant="ghost" size="icon" className="h-8 w-8"><Copy className="h-4 w-4" /></Button>
+                        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => { navigator.clipboard.writeText(`pollgy.com/?ref=${p.name.toLowerCase().replace(/\s/g, '')}`); toast.success("Link copied to clipboard"); }}><Copy className="h-4 w-4" /></Button>
                       </td>
                     </tr>
                   ))}

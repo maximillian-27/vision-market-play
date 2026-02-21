@@ -9,6 +9,7 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import { Search, Mail, Phone, Tag, Users, UserCheck, UserX, MessageSquare, Send, Zap, Bell, Smartphone } from "lucide-react";
+import { toast } from "sonner";
 
 const segments = [
   { id: 1, name: "High Value", count: 2340, description: "Portfolio > $10K", color: "bg-success/10 text-success" },
@@ -151,7 +152,7 @@ export const AdminCRM = () => {
                         <Badge variant="default" className="text-xs">{channel.status}</Badge>
                       </div>
                     </div>
-                    <Button variant="outline" size="sm">Configure</Button>
+                    <Button variant="outline" size="sm" onClick={() => toast(`Opening ${channel.name} configuration`)}>Configure</Button>
                   </div>
                   <div className="grid grid-cols-3 gap-4 text-center">
                     <div><p className="text-xs text-muted-foreground">Delivery</p><p className="text-lg font-bold">{channel.deliveryRate}%</p></div>
@@ -167,7 +168,7 @@ export const AdminCRM = () => {
         <TabsContent value="segments" className="space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-semibold">User Segments</h3>
-            <Button size="sm">Create Segment</Button>
+            <Button size="sm" onClick={() => toast("Segment creation form would open here")}>Create Segment</Button>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {segments.map((segment) => (
@@ -179,8 +180,8 @@ export const AdminCRM = () => {
                   </div>
                   <p className="text-sm text-muted-foreground mb-3">{segment.description}</p>
                   <div className="flex gap-2">
-                    <Button size="sm" variant="outline" className="gap-1"><Mail className="h-3 w-3" /> Email All</Button>
-                    <Button size="sm" variant="outline" className="gap-1"><Tag className="h-3 w-3" /> Edit</Button>
+                    <Button size="sm" variant="outline" className="gap-1" onClick={() => toast(`Sending email to ${segment.count.toLocaleString()} users in ${segment.name}`)}><Mail className="h-3 w-3" /> Email All</Button>
+                    <Button size="sm" variant="outline" className="gap-1" onClick={() => toast(`Editing segment: ${segment.name}`)}><Tag className="h-3 w-3" /> Edit</Button>
                   </div>
                 </CardContent>
               </Card>
@@ -191,7 +192,7 @@ export const AdminCRM = () => {
         <TabsContent value="campaigns" className="space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-semibold">Marketing Campaigns</h3>
-            <Button size="sm">New Campaign</Button>
+            <Button size="sm" onClick={() => toast("Campaign builder would open here")}>New Campaign</Button>
           </div>
           <Card className="border-border/40">
             <div className="overflow-x-auto">
@@ -218,7 +219,7 @@ export const AdminCRM = () => {
                       <td className="p-4 text-sm">{campaign.sent.toLocaleString()}</td>
                       <td className="p-4 text-sm">{campaign.opened.toLocaleString()}</td>
                       <td className="p-4 text-sm">{campaign.clicked.toLocaleString()}</td>
-                      <td className="p-4 text-right"><Button variant="ghost" size="sm">Manage</Button></td>
+                      <td className="p-4 text-right"><Button variant="ghost" size="sm" onClick={() => toast(`Managing campaign: ${campaign.name}`)}>Manage</Button></td>
                     </tr>
                   ))}
                 </tbody>
@@ -230,7 +231,7 @@ export const AdminCRM = () => {
         <TabsContent value="automations" className="space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-semibold">Automated Journeys</h3>
-            <Button size="sm">New Automation</Button>
+            <Button size="sm" onClick={() => toast("Automation builder would open here")}>New Automation</Button>
           </div>
           <Card className="border-border/40">
             <div className="overflow-x-auto">

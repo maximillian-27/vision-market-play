@@ -115,7 +115,7 @@ export const AdminBonusManagement = () => {
         <TabsContent value="promotions" className="space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-semibold">Active Promotions</h3>
-            <Button size="sm" className="gap-2"><Plus className="h-4 w-4" /> New Promotion</Button>
+            <Button size="sm" className="gap-2" onClick={() => toast("Promotion builder would open here")}><Plus className="h-4 w-4" /> New Promotion</Button>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Card className="border-border/40">

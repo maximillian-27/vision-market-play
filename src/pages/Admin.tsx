@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Settings } from "lucide-react";
+import { toast } from "sonner";
 import { AdminSidebar, MobileAdminSidebar } from "@/components/admin/AdminSidebar";
 import { AdminDashboard } from "@/components/admin/AdminDashboard";
 import { AdminUsers } from "@/components/admin/AdminUsers";
@@ -77,7 +78,7 @@ const Admin = () => {
                 <p className="text-xs text-muted-foreground">{currentSection.description}</p>
               </div>
             </div>
-            <Button variant="ghost" size="icon">
+            <Button variant="ghost" size="icon" onClick={() => toast("Platform settings would open here")}>
               <Settings className="h-4 w-4" />
             </Button>
           </div>
@@ -90,7 +91,7 @@ const Admin = () => {
               <h1 className="text-2xl font-bold">{currentSection.title}</h1>
               <p className="text-sm text-muted-foreground">{currentSection.description}</p>
             </div>
-            <Button variant="outline" size="sm" className="gap-2">
+            <Button variant="outline" size="sm" className="gap-2" onClick={() => toast("Platform settings would open here")}>
               <Settings className="h-4 w-4" />
               Settings
             </Button>
