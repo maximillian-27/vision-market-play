@@ -32,8 +32,8 @@ const dashboardStats = {
   totalUsers: 124500,
   usersGrowth: 12.3,
   activeUsers: 45200,
-  totalPot: 15600000,
-  potGrowth: 24.7,
+  totalVolume: 15600000,
+  volumeGrowth: 24.7,
   totalMarkets: 1247,
   pendingMarkets: 23,
   disputes: 8,
@@ -108,13 +108,13 @@ export const AdminDashboard = ({ onNavigate }: AdminDashboardProps) => {
           <CardContent className="p-4">
             <div className="flex items-center gap-2 text-muted-foreground text-sm mb-1">
               <DollarSign className="h-4 w-4" />
-              Total Pot Size
+              Total Volume
             </div>
             <div className="flex items-center gap-2">
-              <p className="text-2xl font-bold">${(dashboardStats.totalPot / 1000000).toFixed(1)}M</p>
+              <p className="text-2xl font-bold">${(dashboardStats.totalVolume / 1000000).toFixed(1)}M</p>
               <Badge className="text-xs bg-success/10 text-success border-0">
                 <ArrowUpRight className="h-3 w-3 mr-1" />
-                {dashboardStats.potGrowth}%
+                {dashboardStats.volumeGrowth}%
               </Badge>
             </div>
           </CardContent>

@@ -1,133 +1,114 @@
 
+# Pari-Mutuel Model UI Update
 
-# Pari-Mutuel Model UI/UX Update
+Updating all platform terminology and metrics from AMM (shares, order book, avg price) to dynamic pari-mutuel (tickets, pot, payout per ticket).
 
-Transitioning the entire platform from AMM terminology (shares, volume, order book) to a dynamic pari-mutuel model (tickets, pot, payout). The core concept: people buy tickets, the pot accumulates, winners split the pot.
-
-## Terminology Map
+## Terminology Changes
 
 | Old (AMM) | New (Pari-Mutuel) |
 |---|---|
 | Shares | Tickets |
-| Volume / Vol. | Pot / Pot Size |
+| Volume | Pot Size |
 | Traders | Players |
 | Quick Trade | Buy Tickets |
 | Place Order | Buy Tickets |
-| Avg. price / Avg | Ticket Price |
-| Potential profit / Profit | Est. Payout |
+| Avg. price | Ticket price |
+| Buy [outcome] | Buy [outcome] tickets |
+| X shares @ $Y | X tickets |
 | Trade History | Ticket History |
 | Total Trades | Total Tickets |
 | Positions | My Tickets |
-| Price (chart tooltip) | Ticket Price |
-| 68c (cents format) | $0.68 (dollar format) |
 
-## Calculation Logic Change
+## Key Concept Changes
 
-Current AMM logic:
-- `shares = Math.floor((amount * 100) / price)`
-- `potentialPayout = shares` (fixed $1/share)
-- `profit = payout - amount`
+- **Pot size** replaces volume as the primary market metric (the total pool people are competing for)
+- **Ticket price** is dynamic based on demand (replaces share price / cents)
+- **Payout** = your share of the pot if your outcome wins, not a fixed $1/share
+- Order summary shows "Tickets", "Ticket price", "Pot share" (your % of the pot), and "Est. payout" instead of shares/avg price/profit
 
-New pari-mutuel logic:
-- `ticketPrice = outcome.price / 100` (dynamic, e.g. 68% = $0.68)
-- `tickets = Math.floor(amount / ticketPrice)`
-- `totalTicketsForOutcome` = mock value (e.g. 15,000)
-- `totalPot` = mock value from market data
-- `potShare = (tickets / (totalTicketsForOutcome + tickets)) * 100`
-- `estPayout = (tickets / (totalTicketsForOutcome + tickets)) * totalPot`
-- Order summary shows: Tickets, Ticket Price, Pot Share %, Est. Payout
-
-## Files to Modify (13 files)
+## Files to Modify
 
 ### 1. `src/components/MarketGridCard.tsx`
-- Line 37: `volume` prop stays in interface but display changes
-- Line 291: `{volume} Vol.` becomes `{volume} Pot`
-- Tooltip text updates if any
+- Footer: "Vol." becomes "Pot" (e.g., "$2.4M Pot" instead of "$2.4M Vol.")
+- Tooltip and labels throughout
 
 ### 2. `src/components/MarketCard.tsx`
-- Line 93-94: TrendingUp icon + `{volume}` label -- add "Pot" label after the value
-- Line 116: `{outcome.price}c` becomes `${(outcome.price/100).toFixed(2)}` format
+- Stats row: Volume icon/label becomes Pot icon/label
 
 ### 3. `src/components/HottestMarkets.tsx`
-- Line 13: `volume` key in mock data -- rename display
-- Line 59: `{market.volume}` display -- append "Pot" label
-- Line 61: `Yes {market.yesPrice}c` becomes `Yes ${(market.yesPrice/100).toFixed(2)}`
+- Change "volume" display to "pot" in trending sidebar
+- Change "Yes 68c" to "Yes $X" ticket price format
 
 ### 4. `src/pages/MarketDetail.tsx`
-- Lines 60, 63-64: Mock data keys `volume` renamed to `pot`, `traders` to `players`, `volume24h` to `tickets24h`
-- Lines 202-206: Calculation logic updated to pari-mutuel
-- Line 245: Toast `shares` to `tickets`
-- Lines 342-356: Stats row -- "volume" to "pot", "traders" to "players"
-- Lines 404-417: Key stats grid -- "Volume" to "Pot Size", "Traders" to "Players", "24h Vol" to "24h Tickets"
-- Line 394: Chart tooltip "Price" to "Ticket Price"
-- Line 551: "Quick Trade" to "Buy Tickets"
-- Lines 701-703: Buy button text `Buy $X` to `Buy X Tickets`
-- Lines 708-726: Order summary "Shares/Avg/Profit" to "Tickets/Price/Est. Payout" with pot share %
+- Stats row: "volume" to "pot", "traders" to "players", "24h Vol" to "24h Tickets"
+- Chart tooltip: "Price" to "Ticket Price"
+- Quick Trade header: "Quick Trade" to "Buy Tickets"
+- Order summary: "Shares" to "Tickets", "Avg" to "Price", "Profit" to "Est. Payout"
+- Buy button: "Buy $X" to "Buy X Tickets"
+- Toast: "bought X shares" to "bought X tickets"
+- Mock data: rename `traders` to `players`, `volume` to `pot`, `volume24h` to `tickets24h`
 
 ### 5. `src/components/MarketDialog.tsx`
-- Lines 143-147: Calculation logic updated
-- Line 167: Toast `shares` to `tickets`
-- Lines 252-265: Stats "volume" to "pot", "traders" to "players"
-- Line 304: Chart tooltip "Price" to "Ticket Price"
-- Line 412: "Quick Trade" to "Buy Tickets"
-- Lines 565-581: Order summary -- "Shares" to "Tickets", "Avg price" to "Ticket price", "Potential profit" to "Est. payout", add "Pot share" row
-- Lines 593-598: Buy button text update
+- Left panel stats: "volume" to "pot", "traders" to "players"
+- Right panel: "Quick Trade" to "Buy Tickets"
+- Order summary: "Shares" to "Tickets", "Avg price" to "Ticket price", "Potential profit" to "Est. payout"
+- Buy button text update
+- Toast messages update
 
 ### 6. `src/components/QuickTradeSheet.tsx`
-- Lines 39-42: Calculation logic updated to pari-mutuel
-- Line 69: Toast `shares` to `tickets`
-- Line 87: "Quick Trade" to "Buy Tickets"
-- Lines 167-181: Order summary -- "Shares" to "Tickets", "Avg" to "Price", "Profit" to "Est. Payout"
+- Header: "Quick Trade" to "Buy Tickets"
+- Order summary: "Shares" to "Tickets", "Avg" to "Price", "Profit" to "Est. Payout"
+- Toast: shares to tickets
 
 ### 7. `src/components/BuyDialog.tsx`
-- Lines 43-45: Calculation logic updated
-- Line 55: Toast `shares` to `tickets`
-- Lines 108-125: Order summary -- "Shares" to "Tickets", "Avg. price" to "Ticket price", "Potential payout" to "Est. payout", "Potential profit" to "Est. profit"
-- Line 136, 150: Button text and dialog title "Place Order" to "Buy Tickets"
-- Line 145: `DrawerTitle` "Place Order" to "Buy Tickets"
+- Title: "Place Order" to "Buy Tickets"
+- Summary: "Shares" to "Tickets", "Avg. price" to "Ticket price"
+- "Potential payout" to "Est. payout", "Potential profit" to "Est. profit"
+- Button and toast text updates
 
 ### 8. `src/components/ResolvedMarketDialog.tsx`
-- Lines 228-241: Stats -- "volume" to "pot", "traders" to "players"
-- Lines 438-458: "Your Position" to "Your Tickets", "Shares: 150 Yes" to "Tickets: 150 Yes"
-- Mock `userPosition` -- `shares` key renamed to `tickets`
+- Stats: "volume" to "pot", "traders" to "players"
+- "Your Position" becomes "Your Tickets"
+- "Shares: 150 Yes" becomes "Tickets: 150 Yes"
 
 ### 9. `src/pages/Portfolio.tsx`
-- Lines 53-58: Position mock data -- `shares` key to `tickets`
-- Lines 60-66: Trade history mock data -- `shares` key to `tickets`
-- Line 180: "Total Trades" to "Total Tickets"
-- Line 217: "Positions" tab label to "My Tickets"
-- Line 266: `{position.shares} @ ${position.avgPrice}` to `{position.tickets} @ ${position.avgPrice}`
-- Line 287: `{position.shares} shares @ ${position.avgPrice}` to `{position.tickets} tickets`
-- Line 314: "Trade History" to "Ticket History"
-- Line 341-342: Trade card labels
-- Line 359: "Shares" table header to "Tickets"
+- Tab: "Positions" to "My Tickets"
+- "Active (4)" header update
+- Position cards: "shares" to "tickets", "shares @ $X" to "tickets @ $X"
+- Trade history: "shares" column to "tickets", trade type labels
+- Stats: "Total Trades" to "Total Tickets"
+- Mock data labels update
 
 ### 10. `src/pages/Feed.tsx`
-- Line 29: `volume` prop stays in interface, display label changes
-- Sort option "volume" label (if present via FeedFilters)
+- Mock data: `volume` key stays but display label becomes "Pot"
+- Sort option "volume" label could become "Pot Size"
 
 ### 11. `src/components/FeedFilters.tsx`
-- Line 85: `SelectItem value="volume"` label "Highest Volume" to "Biggest Pot"
+- If "Volume" sort option exists, rename to "Pot Size"
 
 ### 12. `src/pages/Profile.tsx`
-- Line 22, 29: `volume` in creator data display -- label to "Pot Generated"
-- Any "Total Trades" references to "Total Tickets"
+- Creator stats: "volume" display to "pot"
+- "Total Trades" to "Total Tickets"
+- Portfolio value labels
 
 ### 13. Admin components (light touch)
-- `src/components/admin/AdminMarkets.tsx`:
-  - Line 19-27: Mock data `trades` to `tickets`
-  - Lines 94-95: "Volume" header to "Pot Size", "Trades" to "Tickets"
-  - Line 108-109: Display values
-  - Line 190: Category volume label to "Pot Size"
-- `src/components/admin/AdminDashboard.tsx`:
-  - Line 35-36: `totalVolume` to `totalPot`, `volumeGrowth` to `potGrowth`
-  - Line 111: "Total Volume" to "Total Pot Size"
+- `AdminMarkets.tsx`: "Volume" column header to "Pot Size", "Trades" to "Tickets"
+- `AdminDashboard.tsx`: If volume/trades metrics exist, update labels
+
+## Calculation Logic Changes
+
+The pari-mutuel math is slightly different. Currently:
+- `shares = (amount * 100) / price` (AMM: fixed $1 payout per share)
+
+New model:
+- `tickets = Math.floor(amount / ticketPrice)` where ticketPrice is dynamic
+- `estPayout = (tickets / totalTicketsForOutcome) * totalPot`
+- Display "Est. payout" and "Pot share" percentage
+
+This will be updated in MarketDetail, MarketDialog, QuickTradeSheet, and BuyDialog.
 
 ## What Stays the Same
-- Overall layout, card designs, color scheme, navigation
-- Yes/No button styling and interaction patterns
-- Status badges (open, closing, awaiting resolution, resolved)
-- Chart visuals (just tooltip label changes)
-- Component structure and routing
-- All responsive/mobile patterns
-
+- Overall layout and visual design (no structural changes)
+- Yes/No buttons, color scheme, card layouts
+- Navigation, routing, and component structure
+- All status badges (open, closing, awaiting resolution, resolved)

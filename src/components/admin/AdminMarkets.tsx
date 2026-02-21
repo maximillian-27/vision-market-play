@@ -16,14 +16,14 @@ import { Search, MoreHorizontal, Eye, Pause, CheckCircle, XCircle, TrendingUp, C
 import { toast } from "sonner";
 
 const markets = [
-  { id: 1, title: "Will Bitcoin reach $100K by end of 2024?", creator: "CryptoGuru", status: "Active", volume: 45000, tickets: 1234, endDate: "2024-12-31" },
-  { id: 2, title: "Will AI replace most software jobs by 2030?", creator: "TechOracle", status: "Active", volume: 32000, tickets: 890, endDate: "2030-01-01" },
-  { id: 3, title: "Will SpaceX land on Mars by 2026?", creator: "SpaceWatch", status: "Active", volume: 28000, tickets: 756, endDate: "2026-12-31" },
-  { id: 4, title: "US Election 2024 Winner", creator: "PoliticalPredict", status: "Resolved", volume: 125000, tickets: 5600, endDate: "2024-11-05" },
-  { id: 5, title: "Super Bowl 2024 Champion", creator: "SportsAnalyst", status: "Resolved", volume: 89000, tickets: 3400, endDate: "2024-02-11" },
-  { id: 6, title: "Will Tesla stock hit $300?", creator: "MarketMaven", status: "Paused", volume: 15000, tickets: 450, endDate: "2024-06-30" },
-  { id: 7, title: "Will Ethereum flip Bitcoin?", creator: "CryptoGuru", status: "Active", volume: 22000, tickets: 678, endDate: "2025-12-31" },
-  { id: 8, title: "Next FIFA World Cup host?", creator: "SportsAnalyst", status: "Active", volume: 18000, tickets: 520, endDate: "2026-06-01" },
+  { id: 1, title: "Will Bitcoin reach $100K by end of 2024?", creator: "CryptoGuru", status: "Active", volume: 45000, trades: 1234, endDate: "2024-12-31" },
+  { id: 2, title: "Will AI replace most software jobs by 2030?", creator: "TechOracle", status: "Active", volume: 32000, trades: 890, endDate: "2030-01-01" },
+  { id: 3, title: "Will SpaceX land on Mars by 2026?", creator: "SpaceWatch", status: "Active", volume: 28000, trades: 756, endDate: "2026-12-31" },
+  { id: 4, title: "US Election 2024 Winner", creator: "PoliticalPredict", status: "Resolved", volume: 125000, trades: 5600, endDate: "2024-11-05" },
+  { id: 5, title: "Super Bowl 2024 Champion", creator: "SportsAnalyst", status: "Resolved", volume: 89000, trades: 3400, endDate: "2024-02-11" },
+  { id: 6, title: "Will Tesla stock hit $300?", creator: "MarketMaven", status: "Paused", volume: 15000, trades: 450, endDate: "2024-06-30" },
+  { id: 7, title: "Will Ethereum flip Bitcoin?", creator: "CryptoGuru", status: "Active", volume: 22000, trades: 678, endDate: "2025-12-31" },
+  { id: 8, title: "Next FIFA World Cup host?", creator: "SportsAnalyst", status: "Active", volume: 18000, trades: 520, endDate: "2026-06-01" },
 ];
 
 const pendingMarkets = [
@@ -91,8 +91,8 @@ export const AdminMarkets = () => {
                     <th className="p-4 font-medium">Market</th>
                     <th className="p-4 font-medium">Creator</th>
                     <th className="p-4 font-medium">Status</th>
-                    <th className="p-4 font-medium">Pot Size</th>
-                    <th className="p-4 font-medium">Tickets</th>
+                    <th className="p-4 font-medium">Volume</th>
+                    <th className="p-4 font-medium">Trades</th>
                     <th className="p-4 font-medium">End Date</th>
                     <th className="p-4 font-medium text-right">Actions</th>
                   </tr>
@@ -106,7 +106,7 @@ export const AdminMarkets = () => {
                         <Badge variant={market.status === "Active" ? "default" : market.status === "Resolved" ? "secondary" : "outline"} className="text-xs">{market.status}</Badge>
                       </td>
                       <td className="p-4 text-sm font-medium">${market.volume.toLocaleString()}</td>
-                      <td className="p-4 text-sm">{market.tickets.toLocaleString()}</td>
+                      <td className="p-4 text-sm">{market.trades.toLocaleString()}</td>
                       <td className="p-4 text-sm">{market.endDate}</td>
                       <td className="p-4 text-right">
                         <DropdownMenu>
@@ -187,7 +187,7 @@ export const AdminMarkets = () => {
                   </div>
                   <div className="grid grid-cols-2 gap-y-1 text-sm">
                     <span className="text-muted-foreground">Markets</span><span className="text-right font-medium">{cat.markets}</span>
-                    <span className="text-muted-foreground">Pot Size</span><span className="text-right font-medium">${(cat.volume / 1000000).toFixed(1)}M</span>
+                    <span className="text-muted-foreground">Volume</span><span className="text-right font-medium">${(cat.volume / 1000000).toFixed(1)}M</span>
                   </div>
                 </CardContent>
               </Card>

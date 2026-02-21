@@ -51,18 +51,18 @@ const statsByTimeline = {
 };
 
 const positions = [
-  { id: 1, market: "Will Bitcoin reach $100k by 2025?", position: "Yes", tickets: 150, avgPrice: 0.45, currentPrice: 0.62, pnl: 25.5, pnlPercent: 37.8 },
-  { id: 2, market: "Fed rate cut in March 2025?", position: "No", tickets: 200, avgPrice: 0.38, currentPrice: 0.41, pnl: 6, pnlPercent: 7.9 },
-  { id: 3, market: "Tesla Q4 earnings beat?", position: "Yes", tickets: 100, avgPrice: 0.55, currentPrice: 0.48, pnl: -7, pnlPercent: -12.7 },
-  { id: 4, market: "NBA Championship - Lakers?", position: "Yes", tickets: 75, avgPrice: 0.22, currentPrice: 0.28, pnl: 4.5, pnlPercent: 27.3 },
+  { id: 1, market: "Will Bitcoin reach $100k by 2025?", position: "Yes", shares: 150, avgPrice: 0.45, currentPrice: 0.62, pnl: 25.5, pnlPercent: 37.8 },
+  { id: 2, market: "Fed rate cut in March 2025?", position: "No", shares: 200, avgPrice: 0.38, currentPrice: 0.41, pnl: 6, pnlPercent: 7.9 },
+  { id: 3, market: "Tesla Q4 earnings beat?", position: "Yes", shares: 100, avgPrice: 0.55, currentPrice: 0.48, pnl: -7, pnlPercent: -12.7 },
+  { id: 4, market: "NBA Championship - Lakers?", position: "Yes", shares: 75, avgPrice: 0.22, currentPrice: 0.28, pnl: 4.5, pnlPercent: 27.3 },
 ];
 
 const tradeHistory = [
-  { id: 1, date: "2024-01-15", market: "Bitcoin $100k", type: "Buy", position: "Yes", tickets: 50, price: 0.42, total: 21, pnl: null },
-  { id: 2, date: "2024-01-14", market: "Fed rate cut", type: "Sell", position: "Yes", tickets: 100, price: 0.58, total: 58, pnl: 12 },
-  { id: 3, date: "2024-01-13", market: "Tesla earnings", type: "Buy", position: "Yes", tickets: 100, price: 0.55, total: 55, pnl: null },
-  { id: 4, date: "2024-01-12", market: "Bitcoin $100k", type: "Sell", position: "No", tickets: 80, price: 0.35, total: 28, pnl: -8 },
-  { id: 5, date: "2024-01-10", market: "NBA Championship", type: "Buy", position: "Yes", tickets: 75, price: 0.22, total: 16.5, pnl: null },
+  { id: 1, date: "2024-01-15", market: "Bitcoin $100k", type: "Buy", position: "Yes", shares: 50, price: 0.42, total: 21, pnl: null },
+  { id: 2, date: "2024-01-14", market: "Fed rate cut", type: "Sell", position: "Yes", shares: 100, price: 0.58, total: 58, pnl: 12 },
+  { id: 3, date: "2024-01-13", market: "Tesla earnings", type: "Buy", position: "Yes", shares: 100, price: 0.55, total: 55, pnl: null },
+  { id: 4, date: "2024-01-12", market: "Bitcoin $100k", type: "Sell", position: "No", shares: 80, price: 0.35, total: 28, pnl: -8 },
+  { id: 5, date: "2024-01-10", market: "NBA Championship", type: "Buy", position: "Yes", shares: 75, price: 0.22, total: 16.5, pnl: null },
 ];
 
 const transactions = [
@@ -177,7 +177,7 @@ const Portfolio = () => {
                       <p className="text-sm sm:text-lg font-semibold text-success">+24.3%</p>
                     </div>
                     <div>
-                      <p className="text-[10px] sm:text-xs text-muted-foreground mb-0.5">Total Tickets</p>
+                      <p className="text-[10px] sm:text-xs text-muted-foreground mb-0.5">Total Trades</p>
                       <p className="text-sm sm:text-lg font-semibold">127</p>
                     </div>
                     <div>
@@ -215,7 +215,7 @@ const Portfolio = () => {
         <Tabs defaultValue="positions" className="space-y-4 sm:space-y-6">
           <TabsList className="bg-muted/50 p-1 w-full grid grid-cols-3">
             <TabsTrigger value="positions" className="data-[state=active]:bg-background text-xs sm:text-sm">
-              My Tickets
+              Positions
             </TabsTrigger>
             <TabsTrigger value="history" className="data-[state=active]:bg-background text-xs sm:text-sm">
               History
@@ -263,7 +263,7 @@ const Portfolio = () => {
                           >
                             {position.position}
                           </Badge>
-                          <span className="text-[11px] text-muted-foreground">{position.tickets} tickets @ ${position.avgPrice}</span>
+                          <span className="text-[11px] text-muted-foreground">{position.shares} @ ${position.avgPrice}</span>
                         </div>
                         <div className={`flex items-center gap-1 ${position.pnl >= 0 ? 'text-success' : 'text-destructive'}`}>
                           <span className="text-sm font-bold">
@@ -284,7 +284,7 @@ const Portfolio = () => {
                           <Badge variant={position.position === "Yes" ? "default" : "secondary"} className="text-xs">
                             {position.position}
                           </Badge>
-                          <span>{position.tickets} tickets @ ${position.avgPrice}</span>
+                          <span>{position.shares} shares @ ${position.avgPrice}</span>
                           <span className="text-muted-foreground/60">→</span>
                           <span>Now ${position.currentPrice}</span>
                         </div>
@@ -311,7 +311,7 @@ const Portfolio = () => {
           {/* Trade History */}
           <TabsContent value="history" className="space-y-3 sm:space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm sm:text-lg font-semibold">Ticket History</h3>
+              <h3 className="text-sm sm:text-lg font-semibold">Trade History</h3>
               <Button variant="outline" size="sm" className="gap-1.5 h-7 sm:h-8 text-[10px] sm:text-xs">
                 <Filter className="h-3 w-3 sm:h-4 sm:w-4" />
                 Filter
@@ -339,7 +339,7 @@ const Portfolio = () => {
                       </Badge>
                       <span>{trade.position}</span>
                       <span>•</span>
-                      <span>{trade.tickets} @ ${trade.price}</span>
+                      <span>{trade.shares} @ ${trade.price}</span>
                     </div>
                   </div>
                 );
@@ -356,7 +356,7 @@ const Portfolio = () => {
                       <th className="p-4 font-medium">Market</th>
                       <th className="p-4 font-medium">Type</th>
                       <th className="p-4 font-medium">Position</th>
-                      <th className="p-4 font-medium">Tickets</th>
+                      <th className="p-4 font-medium">Shares</th>
                       <th className="p-4 font-medium">Price</th>
                       <th className="p-4 font-medium text-right">Total</th>
                     </tr>
@@ -374,7 +374,7 @@ const Portfolio = () => {
                             </Badge>
                           </td>
                           <td className="p-4 text-sm">{trade.position}</td>
-                          <td className="p-4 text-sm">{trade.tickets}</td>
+                          <td className="p-4 text-sm">{trade.shares}</td>
                           <td className="p-4 text-sm">${trade.price}</td>
                           <td className="p-4 text-right">
                             <span className={`text-sm font-semibold ${isSell ? 'text-success' : 'text-destructive'}`}>
