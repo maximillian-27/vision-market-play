@@ -108,7 +108,7 @@ export const AdminDashboard = ({ onNavigate }: AdminDashboardProps) => {
           <CardContent className="p-4">
             <div className="flex items-center gap-2 text-muted-foreground text-sm mb-1">
               <DollarSign className="h-4 w-4" />
-              Total Pot Size
+              Total Volume
             </div>
             <div className="flex items-center gap-2">
               <p className="text-2xl font-bold">${(dashboardStats.totalVolume / 1000000).toFixed(1)}M</p>

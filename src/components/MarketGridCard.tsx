@@ -34,7 +34,7 @@ interface MarketGridCardProps {
   outcomes?: Outcome[];
   yesPrice?: number;
   noPrice?: number;
-  pot: string;
+  volume: string;
   endsIn: string;
   status?: MarketStatus;
   resolution?: string;
@@ -51,7 +51,7 @@ export function MarketGridCard({
   outcomes, 
   yesPrice, 
   noPrice, 
-  pot, 
+  volume, 
   endsIn,
   status = "open",
   resolution,
@@ -140,7 +140,7 @@ export function MarketGridCard({
     image,
     creator,
     outcomes: displayOutcomes,
-    volume: pot,
+    volume,
     endsIn,
     status,
     resolutionDate,
@@ -288,7 +288,7 @@ export function MarketGridCard({
           
           {/* Stats footer */}
           <div className="flex items-center gap-3 text-[10px] text-muted-foreground mt-2 pt-2 border-t border-border">
-            <span className="font-medium">{pot} Pot</span>
+            <span className="font-medium">{volume} Vol.</span>
             {getStatusBadge() ? (
               getStatusBadge()
             ) : (
@@ -465,7 +465,7 @@ export function MarketGridCard({
           <div className="flex items-center justify-between px-3 py-2 border-t border-border text-[11px] text-muted-foreground">
             <span className="flex items-center gap-1 font-medium">
               <TrendingUp className="h-3 w-3" />
-              {pot} Pot
+              {volume}
             </span>
             <span className="flex items-center gap-1">
               <Clock className="h-3 w-3" />
