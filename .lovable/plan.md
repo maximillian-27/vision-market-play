@@ -1,107 +1,116 @@
 
 
-# Creator Management & Analytics Overhaul
+# Markets Page - Pari-Mutuel Gambling Overhaul
 
-Creators are your revenue engine -- they onboard users who generate trading fees, and you share revenue with them. The current Creators section has 4 basic KPI cards, a simple table, and static reporting cards. It needs serious tooling for managing, analyzing, and optimizing creator performance.
+Updating all market-facing components to use correct gambling terminology, highlight the Pot as the hero metric, and simplify the UX for a prediction market gambling experience.
 
-## Current State
+## Problem Summary
 
-- **Overview tab**: 4 generic KPI cards (Active Creators, Pending, Total Volume, Commission Paid)
-- **Creators tab**: Basic table with name, status, markets, volume, followers, rating
-- **Reporting tab**: Static cards per creator showing 4 metrics each
-- **Links tab**: Tracking links table
+Every market component still uses stock-trading language: "Volume", "Shares", "Traders", "Avg price", "Profit". The Pot (the prize pool users are competing for) is buried as a small stat instead of being the hero element. Pricing shows "cents" (68c) instead of contextualizing ticket prices within the pari-mutuel model.
 
-Missing entirely: revenue attribution, lifecycle management, performance trends, cohort analysis, tier progression, and payout tracking.
+## Terminology Map (applied everywhere)
 
-## New Tab Structure
+| Old Term | New Term |
+|----------|----------|
+| Volume / Vol. | Pot / Pot Size |
+| Shares | Tickets |
+| Traders | Players |
+| Avg price / Share Price | Ticket Price |
+| Profit / Potential Profit | Est. Payout |
+| "Buy" button text | "Buy Tickets" |
 
-Reorganize from 4 tabs to 5 focused tabs:
+## Changes by File
 
-1. **Dashboard** -- At-a-glance KPIs + revenue attribution chart + top performers leaderboard
-2. **Creators** -- Enhanced management table with tier, rev share %, lifetime revenue, status actions
-3. **Performance** -- Creator-level analytics with charts: revenue over time, conversion rates, retention of referred users
-4. **Payouts** -- Payout history, pending payouts, payout schedule, total cost of creator program
-5. **Links & Codes** -- Existing tracking links (keep as-is, already good)
+### 1. MarketGridCard.tsx -- Highlight Pot as hero metric
 
-## Detailed Changes
+- **Footer stats**: Change `{volume} Vol.` to a highlighted pot display: bold green text showing the pot size (e.g., "$2.4M Pot") so users immediately see the prize
+- Desktop layout: add pot size next to the title percentage so the prize is always visible
+- No structural changes, just label swaps and styling the pot prominently
 
-### Tab 1: Dashboard (replaces Overview)
+### 2. MarketCard.tsx -- Pot + Players labels
 
-**8 KPI cards** in a 4x2 grid:
-- Active Creators | Pending Applications
-- Total Pot Generated | Platform Revenue from Creators
-- Avg Revenue per Creator | Creator Retention Rate (%)
-- Total Commissions Paid (MTD) | ROI (revenue vs commission cost)
+- Stats row (line 92-99): Change `TrendingUp` icon + `{volume}` to a highlighted "Pot" label with the amount styled in primary/green
+- Change `Clock` label from just `{endsIn}` -- keep as-is (time is fine)
+- Outcome buttons: Change `{outcome.price}c` to `{outcome.price}%` for binary cards (percentages, not cents -- the price IS the percentage in pari-mutuel)
 
-**Revenue Attribution Chart** (AreaChart):
-- Shows weekly creator-driven revenue vs organic revenue over 8 weeks
-- Makes it clear how much of the platform revenue comes from creator channels
+### 3. MarketDetail.tsx -- Full terminology overhaul
 
-**Top 5 Creators Leaderboard** (compact table):
-- Rank, Name, Tier badge, Pot Generated, Revenue Earned, Players Referred
-- Quick visual of who's driving the most value
+**Stats row (lines 342-356)**:
+- "volume" label becomes "Pot Size" with highlighted styling
+- "traders" becomes "Players"
+- Keep Clock/endDate as-is
 
-### Tab 2: Creators (enhanced management)
+**Key Stats Grid (lines 404-417)**:
+- "Volume" becomes "Pot Size"
+- "Traders" becomes "Players"
+- "24h Vol" becomes "24h Tickets"
 
-Add columns to the existing table:
-- **Tier** (Bronze/Silver/Gold/Platinum/Diamond badge)
-- **Rev Share %** (their commission rate)
-- **Lifetime Revenue** (total revenue they've generated for the platform)
-- **Players Referred** (total users they brought in)
-- **Last Active** (when they last created a market or were active)
+**Chart tooltip (line 394)**: Change `"Price"` formatter to `"Probability"`
 
-Add dropdown actions:
-- View Profile, Edit Commission, Suspend/Activate, Send Message
+**Quick Trade panel (lines 544-730)**:
+- "Quick Trade" header stays (it's clear)
+- "Shares" becomes "Tickets"
+- "Avg" becomes "Ticket Price"
+- "Profit" becomes "Est. Payout"
+- Toast message (line 245): "shares" to "tickets"
 
-Add filter chips at the top: All, Active, Pending, Suspended + tier filter
+### 4. MarketDialog.tsx -- Same terminology fixes
 
-### Tab 3: Performance (new - analytics/BI for creators)
+**Stats section (lines 251-265)**:
+- "volume" becomes "Pot Size"
+- "traders" becomes "Players"
 
-**Creator Revenue Over Time** (LineChart):
-- Monthly revenue generated by top 5 creators over 6 months
-- Each creator is a separate line
+**Chart tooltip**: "Price" becomes "Probability"
 
-**Creator Conversion Funnel**:
-- Referred Visitors -> Signups -> Depositors -> Active Players
-- Shows how well creators convert their audience
+**Trade panel (lines 406+)**:
+- "Shares" becomes "Tickets"
+- "Avg" becomes "Ticket Price"
+- "Profit" becomes "Est. Payout"
+- Toast message: "shares" to "tickets"
 
-**Key Performance Metrics** (3 cards):
-- Best Converter: creator with highest visitor-to-depositor rate
-- Highest ARPU: creator whose referred users spend the most
-- Fastest Growing: creator with highest month-over-month growth
+### 5. QuickTradeSheet.tsx -- Label swaps
 
-**Referred User Retention** (BarChart):
-- 30/60/90 day retention rates of users referred by creators vs organic users
-- Critical for understanding creator quality
+- "Shares" becomes "Tickets"
+- "Avg" becomes "Ticket Price"
+- "Profit" becomes "Est. Payout"
+- `{outcome.price}%` display -- already correct, keep
+- Toast message: "shares" to "tickets"
 
-### Tab 4: Payouts (new - financial management)
+### 6. BuyDialog.tsx -- Label swaps
 
-**Summary cards** (4 cards):
-- Next Payout Date (Friday) | Pending Amount | MTD Paid | YTD Paid
+- "Shares" becomes "Tickets"
+- "Avg. price" becomes "Ticket Price"
+- "Potential payout" becomes "Max Payout"
+- "Potential profit" becomes "Est. Payout"
+- Toast message: "shares" to "tickets"
 
-**Payout History Table**:
-- Date, Creator, Amount, Status (Paid/Pending/Processing), Method
-- With search and status filter
+### 7. HottestMarkets.tsx -- Pot highlight
 
-**Payout Schedule** info card:
-- "Payouts processed every Friday" with next date
-- Minimum payout threshold
-- Payment methods supported
+- Change `{market.volume}` label to show as "Pot" with emphasized styling
+- Change `Yes {market.yesPrice}c` to `{market.yesPrice}%` (probability, not cents)
 
-### Tab 5: Links & Codes (existing, kept as-is)
+### 8. Feed.tsx -- Sort label
 
-No changes needed -- already functional with copy buttons and generation.
+- The sort option "volume" in FeedFilters should display as "Pot Size" (need to check FeedFilters component -- the sort value key stays "volume" internally but the display label changes)
+
+## Pot Highlighting Strategy
+
+Across all cards, the Pot size gets special treatment:
+- Styled with `text-primary font-bold` (green, bold)
+- Prefixed with a small trophy or dollar icon
+- Positioned prominently (not buried in small muted text)
+
+This makes the prize pool the first thing users notice, reinforcing the gambling feel.
+
+## What Stays the Same
+
+- All layout structures, card designs, responsive patterns
+- All mock data values (just label changes)
+- Chart components and their data
+- All button behaviors and navigation
+- Status badges and lifecycle states
 
 ## Technical Details
 
-### File: src/components/admin/AdminCreators.tsx
-
-- Expand the mock data arrays with new fields (tier, revShare, lifetimeRevenue, playersReferred, lastActive)
-- Add new mock data arrays for: revenue attribution chart, payout history, creator monthly revenue
-- Replace the 4-tab structure with 5 tabs: Dashboard, Creators, Performance, Payouts, Links
-- Add recharts imports (LineChart, AreaChart, BarChart, etc.) following the same pattern used in AdminAnalytics.tsx
-- Add filter state for creator status and tier in the Creators tab
-- Use the same tooltip/tick styling constants from AdminAnalytics for visual consistency
-- All new buttons (Edit Commission, Send Message, etc.) get toast handlers for interactivity
-- Total estimated addition: ~350 lines of new content, replacing ~100 lines of existing overview/reporting tabs
+All changes are simple string replacements and minor className adjustments. No new components, no structural refactoring. Approximately 40-50 label changes across 8 files, plus adding `font-bold text-primary` styling to pot displays.
 

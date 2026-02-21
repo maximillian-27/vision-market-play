@@ -71,7 +71,7 @@ export function QuickTradeSheet({ open, onOpenChange, market }: QuickTradeSheetP
     setTimeout(() => {
       toast({
         title: "Order placed!",
-        description: `You bought ${shares} tickets for "${selectedOutcome.label}" for $${amountNum.toFixed(2)}`,
+        description: `You bought ${shares} shares of "${selectedOutcome.label}" for $${amountNum.toFixed(2)}`,
       });
       setIsSubmitting(false);
       setAmount("10");
@@ -208,17 +208,17 @@ export function QuickTradeSheet({ open, onOpenChange, market }: QuickTradeSheetP
           <div className="flex items-center justify-between text-sm bg-muted/30 rounded-lg px-3 py-2.5">
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-1.5">
-                <span className="text-muted-foreground">Tickets</span>
+                <span className="text-muted-foreground">Shares</span>
                 <span className="font-semibold">{selectedOutcome ? shares : '-'}</span>
               </div>
               <div className="w-px h-4 bg-border" />
               <div className="flex items-center gap-1.5">
-                <span className="text-muted-foreground">Ticket Price</span>
+                <span className="text-muted-foreground">Avg</span>
                 <span className="font-semibold">{selectedOutcome ? `${selectedOutcome.price}¢` : '-'}</span>
               </div>
             </div>
             <div className="flex items-center gap-1.5">
-              <span className="text-muted-foreground">Est. Payout</span>
+              <span className="text-muted-foreground">Profit</span>
               <span className={`font-semibold ${selectedOutcome && potentialProfit > 0 ? 'text-success' : ''}`}>
                 {selectedOutcome ? `+$${potentialProfit.toFixed(2)}` : '-'}
               </span>

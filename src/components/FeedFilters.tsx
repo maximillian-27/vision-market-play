@@ -82,7 +82,7 @@ export function FeedFilters({ filters, onFiltersChange }: FeedFiltersProps) {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="trending">Trending</SelectItem>
-                  <SelectItem value="volume">Biggest Pot</SelectItem>
+                  <SelectItem value="volume">Highest Volume</SelectItem>
                   <SelectItem value="newest">Newest</SelectItem>
                   <SelectItem value="ending">Ending Soon</SelectItem>
                   <SelectItem value="active">Most Active</SelectItem>
