@@ -5,29 +5,29 @@ import { AdminSidebar, MobileAdminSidebar } from "@/components/admin/AdminSideba
 import { AdminDashboard } from "@/components/admin/AdminDashboard";
 import { AdminUsers } from "@/components/admin/AdminUsers";
 import { AdminMarkets } from "@/components/admin/AdminMarkets";
-import { AdminDisputes } from "@/components/admin/AdminDisputes";
-import { AdminCreators } from "@/components/admin/AdminCreators";
-import { AdminPendingMarkets } from "@/components/admin/AdminPendingMarkets";
-import { AdminResolutions } from "@/components/admin/AdminResolutions";
+import { AdminDisputesResolutions } from "@/components/admin/AdminDisputesResolutions";
 import { AdminTransactions } from "@/components/admin/AdminTransactions";
 import { AdminCRM } from "@/components/admin/AdminCRM";
-import { AdminAffiliate } from "@/components/admin/AdminAffiliate";
-import { AdminLoyalty } from "@/components/admin/AdminLoyalty";
+import { AdminCommissions } from "@/components/admin/AdminCommissions";
+import { AdminCreators } from "@/components/admin/AdminCreators";
+import { AdminPartners } from "@/components/admin/AdminPartners";
+import { AdminBonusManagement } from "@/components/admin/AdminBonusManagement";
 import { AdminAnalytics } from "@/components/admin/AdminAnalytics";
+import { AdminUAT } from "@/components/admin/AdminUAT";
 
 const sectionTitles: Record<string, { title: string; description: string }> = {
   dashboard: { title: "Dashboard", description: "Platform overview and key metrics" },
   users: { title: "Users", description: "Manage all platform users" },
-  markets: { title: "All Markets", description: "View and manage all markets" },
-  pending: { title: "Pending Markets", description: "Review and approve new markets" },
-  disputes: { title: "Disputes", description: "Handle user disputes and issues" },
-  resolutions: { title: "Resolutions", description: "Manage market resolutions" },
-  transactions: { title: "Transactions", description: "View all platform transactions" },
-  creators: { title: "Creators", description: "Manage market creators" },
-  crm: { title: "CRM", description: "Customer relationship management" },
-  affiliate: { title: "Affiliate Program", description: "Manage affiliate partners" },
-  loyalty: { title: "Loyalty & Bonuses", description: "Rewards and bonus programs" },
+  markets: { title: "Prediction Markets", description: "Manage markets, categories and settings" },
+  disputes: { title: "Disputes & Resolutions", description: "Handle disputes and market resolutions" },
+  transactions: { title: "Transactions & PSPs", description: "Transactions, PSP config and risk management" },
+  crm: { title: "CRM", description: "Customer relationship management and channels" },
+  commissions: { title: "Commissions", description: "Commission rates for creators, partners and RAF" },
+  creators: { title: "Creators Platform", description: "Creator management, reporting and tracking" },
+  partners: { title: "Partners Platform", description: "Partner management, reporting and tracking" },
+  bonuses: { title: "Bonus Management", description: "Bonuses, promotions and loyalty tiers" },
   analytics: { title: "Analytics & BI", description: "Business intelligence and insights" },
+  uat: { title: "UAT Console", description: "Device and browser compatibility testing" },
 };
 
 const Admin = () => {
@@ -36,32 +36,19 @@ const Admin = () => {
 
   const renderSectionContent = () => {
     switch (activeSection) {
-      case "dashboard":
-        return <AdminDashboard />;
-      case "users":
-        return <AdminUsers />;
-      case "markets":
-        return <AdminMarkets />;
-      case "disputes":
-        return <AdminDisputes />;
-      case "creators":
-        return <AdminCreators />;
-      case "pending":
-        return <AdminPendingMarkets />;
-      case "resolutions":
-        return <AdminResolutions />;
-      case "transactions":
-        return <AdminTransactions />;
-      case "crm":
-        return <AdminCRM />;
-      case "affiliate":
-        return <AdminAffiliate />;
-      case "loyalty":
-        return <AdminLoyalty />;
-      case "analytics":
-        return <AdminAnalytics />;
-      default:
-        return <AdminDashboard />;
+      case "dashboard": return <AdminDashboard />;
+      case "users": return <AdminUsers />;
+      case "markets": return <AdminMarkets />;
+      case "disputes": return <AdminDisputesResolutions />;
+      case "transactions": return <AdminTransactions />;
+      case "crm": return <AdminCRM />;
+      case "commissions": return <AdminCommissions />;
+      case "creators": return <AdminCreators />;
+      case "partners": return <AdminPartners />;
+      case "bonuses": return <AdminBonusManagement />;
+      case "analytics": return <AdminAnalytics />;
+      case "uat": return <AdminUAT />;
+      default: return <AdminDashboard />;
     }
   };
 

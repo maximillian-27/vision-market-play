@@ -4,9 +4,6 @@ import {
   Users,
   TrendingUp,
   AlertTriangle,
-  UserCheck,
-  Clock,
-  CheckCircle,
   Receipt,
   ChevronLeft,
   ChevronRight,
@@ -15,7 +12,9 @@ import {
   Gift,
   BarChart3,
   Menu,
-  X,
+  DollarSign,
+  Handshake,
+  Monitor,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -29,22 +28,35 @@ interface AdminSidebarProps {
   onToggleCollapse: () => void;
 }
 
-const mainItems = [
+const coreItems = [
   { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
   { id: "users", label: "Users", icon: Users },
-  { id: "markets", label: "All Markets", icon: TrendingUp },
-  { id: "pending", label: "Pending Markets", icon: Clock },
-  { id: "disputes", label: "Disputes", icon: AlertTriangle },
-  { id: "resolutions", label: "Resolutions", icon: CheckCircle },
-  { id: "transactions", label: "Transactions", icon: Receipt },
-  { id: "creators", label: "Creators", icon: UserCheck },
+  { id: "markets", label: "Prediction Markets", icon: TrendingUp },
+  { id: "disputes", label: "Disputes & Resolutions", icon: AlertTriangle },
+  { id: "transactions", label: "Transactions & PSPs", icon: Receipt },
 ];
 
-const toolsItems = [
+const crmItems = [
   { id: "crm", label: "CRM", icon: Contact },
-  { id: "affiliate", label: "Affiliate", icon: UserPlus },
-  { id: "loyalty", label: "Loyalty & Bonuses", icon: Gift },
+];
+
+const growthItems = [
+  { id: "commissions", label: "Commissions", icon: DollarSign },
+  { id: "creators", label: "Creators", icon: UserPlus },
+  { id: "partners", label: "Partners", icon: Handshake },
+  { id: "bonuses", label: "Bonus Management", icon: Gift },
+];
+
+const intelligenceItems = [
   { id: "analytics", label: "Analytics & BI", icon: BarChart3 },
+  { id: "uat", label: "UAT", icon: Monitor },
+];
+
+const sections = [
+  { label: "Core Operations", items: coreItems },
+  { label: "CRM & Channels", items: crmItems },
+  { label: "Growth & Revenue", items: growthItems },
+  { label: "Intelligence", items: intelligenceItems },
 ];
 
 const SidebarContent = ({
@@ -65,50 +77,31 @@ const SidebarContent = ({
 
   return (
     <nav className="flex-1 p-2 space-y-1 overflow-y-auto">
-      {!collapsed && (
-        <p className="text-xs text-muted-foreground px-3 py-2 font-medium uppercase tracking-wider">
-          Management
-        </p>
-      )}
-      {mainItems.map((item) => (
-        <button
-          key={item.id}
-          onClick={() => handleClick(item.id)}
-          className={cn(
-            "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
-            activeSection === item.id
-              ? "bg-primary/10 text-primary"
-              : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+      {sections.map((section, idx) => (
+        <div key={section.label}>
+          {idx > 0 && <Separator className="my-3" />}
+          {!collapsed && (
+            <p className="text-xs text-muted-foreground px-3 py-2 font-medium uppercase tracking-wider">
+              {section.label}
+            </p>
           )}
-          title={collapsed ? item.label : undefined}
-        >
-          <item.icon className="h-4 w-4 flex-shrink-0" />
-          {!collapsed && <span>{item.label}</span>}
-        </button>
-      ))}
-
-      <Separator className="my-3" />
-
-      {!collapsed && (
-        <p className="text-xs text-muted-foreground px-3 py-2 font-medium uppercase tracking-wider">
-          Tools
-        </p>
-      )}
-      {toolsItems.map((item) => (
-        <button
-          key={item.id}
-          onClick={() => handleClick(item.id)}
-          className={cn(
-            "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
-            activeSection === item.id
-              ? "bg-primary/10 text-primary"
-              : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
-          )}
-          title={collapsed ? item.label : undefined}
-        >
-          <item.icon className="h-4 w-4 flex-shrink-0" />
-          {!collapsed && <span>{item.label}</span>}
-        </button>
+          {section.items.map((item) => (
+            <button
+              key={item.id}
+              onClick={() => handleClick(item.id)}
+              className={cn(
+                "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
+                activeSection === item.id
+                  ? "bg-primary/10 text-primary"
+                  : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+              )}
+              title={collapsed ? item.label : undefined}
+            >
+              <item.icon className="h-4 w-4 flex-shrink-0" />
+              {!collapsed && <span>{item.label}</span>}
+            </button>
+          ))}
+        </div>
       ))}
     </nav>
   );
