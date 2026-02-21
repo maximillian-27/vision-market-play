@@ -66,6 +66,11 @@
     --pollgy-green: 152 68% 42%;
     --pollgy-green-foreground: 0 0% 100%;
 
+    /* Gold = Prediction market trophy/prize highlight */
+    --gold: 45 93% 47%;
+    --gold-foreground: 45 100% 10%;
+    --gold-muted: 45 93% 96%;
+
     /* Borders */
     --border: 220 13% 91%;
     --border-hover: 220 13% 85%;
@@ -149,6 +154,10 @@
     --pollgy-blue-foreground: 0 0% 100%;
     --pollgy-green: 152 60% 48%;
     --pollgy-green-foreground: 220 16% 6%;
+
+    --gold: 45 100% 50%;
+    --gold-foreground: 45 100% 10%;
+    --gold-muted: 45 50% 15%;
 
     --border: 220 14% 18%;
     --border-hover: 220 14% 25%;
