@@ -288,7 +288,7 @@ export function MarketGridCard({
           
           {/* Stats footer */}
           <div className="flex items-center gap-3 text-[10px] text-muted-foreground mt-2 pt-2 border-t border-border">
-            <span className="font-bold text-primary">🏆 {volume} Pot</span>
+            <span className="font-bold text-primary">{volume} Pot</span>
             {getStatusBadge() ? (
               getStatusBadge()
             ) : (
@@ -464,7 +464,6 @@ export function MarketGridCard({
           {/* Bottom stats bar */}
           <div className="flex items-center justify-between px-3 py-2 border-t border-border text-[11px] text-muted-foreground">
             <span className="flex items-center gap-1 font-medium">
-             🏆
               <span className="font-bold text-primary">{volume} Pot</span>
             </span>
             <span className="flex items-center gap-1">
