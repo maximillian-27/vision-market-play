@@ -37,11 +37,14 @@ export function QuickTradeSheet({ open, onOpenChange, market }: QuickTradeSheetP
     (market.outcomes[0].label.toLowerCase() === "yes" || market.outcomes[0].label.toLowerCase() === "no");
 
   const amountNum = parseFloat(amount) || 0;
-  const shares = selectedOutcome && selectedOutcome.price > 0 
-    ? Math.floor((amountNum * 100) / selectedOutcome.price) 
+  const ticketPrice = selectedOutcome ? Math.max(0.1, selectedOutcome.price / 100) : 1;
+  const tickets = selectedOutcome && ticketPrice > 0 
+    ? Math.floor(amountNum / ticketPrice) 
     : 0;
-  const potentialPayout = shares;
-  const potentialProfit = potentialPayout - amountNum;
+  const totalTicketsForOutcome = 1000; // mock
+  const totalPot = 50000; // mock
+  const potShare = totalTicketsForOutcome > 0 ? (tickets / (totalTicketsForOutcome + tickets)) * 100 : 0;
+  const estPayout = totalPot > 0 ? ((tickets / (totalTicketsForOutcome + tickets)) * (totalPot + amountNum)) : 0;
 
   const yesOutcome = isBinary ? market.outcomes.find(o => o.label.toLowerCase() === "yes") : null;
   const noOutcome = isBinary ? market.outcomes.find(o => o.label.toLowerCase() === "no") : null;
@@ -71,7 +74,7 @@ export function QuickTradeSheet({ open, onOpenChange, market }: QuickTradeSheetP
     setTimeout(() => {
       toast({
         title: "Order placed!",
-        description: `You bought ${shares} shares of "${selectedOutcome.label}" for $${amountNum.toFixed(2)}`,
+        description: `You bought ${tickets} tickets of "${selectedOutcome.label}" for $${amountNum.toFixed(2)}`,
       });
       setIsSubmitting(false);
       setAmount("10");
@@ -93,7 +96,7 @@ export function QuickTradeSheet({ open, onOpenChange, market }: QuickTradeSheetP
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Zap className="h-4 w-4 text-primary" />
-              <DrawerTitle className="text-base font-semibold">Quick Trade</DrawerTitle>
+              <DrawerTitle className="text-base font-semibold">Buy Tickets</DrawerTitle>
             </div>
             <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
               <Wallet className="h-3.5 w-3.5" />
@@ -208,19 +211,19 @@ export function QuickTradeSheet({ open, onOpenChange, market }: QuickTradeSheetP
           <div className="flex items-center justify-between text-sm bg-muted/30 rounded-lg px-3 py-2.5">
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-1.5">
-                <span className="text-muted-foreground">Shares</span>
-                <span className="font-semibold">{selectedOutcome ? shares : '-'}</span>
+                <span className="text-muted-foreground">Tickets</span>
+                <span className="font-semibold">{selectedOutcome ? tickets : '-'}</span>
               </div>
               <div className="w-px h-4 bg-border" />
               <div className="flex items-center gap-1.5">
-                <span className="text-muted-foreground">Avg</span>
-                <span className="font-semibold">{selectedOutcome ? `${selectedOutcome.price}¢` : '-'}</span>
+                <span className="text-muted-foreground">Price</span>
+                <span className="font-semibold">{selectedOutcome ? `$${ticketPrice.toFixed(2)}` : '-'}</span>
               </div>
             </div>
             <div className="flex items-center gap-1.5">
-              <span className="text-muted-foreground">Profit</span>
-              <span className={`font-semibold ${selectedOutcome && potentialProfit > 0 ? 'text-success' : ''}`}>
-                {selectedOutcome ? `+$${potentialProfit.toFixed(2)}` : '-'}
+              <span className="text-muted-foreground">Est. Payout</span>
+              <span className={`font-semibold ${selectedOutcome && estPayout > amountNum ? 'text-success' : ''}`}>
+                {selectedOutcome ? `$${estPayout.toFixed(2)}` : '-'}
               </span>
             </div>
           </div>

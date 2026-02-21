@@ -91,8 +91,8 @@ export const AdminMarkets = () => {
                     <th className="p-4 font-medium">Market</th>
                     <th className="p-4 font-medium">Creator</th>
                     <th className="p-4 font-medium">Status</th>
-                    <th className="p-4 font-medium">Volume</th>
-                    <th className="p-4 font-medium">Trades</th>
+                    <th className="p-4 font-medium">Pot Size</th>
+                    <th className="p-4 font-medium">Tickets</th>
                     <th className="p-4 font-medium">End Date</th>
                     <th className="p-4 font-medium text-right">Actions</th>
                   </tr>
