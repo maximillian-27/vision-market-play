@@ -1,75 +1,116 @@
 
-# Admin Panel - Make Every Button Functional
 
-After a thorough audit of all 12 admin sections, I found **26 buttons and dropdown actions** that currently do nothing when clicked. Every single one needs a toast notification or action handler so users get feedback.
+# Markets Page - Pari-Mutuel Gambling Overhaul
 
-## Issues Found
+Updating all market-facing components to use correct gambling terminology, highlight the Pot as the hero metric, and simplify the UX for a prediction market gambling experience.
 
-All buttons below are missing `onClick` handlers -- they render but clicking them produces no response.
+## Problem Summary
+
+Every market component still uses stock-trading language: "Volume", "Shares", "Traders", "Avg price", "Profit". The Pot (the prize pool users are competing for) is buried as a small stat instead of being the hero element. Pricing shows "cents" (68c) instead of contextualizing ticket prices within the pari-mutuel model.
+
+## Terminology Map (applied everywhere)
+
+| Old Term | New Term |
+|----------|----------|
+| Volume / Vol. | Pot / Pot Size |
+| Shares | Tickets |
+| Traders | Players |
+| Avg price / Share Price | Ticket Price |
+| Profit / Potential Profit | Est. Payout |
+| "Buy" button text | "Buy Tickets" |
 
 ## Changes by File
 
-### 1. AdminUsers.tsx (4 fixes)
-- **"View Profile"** dropdown -> toast: "Opening profile for {name}"
-- **"Review KYC"** dropdown -> toast: "Opening KYC review for {name}"
-- **"Send Email"** dropdown -> toast: "Opening email composer for {email}"
-- **"Suspend"** dropdown -> toast: "{name} has been suspended"
-- **"Add User"** button -> toast: "Add user form would open here"
+### 1. MarketGridCard.tsx -- Highlight Pot as hero metric
 
-### 2. AdminMarkets.tsx (5 fixes)
-- **"View"** dropdown -> toast: "Opening market: {title}"
-- **"Pause"** dropdown -> toast: "Market '{title}' paused"
-- **"Resolve"** dropdown -> toast: "Opening resolution for '{title}'"
-- **"Cancel"** dropdown -> toast: "Market '{title}' cancelled" (destructive)
-- **"Add Category"** button -> toast: "Category creation form would open here"
+- **Footer stats**: Change `{volume} Vol.` to a highlighted pot display: bold green text showing the pot size (e.g., "$2.4M Pot") so users immediately see the prize
+- Desktop layout: add pot size next to the title percentage so the prize is always visible
+- No structural changes, just label swaps and styling the pot prominently
 
-### 3. AdminDisputesResolutions.tsx (2 fixes)
-- **"View"** dropdown -> toast: "Opening dispute details for '{marketTitle}'"
-- **"Message"** dropdown -> toast: "Opening message thread with {user}"
+### 2. MarketCard.tsx -- Pot + Players labels
 
-### 4. AdminTransactions.tsx (2 fixes)
-- **"View Details"** dropdown -> toast: "Opening transaction {id}"
-- PSP **"Configure"** buttons -> toast: "Opening {name} configuration"
+- Stats row (line 92-99): Change `TrendingUp` icon + `{volume}` to a highlighted "Pot" label with the amount styled in primary/green
+- Change `Clock` label from just `{endsIn}` -- keep as-is (time is fine)
+- Outcome buttons: Change `{outcome.price}c` to `{outcome.price}%` for binary cards (percentages, not cents -- the price IS the percentage in pari-mutuel)
 
-### 5. AdminCreators.tsx (4 fixes)
-- **"View Profile"** dropdown -> toast: "Opening creator profile: {name}"
-- **"Approve"** dropdown -> toast.success: "Creator {name} approved"
-- **"Reject"** dropdown -> toast: "Creator {name} rejected"
-- **"Generate Link"** button -> toast: "New tracking link generated"
-- **Copy buttons** in Links tab -> copy to clipboard + toast: "Link copied"
+### 3. MarketDetail.tsx -- Full terminology overhaul
 
-### 6. AdminPartners.tsx (4 fixes)
-- **"View"** dropdown -> toast: "Opening partner: {name}"
-- **"Add Partner"** button -> toast: "Partner onboarding form would open here"
-- **"Generate Link"** button -> toast: "New partner link generated"
-- **Copy buttons** -> copy to clipboard + toast: "Link copied"
+**Stats row (lines 342-356)**:
+- "volume" label becomes "Pot Size" with highlighted styling
+- "traders" becomes "Players"
+- Keep Clock/endDate as-is
 
-### 7. AdminCRM.tsx (6 fixes)
-- Channel **"Configure"** buttons -> toast: "Opening {name} configuration"
-- **"Create Segment"** button -> toast: "Segment creation form would open here"
-- Segment **"Email All"** buttons -> toast: "Sending email to {count} users in {name}"
-- Segment **"Edit"** buttons -> toast: "Editing segment: {name}"
-- **"New Campaign"** button -> toast: "Campaign builder would open here"
-- Campaign **"Manage"** buttons -> toast: "Managing campaign: {name}"
-- **"New Automation"** button -> toast: "Automation builder would open here"
+**Key Stats Grid (lines 404-417)**:
+- "Volume" becomes "Pot Size"
+- "Traders" becomes "Players"
+- "24h Vol" becomes "24h Tickets"
 
-### 8. AdminBonusManagement.tsx (1 fix)
-- **"New Promotion"** button -> toast: "Promotion builder would open here"
+**Chart tooltip (line 394)**: Change `"Price"` formatter to `"Probability"`
 
-### 9. AdminUAT.tsx (2 fixes)
-- **"Add Device"** button -> toast: "Device registration form would open here"
-- **"Report Issue"** button -> toast: "Issue report form would open here"
+**Quick Trade panel (lines 544-730)**:
+- "Quick Trade" header stays (it's clear)
+- "Shares" becomes "Tickets"
+- "Avg" becomes "Ticket Price"
+- "Profit" becomes "Est. Payout"
+- Toast message (line 245): "shares" to "tickets"
 
-### 10. AdminAnalytics.tsx (1 fix)
-- **"Export"** button -> toast: "Exporting analytics report..."
+### 4. MarketDialog.tsx -- Same terminology fixes
 
-### 11. Admin.tsx (1 fix)
-- Top-right **"Settings"** button -> toast: "Platform settings would open here"
+**Stats section (lines 251-265)**:
+- "volume" becomes "Pot Size"
+- "traders" becomes "Players"
 
-## Technical Approach
+**Chart tooltip**: "Price" becomes "Probability"
 
-Every fix follows the same simple pattern: add an `onClick` handler that calls `toast()` or `toast.success()` from `sonner`. For copy actions, use `navigator.clipboard.writeText()` plus a toast confirmation.
+**Trade panel (lines 406+)**:
+- "Shares" becomes "Tickets"
+- "Avg" becomes "Ticket Price"
+- "Profit" becomes "Est. Payout"
+- Toast message: "shares" to "tickets"
 
-No new components needed. No structural changes. Just wiring up the existing buttons so every single one gives feedback when clicked.
+### 5. QuickTradeSheet.tsx -- Label swaps
 
-**Total: 26 button/action fixes across 11 files.**
+- "Shares" becomes "Tickets"
+- "Avg" becomes "Ticket Price"
+- "Profit" becomes "Est. Payout"
+- `{outcome.price}%` display -- already correct, keep
+- Toast message: "shares" to "tickets"
+
+### 6. BuyDialog.tsx -- Label swaps
+
+- "Shares" becomes "Tickets"
+- "Avg. price" becomes "Ticket Price"
+- "Potential payout" becomes "Max Payout"
+- "Potential profit" becomes "Est. Payout"
+- Toast message: "shares" to "tickets"
+
+### 7. HottestMarkets.tsx -- Pot highlight
+
+- Change `{market.volume}` label to show as "Pot" with emphasized styling
+- Change `Yes {market.yesPrice}c` to `{market.yesPrice}%` (probability, not cents)
+
+### 8. Feed.tsx -- Sort label
+
+- The sort option "volume" in FeedFilters should display as "Pot Size" (need to check FeedFilters component -- the sort value key stays "volume" internally but the display label changes)
+
+## Pot Highlighting Strategy
+
+Across all cards, the Pot size gets special treatment:
+- Styled with `text-primary font-bold` (green, bold)
+- Prefixed with a small trophy or dollar icon
+- Positioned prominently (not buried in small muted text)
+
+This makes the prize pool the first thing users notice, reinforcing the gambling feel.
+
+## What Stays the Same
+
+- All layout structures, card designs, responsive patterns
+- All mock data values (just label changes)
+- Chart components and their data
+- All button behaviors and navigation
+- Status badges and lifecycle states
+
+## Technical Details
+
+All changes are simple string replacements and minor className adjustments. No new components, no structural refactoring. Approximately 40-50 label changes across 8 files, plus adding `font-bold text-primary` styling to pot displays.
+
