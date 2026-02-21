@@ -1,123 +1,88 @@
 
 
-# Pari-Mutuel Model UI/UX Update
+# CMO Request Sheet - Admin Dashboard Implementation
 
-Transitioning the platform from AMM terminology (shares, volume, order book) to a dynamic pari-mutuel model (tickets, pot, split the pot). The visual design stays the same -- only labels, metrics, and calculation logic change.
+Adding a comprehensive **Marketing & GTM** section to the admin panel, plus implementing the technical SEO/tracking infrastructure that can be done directly in the codebase.
 
-## What Changes
+## What Can Be Implemented Now (in the codebase)
 
-### Terminology (across all files)
+From the CMO's full request sheet, these items can be covered:
 
-| Current | New |
+| CMO Request | What We'll Build |
 |---|---|
-| Shares | Tickets |
-| Volume / Vol. | Pot |
-| Traders | Players |
-| Quick Trade | Buy Tickets |
-| Place Order | Buy Tickets |
-| Avg. price / Share price | Ticket Price |
-| Potential profit | Est. Payout |
-| Positions | My Tickets |
-| Trade History | Ticket History |
-| 68c / 32c (cent pricing) | $0.68 / $0.32 (dollar pricing) |
+| GTM (Google Tag Manager) | Add GTM snippet placeholders to `index.html` with configurable container ID |
+| Event Tracking | Create a `src/lib/analytics.ts` utility that pushes events to the dataLayer (regstarted, regcomplete, depositstarted, depositcomplete, betcomplete, etc.) |
+| Rich Snippets / Structured Data | Add JSON-LD schema markup to `index.html` for the platform |
+| Meta Data improvements | Update `index.html` with canonical URL, improved OG tags |
+| Admin: Marketing & GTM tab | New tab in Analytics & BI showing integration status, event tracking overview, SEO checklist, and channel/platform status |
 
-### Pot as the Hero Metric
+Items like GA4 account setup, Search Console, Bing Webmaster, CRM platform selection, ESP, offsite SEO, social media management, and BI platform are **operational tasks** (not code) -- they'll appear as a checklist in the admin panel for your team to track progress.
 
-The pot size is what players are competing for -- it needs to be prominent on every card and page. Currently "volume" is a small footnote. In the new model, **pot size becomes the primary metric** users see, visually emphasized.
+**Note:** `robots.txt`, `sitemap.xml`, and `llms.txt` are already updated from the previous edit.
 
-### Calculation Logic
+## Changes
 
-Current AMM math:
-- `shares = (amount * 100) / price`
-- Fixed $1 payout per share
+### 1. `index.html` -- GTM + Structured Data + Meta Improvements
+- Add GTM `<script>` placeholder in `<head>` with comment `<!-- Replace GTM-XXXXXXX with your container ID -->`
+- Add GTM `<noscript>` iframe after `<body>` tag
+- Add `<link rel="canonical">` tag
+- Add JSON-LD structured data for the platform (WebSite + Organization schema)
+- Keep existing meta tags, improve description
 
-New pari-mutuel math:
-- `tickets = Math.floor(amount / ticketPrice)`
-- `estPayout = (tickets / totalTicketsForOutcome) * totalPot`
-- Order summary shows: Tickets, Ticket Price, Pot Share %, Est. Payout
+### 2. New file: `src/lib/analytics.ts` -- Event Tracking Utility
+- `trackEvent(eventName, params)` function that pushes to `window.dataLayer`
+- Pre-defined event constants: `REG_STARTED`, `REG_COMPLETE`, `DEPOSIT_STARTED`, `DEPOSIT_COMPLETE`, `BET_COMPLETE`, `PAGE_VIEW`
+- Each event follows GA4 structure: eventCategory, eventAction, eventLabel, eventValue
+- Ready to sync with GTM once container ID is configured
 
-## Files to Modify
+### 3. `src/components/admin/AdminAnalytics.tsx` -- Add "Marketing" Tab
+Add a new **Marketing** tab to the existing Analytics & BI section with:
 
-### 1. Feed Page (`src/pages/Feed.tsx`)
-- Rename `volume` field to `pot` in mock data interface and values (keep same dollar amounts)
-- Pass `pot` instead of `volume` to MarketGridCard
-- Rename sort option "Highest Volume" to "Biggest Pot" in the sort logic
+**Integrations Status Panel:**
+- GTM: status badge (configured/not configured), container ID display, link to tagmanager.google.com
+- GA4: status badge, measurement ID field, link to analytics.google.com
+- Search Console: status badge, link to search.google.com/search-console
+- Bing Webmaster: status badge, link to bing.com/webmasters
+- Matomo/Metrica: optional status
 
-### 2. Feed Filters (`src/components/FeedFilters.tsx`)
-- Sort option "Highest Volume" becomes "Biggest Pot"
+**Event Tracking Overview:**
+- Table of all tracked events (regstarted, regcomplete, depositstarted, depositcomplete, betcomplete)
+- Columns: Event Name, Category, Last Fired, Count (24h)
+- Mock data showing event activity
 
-### 3. Market Grid Card (`src/components/MarketGridCard.tsx`)
-- Rename `volume` prop to `pot`
-- Desktop footer: "$2.4M Vol." becomes "$2.4M Pot" with a trophy/target icon instead of TrendingUp
-- Mobile bottom bar: Same change -- TrendingUp icon + volume becomes pot-focused display
-- Binary outcome cent pricing ("68c") stays as percentage ("68%") -- already done
+**SEO Checklist:**
+- Checkboxes for: robots.txt (done), sitemap.xml (done), llms.txt (done), meta tags (done), canonical URLs, hreflang tags, structured data (done), alt tags, internal linking, SEO blocks
+- Each item shows status (complete/pending/not started)
 
-### 4. Market Card (`src/components/MarketCard.tsx`)
-- Rename `volume` prop to `pot`
-- Stats row: TrendingUp icon + volume label becomes pot display
-- Outcome buttons: "68c" pricing becomes "$0.68" ticket price format
+**Channel & Platform Tracker:**
+- Cards for each platform/tool from CMO sheet: CRM, ESP, RAF, Affiliate Program, CDP, MMP, BI Platform, Social Media channels
+- Status: Not Started / In Progress / Connected
+- Quick links to recommended platforms (Zoho, Hubspot, Looker Studio, etc.)
 
-### 5. Hottest Markets Sidebar (`src/components/HottestMarkets.tsx`)
-- `volume` field becomes `pot` in mock data
-- Display: "$2.4M" label stays, but context changes to "pot"
-- "Yes 68c" becomes "Yes $0.68" ticket price
+**Social Media Presence:**
+- Grid of social platforms: X, Discord, Twitch, Meta, TikTok, Reddit, Snap
+- Per-GEO profiles needed: Balkan, English, Greek
+- Status indicators for each
 
-### 6. Market Dialog (`src/components/MarketDialog.tsx`)
-- Left panel stats: "volume" label becomes "pot", "traders" becomes "players"
-- Chart tooltip: "Price" becomes "Ticket Price"
-- Right panel header: "Quick Trade" becomes "Buy Tickets"
-- Order summary: "Shares" to "Tickets", "Avg price" to "Ticket price", "Potential profit" to "Est. payout"
-- Add "Pot share" percentage to order summary
-- Buy button: "Buy" becomes contextual ticket purchase text
-- Toast: "bought X shares" becomes "bought X tickets"
-- Pari-mutuel calculation logic replaces AMM math
+### 4. `src/components/admin/AdminSidebar.tsx` -- No changes needed
+The "Analytics & BI" sidebar item already covers this since we're adding the Marketing tab within AdminAnalytics.
 
-### 7. Quick Trade Sheet (`src/components/QuickTradeSheet.tsx`)
-- Header: "Quick Trade" becomes "Buy Tickets"
-- Order summary row: "Shares" to "Tickets", "Avg" to "Price", "Profit" to "Est. Payout"
-- Add pot share % display
-- Toast: shares to tickets
-- Update calculation logic
+## Technical Details
 
-### 8. Buy Dialog (`src/components/BuyDialog.tsx`)
-- Title: "Place Order" becomes "Buy Tickets"
-- "Buying" section: show ticket price instead of cent price
-- Summary: "Shares" to "Tickets", "Avg. price" to "Ticket price"
-- "Potential payout" to "Est. payout", "Potential profit" to "Est. profit"
-- Button: "Buy Yes for $10.00" becomes "Buy 10 Yes Tickets"
-- Update calculation logic
+### GTM Implementation (`index.html`)
+The GTM snippets will use a placeholder `GTM-XXXXXXX` that needs to be replaced with the actual container ID once created. Two code blocks:
+1. Head script (as high as possible)
+2. Body noscript iframe (immediately after opening body tag)
 
-### 9. Market Detail Page (`src/pages/MarketDetail.tsx`)
-- Stats row: "volume" to "pot", "traders" to "players", "24h Vol" to "24h Tickets"
-- Chart tooltip: "Price" to "Ticket Price"
-- Trade panel header: "Quick Trade" to "Buy Tickets"
-- Order summary: same terminology changes as MarketDialog
-- Toast and button text updates
-- Mock data: rename `traders` to `players`, `volume` to `pot`, `volume24h` to `tickets24h`
-- Update pari-mutuel calculation logic
+### Event Tracking Utility (`src/lib/analytics.ts`)
+```typescript
+// Pushes to window.dataLayer for GTM pickup
+export const trackEvent = (event: string, params?: Record<string, any>) => {
+  window.dataLayer?.push({ event, ...params });
+};
+```
+Pre-defined events follow the CMO's requested naming: `regstarted`, `regcomplete`, `depositstarted`, `depositcomplete`, `betcomplete`.
 
-### 10. Resolved Market Dialog (`src/components/ResolvedMarketDialog.tsx`)
-- Stats: "volume" to "pot", "traders" to "players"
-- "Your Position" becomes "Your Tickets"
-- "Shares: 150 Yes" becomes "Tickets: 150 Yes"
-
-### 11. Portfolio Page (`src/pages/Portfolio.tsx`)
-- Tab: "Positions" to "My Tickets"
-- Position cards: "shares" to "tickets", "avgPrice" label to "ticket price"
-- Trade history: "shares" column to "tickets"
-- Stats labels update
-
-### 12. Profile Page (`src/pages/Profile.tsx`)
-- Creator stats: "volume" display to "pot"
-- "Total Trades" to "Total Tickets"
-
-### 13. Admin (light touch)
-- `AdminMarkets.tsx`: "Volume" column header to "Pot Size", "Trades" to "Tickets"
-- `AdminDashboard.tsx`: Update volume/trade labels if present
-
-## What Stays the Same
-- All layouts, card designs, color schemes, component structure
-- Yes/No buttons, probability bars, outcome presentation
-- Navigation, routing, status badges (open, closing, awaiting resolution, resolved)
-- Icons and visual hierarchy (only swapping TrendingUp for a pot-relevant icon where it represents volume)
+### Structured Data (JSON-LD)
+WebSite + Organization schema for pollgy.com, enabling rich snippets in search results.
 
