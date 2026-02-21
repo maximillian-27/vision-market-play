@@ -158,7 +158,7 @@ export default function Profile() {
     // Trader stats
     totalProfit: "+$12,450",
     winRate: 78,
-    totalTickets: 142,
+    totalTrades: 142,
     accuracy: 72,
     portfolioValue: 18450,
     cashBalance: 5230,
@@ -316,9 +316,9 @@ export default function Profile() {
           <ProfileStats 
             type="trader"
             stats={{
-            totalProfit: userData.totalProfit,
+              totalProfit: userData.totalProfit,
               winRate: userData.winRate,
-              totalTrades: userData.totalTickets,
+              totalTrades: userData.totalTrades,
               accuracy: userData.accuracy,
             }}
           />
@@ -337,7 +337,7 @@ export default function Profile() {
                   </>
                 ) : (
                   <>
-                    <TabsTrigger value="positions">My Tickets</TabsTrigger>
+                    <TabsTrigger value="positions">Positions</TabsTrigger>
                     <TabsTrigger value="posts">Posts</TabsTrigger>
                     <TabsTrigger value="achievements">Achievements</TabsTrigger>
                   </>
