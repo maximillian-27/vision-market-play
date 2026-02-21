@@ -36,7 +36,7 @@ const Admin = () => {
 
   const renderSectionContent = () => {
     switch (activeSection) {
-      case "dashboard": return <AdminDashboard />;
+      case "dashboard": return <AdminDashboard onNavigate={setActiveSection} />;
       case "users": return <AdminUsers />;
       case "markets": return <AdminMarkets />;
       case "disputes": return <AdminDisputesResolutions />;

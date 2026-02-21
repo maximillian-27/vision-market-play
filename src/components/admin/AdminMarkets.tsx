@@ -12,7 +12,8 @@ import {
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Search, MoreHorizontal, Eye, Pause, CheckCircle, XCircle, TrendingUp, Clock, Settings, Tag, Plus } from "lucide-react";
+import { Search, MoreHorizontal, Eye, Pause, CheckCircle, XCircle, TrendingUp, Clock, Settings, Tag, Plus, ChevronLeft, ChevronRight } from "lucide-react";
+import { toast } from "sonner";
 
 const markets = [
   { id: 1, title: "Will Bitcoin reach $100K by end of 2024?", creator: "CryptoGuru", status: "Active", volume: 45000, trades: 1234, endDate: "2024-12-31" },
@@ -21,6 +22,8 @@ const markets = [
   { id: 4, title: "US Election 2024 Winner", creator: "PoliticalPredict", status: "Resolved", volume: 125000, trades: 5600, endDate: "2024-11-05" },
   { id: 5, title: "Super Bowl 2024 Champion", creator: "SportsAnalyst", status: "Resolved", volume: 89000, trades: 3400, endDate: "2024-02-11" },
   { id: 6, title: "Will Tesla stock hit $300?", creator: "MarketMaven", status: "Paused", volume: 15000, trades: 450, endDate: "2024-06-30" },
+  { id: 7, title: "Will Ethereum flip Bitcoin?", creator: "CryptoGuru", status: "Active", volume: 22000, trades: 678, endDate: "2025-12-31" },
+  { id: 8, title: "Next FIFA World Cup host?", creator: "SportsAnalyst", status: "Active", volume: 18000, trades: 520, endDate: "2026-06-01" },
 ];
 
 const pendingMarkets = [
@@ -38,15 +41,21 @@ const categories = [
   { name: "Science", markets: 23, volume: 56000, active: false },
 ];
 
+const PAGE_SIZE = 5;
+
 export const AdminMarkets = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [page, setPage] = useState(1);
 
   const filteredMarkets = markets.filter((market) => {
     const matchesSearch = market.title.toLowerCase().includes(searchQuery.toLowerCase()) || market.creator.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesStatus = statusFilter === "all" || market.status.toLowerCase() === statusFilter;
     return matchesSearch && matchesStatus;
   });
+
+  const totalPages = Math.ceil(filteredMarkets.length / PAGE_SIZE);
+  const paginatedMarkets = filteredMarkets.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   return (
     <div className="space-y-6">
@@ -62,9 +71,9 @@ export const AdminMarkets = () => {
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
             <div className="relative flex-1 w-full sm:w-64">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input placeholder="Search markets..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-9 h-9" />
+              <Input placeholder="Search markets..." value={searchQuery} onChange={(e) => { setSearchQuery(e.target.value); setPage(1); }} className="pl-9 h-9" />
             </div>
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setPage(1); }}>
               <SelectTrigger className="w-28 h-9"><SelectValue /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All</SelectItem>
@@ -89,7 +98,7 @@ export const AdminMarkets = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredMarkets.map((market) => (
+                  {paginatedMarkets.map((market) => (
                     <tr key={market.id} className="border-b border-border/20 hover:bg-muted/30 transition-colors">
                       <td className="p-4"><p className="font-medium line-clamp-1 max-w-xs">{market.title}</p></td>
                       <td className="p-4 text-sm">{market.creator}</td>
@@ -114,6 +123,17 @@ export const AdminMarkets = () => {
                   ))}
                 </tbody>
               </table>
+            </div>
+            {/* Pagination */}
+            <div className="flex items-center justify-between px-4 py-3 border-t border-border/40">
+              <p className="text-sm text-muted-foreground">
+                Showing {((page - 1) * PAGE_SIZE) + 1}–{Math.min(page * PAGE_SIZE, filteredMarkets.length)} of {filteredMarkets.length}
+              </p>
+              <div className="flex items-center gap-2">
+                <Button variant="outline" size="sm" disabled={page === 1} onClick={() => setPage(p => p - 1)}><ChevronLeft className="h-4 w-4" /></Button>
+                <span className="text-sm font-medium">{page} / {totalPages}</span>
+                <Button variant="outline" size="sm" disabled={page === totalPages} onClick={() => setPage(p => p + 1)}><ChevronRight className="h-4 w-4" /></Button>
+              </div>
             </div>
           </Card>
         </TabsContent>
@@ -140,8 +160,8 @@ export const AdminMarkets = () => {
                       <td className="p-4 text-sm">{m.submitted}</td>
                       <td className="p-4 text-right">
                         <div className="flex items-center justify-end gap-2">
-                          <Button size="sm" className="gap-1 h-8"><CheckCircle className="h-3 w-3" /> Approve</Button>
-                          <Button size="sm" variant="outline" className="gap-1 h-8 text-destructive"><XCircle className="h-3 w-3" /> Reject</Button>
+                          <Button size="sm" className="gap-1 h-8" onClick={() => toast.success(`Market "${m.title}" approved`)}><CheckCircle className="h-3 w-3" /> Approve</Button>
+                          <Button size="sm" variant="outline" className="gap-1 h-8 text-destructive" onClick={() => toast.success(`Market "${m.title}" rejected`)}><XCircle className="h-3 w-3" /> Reject</Button>
                         </div>
                       </td>
                     </tr>
@@ -180,32 +200,14 @@ export const AdminMarkets = () => {
             <CardContent className="p-6 space-y-4">
               <h3 className="font-semibold text-lg">Market Settings</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <Label>Min Bet Amount</Label>
-                  <Input defaultValue="1" type="number" className="mt-1" />
-                </div>
-                <div>
-                  <Label>Max Bet Amount</Label>
-                  <Input defaultValue="50000" type="number" className="mt-1" />
-                </div>
-                <div>
-                  <Label>Platform Fee (%)</Label>
-                  <Input defaultValue="2" type="number" className="mt-1" />
-                </div>
-                <div>
-                  <Label>Resolution Timeframe (days)</Label>
-                  <Input defaultValue="7" type="number" className="mt-1" />
-                </div>
-                <div className="sm:col-span-2 flex items-center justify-between">
-                  <span className="text-sm">Auto-approve verified creators</span>
-                  <Switch defaultChecked />
-                </div>
-                <div className="sm:col-span-2 flex items-center justify-between">
-                  <span className="text-sm">Require KYC for markets {'>'}  $10K</span>
-                  <Switch defaultChecked />
-                </div>
+                <div><Label>Min Bet Amount</Label><Input defaultValue="1" type="number" className="mt-1" /></div>
+                <div><Label>Max Bet Amount</Label><Input defaultValue="50000" type="number" className="mt-1" /></div>
+                <div><Label>Platform Fee (%)</Label><Input defaultValue="2" type="number" className="mt-1" /></div>
+                <div><Label>Resolution Timeframe (days)</Label><Input defaultValue="7" type="number" className="mt-1" /></div>
+                <div className="sm:col-span-2 flex items-center justify-between"><span className="text-sm">Auto-approve verified creators</span><Switch defaultChecked /></div>
+                <div className="sm:col-span-2 flex items-center justify-between"><span className="text-sm">Require KYC for markets {'>'} $10K</span><Switch defaultChecked /></div>
               </div>
-              <Button className="w-full">Save Settings</Button>
+              <Button className="w-full" onClick={() => toast.success("Market settings saved")}>Save Settings</Button>
             </CardContent>
           </Card>
         </TabsContent>

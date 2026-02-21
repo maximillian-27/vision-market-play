@@ -8,10 +8,7 @@ import { Switch } from "@/components/ui/switch";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
-import {
-  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Search, MoreHorizontal, Mail, Phone, Tag, Users, UserCheck, UserX, MessageSquare, Send, Zap, Bell, Smartphone } from "lucide-react";
+import { Search, Mail, Phone, Tag, Users, UserCheck, UserX, MessageSquare, Send, Zap, Bell, Smartphone } from "lucide-react";
 
 const segments = [
   { id: 1, name: "High Value", count: 2340, description: "Portfolio > $10K", color: "bg-success/10 text-success" },
@@ -104,6 +101,39 @@ export const AdminCRM = () => {
               </Card>
             ))}
           </div>
+
+          {/* Recent Contacts Table */}
+          <Card className="border-border/40">
+            <div className="p-4 border-b border-border/40">
+              <h3 className="font-semibold">Recent Contacts</h3>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-border/40 text-left text-sm text-muted-foreground">
+                    <th className="p-4 font-medium">Name</th>
+                    <th className="p-4 font-medium">Email</th>
+                    <th className="p-4 font-medium">Segment</th>
+                    <th className="p-4 font-medium">Last Contact</th>
+                    <th className="p-4 font-medium">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {contacts.map((contact) => (
+                    <tr key={contact.id} className="border-b border-border/20 hover:bg-muted/30 transition-colors">
+                      <td className="p-4 font-medium text-sm">{contact.name}</td>
+                      <td className="p-4 text-sm text-muted-foreground">{contact.email}</td>
+                      <td className="p-4"><Badge variant="outline" className="text-xs">{contact.segment}</Badge></td>
+                      <td className="p-4 text-sm">{contact.lastContact}</td>
+                      <td className="p-4">
+                        <Badge variant={contact.status === "Engaged" ? "default" : contact.status === "VIP" ? "default" : "secondary"} className="text-xs">{contact.status}</Badge>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </Card>
         </TabsContent>
 
         <TabsContent value="channels" className="space-y-4">
@@ -124,18 +154,9 @@ export const AdminCRM = () => {
                     <Button variant="outline" size="sm">Configure</Button>
                   </div>
                   <div className="grid grid-cols-3 gap-4 text-center">
-                    <div>
-                      <p className="text-xs text-muted-foreground">Delivery</p>
-                      <p className="text-lg font-bold">{channel.deliveryRate}%</p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-muted-foreground">Open Rate</p>
-                      <p className="text-lg font-bold">{channel.openRate}%</p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-muted-foreground">Opt-ins</p>
-                      <p className="text-lg font-bold">{(channel.optIns / 1000).toFixed(1)}K</p>
-                    </div>
+                    <div><p className="text-xs text-muted-foreground">Delivery</p><p className="text-lg font-bold">{channel.deliveryRate}%</p></div>
+                    <div><p className="text-xs text-muted-foreground">Open Rate</p><p className="text-lg font-bold">{channel.openRate}%</p></div>
+                    <div><p className="text-xs text-muted-foreground">Opt-ins</p><p className="text-lg font-bold">{(channel.optIns / 1000).toFixed(1)}K</p></div>
                   </div>
                 </CardContent>
               </Card>
