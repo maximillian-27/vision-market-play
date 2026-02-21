@@ -7,8 +7,9 @@ import {
 } from "@/components/ui/select";
 import {
   BarChart3, TrendingUp, TrendingDown, Users, DollarSign, Activity,
-  ArrowUpRight, ArrowDownRight, Download, Target, Zap
+  ArrowUpRight, ArrowDownRight, Download, Target, Zap, Megaphone
 } from "lucide-react";
+import { AdminMarketing } from "./AdminMarketing";
 import { Progress } from "@/components/ui/progress";
 import {
   LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, AreaChart, Area,
@@ -125,6 +126,7 @@ export const AdminAnalytics = () => {
           <TabsTrigger value="markets" className="data-[state=active]:bg-background gap-2"><TrendingUp className="h-4 w-4" /> Market Analytics</TabsTrigger>
           <TabsTrigger value="revenue" className="data-[state=active]:bg-background gap-2"><DollarSign className="h-4 w-4" /> Revenue</TabsTrigger>
           <TabsTrigger value="funnel" className="data-[state=active]:bg-background gap-2"><Target className="h-4 w-4" /> Funnel</TabsTrigger>
+          <TabsTrigger value="marketing" className="data-[state=active]:bg-background gap-2"><Megaphone className="h-4 w-4" /> Marketing</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-4">
@@ -376,6 +378,10 @@ export const AdminAnalytics = () => {
               </CardContent>
             </Card>
           </div>
+        </TabsContent>
+
+        <TabsContent value="marketing" className="space-y-4">
+          <AdminMarketing />
         </TabsContent>
       </Tabs>
     </div>
