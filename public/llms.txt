@@ -1,0 +1,32 @@
+# Pollgy - Prediction Market Platform
+
+## About
+Pollgy is a dynamic pari-mutuel prediction market platform where users buy tickets on the outcomes of real-world events. The pot accumulates from ticket sales, and winning ticket holders split the pot.
+
+## How It Works
+- Users browse prediction markets across categories: Sports, Crypto, Politics, Tech, Entertainment
+- Each market has outcomes (e.g., Yes/No) with dynamically priced tickets
+- Ticket prices shift based on demand — more popular outcomes cost more
+- When a market resolves, winning ticket holders split the total pot proportionally
+- Estimated payouts update in real-time as the pot and ticket distribution change
+
+## Key Concepts
+- **Tickets**: Units purchased to bet on an outcome
+- **Pot**: Total pool of money accumulated from all ticket sales in a market
+- **Ticket Price**: Dynamic price that shifts based on demand for each outcome
+- **Est. Payout**: Estimated return based on your share of winning tickets
+- **Players**: Users who hold tickets in a market
+
+## Pages
+- / — Home feed with all active prediction markets
+- /market/:id — Individual market detail with ticket purchasing
+- /news — News and trending topics
+- /community — Community discussions
+- /community-feed — Social feed from the community
+- /portfolio — User's ticket holdings and history
+- /profile — User profile and stats
+- /settings — Account settings
+
+## Contact
+- Website: https://pollgy.com
+- Support: support@pollgy.com
