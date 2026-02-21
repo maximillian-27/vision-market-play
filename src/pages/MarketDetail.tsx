@@ -25,7 +25,8 @@ import {
   FileText,
   Scale,
   Wallet,
-  Zap
+  Zap,
+  Ticket
 } from "lucide-react";
 import { ResponsiveContainer, AreaChart, Area, XAxis, Tooltip } from "recharts";
 import { useToast } from "@/hooks/use-toast";
@@ -410,8 +411,8 @@ export default function MarketDetail() {
             <p className="text-sm font-bold">{formatNumber(market.traders)}</p>
           </div>
           <div className="p-2.5 rounded-lg bg-muted/30 text-center">
-            <p className="text-[10px] text-muted-foreground uppercase">24h Tickets</p>
-            <p className="text-sm font-bold">{market.volume24h || "$45K"}</p>
+            <p className="text-[10px] text-muted-foreground uppercase">Ticket Price</p>
+            <p className="text-sm font-bold">${selectedOutcome ? (selectedOutcome.price / 100).toFixed(2) : (market.outcomes[0].price / 100).toFixed(2)}</p>
           </div>
         </div>
 
@@ -546,8 +547,8 @@ export default function MarketDetail() {
           {/* Quick Trade Header */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Zap className="h-4 w-4 text-primary" />
-              <span className="text-sm font-semibold">Quick Trade</span>
+              <Ticket className="h-4 w-4 text-primary" />
+              <span className="text-sm font-semibold">Buy Tickets</span>
             </div>
             {!isAwaitingResolution && (
               <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
@@ -697,7 +698,7 @@ export default function MarketDetail() {
                   {isSubmitting 
                     ? "..." 
                     : selectedOutcome 
-                      ? `Buy Tickets $${amountNum}`
+                  ? `Buy ${shares} Tickets · $${amountNum}`
                       : "Select"
                   }
                 </Button>
@@ -705,21 +706,14 @@ export default function MarketDetail() {
 
               {/* Order Summary - always visible with key info */}
               <div className="flex items-center justify-between text-xs bg-muted/30 rounded-lg px-3 py-2">
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center gap-1">
-                    <span className="text-muted-foreground">Tickets</span>
-                    <span className="font-semibold">{selectedOutcome ? shares : '-'}</span>
-                  </div>
-                  <div className="w-px h-3 bg-border" />
-                  <div className="flex items-center gap-1">
-                    <span className="text-muted-foreground">Ticket Price</span>
-                    <span className="font-semibold">{selectedOutcome ? `${selectedOutcome.price}¢` : '-'}</span>
-                  </div>
+                <div className="flex items-center gap-1">
+                  <span className="text-muted-foreground">Tickets</span>
+                  <span className="font-semibold">{selectedOutcome ? shares : '-'}</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <span className="text-muted-foreground">Est. Payout</span>
-                  <span className={`font-semibold ${selectedOutcome && potentialProfit > 0 ? 'text-success' : ''}`}>
-                    {selectedOutcome ? `+$${potentialProfit.toFixed(2)}` : '-'}
+                  <span className="text-muted-foreground">If you win</span>
+                  <span className={`font-semibold ${selectedOutcome && potentialPayout > 0 ? 'text-success' : ''}`}>
+                    {selectedOutcome ? `$${potentialPayout.toFixed(2)}` : '-'}
                   </span>
                 </div>
               </div>
