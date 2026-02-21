@@ -10,21 +10,21 @@ const hottestMarkets = [
     id: "1",
     title: "Will Bitcoin reach $100,000 by end of 2025?",
     image: bitcoinImage,
-    volume: "$2.4M",
+    pot: "$2.4M",
     yesPrice: 68,
   },
   {
     id: "4",
     title: "Next US Federal Reserve interest rate decision?",
     image: fedImage,
-    volume: "$3.1M",
+    pot: "$3.1M",
     yesPrice: 45,
   },
   {
     id: "2",
     title: "Who will win the NBA Championship this season?",
     image: nbaImage,
-    volume: "$890K",
+    pot: "$890K",
     yesPrice: 32,
   },
 ];
@@ -59,9 +59,9 @@ export function HottestMarkets() {
                     {market.title}
                   </h4>
                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                    <span className="font-medium">{market.volume}</span>
+                    <span className="font-medium">{market.pot}</span>
                     <span className="text-muted-foreground/40">•</span>
-                    <span className="font-semibold text-success">Yes {market.yesPrice}¢</span>
+                    <span className="font-semibold text-success">Yes ${(market.yesPrice / 100).toFixed(2)}</span>
                   </div>
                 </div>
               </div>
