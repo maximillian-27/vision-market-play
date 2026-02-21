@@ -242,7 +242,7 @@ export default function MarketDetail() {
       setTimeout(() => {
         toast({
           title: "Order placed!",
-          description: `You bought ${shares} shares of "${selectedOutcome.label}" for $${amountNum.toFixed(2)}`,
+          description: `You bought ${shares} tickets for "${selectedOutcome.label}" for $${amountNum.toFixed(2)}`,
         });
         setIsSubmitting(false);
         setAmount("10");
@@ -341,13 +341,13 @@ export default function MarketDetail() {
         {/* Stats Row */}
         <div className="flex flex-wrap items-center gap-4 px-4 pb-4 text-xs text-muted-foreground">
           <div className="flex items-center gap-1">
-            <TrendingUp className="h-3.5 w-3.5 text-primary" />
-            <span className="font-semibold text-foreground">{market.volume}</span>
-            <span>volume</span>
+            <span className="text-sm">🏆</span>
+            <span className="font-bold text-primary">{market.volume}</span>
+            <span>Pot</span>
           </div>
           <div className="flex items-center gap-1">
             <Users className="h-3.5 w-3.5" />
-            <span>{formatNumber(market.traders)} traders</span>
+            <span>{formatNumber(market.traders)} players</span>
           </div>
           <div className="flex items-center gap-1">
             <Clock className="h-3.5 w-3.5" />
@@ -391,7 +391,7 @@ export default function MarketDetail() {
                     fontSize: "12px",
                     padding: "6px 10px"
                   }}
-                  formatter={(value: any) => [`${value}%`, "Price"]}
+                  formatter={(value: any) => [`${value}%`, "Probability"]}
                   labelFormatter={(label) => `Date: ${label}`}
                 />
                 <Area type="monotone" dataKey="price" stroke="hsl(var(--primary))" fill="url(#chartGradient)" strokeWidth={2} />
@@ -403,15 +403,15 @@ export default function MarketDetail() {
         {/* Key Stats Grid */}
         <div className="grid grid-cols-3 gap-2 px-4 pb-4">
           <div className="p-2.5 rounded-lg bg-muted/30 text-center">
-            <p className="text-[10px] text-muted-foreground uppercase">Volume</p>
-            <p className="text-sm font-bold">{market.volume}</p>
+            <p className="text-[10px] text-muted-foreground uppercase">Pot Size</p>
+            <p className="text-sm font-bold text-primary">{market.volume}</p>
           </div>
           <div className="p-2.5 rounded-lg bg-muted/30 text-center">
-            <p className="text-[10px] text-muted-foreground uppercase">Traders</p>
+            <p className="text-[10px] text-muted-foreground uppercase">Players</p>
             <p className="text-sm font-bold">{formatNumber(market.traders)}</p>
           </div>
           <div className="p-2.5 rounded-lg bg-muted/30 text-center">
-            <p className="text-[10px] text-muted-foreground uppercase">24h Vol</p>
+            <p className="text-[10px] text-muted-foreground uppercase">24h Tickets</p>
             <p className="text-sm font-bold">{market.volume24h || "$45K"}</p>
           </div>
         </div>
@@ -698,7 +698,7 @@ export default function MarketDetail() {
                   {isSubmitting 
                     ? "..." 
                     : selectedOutcome 
-                      ? `Buy $${amountNum}`
+                      ? `Buy Tickets $${amountNum}`
                       : "Select"
                   }
                 </Button>
@@ -708,17 +708,17 @@ export default function MarketDetail() {
               <div className="flex items-center justify-between text-xs bg-muted/30 rounded-lg px-3 py-2">
                 <div className="flex items-center gap-3">
                   <div className="flex items-center gap-1">
-                    <span className="text-muted-foreground">Shares</span>
+                    <span className="text-muted-foreground">Tickets</span>
                     <span className="font-semibold">{selectedOutcome ? shares : '-'}</span>
                   </div>
                   <div className="w-px h-3 bg-border" />
                   <div className="flex items-center gap-1">
-                    <span className="text-muted-foreground">Avg</span>
+                    <span className="text-muted-foreground">Ticket Price</span>
                     <span className="font-semibold">{selectedOutcome ? `${selectedOutcome.price}¢` : '-'}</span>
                   </div>
                 </div>
                 <div className="flex items-center gap-1">
-                  <span className="text-muted-foreground">Profit</span>
+                  <span className="text-muted-foreground">Est. Payout</span>
                   <span className={`font-semibold ${selectedOutcome && potentialProfit > 0 ? 'text-success' : ''}`}>
                     {selectedOutcome ? `+$${potentialProfit.toFixed(2)}` : '-'}
                   </span>
