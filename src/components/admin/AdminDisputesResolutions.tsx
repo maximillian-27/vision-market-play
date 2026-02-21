@@ -6,6 +6,7 @@ import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal, Eye, CheckCircle, XCircle, MessageSquare, AlertTriangle, Clock } from "lucide-react";
+import { toast } from "sonner";
 
 const disputes = [
   { id: 1, marketTitle: "Bitcoin Price by EOY", user: "john@example.com", reason: "Incorrect resolution", status: "Open", priority: "High", created: "2024-01-15", amount: 2500 },
@@ -110,8 +111,8 @@ export const AdminDisputesResolutions = () => {
                           <DropdownMenuContent align="end" className="bg-popover">
                             <DropdownMenuItem className="gap-2"><Eye className="h-4 w-4" /> View</DropdownMenuItem>
                             <DropdownMenuItem className="gap-2"><MessageSquare className="h-4 w-4" /> Message</DropdownMenuItem>
-                            <DropdownMenuItem className="gap-2 text-success"><CheckCircle className="h-4 w-4" /> Approve</DropdownMenuItem>
-                            <DropdownMenuItem className="gap-2 text-destructive"><XCircle className="h-4 w-4" /> Reject</DropdownMenuItem>
+                            <DropdownMenuItem className="gap-2 text-success" onClick={() => toast.success(`Dispute on "${d.marketTitle}" approved`)}><CheckCircle className="h-4 w-4" /> Approve</DropdownMenuItem>
+                            <DropdownMenuItem className="gap-2 text-destructive" onClick={() => toast.success(`Dispute on "${d.marketTitle}" rejected`)}><XCircle className="h-4 w-4" /> Reject</DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </td>
@@ -152,7 +153,7 @@ export const AdminDisputesResolutions = () => {
                       <td className="p-4 text-sm">{r.deadline}</td>
                       <td className="p-4 text-right">
                         <div className="flex items-center justify-end gap-2">
-                          {r.status === "Pending" && <Button size="sm" className="gap-1 h-8"><CheckCircle className="h-3 w-3" /> Confirm</Button>}
+                          {r.status === "Pending" && <Button size="sm" className="gap-1 h-8" onClick={() => toast.success(`Resolution for "${r.title}" confirmed`)}><CheckCircle className="h-3 w-3" /> Confirm</Button>}
                           <Button variant="ghost" size="icon" className="h-8 w-8"><MoreHorizontal className="h-4 w-4" /></Button>
                         </div>
                       </td>

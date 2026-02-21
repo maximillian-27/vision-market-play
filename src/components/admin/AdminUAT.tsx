@@ -14,22 +14,17 @@ const devices = ["Desktop", "iPhone 15", "Samsung S24", "iPad Pro"];
 
 type TestStatus = "pass" | "fail" | "untested";
 
-const generateMatrix = (): Record<string, Record<string, TestStatus>> => {
-  const matrix: Record<string, Record<string, TestStatus>> = {};
-  features.forEach(f => {
-    matrix[f] = {};
-    browsers.forEach(b => {
-      devices.forEach(d => {
-        const key = `${b} - ${d}`;
-        const rand = Math.random();
-        matrix[f][key] = rand > 0.3 ? "pass" : rand > 0.1 ? "untested" : "fail";
-      });
-    });
-  });
-  return matrix;
+// Deterministic test matrix
+const testMatrix: Record<string, Record<string, TestStatus>> = {
+  "Login": { "Chrome 120 - Desktop": "pass", "Chrome 120 - iPhone 15": "pass", "Chrome 120 - Samsung S24": "pass", "Chrome 120 - iPad Pro": "pass", "Safari 17 - Desktop": "pass", "Safari 17 - iPhone 15": "pass", "Safari 17 - Samsung S24": "untested", "Safari 17 - iPad Pro": "pass", "Firefox 121 - Desktop": "fail", "Firefox 121 - iPhone 15": "untested", "Firefox 121 - Samsung S24": "untested", "Firefox 121 - iPad Pro": "untested", "Edge 120 - Desktop": "pass", "Edge 120 - iPhone 15": "untested", "Edge 120 - Samsung S24": "untested", "Edge 120 - iPad Pro": "untested" },
+  "Registration": { "Chrome 120 - Desktop": "pass", "Chrome 120 - iPhone 15": "pass", "Chrome 120 - Samsung S24": "pass", "Chrome 120 - iPad Pro": "pass", "Safari 17 - Desktop": "pass", "Safari 17 - iPhone 15": "pass", "Safari 17 - Samsung S24": "untested", "Safari 17 - iPad Pro": "pass", "Firefox 121 - Desktop": "pass", "Firefox 121 - iPhone 15": "untested", "Firefox 121 - Samsung S24": "untested", "Firefox 121 - iPad Pro": "untested", "Edge 120 - Desktop": "pass", "Edge 120 - iPhone 15": "untested", "Edge 120 - Samsung S24": "untested", "Edge 120 - iPad Pro": "untested" },
+  "Market Browse": { "Chrome 120 - Desktop": "pass", "Chrome 120 - iPhone 15": "pass", "Chrome 120 - Samsung S24": "pass", "Chrome 120 - iPad Pro": "pass", "Safari 17 - Desktop": "pass", "Safari 17 - iPhone 15": "pass", "Safari 17 - Samsung S24": "untested", "Safari 17 - iPad Pro": "pass", "Firefox 121 - Desktop": "pass", "Firefox 121 - iPhone 15": "untested", "Firefox 121 - Samsung S24": "pass", "Firefox 121 - iPad Pro": "untested", "Edge 120 - Desktop": "pass", "Edge 120 - iPhone 15": "untested", "Edge 120 - Samsung S24": "untested", "Edge 120 - iPad Pro": "pass" },
+  "Place Bet": { "Chrome 120 - Desktop": "pass", "Chrome 120 - iPhone 15": "pass", "Chrome 120 - Samsung S24": "pass", "Chrome 120 - iPad Pro": "pass", "Safari 17 - Desktop": "pass", "Safari 17 - iPhone 15": "pass", "Safari 17 - Samsung S24": "untested", "Safari 17 - iPad Pro": "pass", "Firefox 121 - Desktop": "pass", "Firefox 121 - iPhone 15": "untested", "Firefox 121 - Samsung S24": "untested", "Firefox 121 - iPad Pro": "untested", "Edge 120 - Desktop": "pass", "Edge 120 - iPhone 15": "untested", "Edge 120 - Samsung S24": "untested", "Edge 120 - iPad Pro": "untested" },
+  "Deposit": { "Chrome 120 - Desktop": "pass", "Chrome 120 - iPhone 15": "pass", "Chrome 120 - Samsung S24": "fail", "Chrome 120 - iPad Pro": "pass", "Safari 17 - Desktop": "pass", "Safari 17 - iPhone 15": "pass", "Safari 17 - Samsung S24": "untested", "Safari 17 - iPad Pro": "pass", "Firefox 121 - Desktop": "pass", "Firefox 121 - iPhone 15": "untested", "Firefox 121 - Samsung S24": "untested", "Firefox 121 - iPad Pro": "untested", "Edge 120 - Desktop": "pass", "Edge 120 - iPhone 15": "untested", "Edge 120 - Samsung S24": "untested", "Edge 120 - iPad Pro": "untested" },
+  "Withdrawal": { "Chrome 120 - Desktop": "pass", "Chrome 120 - iPhone 15": "pass", "Chrome 120 - Samsung S24": "pass", "Chrome 120 - iPad Pro": "pass", "Safari 17 - Desktop": "pass", "Safari 17 - iPhone 15": "pass", "Safari 17 - Samsung S24": "untested", "Safari 17 - iPad Pro": "pass", "Firefox 121 - Desktop": "pass", "Firefox 121 - iPhone 15": "untested", "Firefox 121 - Samsung S24": "untested", "Firefox 121 - iPad Pro": "untested", "Edge 120 - Desktop": "pass", "Edge 120 - iPhone 15": "untested", "Edge 120 - Samsung S24": "untested", "Edge 120 - iPad Pro": "untested" },
+  "Profile": { "Chrome 120 - Desktop": "pass", "Chrome 120 - iPhone 15": "pass", "Chrome 120 - Samsung S24": "pass", "Chrome 120 - iPad Pro": "pass", "Safari 17 - Desktop": "pass", "Safari 17 - iPhone 15": "pass", "Safari 17 - Samsung S24": "untested", "Safari 17 - iPad Pro": "pass", "Firefox 121 - Desktop": "pass", "Firefox 121 - iPhone 15": "untested", "Firefox 121 - Samsung S24": "untested", "Firefox 121 - iPad Pro": "untested", "Edge 120 - Desktop": "fail", "Edge 120 - iPhone 15": "untested", "Edge 120 - Samsung S24": "untested", "Edge 120 - iPad Pro": "untested" },
+  "Push Notifications": { "Chrome 120 - Desktop": "pass", "Chrome 120 - iPhone 15": "untested", "Chrome 120 - Samsung S24": "pass", "Chrome 120 - iPad Pro": "untested", "Safari 17 - Desktop": "pass", "Safari 17 - iPhone 15": "fail", "Safari 17 - Samsung S24": "untested", "Safari 17 - iPad Pro": "untested", "Firefox 121 - Desktop": "pass", "Firefox 121 - iPhone 15": "untested", "Firefox 121 - Samsung S24": "untested", "Firefox 121 - iPad Pro": "untested", "Edge 120 - Desktop": "pass", "Edge 120 - iPhone 15": "untested", "Edge 120 - Samsung S24": "untested", "Edge 120 - iPad Pro": "untested" },
 };
-
-const testMatrix = generateMatrix();
 
 const deviceList = [
   { name: "iPhone 15 Pro", os: "iOS 17.2", browser: "Safari 17", status: "Tested" },
@@ -55,22 +50,15 @@ const StatusIcon = ({ status }: { status: TestStatus }) => {
 
 export const AdminUAT = () => {
   const [selectedBrowser, setSelectedBrowser] = useState(browsers[0]);
-
   const cols = devices.map(d => `${selectedBrowser} - ${d}`);
 
   return (
     <div className="space-y-6">
       <Tabs defaultValue="matrix" className="space-y-4">
         <TabsList className="bg-muted/50 p-1">
-          <TabsTrigger value="matrix" className="data-[state=active]:bg-background gap-2">
-            <Monitor className="h-4 w-4" /> Test Matrix
-          </TabsTrigger>
-          <TabsTrigger value="devices" className="data-[state=active]:bg-background gap-2">
-            <Smartphone className="h-4 w-4" /> Devices
-          </TabsTrigger>
-          <TabsTrigger value="issues" className="data-[state=active]:bg-background gap-2">
-            <Bug className="h-4 w-4" /> Issues
-          </TabsTrigger>
+          <TabsTrigger value="matrix" className="data-[state=active]:bg-background gap-2"><Monitor className="h-4 w-4" /> Test Matrix</TabsTrigger>
+          <TabsTrigger value="devices" className="data-[state=active]:bg-background gap-2"><Smartphone className="h-4 w-4" /> Devices</TabsTrigger>
+          <TabsTrigger value="issues" className="data-[state=active]:bg-background gap-2"><Bug className="h-4 w-4" /> Issues</TabsTrigger>
         </TabsList>
 
         <TabsContent value="matrix" className="space-y-4">
@@ -102,7 +90,7 @@ export const AdminUAT = () => {
                       <td className="p-4 font-medium text-sm">{f}</td>
                       {cols.map(c => (
                         <td key={c} className="p-4 text-center">
-                          <StatusIcon status={testMatrix[f][c]} />
+                          <StatusIcon status={testMatrix[f]?.[c] || "untested"} />
                         </td>
                       ))}
                     </tr>
@@ -166,22 +154,12 @@ export const AdminUAT = () => {
                     <tr key={issue.id} className="border-b border-border/20 hover:bg-muted/30 transition-colors">
                       <td className="p-4 font-medium text-sm">{issue.title}</td>
                       <td className="p-4">
-                        <Badge
-                          variant={issue.severity === "Critical" ? "destructive" : issue.severity === "High" ? "default" : "secondary"}
-                          className="text-xs"
-                        >
-                          {issue.severity}
-                        </Badge>
+                        <Badge variant={issue.severity === "Critical" ? "destructive" : issue.severity === "High" ? "default" : "secondary"} className="text-xs">{issue.severity}</Badge>
                       </td>
                       <td className="p-4 text-sm">{issue.device}</td>
                       <td className="p-4 text-sm">{issue.assignee}</td>
                       <td className="p-4">
-                        <Badge
-                          variant={issue.status === "Resolved" ? "default" : issue.status === "In Progress" ? "secondary" : "outline"}
-                          className="text-xs"
-                        >
-                          {issue.status}
-                        </Badge>
+                        <Badge variant={issue.status === "Resolved" ? "default" : issue.status === "In Progress" ? "secondary" : "outline"} className="text-xs">{issue.status}</Badge>
                       </td>
                     </tr>
                   ))}

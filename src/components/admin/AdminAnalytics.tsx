@@ -3,29 +3,17 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
-import { 
-  BarChart3, 
-  TrendingUp, 
-  TrendingDown, 
-  Users, 
-  DollarSign, 
-  Activity, 
-  ArrowUpRight, 
-  ArrowDownRight,
-  PieChart,
-  LineChart,
-  Download,
-  Calendar,
-  Target,
-  Zap
+import {
+  BarChart3, TrendingUp, TrendingDown, Users, DollarSign, Activity,
+  ArrowUpRight, ArrowDownRight, Download, Target, Zap
 } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
+import {
+  LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, AreaChart, Area,
+  XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend
+} from "recharts";
 
 const kpis = {
   revenue: { value: 124500, change: 12.5, label: "Revenue (24h)" },
@@ -68,6 +56,47 @@ const conversionFunnel = [
   { stage: "Active Traders", count: 3675, rate: 70 },
 ];
 
+const userActivityData = [
+  { day: "Mon", dau: 6200, newUsers: 320 },
+  { day: "Tue", dau: 7100, newUsers: 410 },
+  { day: "Wed", dau: 6800, newUsers: 350 },
+  { day: "Thu", dau: 7500, newUsers: 380 },
+  { day: "Fri", dau: 8200, newUsers: 420 },
+  { day: "Sat", dau: 9100, newUsers: 510 },
+  { day: "Sun", dau: 8450, newUsers: 470 },
+];
+
+const categoryDistribution = [
+  { name: "Sports", value: 35 },
+  { name: "Crypto", value: 28 },
+  { name: "Politics", value: 15 },
+  { name: "Tech", value: 14 },
+  { name: "Other", value: 8 },
+];
+
+const COLORS = ["hsl(var(--primary))", "hsl(var(--success))", "hsl(var(--warning))", "hsl(var(--destructive))", "hsl(var(--muted-foreground))"];
+
+const volumeData = [
+  { week: "W1", volume: 1200000 },
+  { week: "W2", volume: 1450000 },
+  { week: "W3", volume: 1320000 },
+  { week: "W4", volume: 1680000 },
+  { week: "W5", volume: 1890000 },
+  { week: "W6", volume: 1560000 },
+  { week: "W7", volume: 2100000 },
+];
+
+const revenueData = [
+  { date: "Jan 1", revenue: 38000 },
+  { date: "Jan 5", revenue: 42000 },
+  { date: "Jan 9", revenue: 39000 },
+  { date: "Jan 13", revenue: 51000 },
+  { date: "Jan 17", revenue: 48000 },
+  { date: "Jan 21", revenue: 55000 },
+  { date: "Jan 25", revenue: 62000 },
+  { date: "Jan 29", revenue: 58000 },
+];
+
 export const AdminAnalytics = () => {
   return (
     <div className="space-y-6">
@@ -75,9 +104,7 @@ export const AdminAnalytics = () => {
         <h2 className="text-xl font-semibold">Analytics & BI</h2>
         <div className="flex items-center gap-3">
           <Select defaultValue="7d">
-            <SelectTrigger className="w-32 h-9">
-              <SelectValue />
-            </SelectTrigger>
+            <SelectTrigger className="w-32 h-9"><SelectValue /></SelectTrigger>
             <SelectContent>
               <SelectItem value="24h">Last 24h</SelectItem>
               <SelectItem value="7d">Last 7 days</SelectItem>
@@ -86,38 +113,21 @@ export const AdminAnalytics = () => {
             </SelectContent>
           </Select>
           <Button variant="outline" size="sm" className="gap-2">
-            <Download className="h-4 w-4" />
-            Export
+            <Download className="h-4 w-4" /> Export
           </Button>
         </div>
       </div>
 
       <Tabs defaultValue="overview" className="space-y-4">
         <TabsList className="bg-muted/50 p-1 flex-wrap h-auto gap-1">
-          <TabsTrigger value="overview" className="data-[state=active]:bg-background gap-2">
-            <BarChart3 className="h-4 w-4" />
-            Overview
-          </TabsTrigger>
-          <TabsTrigger value="users" className="data-[state=active]:bg-background gap-2">
-            <Users className="h-4 w-4" />
-            User Analytics
-          </TabsTrigger>
-          <TabsTrigger value="markets" className="data-[state=active]:bg-background gap-2">
-            <TrendingUp className="h-4 w-4" />
-            Market Analytics
-          </TabsTrigger>
-          <TabsTrigger value="revenue" className="data-[state=active]:bg-background gap-2">
-            <DollarSign className="h-4 w-4" />
-            Revenue
-          </TabsTrigger>
-          <TabsTrigger value="funnel" className="data-[state=active]:bg-background gap-2">
-            <Target className="h-4 w-4" />
-            Funnel
-          </TabsTrigger>
+          <TabsTrigger value="overview" className="data-[state=active]:bg-background gap-2"><BarChart3 className="h-4 w-4" /> Overview</TabsTrigger>
+          <TabsTrigger value="users" className="data-[state=active]:bg-background gap-2"><Users className="h-4 w-4" /> User Analytics</TabsTrigger>
+          <TabsTrigger value="markets" className="data-[state=active]:bg-background gap-2"><TrendingUp className="h-4 w-4" /> Market Analytics</TabsTrigger>
+          <TabsTrigger value="revenue" className="data-[state=active]:bg-background gap-2"><DollarSign className="h-4 w-4" /> Revenue</TabsTrigger>
+          <TabsTrigger value="funnel" className="data-[state=active]:bg-background gap-2"><Target className="h-4 w-4" /> Funnel</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-4">
-          {/* KPI Grid */}
           <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
             {Object.entries(kpis).map(([key, kpi]) => (
               <Card key={key} className="border-border/40">
@@ -138,7 +148,6 @@ export const AdminAnalytics = () => {
             ))}
           </div>
 
-          {/* Traffic Sources */}
           <Card className="border-border/40">
             <CardHeader className="pb-3">
               <CardTitle className="text-base">Traffic Sources</CardTitle>
@@ -158,7 +167,6 @@ export const AdminAnalytics = () => {
         </TabsContent>
 
         <TabsContent value="users" className="space-y-4">
-          {/* User Metrics */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {userMetrics.map((metric) => (
               <Card key={metric.metric} className="border-border/40">
@@ -168,9 +176,7 @@ export const AdminAnalytics = () => {
                     <p className="text-2xl font-bold">{metric.value}</p>
                     <div className="text-right">
                       <p className="text-xs text-muted-foreground">Benchmark</p>
-                      <Badge variant={metric.status === "good" ? "default" : "secondary"} className="text-xs">
-                        {metric.benchmark}
-                      </Badge>
+                      <Badge variant={metric.status === "good" ? "default" : "secondary"} className="text-xs">{metric.benchmark}</Badge>
                     </div>
                   </div>
                 </CardContent>
@@ -178,24 +184,29 @@ export const AdminAnalytics = () => {
             ))}
           </div>
 
-          {/* User Activity Chart Placeholder */}
           <Card className="border-border/40">
             <CardHeader className="pb-3">
               <CardTitle className="text-base">User Activity Over Time</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="h-64 flex items-center justify-center border border-dashed border-border rounded-lg">
-                <div className="text-center text-muted-foreground">
-                  <LineChart className="h-8 w-8 mx-auto mb-2" />
-                  <p className="text-sm">Activity chart visualization</p>
-                </div>
+              <div className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={userActivityData}>
+                    <CartesianGrid strokeDasharray="3 3" className="stroke-border/40" />
+                    <XAxis dataKey="day" className="text-xs" tick={{ fill: 'hsl(var(--muted-foreground))' }} />
+                    <YAxis className="text-xs" tick={{ fill: 'hsl(var(--muted-foreground))' }} />
+                    <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--popover))', border: '1px solid hsl(var(--border))', borderRadius: '8px', color: 'hsl(var(--popover-foreground))' }} />
+                    <Legend />
+                    <Line type="monotone" dataKey="dau" name="Daily Active Users" stroke="hsl(var(--primary))" strokeWidth={2} dot={false} />
+                    <Line type="monotone" dataKey="newUsers" name="New Users" stroke="hsl(var(--success))" strokeWidth={2} dot={false} />
+                  </LineChart>
+                </ResponsiveContainer>
               </div>
             </CardContent>
           </Card>
         </TabsContent>
 
         <TabsContent value="markets" className="space-y-4">
-          {/* Top Markets */}
           <Card className="border-border/40">
             <CardHeader className="pb-3">
               <CardTitle className="text-base">Top Performing Markets</CardTitle>
@@ -218,11 +229,7 @@ export const AdminAnalytics = () => {
                         <td className="p-3 text-sm">${market.volume.toLocaleString()}</td>
                         <td className="p-3 text-sm">{market.trades.toLocaleString()}</td>
                         <td className="p-3">
-                          {market.trend === "up" ? (
-                            <TrendingUp className="h-4 w-4 text-success" />
-                          ) : (
-                            <TrendingDown className="h-4 w-4 text-destructive" />
-                          )}
+                          {market.trend === "up" ? <TrendingUp className="h-4 w-4 text-success" /> : <TrendingDown className="h-4 w-4 text-destructive" />}
                         </td>
                       </tr>
                     ))}
@@ -232,18 +239,24 @@ export const AdminAnalytics = () => {
             </CardContent>
           </Card>
 
-          {/* Market Distribution */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Card className="border-border/40">
               <CardHeader className="pb-3">
                 <CardTitle className="text-base">Markets by Category</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="h-48 flex items-center justify-center border border-dashed border-border rounded-lg">
-                  <div className="text-center text-muted-foreground">
-                    <PieChart className="h-8 w-8 mx-auto mb-2" />
-                    <p className="text-sm">Category distribution</p>
-                  </div>
+                <div className="h-48">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie data={categoryDistribution} cx="50%" cy="50%" innerRadius={40} outerRadius={70} paddingAngle={4} dataKey="value">
+                        {categoryDistribution.map((_, index) => (
+                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        ))}
+                      </Pie>
+                      <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--popover))', border: '1px solid hsl(var(--border))', borderRadius: '8px', color: 'hsl(var(--popover-foreground))' }} />
+                      <Legend />
+                    </PieChart>
+                  </ResponsiveContainer>
                 </div>
               </CardContent>
             </Card>
@@ -252,11 +265,16 @@ export const AdminAnalytics = () => {
                 <CardTitle className="text-base">Volume Over Time</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="h-48 flex items-center justify-center border border-dashed border-border rounded-lg">
-                  <div className="text-center text-muted-foreground">
-                    <BarChart3 className="h-8 w-8 mx-auto mb-2" />
-                    <p className="text-sm">Volume trends</p>
-                  </div>
+                <div className="h-48">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={volumeData}>
+                      <CartesianGrid strokeDasharray="3 3" className="stroke-border/40" />
+                      <XAxis dataKey="week" tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} />
+                      <YAxis tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} tickFormatter={(v) => `$${(v / 1000000).toFixed(1)}M`} />
+                      <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--popover))', border: '1px solid hsl(var(--border))', borderRadius: '8px', color: 'hsl(var(--popover-foreground))' }} formatter={(value: number) => [`$${(value / 1000000).toFixed(2)}M`, 'Volume']} />
+                      <Bar dataKey="volume" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
                 </div>
               </CardContent>
             </Card>
@@ -264,14 +282,10 @@ export const AdminAnalytics = () => {
         </TabsContent>
 
         <TabsContent value="revenue" className="space-y-4">
-          {/* Revenue Stats */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             <Card className="border-border/40 bg-success/5">
               <CardContent className="p-4">
-                <div className="flex items-center gap-2 text-success text-sm mb-1">
-                  <DollarSign className="h-4 w-4" />
-                  Total Revenue (MTD)
-                </div>
+                <div className="flex items-center gap-2 text-success text-sm mb-1"><DollarSign className="h-4 w-4" /> Total Revenue (MTD)</div>
                 <p className="text-2xl font-bold">$1.24M</p>
               </CardContent>
             </Card>
@@ -295,17 +309,21 @@ export const AdminAnalytics = () => {
             </Card>
           </div>
 
-          {/* Revenue Chart */}
           <Card className="border-border/40">
             <CardHeader className="pb-3">
               <CardTitle className="text-base">Revenue Trend</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="h-64 flex items-center justify-center border border-dashed border-border rounded-lg">
-                <div className="text-center text-muted-foreground">
-                  <LineChart className="h-8 w-8 mx-auto mb-2" />
-                  <p className="text-sm">Revenue over time</p>
-                </div>
+              <div className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={revenueData}>
+                    <CartesianGrid strokeDasharray="3 3" className="stroke-border/40" />
+                    <XAxis dataKey="date" tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} />
+                    <YAxis tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} tickFormatter={(v) => `$${(v / 1000).toFixed(0)}K`} />
+                    <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--popover))', border: '1px solid hsl(var(--border))', borderRadius: '8px', color: 'hsl(var(--popover-foreground))' }} formatter={(value: number) => [`$${value.toLocaleString()}`, 'Revenue']} />
+                    <Area type="monotone" dataKey="revenue" stroke="hsl(var(--success))" fill="hsl(var(--success) / 0.1)" strokeWidth={2} />
+                  </AreaChart>
+                </ResponsiveContainer>
               </div>
             </CardContent>
           </Card>
@@ -321,16 +339,12 @@ export const AdminAnalytics = () => {
                 <div key={stage.stage} className="space-y-2">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-xs font-medium text-primary">
-                        {index + 1}
-                      </div>
+                      <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-xs font-medium text-primary">{index + 1}</div>
                       <span className="font-medium">{stage.stage}</span>
                     </div>
                     <div className="text-right">
                       <span className="font-medium">{stage.count.toLocaleString()}</span>
-                      {index > 0 && (
-                        <span className="text-sm text-muted-foreground ml-2">({stage.rate}% conversion)</span>
-                      )}
+                      {index > 0 && <span className="text-sm text-muted-foreground ml-2">({stage.rate}% conversion)</span>}
                     </div>
                   </div>
                   <Progress value={(stage.count / conversionFunnel[0].count) * 100} className="h-3" />
@@ -339,24 +353,17 @@ export const AdminAnalytics = () => {
             </CardContent>
           </Card>
 
-          {/* Funnel Insights */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Card className="border-border/40 bg-success/5">
               <CardContent className="p-4">
-                <div className="flex items-center gap-2 text-success text-sm mb-1">
-                  <Zap className="h-4 w-4" />
-                  Best Performing
-                </div>
+                <div className="flex items-center gap-2 text-success text-sm mb-1"><Zap className="h-4 w-4" /> Best Performing</div>
                 <p className="font-medium">Signups → Verified</p>
                 <p className="text-2xl font-bold">70%</p>
               </CardContent>
             </Card>
             <Card className="border-border/40 bg-warning/5">
               <CardContent className="p-4">
-                <div className="flex items-center gap-2 text-warning text-sm mb-1">
-                  <Target className="h-4 w-4" />
-                  Needs Improvement
-                </div>
+                <div className="flex items-center gap-2 text-warning text-sm mb-1"><Target className="h-4 w-4" /> Needs Improvement</div>
                 <p className="font-medium">Visitors → Signups</p>
                 <p className="text-2xl font-bold">10%</p>
               </CardContent>

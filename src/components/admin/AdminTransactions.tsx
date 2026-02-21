@@ -12,7 +12,14 @@ import {
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Search, MoreHorizontal, Eye, Download, ArrowUpRight, ArrowDownRight, RefreshCw, Receipt, CreditCard, Shield } from "lucide-react";
+import {
+  Popover, PopoverContent, PopoverTrigger,
+} from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { cn } from "@/lib/utils";
+import { format } from "date-fns";
+import { Search, MoreHorizontal, Eye, Download, ArrowUpRight, ArrowDownRight, RefreshCw, Receipt, CreditCard, Shield, CalendarIcon, ChevronLeft, ChevronRight } from "lucide-react";
+import { toast } from "sonner";
 
 const transactions = [
   { id: "TXN-001", user: "john@example.com", type: "Deposit", method: "Bank Transfer", amount: 5000, status: "Completed", date: "2024-01-15 14:32" },
@@ -22,6 +29,9 @@ const transactions = [
   { id: "TXN-005", user: "charlie@example.com", type: "Deposit", method: "Credit Card", amount: 1000, status: "Completed", date: "2024-01-15 10:45" },
   { id: "TXN-006", user: "diana@example.com", type: "Trade", method: "Market Sell", amount: 3400, status: "Completed", date: "2024-01-15 09:30" },
   { id: "TXN-007", user: "edward@example.com", type: "Withdrawal", method: "Crypto (ETH)", amount: 8900, status: "Failed", date: "2024-01-15 08:15" },
+  { id: "TXN-008", user: "fiona@example.com", type: "Deposit", method: "Bank Transfer", amount: 25000, status: "Completed", date: "2024-01-14 16:20" },
+  { id: "TXN-009", user: "george@example.com", type: "Trade", method: "Market Buy", amount: 7500, status: "Completed", date: "2024-01-14 14:10" },
+  { id: "TXN-010", user: "hannah@example.com", type: "Deposit", method: "Credit Card", amount: 500, status: "Completed", date: "2024-01-14 11:55" },
 ];
 
 const typeIcons: Record<string, any> = { Deposit: ArrowDownRight, Withdrawal: ArrowUpRight, Trade: RefreshCw };
@@ -34,15 +44,37 @@ const psps = [
   { name: "Bank Transfer", type: "Wire", status: "Active", txnCount: 890, volume: 3400000, health: "Healthy" },
 ];
 
+const PAGE_SIZE = 5;
+
+const downloadCSV = (data: typeof transactions) => {
+  const headers = ["ID", "User", "Type", "Method", "Amount", "Status", "Date"];
+  const rows = data.map(t => [t.id, t.user, t.type, t.method, t.amount, t.status, t.date]);
+  const csv = [headers, ...rows].map(r => r.join(",")).join("\n");
+  const blob = new Blob([csv], { type: "text/csv" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "transactions-export.csv";
+  a.click();
+  URL.revokeObjectURL(url);
+  toast.success("Transactions exported successfully");
+};
+
 export const AdminTransactions = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [typeFilter, setTypeFilter] = useState("all");
+  const [dateFrom, setDateFrom] = useState<Date>();
+  const [dateTo, setDateTo] = useState<Date>();
+  const [page, setPage] = useState(1);
 
   const filteredTransactions = transactions.filter((txn) => {
     const matchesSearch = txn.user.toLowerCase().includes(searchQuery.toLowerCase()) || txn.id.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesType = typeFilter === "all" || txn.type.toLowerCase() === typeFilter;
     return matchesSearch && matchesType;
   });
+
+  const totalPages = Math.ceil(filteredTransactions.length / PAGE_SIZE);
+  const paginatedTransactions = filteredTransactions.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   const totalDeposits = transactions.filter(t => t.type === "Deposit" && t.status === "Completed").reduce((acc, t) => acc + t.amount, 0);
   const totalWithdrawals = transactions.filter(t => t.type === "Withdrawal" && t.status === "Completed").reduce((acc, t) => acc + t.amount, 0);
@@ -88,9 +120,9 @@ export const AdminTransactions = () => {
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-end gap-3 flex-wrap">
             <div className="relative flex-1 sm:w-64">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input placeholder="Search transactions..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-9 h-9" />
+              <Input placeholder="Search transactions..." value={searchQuery} onChange={(e) => { setSearchQuery(e.target.value); setPage(1); }} className="pl-9 h-9" />
             </div>
-            <Select value={typeFilter} onValueChange={setTypeFilter}>
+            <Select value={typeFilter} onValueChange={(v) => { setTypeFilter(v); setPage(1); }}>
               <SelectTrigger className="w-32 h-9"><SelectValue /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Types</SelectItem>
@@ -99,7 +131,31 @@ export const AdminTransactions = () => {
                 <SelectItem value="trade">Trades</SelectItem>
               </SelectContent>
             </Select>
-            <Button variant="outline" size="sm" className="gap-2"><Download className="h-4 w-4" /> Export</Button>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" size="sm" className={cn("gap-2 h-9", !dateFrom && "text-muted-foreground")}>
+                  <CalendarIcon className="h-4 w-4" />
+                  {dateFrom ? format(dateFrom, "MMM d") : "From"}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar mode="single" selected={dateFrom} onSelect={setDateFrom} className={cn("p-3 pointer-events-auto")} />
+              </PopoverContent>
+            </Popover>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" size="sm" className={cn("gap-2 h-9", !dateTo && "text-muted-foreground")}>
+                  <CalendarIcon className="h-4 w-4" />
+                  {dateTo ? format(dateTo, "MMM d") : "To"}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar mode="single" selected={dateTo} onSelect={setDateTo} className={cn("p-3 pointer-events-auto")} />
+              </PopoverContent>
+            </Popover>
+            <Button variant="outline" size="sm" className="gap-2" onClick={() => downloadCSV(filteredTransactions)}>
+              <Download className="h-4 w-4" /> Export
+            </Button>
           </div>
           <Card className="border-border/40">
             <div className="overflow-x-auto">
@@ -117,7 +173,7 @@ export const AdminTransactions = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredTransactions.map((txn) => {
+                  {paginatedTransactions.map((txn) => {
                     const Icon = typeIcons[txn.type];
                     const color = typeColors[txn.type];
                     return (
@@ -144,6 +200,17 @@ export const AdminTransactions = () => {
                   })}
                 </tbody>
               </table>
+            </div>
+            {/* Pagination */}
+            <div className="flex items-center justify-between px-4 py-3 border-t border-border/40">
+              <p className="text-sm text-muted-foreground">
+                Showing {((page - 1) * PAGE_SIZE) + 1}–{Math.min(page * PAGE_SIZE, filteredTransactions.length)} of {filteredTransactions.length}
+              </p>
+              <div className="flex items-center gap-2">
+                <Button variant="outline" size="sm" disabled={page === 1} onClick={() => setPage(p => p - 1)}><ChevronLeft className="h-4 w-4" /></Button>
+                <span className="text-sm font-medium">{page} / {totalPages}</span>
+                <Button variant="outline" size="sm" disabled={page === totalPages} onClick={() => setPage(p => p + 1)}><ChevronRight className="h-4 w-4" /></Button>
+              </div>
             </div>
           </Card>
         </TabsContent>
@@ -179,36 +246,15 @@ export const AdminTransactions = () => {
             <CardContent className="p-6 space-y-4">
               <h3 className="font-semibold text-lg">Risk & Limits Configuration</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <Label>Min Deposit</Label>
-                  <Input defaultValue="10" type="number" className="mt-1" />
-                </div>
-                <div>
-                  <Label>Max Deposit</Label>
-                  <Input defaultValue="100000" type="number" className="mt-1" />
-                </div>
-                <div>
-                  <Label>Daily Withdrawal Limit</Label>
-                  <Input defaultValue="50000" type="number" className="mt-1" />
-                </div>
-                <div>
-                  <Label>KYC Threshold</Label>
-                  <Input defaultValue="10000" type="number" className="mt-1" />
-                </div>
-                <div className="sm:col-span-2 flex items-center justify-between">
-                  <span className="text-sm">Auto-approve withdrawals under $1,000</span>
-                  <Switch defaultChecked />
-                </div>
-                <div className="sm:col-span-2 flex items-center justify-between">
-                  <span className="text-sm">Require 2FA for withdrawals over $5,000</span>
-                  <Switch defaultChecked />
-                </div>
-                <div className="sm:col-span-2 flex items-center justify-between">
-                  <span className="text-sm">Enable fraud detection</span>
-                  <Switch defaultChecked />
-                </div>
+                <div><Label>Min Deposit</Label><Input defaultValue="10" type="number" className="mt-1" /></div>
+                <div><Label>Max Deposit</Label><Input defaultValue="100000" type="number" className="mt-1" /></div>
+                <div><Label>Daily Withdrawal Limit</Label><Input defaultValue="50000" type="number" className="mt-1" /></div>
+                <div><Label>KYC Threshold</Label><Input defaultValue="10000" type="number" className="mt-1" /></div>
+                <div className="sm:col-span-2 flex items-center justify-between"><span className="text-sm">Auto-approve withdrawals under $1,000</span><Switch defaultChecked /></div>
+                <div className="sm:col-span-2 flex items-center justify-between"><span className="text-sm">Require 2FA for withdrawals over $5,000</span><Switch defaultChecked /></div>
+                <div className="sm:col-span-2 flex items-center justify-between"><span className="text-sm">Enable fraud detection</span><Switch defaultChecked /></div>
               </div>
-              <Button className="w-full">Save Configuration</Button>
+              <Button className="w-full" onClick={() => toast.success("Risk configuration saved")}>Save Configuration</Button>
             </CardContent>
           </Card>
         </TabsContent>
