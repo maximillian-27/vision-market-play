@@ -19,11 +19,11 @@ const creatorData: Record<string, {
   name: string;
   username: string;
   markets: number;
-  volume: string;
+  pot: string;
   followers: number;
   following: number;
   successRate: number;
-  avgVolume: string;
+  avgPot: string;
   categories: string[];
   description: string;
   joinedDate: string;
@@ -37,11 +37,11 @@ const creatorData: Record<string, {
     name: 'Sarah Chen',
     username: '@sarahchen',
     markets: 47, 
-    volume: '$2.8M', 
+    pot: '$2.8M', 
     followers: 12340,
     following: 234,
     successRate: 89,
-    avgVolume: '$59.6K',
+    avgPot: '$59.6K',
     categories: ['Crypto', 'Tech', 'Finance'],
     description: 'Professional market analyst specializing in crypto and tech predictions. Creating high-quality markets since 2023. Former analyst at Goldman Sachs.',
     joinedDate: 'Jan 2023',
@@ -55,11 +55,11 @@ const creatorData: Record<string, {
     name: 'MarketMaven',
     username: '@marketmaven',
     markets: 47, 
-    volume: '$2.8M', 
+    pot: '$2.8M', 
     followers: 12340,
     following: 156,
     successRate: 89,
-    avgVolume: '$59.6K',
+    avgPot: '$59.6K',
     categories: ['Crypto', 'Tech', 'Finance'],
     description: 'Professional market analyst specializing in crypto and tech predictions. Creating high-quality markets since 2023.',
     joinedDate: 'Jan 2023',
@@ -71,11 +71,11 @@ const creatorData: Record<string, {
     name: 'PredictPro',
     username: '@predictpro',
     markets: 38, 
-    volume: '$2.1M', 
+    pot: '$2.1M', 
     followers: 9800,
     following: 89,
     successRate: 85,
-    avgVolume: '$55.3K',
+    avgPot: '$55.3K',
     categories: ['Sports', 'Politics', 'Finance'],
     description: 'Data-driven predictions across finance, sports, and politics. Building the future of forecasting.',
     joinedDate: 'Mar 2023',
@@ -94,7 +94,7 @@ const getCreatorMarkets = (creatorName: string) => [
     image: bitcoinImage,
     yesPrice: 68,
     noPrice: 32,
-    volume: "$1.2M",
+    pot: "$1.2M",
     endsIn: "3 months",
     status: "open" as const,
   },
@@ -105,7 +105,7 @@ const getCreatorMarkets = (creatorName: string) => [
     image: iphoneImage,
     yesPrice: 45,
     noPrice: 55,
-    volume: "$890K",
+    pot: "$890K",
     endsIn: "8 months",
     status: "open" as const,
   },
@@ -116,7 +116,7 @@ const getCreatorMarkets = (creatorName: string) => [
     image: fedImage,
     yesPrice: 73,
     noPrice: 27,
-    volume: "$2.1M",
+    pot: "$2.1M",
     endsIn: "2 weeks",
     status: "open" as const,
   }
@@ -381,10 +381,10 @@ export default function CreatorProfile() {
         <ProfileStats 
           type="creator"
           stats={{
-            totalVolume: creator.volume,
+            totalVolume: creator.pot,
             marketsCreated: creator.markets,
             rank: 12,
-            avgVolume: creator.avgVolume,
+            avgVolume: creator.avgPot,
           }}
         />
 
