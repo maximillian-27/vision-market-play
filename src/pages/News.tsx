@@ -31,7 +31,7 @@ const newsItems = [
           { label: "Yes", price: 68 },
           { label: "No", price: 32 },
         ],
-        volume: "$2.3M",
+        pot: "$2.3M",
         endsIn: "Dec 31",
       },
     ],

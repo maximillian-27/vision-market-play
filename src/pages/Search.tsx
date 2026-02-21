@@ -35,7 +35,7 @@ const allMarkets = [
     image: bitcoinImage,
     yesPrice: 68,
     noPrice: 32,
-    volume: "$2.4M",
+    pot: "$2.4M",
     endsIn: "3 months",
     status: "open" as const,
   },
@@ -50,7 +50,7 @@ const allMarkets = [
       { label: "Nuggets", price: 21 },
       { label: "Other", price: 22 },
     ],
-    volume: "$890K",
+    pot: "$890K",
     endsIn: "2 months",
     status: "open" as const,
   },
@@ -61,7 +61,7 @@ const allMarkets = [
     image: iphoneImage,
     yesPrice: 23,
     noPrice: 77,
-    volume: "$1.2M",
+    pot: "$1.2M",
     endsIn: "11 months",
     status: "open" as const,
   },
@@ -75,7 +75,7 @@ const allMarkets = [
       { label: "Hold", price: 38 },
       { label: "Raise", price: 17 },
     ],
-    volume: "$3.1M",
+    pot: "$3.1M",
     endsIn: "1 month",
     status: "open" as const,
   },
@@ -86,7 +86,7 @@ const allMarkets = [
     image: aiImage,
     yesPrice: 71,
     noPrice: 29,
-    volume: "$1.8M",
+    pot: "$1.8M",
     endsIn: "1 year",
     status: "open" as const,
   },
@@ -250,7 +250,7 @@ export default function Search() {
                 outcomes={market.outcomes}
                 yesPrice={market.yesPrice}
                 noPrice={market.noPrice}
-                volume={market.volume}
+                pot={market.pot}
                 endsIn={market.endsIn}
                 status={market.status}
               />
@@ -352,7 +352,7 @@ export default function Search() {
                             <img src={post.market.image} alt="" className="w-12 h-12 rounded object-cover" />
                             <div className="flex-1 min-w-0">
                               <p className="text-xs font-medium line-clamp-2">{post.market.title}</p>
-                              <p className="text-[10px] text-muted-foreground mt-0.5">{post.market.volume} volume</p>
+                              <p className="text-[10px] text-muted-foreground mt-0.5">{post.market.pot} pot</p>
                             </div>
                           </div>
                         </div>

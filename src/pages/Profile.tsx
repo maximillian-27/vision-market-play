@@ -74,7 +74,7 @@ const mockCreatorMarkets = [
     subtitle: "Major crypto milestone approaching",
     yesPrice: 68,
     noPrice: 32,
-    volume: "$1.2M",
+    pot: "$1.2M",
     endsIn: "3 months",
     image: "/src/assets/bitcoin-market.jpg",
     likes: 142,
@@ -158,7 +158,7 @@ export default function Profile() {
     // Trader stats
     totalProfit: "+$12,450",
     winRate: 78,
-    totalTrades: 142,
+    totalTickets: 142,
     accuracy: 72,
     portfolioValue: 18450,
     cashBalance: 5230,
@@ -318,7 +318,7 @@ export default function Profile() {
             stats={{
               totalProfit: userData.totalProfit,
               winRate: userData.winRate,
-              totalTrades: userData.totalTrades,
+              totalTrades: userData.totalTickets,
               accuracy: userData.accuracy,
             }}
           />
@@ -526,7 +526,7 @@ export default function Profile() {
                   </div>
                   <div className="text-center">
                     <p className="text-2xl font-bold text-success">{creatorStats.volume}</p>
-                    <p className="text-sm text-muted-foreground">Volume</p>
+                    <p className="text-sm text-muted-foreground">Pot Generated</p>
                   </div>
                   <div className="text-center">
                     <p className="text-2xl font-bold">{creatorStats.followers.toLocaleString()}</p>

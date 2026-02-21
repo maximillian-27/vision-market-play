@@ -26,14 +26,14 @@ interface MarketCardProps {
   outcomes?: Outcome[];
   yesPrice?: number;
   noPrice?: number;
-  volume: string;
+  pot: string;
   endsIn: string;
   likes?: number;
   comments?: number;
   hideEngagement?: boolean;
 }
 
-export function MarketCard({ id, creator, title, subtitle, image, outcomes, yesPrice, noPrice, volume, endsIn, likes = 0, comments = 0, hideEngagement = false }: MarketCardProps) {
+export function MarketCard({ id, creator, title, subtitle, image, outcomes, yesPrice, noPrice, pot, endsIn, likes = 0, comments = 0, hideEngagement = false }: MarketCardProps) {
   const navigate = useNavigate();
   const [showRepostDialog, setShowRepostDialog] = useState(false);
   
@@ -91,7 +91,7 @@ export function MarketCard({ id, creator, title, subtitle, image, outcomes, yesP
             <div className="flex items-center gap-3 text-xs text-muted-foreground mt-1.5 mb-2">
               <span className="flex items-center gap-1">
                 <TrendingUp className="h-3.5 w-3.5" />
-                {volume}
+                {pot} Pot
               </span>
               <span className="flex items-center gap-1">
                 <Clock className="h-3.5 w-3.5" />
@@ -113,7 +113,7 @@ export function MarketCard({ id, creator, title, subtitle, image, outcomes, yesP
                       }`}
                       onClick={(e) => e.stopPropagation()}
                     >
-                      <div className="text-lg font-bold">{outcome.price}¢</div>
+                      <div className="text-lg font-bold">${(outcome.price / 100).toFixed(2)}</div>
                       <div className="text-[10px] font-medium">{outcome.label}</div>
                     </button>
                   ))}
