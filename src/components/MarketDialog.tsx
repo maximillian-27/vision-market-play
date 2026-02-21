@@ -249,9 +249,9 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
               <div className="space-y-2">
                 <h2 className="text-base font-bold leading-tight">{market.title}</h2>
                 <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
-                  <div className="flex items-center gap-1.5 bg-gold/15 border border-gold/20 rounded-full px-2.5 py-0.5">
-                    <span className="font-bold text-gold">{market.volume}</span>
-                    <span className="text-gold/80 font-medium">Pot</span>
+                  <div className="flex items-center gap-1.5 bg-primary/10 rounded-full px-2.5 py-0.5">
+                    <span className="font-bold text-primary">{market.volume}</span>
+                    <span className="text-primary/70 font-medium">Pot</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <Users className="h-3.5 w-3.5" />

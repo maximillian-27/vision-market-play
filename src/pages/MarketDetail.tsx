@@ -340,9 +340,9 @@ export default function MarketDetail() {
 
         {/* Stats Row */}
         <div className="flex flex-wrap items-center gap-4 px-4 pb-4 text-xs text-muted-foreground">
-          <div className="flex items-center gap-1.5 bg-gold/15 border border-gold/20 rounded-full px-2.5 py-0.5">
-            <span className="font-bold text-gold">{market.volume}</span>
-            <span className="text-gold/80 font-medium">Pot</span>
+          <div className="flex items-center gap-1.5 bg-primary/10 rounded-full px-2.5 py-0.5">
+            <span className="font-bold text-primary">{market.volume}</span>
+            <span className="text-primary/70 font-medium">Pot</span>
           </div>
           <div className="flex items-center gap-1">
             <Users className="h-3.5 w-3.5" />
@@ -403,7 +403,7 @@ export default function MarketDetail() {
         <div className="grid grid-cols-3 gap-2 px-4 pb-4">
           <div className="p-2.5 rounded-lg bg-muted/30 text-center">
             <p className="text-[10px] text-muted-foreground uppercase">Pot Size</p>
-            <p className="text-sm font-bold text-gold">{market.volume}</p>
+            <p className="text-sm font-bold text-primary">{market.volume}</p>
           </div>
           <div className="p-2.5 rounded-lg bg-muted/30 text-center">
             <p className="text-[10px] text-muted-foreground uppercase">Players</p>
