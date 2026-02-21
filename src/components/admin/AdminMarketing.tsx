@@ -88,7 +88,7 @@ export const AdminMarketing = () => {
                   {statusBadge(integration.status)}
                 </div>
                 <p className="text-xs text-muted-foreground">{integration.description}</p>
-                <p className="text-xs font-mono text-muted-foreground">{integration.id}</p>
+                
               </div>
               <Button variant="ghost" size="sm" asChild>
                 <a href={integration.url} target="_blank" rel="noopener noreferrer" className="gap-1">
@@ -112,7 +112,6 @@ export const AdminMarketing = () => {
                 <tr className="border-b border-border/40 text-left text-sm text-muted-foreground">
                   <th className="p-2 font-medium">Event Name</th>
                   <th className="p-2 font-medium">Category</th>
-                  <th className="p-2 font-medium">Action</th>
                   <th className="p-2 font-medium">Last Fired</th>
                   <th className="p-2 font-medium text-right">Count (24h)</th>
                 </tr>
@@ -122,7 +121,6 @@ export const AdminMarketing = () => {
                   <tr key={evt.name} className="border-b border-border/20 hover:bg-muted/30 transition-colors">
                     <td className="p-2 font-mono text-sm text-primary">{evt.name}</td>
                     <td className="p-2 text-sm">{evt.category}</td>
-                    <td className="p-2 text-sm text-muted-foreground">{evt.action}</td>
                     <td className="p-2 text-sm text-muted-foreground">{evt.lastFired}</td>
                     <td className="p-2 text-sm font-medium text-right">{evt.count24h.toLocaleString()}</td>
                   </tr>
