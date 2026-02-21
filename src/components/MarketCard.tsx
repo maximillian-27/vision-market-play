@@ -90,7 +90,6 @@ export function MarketCard({ id, creator, title, subtitle, image, outcomes, yesP
             {/* Stats */}
             <div className="flex items-center gap-3 text-xs text-muted-foreground mt-1.5 mb-2">
               <span className="flex items-center gap-1 font-bold text-primary">
-                🏆
                 {volume} Pot
               </span>
               <span className="flex items-center gap-1">
