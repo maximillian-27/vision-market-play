@@ -1,88 +1,66 @@
 
 
-# CMO Request Sheet - Admin Dashboard Implementation
+# Admin Dashboard - Logic & Usability Overhaul
 
-Adding a comprehensive **Marketing & GTM** section to the admin panel, plus implementing the technical SEO/tracking infrastructure that can be done directly in the codebase.
+Streamlining the admin panel to surface important information first, reduce tab overload, apply pari-mutuel terminology consistently, and remove clutter.
 
-## What Can Be Implemented Now (in the codebase)
+## Problem Summary
 
-From the CMO's full request sheet, these items can be covered:
-
-| CMO Request | What We'll Build |
-|---|---|
-| GTM (Google Tag Manager) | Add GTM snippet placeholders to `index.html` with configurable container ID |
-| Event Tracking | Create a `src/lib/analytics.ts` utility that pushes events to the dataLayer (regstarted, regcomplete, depositstarted, depositcomplete, betcomplete, etc.) |
-| Rich Snippets / Structured Data | Add JSON-LD schema markup to `index.html` for the platform |
-| Meta Data improvements | Update `index.html` with canonical URL, improved OG tags |
-| Admin: Marketing & GTM tab | New tab in Analytics & BI showing integration status, event tracking overview, SEO checklist, and channel/platform status |
-
-Items like GA4 account setup, Search Console, Bing Webmaster, CRM platform selection, ESP, offsite SEO, social media management, and BI platform are **operational tasks** (not code) -- they'll appear as a checklist in the admin panel for your team to track progress.
-
-**Note:** `robots.txt`, `sitemap.xml`, and `llms.txt` are already updated from the previous edit.
+- **Analytics has 6 sub-tabs** (Overview, User Analytics, Market Analytics, Revenue, Funnel, Marketing) -- too many clicks to find what matters
+- **Pari-mutuel terminology missing** in admin: still says "Volume", "Trades", "Trading Volume" instead of "Pot Size", "Tickets"
+- **Dashboard duplicates** Analytics data (both show revenue, volume, users)
+- **Marketing tab buried** as last item in Analytics
+- **Funnel and Revenue are separate tabs** but should be front-and-center, not hidden
 
 ## Changes
 
-### 1. `index.html` -- GTM + Structured Data + Meta Improvements
-- Add GTM `<script>` placeholder in `<head>` with comment `<!-- Replace GTM-XXXXXXX with your container ID -->`
-- Add GTM `<noscript>` iframe after `<body>` tag
-- Add `<link rel="canonical">` tag
-- Add JSON-LD structured data for the platform (WebSite + Organization schema)
-- Keep existing meta tags, improve description
+### 1. AdminAnalytics.tsx -- Consolidate 6 tabs down to 4, reorder by importance
 
-### 2. New file: `src/lib/analytics.ts` -- Event Tracking Utility
-- `trackEvent(eventName, params)` function that pushes to `window.dataLayer`
-- Pre-defined event constants: `REG_STARTED`, `REG_COMPLETE`, `DEPOSIT_STARTED`, `DEPOSIT_COMPLETE`, `BET_COMPLETE`, `PAGE_VIEW`
-- Each event follows GA4 structure: eventCategory, eventAction, eventLabel, eventValue
-- Ready to sync with GTM once container ID is configured
+**Current tabs:** Overview | User Analytics | Market Analytics | Revenue | Funnel | Marketing
 
-### 3. `src/components/admin/AdminAnalytics.tsx` -- Add "Marketing" Tab
-Add a new **Marketing** tab to the existing Analytics & BI section with:
+**New tabs:** Performance | Users & Funnel | Markets | Marketing
 
-**Integrations Status Panel:**
-- GTM: status badge (configured/not configured), container ID display, link to tagmanager.google.com
-- GA4: status badge, measurement ID field, link to analytics.google.com
-- Search Console: status badge, link to search.google.com/search-console
-- Bing Webmaster: status badge, link to bing.com/webmasters
-- Matomo/Metrica: optional status
+- **Performance** (was Overview + Revenue merged): KPI cards on top (Revenue 24h, Active Users, Pot Size 24h, New Signups, Retention, Avg Session), then Revenue Trend chart, then Traffic Sources. Removes the separate Revenue tab entirely.
+- **Users & Funnel** (was User Analytics + Funnel merged): User metrics cards on top (DAU/MAU, ARPU, Churn, CAC, LTV), then Conversion Funnel visual with the 3 insight cards (Best Performing, Needs Improvement, Overall Conversion), then User Activity chart below.
+- **Markets**: Top Performing Markets table (rename "Volume" to "Pot Size", "Trades" to "Tickets"), Category pie chart, Pot Size Over Time bar chart. Same data, updated labels.
+- **Marketing**: Unchanged -- already well-structured from AdminMarketing.tsx.
 
-**Event Tracking Overview:**
-- Table of all tracked events (regstarted, regcomplete, depositstarted, depositcomplete, betcomplete)
-- Columns: Event Name, Category, Last Fired, Count (24h)
-- Mock data showing event activity
+Also update all labels: "Trading Volume" to "Total Pot Size", "Volume" to "Pot Size" in charts.
 
-**SEO Checklist:**
-- Checkboxes for: robots.txt (done), sitemap.xml (done), llms.txt (done), meta tags (done), canonical URLs, hreflang tags, structured data (done), alt tags, internal linking, SEO blocks
-- Each item shows status (complete/pending/not started)
+### 2. AdminDashboard.tsx -- Apply pari-mutuel terminology
 
-**Channel & Platform Tracker:**
-- Cards for each platform/tool from CMO sheet: CRM, ESP, RAF, Affiliate Program, CDP, MMP, BI Platform, Social Media channels
-- Status: Not Started / In Progress / Connected
-- Quick links to recommended platforms (Zoho, Hubspot, Looker Studio, etc.)
+- Line 35: `totalVolume` display label "Total Volume" becomes "Total Pot Size"
+- Line 111: Label text "Total Volume" becomes "Total Pot Size"
+- Keep the data values the same, just rename the labels
 
-**Social Media Presence:**
-- Grid of social platforms: X, Discord, Twitch, Meta, TikTok, Reddit, Snap
-- Per-GEO profiles needed: Balkan, English, Greek
-- Status indicators for each
+### 3. AdminMarkets.tsx -- Apply pari-mutuel terminology
 
-### 4. `src/components/admin/AdminSidebar.tsx` -- No changes needed
-The "Analytics & BI" sidebar item already covers this since we're adding the Marketing tab within AdminAnalytics.
+- Mock data: keep `volume` and `trades` keys but update display labels
+- Line 94: Table header "Volume" becomes "Pot Size"
+- Line 95: Table header "Trades" becomes "Tickets"
+- Line 190: Category card "Volume" label becomes "Pot Size"
+
+### 4. AdminMarketing.tsx -- Minor cleanup
+
+- Remove the "Action" column from Event Tracking table (redundant with "Category") to reduce width
+- Remove the `font-mono` ID line from integrations (visual clutter -- the description already explains what to do)
+
+## What stays the same
+
+- Sidebar structure and navigation
+- All other admin sections (Users, Disputes, Transactions, CRM, Commissions, Creators, Partners, Bonuses, UAT)
+- Card designs, color scheme, responsive patterns
+- All mock data values (just label changes)
 
 ## Technical Details
 
-### GTM Implementation (`index.html`)
-The GTM snippets will use a placeholder `GTM-XXXXXXX` that needs to be replaced with the actual container ID once created. Two code blocks:
-1. Head script (as high as possible)
-2. Body noscript iframe (immediately after opening body tag)
+### AdminAnalytics.tsx restructure
+- Remove `TabsTrigger` for "revenue" and "funnel" tabs
+- Rename "overview" tab to "performance", merge in revenue KPI cards + AreaChart from the old revenue tab
+- Rename "users" tab to "users-funnel", append the conversion funnel Progress bars + 3 insight cards from the old funnel tab
+- Update chart tooltip labels and table headers for pari-mutuel terminology
+- Remove unused imports after consolidation
 
-### Event Tracking Utility (`src/lib/analytics.ts`)
-```typescript
-// Pushes to window.dataLayer for GTM pickup
-export const trackEvent = (event: string, params?: Record<string, any>) => {
-  window.dataLayer?.push({ event, ...params });
-};
-```
-Pre-defined events follow the CMO's requested naming: `regstarted`, `regcomplete`, `depositstarted`, `depositcomplete`, `betcomplete`.
-
-### Structured Data (JSON-LD)
-WebSite + Organization schema for pollgy.com, enabling rich snippets in search results.
+### Label changes (AdminDashboard + AdminMarkets)
+- Simple string replacements: "Volume" to "Pot Size", "Trades" to "Tickets", "Trading Volume" to "Total Pot Size"
 
