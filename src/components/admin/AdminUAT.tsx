@@ -7,6 +7,7 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import { Monitor, Smartphone, Tablet, CheckCircle, XCircle, MinusCircle, Plus, Bug } from "lucide-react";
+import { toast } from "sonner";
 
 const features = ["Login", "Registration", "Market Browse", "Place Bet", "Deposit", "Withdrawal", "Profile", "Push Notifications"];
 const browsers = ["Chrome 120", "Safari 17", "Firefox 121", "Edge 120"];
@@ -104,7 +105,7 @@ export const AdminUAT = () => {
         <TabsContent value="devices" className="space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-semibold">Target Devices</h3>
-            <Button size="sm" className="gap-2"><Plus className="h-4 w-4" /> Add Device</Button>
+            <Button size="sm" className="gap-2" onClick={() => toast("Device registration form would open here")}><Plus className="h-4 w-4" /> Add Device</Button>
           </div>
           <Card className="border-border/40">
             <div className="overflow-x-auto">
@@ -135,7 +136,7 @@ export const AdminUAT = () => {
         <TabsContent value="issues" className="space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-semibold">UAT Issues</h3>
-            <Button size="sm" className="gap-2"><Plus className="h-4 w-4" /> Report Issue</Button>
+            <Button size="sm" className="gap-2" onClick={() => toast("Issue report form would open here")}><Plus className="h-4 w-4" /> Report Issue</Button>
           </div>
           <Card className="border-border/40">
             <div className="overflow-x-auto">

@@ -112,10 +112,10 @@ export const AdminMarkets = () => {
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild><Button variant="ghost" size="icon" className="h-8 w-8"><MoreHorizontal className="h-4 w-4" /></Button></DropdownMenuTrigger>
                           <DropdownMenuContent align="end" className="bg-popover">
-                            <DropdownMenuItem className="gap-2"><Eye className="h-4 w-4" /> View</DropdownMenuItem>
-                            <DropdownMenuItem className="gap-2"><Pause className="h-4 w-4" /> Pause</DropdownMenuItem>
-                            <DropdownMenuItem className="gap-2"><CheckCircle className="h-4 w-4" /> Resolve</DropdownMenuItem>
-                            <DropdownMenuItem className="gap-2 text-destructive"><XCircle className="h-4 w-4" /> Cancel</DropdownMenuItem>
+                            <DropdownMenuItem className="gap-2" onClick={() => toast(`Opening market: ${market.title}`)}><Eye className="h-4 w-4" /> View</DropdownMenuItem>
+                            <DropdownMenuItem className="gap-2" onClick={() => toast.success(`Market "${market.title}" paused`)}><Pause className="h-4 w-4" /> Pause</DropdownMenuItem>
+                            <DropdownMenuItem className="gap-2" onClick={() => toast(`Opening resolution for "${market.title}"`)}><CheckCircle className="h-4 w-4" /> Resolve</DropdownMenuItem>
+                            <DropdownMenuItem className="gap-2 text-destructive" onClick={() => toast.success(`Market "${market.title}" cancelled`)}><XCircle className="h-4 w-4" /> Cancel</DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </td>
@@ -175,7 +175,7 @@ export const AdminMarkets = () => {
         <TabsContent value="categories" className="space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-semibold">Market Categories</h3>
-            <Button size="sm" className="gap-2"><Plus className="h-4 w-4" /> Add Category</Button>
+            <Button size="sm" className="gap-2" onClick={() => toast("Category creation form would open here")}><Plus className="h-4 w-4" /> Add Category</Button>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {categories.map((cat) => (

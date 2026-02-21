@@ -8,6 +8,7 @@ import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Search, MoreHorizontal, Eye, CheckCircle, XCircle, Star, TrendingUp, Users, Link2, Copy, Plus } from "lucide-react";
+import { toast } from "sonner";
 
 const creators = [
   { id: 1, name: "CryptoGuru", email: "crypto@guru.com", status: "Active", markets: 45, volume: 234000, followers: 12500, rating: 4.8, commission: 12400 },
@@ -110,11 +111,11 @@ export const AdminCreators = () => {
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild><Button variant="ghost" size="icon" className="h-8 w-8"><MoreHorizontal className="h-4 w-4" /></Button></DropdownMenuTrigger>
                           <DropdownMenuContent align="end" className="bg-popover">
-                            <DropdownMenuItem className="gap-2"><Eye className="h-4 w-4" /> View Profile</DropdownMenuItem>
+                            <DropdownMenuItem className="gap-2" onClick={() => toast(`Opening creator profile: ${creator.name}`)}><Eye className="h-4 w-4" /> View Profile</DropdownMenuItem>
                             {creator.status === "Pending" && (
                               <>
-                                <DropdownMenuItem className="gap-2 text-success"><CheckCircle className="h-4 w-4" /> Approve</DropdownMenuItem>
-                                <DropdownMenuItem className="gap-2 text-destructive"><XCircle className="h-4 w-4" /> Reject</DropdownMenuItem>
+                                <DropdownMenuItem className="gap-2 text-success" onClick={() => toast.success(`Creator ${creator.name} approved`)}><CheckCircle className="h-4 w-4" /> Approve</DropdownMenuItem>
+                                <DropdownMenuItem className="gap-2 text-destructive" onClick={() => toast(`Creator ${creator.name} rejected`)}><XCircle className="h-4 w-4" /> Reject</DropdownMenuItem>
                               </>
                             )}
                           </DropdownMenuContent>
@@ -152,7 +153,7 @@ export const AdminCreators = () => {
         <TabsContent value="links" className="space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-semibold">Creator Tracking Links</h3>
-            <Button size="sm" className="gap-2"><Plus className="h-4 w-4" /> Generate Link</Button>
+            <Button size="sm" className="gap-2" onClick={() => toast.success("New tracking link generated")}><Plus className="h-4 w-4" /> Generate Link</Button>
           </div>
           <Card className="border-border/40">
             <div className="overflow-x-auto">
@@ -173,7 +174,7 @@ export const AdminCreators = () => {
                       <td className="p-4"><code className="text-xs bg-muted px-2 py-1 rounded">pollgy.com/?ref={c.name.toLowerCase()}</code></td>
                       <td className="p-4 text-sm">{(c.followers * 2).toLocaleString()}</td>
                       <td className="p-4 text-sm">{Math.floor(c.followers * 0.15).toLocaleString()}</td>
-                      <td className="p-4 text-right"><Button variant="ghost" size="icon" className="h-8 w-8"><Copy className="h-4 w-4" /></Button></td>
+                      <td className="p-4 text-right"><Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => { navigator.clipboard.writeText(`pollgy.com/?ref=${c.name.toLowerCase()}`); toast.success("Link copied to clipboard"); }}><Copy className="h-4 w-4" /></Button></td>
                     </tr>
                   ))}
                 </tbody>

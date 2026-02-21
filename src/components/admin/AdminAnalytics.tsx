@@ -9,6 +9,7 @@ import {
   BarChart3, TrendingUp, TrendingDown, Users, DollarSign,
   ArrowUpRight, ArrowDownRight, Download, Target, Zap, Megaphone
 } from "lucide-react";
+import { toast } from "sonner";
 import { AdminMarketing } from "./AdminMarketing";
 import { Progress } from "@/components/ui/progress";
 import {
@@ -122,7 +123,7 @@ export const AdminAnalytics = () => {
                 <SelectItem value="90d">Last 90 days</SelectItem>
               </SelectContent>
             </Select>
-            <Button variant="outline" size="sm" className="gap-2">
+            <Button variant="outline" size="sm" className="gap-2" onClick={() => toast("Exporting analytics report...")}>
               <Download className="h-4 w-4" /> Export
             </Button>
           </div>

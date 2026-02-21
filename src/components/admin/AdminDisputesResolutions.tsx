@@ -109,8 +109,8 @@ export const AdminDisputesResolutions = () => {
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild><Button variant="ghost" size="icon" className="h-8 w-8"><MoreHorizontal className="h-4 w-4" /></Button></DropdownMenuTrigger>
                           <DropdownMenuContent align="end" className="bg-popover">
-                            <DropdownMenuItem className="gap-2"><Eye className="h-4 w-4" /> View</DropdownMenuItem>
-                            <DropdownMenuItem className="gap-2"><MessageSquare className="h-4 w-4" /> Message</DropdownMenuItem>
+                            <DropdownMenuItem className="gap-2" onClick={() => toast(`Opening dispute details for "${d.marketTitle}"`)}><Eye className="h-4 w-4" /> View</DropdownMenuItem>
+                            <DropdownMenuItem className="gap-2" onClick={() => toast(`Opening message thread with ${d.user}`)}><MessageSquare className="h-4 w-4" /> Message</DropdownMenuItem>
                             <DropdownMenuItem className="gap-2 text-success" onClick={() => toast.success(`Dispute on "${d.marketTitle}" approved`)}><CheckCircle className="h-4 w-4" /> Approve</DropdownMenuItem>
                             <DropdownMenuItem className="gap-2 text-destructive" onClick={() => toast.success(`Dispute on "${d.marketTitle}" rejected`)}><XCircle className="h-4 w-4" /> Reject</DropdownMenuItem>
                           </DropdownMenuContent>
