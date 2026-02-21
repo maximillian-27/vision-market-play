@@ -31,7 +31,7 @@ export function ProfileStats({ type, stats }: ProfileStatsProps) {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <StatCard
           icon={<DollarSign className="h-4 w-4" />}
-          label="Volume"
+          label="Pot Generated"
           value={stats.totalVolume || "$0"}
           valueClassName="text-success"
         />
@@ -69,7 +69,7 @@ export function ProfileStats({ type, stats }: ProfileStatsProps) {
       />
       <StatCard
         icon={<BarChart3 className="h-4 w-4" />}
-        label="Total Trades"
+        label="Total Tickets"
         value={stats.totalTrades?.toString() || "0"}
       />
       <StatCard
