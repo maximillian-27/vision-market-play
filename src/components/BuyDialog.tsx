@@ -50,7 +50,7 @@ export function BuyDialog({ open, onOpenChange, outcome, marketTitle, marketId }
       setTimeout(() => {
         toast({
           title: "Order placed",
-          description: `You bought ${shares} shares of "${outcome.label}" for $${amountNum.toFixed(2)}`,
+          description: `You bought ${shares} tickets for "${outcome.label}" for $${amountNum.toFixed(2)}`,
         });
         onOpenChange(false);
         setIsSubmitting(false);
@@ -124,20 +124,20 @@ export function BuyDialog({ open, onOpenChange, outcome, marketTitle, marketId }
       {/* Order Summary */}
       <div className="space-y-2 p-4 rounded-lg bg-muted/20">
         <div className="flex justify-between text-sm">
-          <span className="text-muted-foreground">Shares</span>
+          <span className="text-muted-foreground">Tickets</span>
           <span className="font-semibold">{shares.toLocaleString()}</span>
         </div>
         <div className="flex justify-between text-sm">
-          <span className="text-muted-foreground">Avg. price</span>
+          <span className="text-muted-foreground">Ticket Price</span>
           <span className="font-semibold">{outcome.price}¢</span>
         </div>
         <Separator className="my-2" />
         <div className="flex justify-between text-sm">
-          <span className="text-muted-foreground">Potential payout</span>
+          <span className="text-muted-foreground">Max Payout</span>
           <span className="font-semibold">${potentialPayout.toFixed(2)}</span>
         </div>
         <div className="flex justify-between text-sm">
-          <span className="text-muted-foreground">Potential profit</span>
+          <span className="text-muted-foreground">Est. Payout</span>
           <span className={`font-semibold ${potentialProfit > 0 ? 'text-success' : ''}`}>
             ${potentialProfit.toFixed(2)}
           </span>
@@ -162,7 +162,7 @@ export function BuyDialog({ open, onOpenChange, outcome, marketTitle, marketId }
         onClick={handleBuy}
         disabled={isSubmitting || amountNum < 1 || amountNum > 10000}
       >
-        {isSubmitting ? "Placing order..." : `Buy ${outcome.label} for $${amountNum.toFixed(2)}`}
+        {isSubmitting ? "Placing order..." : `Buy Tickets for $${amountNum.toFixed(2)}`}
       </Button>
     </div>
   );
@@ -183,7 +183,7 @@ export function BuyDialog({ open, onOpenChange, outcome, marketTitle, marketId }
               onClick={handleBuy}
               disabled={isSubmitting || amountNum < 1 || amountNum > 10000}
             >
-              {isSubmitting ? "Placing order..." : `Buy ${outcome.label} for $${amountNum.toFixed(2)}`}
+              {isSubmitting ? "Placing order..." : `Buy Tickets for $${amountNum.toFixed(2)}`}
             </Button>
           </div>
         </DrawerContent>
