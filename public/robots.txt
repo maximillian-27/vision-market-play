@@ -12,3 +12,7 @@ Allow: /
 
 User-agent: *
 Allow: /
+Disallow: /*?
+Disallow: /*#
+
+Sitemap: https://pollgy.com/sitemap.xml
