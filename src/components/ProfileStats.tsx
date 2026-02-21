@@ -31,7 +31,7 @@ export function ProfileStats({ type, stats }: ProfileStatsProps) {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <StatCard
           icon={<DollarSign className="h-4 w-4" />}
-          label="Total Pot Generated"
+          label="Volume"
           value={stats.totalVolume || "$0"}
           valueClassName="text-success"
         />
@@ -47,7 +47,7 @@ export function ProfileStats({ type, stats }: ProfileStatsProps) {
         />
         <StatCard
           icon={<TrendingUp className="h-4 w-4" />}
-          label="Avg Pot / Market"
+          label="Avg Vol / Market"
           value={stats.avgVolume || "$0"}
         />
       </div>
@@ -58,7 +58,7 @@ export function ProfileStats({ type, stats }: ProfileStatsProps) {
     <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
       <StatCard
         icon={<TrendingUp className="h-4 w-4" />}
-        label="Total Winnings"
+        label="Total P&L"
         value={stats.totalProfit || "$0"}
         valueClassName={stats.totalProfit?.startsWith("+") ? "text-success" : stats.totalProfit?.startsWith("-") ? "text-destructive" : ""}
       />
@@ -69,7 +69,7 @@ export function ProfileStats({ type, stats }: ProfileStatsProps) {
       />
       <StatCard
         icon={<BarChart3 className="h-4 w-4" />}
-        label="Entries"
+        label="Total Trades"
         value={stats.totalTrades?.toString() || "0"}
       />
       <StatCard

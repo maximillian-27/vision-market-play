@@ -27,7 +27,7 @@ import {
   Heart,
   MessageCircle,
   ExternalLink,
-  Ticket,
+  Zap,
   Repeat2
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -407,8 +407,8 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
             <div className="p-4 space-y-4 flex-1">
               {/* Quick Trade Header */}
               <div className="flex items-center gap-2">
-                <Ticket className="h-4 w-4 text-primary" />
-                <span className="text-sm font-semibold">Buy Tickets</span>
+                <Zap className="h-4 w-4 text-primary" />
+                <span className="text-sm font-semibold">Quick Trade</span>
               </div>
 
               {/* Awaiting Resolution State */}
@@ -566,11 +566,15 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
                   <span className="text-muted-foreground">Tickets</span>
                   <span className="font-semibold">{selectedOutcome ? shares.toLocaleString() : "—"}</span>
                 </div>
+                <div className="flex justify-between text-xs">
+                  <span className="text-muted-foreground">Ticket Price</span>
+                  <span className="font-semibold">{selectedOutcome ? `${selectedOutcome.price}¢` : "—"}</span>
+                </div>
                 <Separator className="my-1.5" />
                 <div className="flex justify-between text-xs">
-                  <span className="text-muted-foreground">If you win</span>
-                  <span className={`font-bold ${selectedOutcome && potentialPayout > 0 ? 'text-success' : ''}`}>
-                    {selectedOutcome ? `$${potentialPayout.toFixed(2)}` : "—"}
+                  <span className="text-muted-foreground">Est. Payout</span>
+                  <span className={`font-bold ${selectedOutcome && potentialProfit > 0 ? 'text-success' : ''}`}>
+                    {selectedOutcome ? `+$${potentialProfit.toFixed(2)}` : "—"}
                   </span>
                 </div>
               </div>
@@ -588,7 +592,7 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
                 {isSubmitting 
                   ? "Placing order..." 
                   : selectedOutcome 
-                    ? `Buy ${shares} Tickets · $${amountNum.toFixed(2)}`
+                    ? `Buy Tickets • $${amountNum.toFixed(2)}`
                     : "Select outcome"
                 }
               </Button>

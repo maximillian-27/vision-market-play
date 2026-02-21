@@ -289,12 +289,12 @@ export default function Profile() {
                 <div>
                   <p className="text-sm text-muted-foreground mb-1">Portfolio Value</p>
                   <p className="text-3xl font-bold">${userData.portfolioValue.toLocaleString()}</p>
-                  <p className="text-sm text-success mt-1">{userData.totalProfit} winnings</p>
+                  <p className="text-sm text-success mt-1">{userData.totalProfit} profit</p>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground mb-1">Cash Balance</p>
                   <p className="text-3xl font-bold">${userData.cashBalance.toLocaleString()}</p>
-                  <p className="text-sm text-muted-foreground mt-1">Available balance</p>
+                  <p className="text-sm text-muted-foreground mt-1">Available to trade</p>
                 </div>
               </div>
             </CardContent>
@@ -337,7 +337,7 @@ export default function Profile() {
                   </>
                 ) : (
                   <>
-                    <TabsTrigger value="positions">Entries</TabsTrigger>
+                    <TabsTrigger value="positions">Positions</TabsTrigger>
                     <TabsTrigger value="posts">Posts</TabsTrigger>
                     <TabsTrigger value="achievements">Achievements</TabsTrigger>
                   </>
@@ -366,10 +366,11 @@ export default function Profile() {
                       >
                         <div className="flex-1 min-w-0 pr-4">
                           <h3 className="font-medium text-sm leading-snug">Bitcoin reaches $100K by 2025?</h3>
-                          <p className="text-xs text-muted-foreground mt-0.5">Yes at 68% · 150 tickets</p>
+                          <p className="text-xs text-muted-foreground mt-0.5">Yes at 68¢ · 3mo left</p>
                         </div>
                         <div className="text-right shrink-0">
-                          <div className="text-sm font-semibold text-success">Wins $150</div>
+                          <div className="text-sm font-semibold text-success">+$124</div>
+                          <div className="text-[11px] text-muted-foreground">+15.2%</div>
                         </div>
                       </div>
                       <div 
@@ -378,10 +379,11 @@ export default function Profile() {
                       >
                         <div className="flex-1 min-w-0 pr-4">
                           <h3 className="font-medium text-sm leading-snug">Lakers make NBA playoffs?</h3>
-                          <p className="text-xs text-muted-foreground mt-0.5">No at 55% · 200 tickets</p>
+                          <p className="text-xs text-muted-foreground mt-0.5">No at 55¢ · 2w left</p>
                         </div>
                         <div className="text-right shrink-0">
-                          <div className="text-sm font-semibold text-success">Wins $200</div>
+                          <div className="text-sm font-semibold text-destructive">-$45</div>
+                          <div className="text-[11px] text-muted-foreground">-8.1%</div>
                         </div>
                       </div>
                     </>
@@ -393,10 +395,11 @@ export default function Profile() {
                       >
                         <div className="flex-1 min-w-0 pr-4">
                           <h3 className="font-medium text-sm leading-snug">Will AI replace 50% of jobs by 2030?</h3>
-                          <p className="text-xs text-muted-foreground mt-0.5">Yes at 42% · 120 tickets</p>
+                          <p className="text-xs text-muted-foreground mt-0.5">Yes at 42¢ · 5y left</p>
                         </div>
                         <div className="text-right shrink-0">
-                          <div className="text-sm font-semibold text-success">Wins $120</div>
+                          <div className="text-sm font-semibold text-success">+$89</div>
+                          <div className="text-[11px] text-muted-foreground">+21.2%</div>
                         </div>
                       </div>
                       <div 
@@ -405,10 +408,11 @@ export default function Profile() {
                       >
                         <div className="flex-1 min-w-0 pr-4">
                           <h3 className="font-medium text-sm leading-snug">Tesla stock above $300 by Q2 2025?</h3>
-                          <p className="text-xs text-muted-foreground mt-0.5">No at 61% · 90 tickets</p>
+                          <p className="text-xs text-muted-foreground mt-0.5">No at 61¢ · 6mo left</p>
                         </div>
                         <div className="text-right shrink-0">
-                          <div className="text-sm font-semibold text-success">Wins $90</div>
+                          <div className="text-sm font-semibold text-success">+$156</div>
+                          <div className="text-[11px] text-muted-foreground">+25.6%</div>
                         </div>
                       </div>
                       <div 
@@ -417,10 +421,11 @@ export default function Profile() {
                       >
                         <div className="flex-1 min-w-0 pr-4">
                           <h3 className="font-medium text-sm leading-snug">Fed cuts rates before March 2025?</h3>
-                          <p className="text-xs text-muted-foreground mt-0.5">Yes at 73% · 60 tickets</p>
+                          <p className="text-xs text-muted-foreground mt-0.5">Yes at 73¢ · 3mo left</p>
                         </div>
                         <div className="text-right shrink-0">
-                          <div className="text-sm font-semibold text-success">Wins $60</div>
+                          <div className="text-sm font-semibold text-destructive">-$32</div>
+                          <div className="text-[11px] text-muted-foreground">-4.4%</div>
                         </div>
                       </div>
                     </>

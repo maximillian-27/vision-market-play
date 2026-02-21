@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Ticket, Wallet } from "lucide-react";
+import { Zap, Wallet } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface Outcome {
@@ -92,8 +92,8 @@ export function QuickTradeSheet({ open, onOpenChange, market }: QuickTradeSheetP
         <DrawerHeader className="px-0 pt-4 pb-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Ticket className="h-4 w-4 text-primary" />
-              <DrawerTitle className="text-base font-semibold">Buy Tickets</DrawerTitle>
+              <Zap className="h-4 w-4 text-primary" />
+              <DrawerTitle className="text-base font-semibold">Quick Trade</DrawerTitle>
             </div>
             <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
               <Wallet className="h-3.5 w-3.5" />
@@ -206,14 +206,21 @@ export function QuickTradeSheet({ open, onOpenChange, market }: QuickTradeSheetP
 
           {/* Order Summary */}
           <div className="flex items-center justify-between text-sm bg-muted/30 rounded-lg px-3 py-2.5">
-            <div className="flex items-center gap-1.5">
-              <span className="text-muted-foreground">Tickets</span>
-              <span className="font-semibold">{selectedOutcome ? shares : '-'}</span>
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-1.5">
+                <span className="text-muted-foreground">Tickets</span>
+                <span className="font-semibold">{selectedOutcome ? shares : '-'}</span>
+              </div>
+              <div className="w-px h-4 bg-border" />
+              <div className="flex items-center gap-1.5">
+                <span className="text-muted-foreground">Ticket Price</span>
+                <span className="font-semibold">{selectedOutcome ? `${selectedOutcome.price}¢` : '-'}</span>
+              </div>
             </div>
             <div className="flex items-center gap-1.5">
-              <span className="text-muted-foreground">If you win</span>
-              <span className={`font-semibold ${selectedOutcome && potentialPayout > 0 ? 'text-success' : ''}`}>
-                {selectedOutcome ? `$${potentialPayout.toFixed(2)}` : '-'}
+              <span className="text-muted-foreground">Est. Payout</span>
+              <span className={`font-semibold ${selectedOutcome && potentialProfit > 0 ? 'text-success' : ''}`}>
+                {selectedOutcome ? `+$${potentialProfit.toFixed(2)}` : '-'}
               </span>
             </div>
           </div>
