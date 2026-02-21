@@ -228,11 +228,11 @@ export function ResolvedMarketDialog({
             <div className="flex items-center gap-1">
               <TrendingUp className="h-3.5 w-3.5 text-primary" />
               <span className="font-semibold text-foreground">{market.volume}</span>
-              <span>pot</span>
+              <span>volume</span>
             </div>
             <div className="flex items-center gap-1">
               <Users className="h-3.5 w-3.5" />
-              <span>{market.traders?.toLocaleString() || "1.2K"} players</span>
+              <span>{market.traders?.toLocaleString() || "1.2K"} traders</span>
             </div>
             <div className="flex items-center gap-1">
               <Clock className="h-3.5 w-3.5" />
@@ -437,7 +437,7 @@ export function ResolvedMarketDialog({
         {/* Your Position */}
         <div className="p-3 rounded-lg bg-background border border-border/50 space-y-2">
           <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
-            <span>Your Tickets</span>
+            <span>Your Position</span>
             {userPosition.isWinner ? (
               <Badge className="bg-yes/20 text-yes border-yes/30 text-[10px] px-1.5 py-0">
                 Winner
@@ -450,7 +450,7 @@ export function ResolvedMarketDialog({
           </div>
           
           <div className="flex justify-between text-xs">
-            <span className="text-muted-foreground">Tickets: {userPosition.shares} {userPosition.outcome}</span>
+            <span className="text-muted-foreground">Shares: {userPosition.shares} {userPosition.outcome}</span>
             <span className={`font-bold ${userPosition.profit >= 0 ? 'text-yes' : 'text-no'}`}>
               {userPosition.profit >= 0 ? '+' : ''}${userPosition.profit.toFixed(2)}
             </span>
@@ -569,12 +569,12 @@ export function ResolvedMarketDialog({
               <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
                 <div className="flex items-center gap-1">
                   <TrendingUp className="h-3.5 w-3.5 text-primary" />
-                    <span className="font-semibold text-foreground">{market.volume}</span>
-                    <span>pot</span>
+                  <span className="font-semibold text-foreground">{market.volume}</span>
+                  <span>volume</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <Users className="h-3.5 w-3.5" />
-                  <span>{market.traders?.toLocaleString() || "1.2K"} players</span>
+                  <span>{market.traders?.toLocaleString() || "1.2K"} traders</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <Clock className="h-3.5 w-3.5" />
@@ -759,7 +759,7 @@ export function ResolvedMarketDialog({
 
             <div className="p-3 rounded-lg bg-background border border-border/50 space-y-2">
               <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
-                <span>Your Tickets</span>
+                <span>Your Position</span>
                 {userPosition.isWinner ? (
                   <Badge className="bg-yes/20 text-yes border-yes/30 text-[10px] px-1.5 py-0">
                     Winner
@@ -773,12 +773,12 @@ export function ResolvedMarketDialog({
               
               <div className="space-y-1.5">
                 <div className="flex justify-between text-xs">
-                  <span className="text-muted-foreground">Tickets held</span>
+                  <span className="text-muted-foreground">Shares held</span>
                   <span className="font-semibold">{userPosition.shares} {userPosition.outcome}</span>
                 </div>
                 <div className="flex justify-between text-xs">
-                  <span className="text-muted-foreground">Ticket price</span>
-                  <span className="font-semibold">${(userPosition.avgPrice / 100).toFixed(2)}</span>
+                  <span className="text-muted-foreground">Avg. price</span>
+                  <span className="font-semibold">{userPosition.avgPrice}¢</span>
                 </div>
                 <Separator className="my-1.5" />
                 <div className="flex justify-between text-xs">

@@ -26,7 +26,7 @@ interface Market {
   outcomes?: { label: string; price: number; color?: string; logo?: string }[];
   yesPrice?: number;
   noPrice?: number;
-  pot: string;
+  volume: string;
   endsIn: string;
   likes: number;
   comments: number;
@@ -49,7 +49,7 @@ const mockMarkets: Market[] = [
     image: bitcoinImage,
     yesPrice: 68,
     noPrice: 32,
-    pot: "$2.4M",
+    volume: "$2.4M",
     endsIn: "3 months",
     likes: 142,
     comments: 38,
@@ -68,7 +68,7 @@ const mockMarkets: Market[] = [
       { label: "Nuggets", price: 21, logo: "https://cdn.nba.com/logos/nba/1610612743/primary/L/logo.svg" },
       { label: "Other", price: 22 },
     ],
-    pot: "$890K",
+    volume: "$890K",
     endsIn: "2 months",
     likes: 89,
     comments: 24,
@@ -83,7 +83,7 @@ const mockMarkets: Market[] = [
     image: iphoneImage,
     yesPrice: 23,
     noPrice: 77,
-    pot: "$1.2M",
+    volume: "$1.2M",
     endsIn: "11 months",
     likes: 203,
     comments: 67,
@@ -101,7 +101,7 @@ const mockMarkets: Market[] = [
       { label: "Hold", price: 38 },
       { label: "Raise", price: 17, color: "destructive" },
     ],
-    pot: "$3.1M",
+    volume: "$3.1M",
     endsIn: "1 month",
     likes: 321,
     comments: 95,
@@ -116,7 +116,7 @@ const mockMarkets: Market[] = [
     image: aiImage,
     yesPrice: 71,
     noPrice: 29,
-    pot: "$1.8M",
+    volume: "$1.8M",
     endsIn: "Ended",
     likes: 176,
     comments: 52,
@@ -132,7 +132,7 @@ const mockMarkets: Market[] = [
     image: "https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=800&h=800&fit=crop",
     yesPrice: 42,
     noPrice: 58,
-    pot: "$987K",
+    volume: "$987K",
     endsIn: "2 hours",
     likes: 154,
     comments: 41,
@@ -147,7 +147,7 @@ const mockMarkets: Market[] = [
     image: "https://images.unsplash.com/photo-1621761191319-c6fb62004040?w=800&h=800&fit=crop",
     yesPrice: 100,
     noPrice: 0,
-    pot: "$1.7M",
+    volume: "$1.7M",
     endsIn: "Ended",
     likes: 187,
     comments: 56,
@@ -163,7 +163,7 @@ const mockMarkets: Market[] = [
     image: fedImage,
     yesPrice: 0,
     noPrice: 100,
-    pot: "$2.3M",
+    volume: "$2.3M",
     endsIn: "Ended",
     likes: 234,
     comments: 89,
@@ -180,7 +180,7 @@ const mockMarkets: Market[] = [
     image: iphoneImage,
     yesPrice: 100,
     noPrice: 0,
-    pot: "$3.2M",
+    volume: "$3.2M",
     endsIn: "Resolved",
     likes: 421,
     comments: 156,
@@ -196,7 +196,7 @@ const mockMarkets: Market[] = [
     image: "https://images.unsplash.com/photo-1541872703-74c5e44368f9?w=800&h=800&fit=crop",
     yesPrice: 0,
     noPrice: 100,
-    pot: "$5.8M",
+    volume: "$5.8M",
     endsIn: "Resolved",
     likes: 567,
     comments: 234,
@@ -216,7 +216,7 @@ const mockMarkets: Market[] = [
       { label: "Nuggets", price: 0 },
       { label: "Other", price: 0 },
     ],
-    pot: "$4.1M",
+    volume: "$4.1M",
     endsIn: "Resolved",
     likes: 389,
     comments: 178,
@@ -232,7 +232,7 @@ const mockMarkets: Market[] = [
     image: "https://images.unsplash.com/photo-1614728894747-a83421e2b9c9?w=800&h=800&fit=crop",
     yesPrice: 100,
     noPrice: 0,
-    pot: "$2.9M",
+    volume: "$2.9M",
     endsIn: "Resolved",
     likes: 445,
     comments: 167,
@@ -277,8 +277,8 @@ export default function Feed() {
     switch (filters.sortBy) {
       case "volume":
         result = result.sort((a, b) => {
-          const volA = parseFloat(a.pot.replace(/[$,KM]/g, ''));
-          const volB = parseFloat(b.pot.replace(/[$,KM]/g, ''));
+          const volA = parseFloat(a.volume.replace(/[$,KM]/g, ''));
+          const volB = parseFloat(b.volume.replace(/[$,KM]/g, ''));
           return volB - volA;
         });
         break;
@@ -323,7 +323,7 @@ export default function Feed() {
                 outcomes={market.outcomes}
                 yesPrice={market.yesPrice}
                 noPrice={market.noPrice}
-                pot={market.pot}
+                volume={market.volume}
                 endsIn={market.endsIn}
                 status={market.status}
                 resolution={market.resolution}
