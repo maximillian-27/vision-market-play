@@ -1,9 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Users,
   DollarSign,
@@ -19,9 +16,6 @@ import {
   Server,
   CreditCard,
   Shield,
-  Settings,
-  Globe,
-  ToggleLeft,
 } from "lucide-react";
 
 interface AdminDashboardProps {
@@ -180,15 +174,18 @@ export const AdminDashboard = ({ onNavigate }: AdminDashboardProps) => {
         </Card>
       </div>
 
-      {/* Quick Stats Row - Actionable */}
-      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+      {/* Actionable Alerts */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <Card className="border-border/40 bg-warning/5 cursor-pointer hover:bg-warning/10 transition-colors" onClick={() => onNavigate?.("markets")}>
           <CardContent className="p-4">
             <div className="flex items-center gap-2 text-warning text-sm mb-1">
               <Clock className="h-4 w-4" />
               Pending Markets
             </div>
-            <p className="text-2xl font-bold">{dashboardStats.pendingMarkets}</p>
+            <div className="flex items-center justify-between">
+              <p className="text-2xl font-bold">{dashboardStats.pendingMarkets}</p>
+              <Button size="sm" variant="ghost" className="text-warning h-7 px-2 text-xs">Review →</Button>
+            </div>
           </CardContent>
         </Card>
 
@@ -198,7 +195,10 @@ export const AdminDashboard = ({ onNavigate }: AdminDashboardProps) => {
               <AlertTriangle className="h-4 w-4" />
               Open Disputes
             </div>
-            <p className="text-2xl font-bold">{dashboardStats.disputes}</p>
+            <div className="flex items-center justify-between">
+              <p className="text-2xl font-bold">{dashboardStats.disputes}</p>
+              <Button size="sm" variant="ghost" className="text-destructive h-7 px-2 text-xs">Review →</Button>
+            </div>
           </CardContent>
         </Card>
 
@@ -208,94 +208,43 @@ export const AdminDashboard = ({ onNavigate }: AdminDashboardProps) => {
               <CheckCircle className="h-4 w-4" />
               Pending Resolutions
             </div>
-            <p className="text-2xl font-bold">{dashboardStats.pendingResolutions}</p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Quick Actions */}
-      <div className="flex flex-wrap gap-3">
-        <Button size="sm" className="gap-2" onClick={() => onNavigate?.("markets")}>
-          <CheckCircle className="h-4 w-4" />
-          Approve Markets ({dashboardStats.pendingMarkets})
-        </Button>
-        <Button size="sm" variant="outline" className="gap-2" onClick={() => onNavigate?.("disputes")}>
-          <AlertTriangle className="h-4 w-4" />
-          Review Disputes ({dashboardStats.disputes})
-        </Button>
-        <Button size="sm" variant="outline" className="gap-2" onClick={() => onNavigate?.("transactions")}>
-          <CreditCard className="h-4 w-4" />
-          Pending Withdrawals
-        </Button>
-        <Button size="sm" variant="outline" className="gap-2" onClick={() => onNavigate?.("users")}>
-          <Shield className="h-4 w-4" />
-          KYC Reviews
-        </Button>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Recent Activity */}
-        <Card className="border-border/40">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base">Recent Activity</CardTitle>
-          </CardHeader>
-          <CardContent className="p-0">
-            <div className="divide-y divide-border/40">
-              {recentActivity.map((activity) => (
-                <div key={activity.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 hover:bg-muted/30 transition-colors gap-1">
-                  <p className="text-sm">{activity.message}</p>
-                  <span className="text-xs text-muted-foreground whitespace-nowrap">{activity.time}</span>
-                </div>
-              ))}
+            <div className="flex items-center justify-between">
+              <p className="text-2xl font-bold">{dashboardStats.pendingResolutions}</p>
+              <Button size="sm" variant="ghost" className="text-primary h-7 px-2 text-xs">Resolve →</Button>
             </div>
           </CardContent>
         </Card>
 
-        {/* Platform Settings */}
-        <Card className="border-border/40">
-          <CardHeader className="pb-3">
-            <div className="flex items-center gap-2">
-              <Settings className="h-4 w-4" />
-              <CardTitle className="text-base">Platform Settings</CardTitle>
+        <Card className="border-border/40 cursor-pointer hover:bg-muted/30 transition-colors" onClick={() => onNavigate?.("users")}>
+          <CardContent className="p-4">
+            <div className="flex items-center gap-2 text-muted-foreground text-sm mb-1">
+              <Shield className="h-4 w-4" />
+              KYC Reviews
             </div>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div>
-                <Label className="text-xs text-muted-foreground">Platform Name</Label>
-                <Input defaultValue="Pollgy" className="h-8 mt-1 text-sm" />
-              </div>
-              <div>
-                <Label className="text-xs text-muted-foreground">Support Email</Label>
-                <Input defaultValue="support@pollgy.com" className="h-8 mt-1 text-sm" />
-              </div>
-            </div>
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-sm">
-                  <Globe className="h-4 w-4 text-muted-foreground" />
-                  Maintenance Mode
-                </div>
-                <Switch />
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-sm">
-                  <CreditCard className="h-4 w-4 text-muted-foreground" />
-                  Crypto Deposits
-                </div>
-                <Switch defaultChecked />
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-sm">
-                  <ToggleLeft className="h-4 w-4 text-muted-foreground" />
-                  Social Features
-                </div>
-                <Switch defaultChecked />
-              </div>
+            <div className="flex items-center justify-between">
+              <p className="text-2xl font-bold">12</p>
+              <Button size="sm" variant="ghost" className="text-muted-foreground h-7 px-2 text-xs">Review →</Button>
             </div>
           </CardContent>
         </Card>
       </div>
+
+      {/* Recent Activity - Full Width */}
+      <Card className="border-border/40">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base">Recent Activity</CardTitle>
+        </CardHeader>
+        <CardContent className="p-0">
+          <div className="divide-y divide-border/40">
+            {recentActivity.map((activity) => (
+              <div key={activity.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 hover:bg-muted/30 transition-colors gap-1">
+                <p className="text-sm">{activity.message}</p>
+                <span className="text-xs text-muted-foreground whitespace-nowrap">{activity.time}</span>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };

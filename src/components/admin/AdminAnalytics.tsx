@@ -104,31 +104,29 @@ const tickStyle = { fill: 'hsl(var(--muted-foreground))', fontSize: 12 };
 export const AdminAnalytics = () => {
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <h2 className="text-xl font-semibold">Analytics & BI</h2>
-        <div className="flex items-center gap-3">
-          <Select defaultValue="7d">
-            <SelectTrigger className="w-32 h-9"><SelectValue /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="24h">Last 24h</SelectItem>
-              <SelectItem value="7d">Last 7 days</SelectItem>
-              <SelectItem value="30d">Last 30 days</SelectItem>
-              <SelectItem value="90d">Last 90 days</SelectItem>
-            </SelectContent>
-          </Select>
-          <Button variant="outline" size="sm" className="gap-2">
-            <Download className="h-4 w-4" /> Export
-          </Button>
-        </div>
-      </div>
-
       <Tabs defaultValue="performance" className="space-y-4">
-        <TabsList className="bg-muted/50 p-1 flex-wrap h-auto gap-1">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <TabsList className="bg-muted/50 p-1 flex-wrap h-auto gap-1">
           <TabsTrigger value="performance" className="data-[state=active]:bg-background gap-2"><BarChart3 className="h-4 w-4" /> Performance</TabsTrigger>
           <TabsTrigger value="users-funnel" className="data-[state=active]:bg-background gap-2"><Users className="h-4 w-4" /> Users & Funnel</TabsTrigger>
           <TabsTrigger value="markets" className="data-[state=active]:bg-background gap-2"><TrendingUp className="h-4 w-4" /> Markets</TabsTrigger>
           <TabsTrigger value="marketing" className="data-[state=active]:bg-background gap-2"><Megaphone className="h-4 w-4" /> Marketing</TabsTrigger>
-        </TabsList>
+          </TabsList>
+          <div className="flex items-center gap-3">
+            <Select defaultValue="7d">
+              <SelectTrigger className="w-32 h-9"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="24h">Last 24h</SelectItem>
+                <SelectItem value="7d">Last 7 days</SelectItem>
+                <SelectItem value="30d">Last 30 days</SelectItem>
+                <SelectItem value="90d">Last 90 days</SelectItem>
+              </SelectContent>
+            </Select>
+            <Button variant="outline" size="sm" className="gap-2">
+              <Download className="h-4 w-4" /> Export
+            </Button>
+          </div>
+        </div>
 
         {/* Performance = Overview + Revenue merged */}
         <TabsContent value="performance" className="space-y-4">
@@ -150,34 +148,6 @@ export const AdminAnalytics = () => {
                 </CardContent>
               </Card>
             ))}
-          </div>
-
-          {/* Revenue breakdown cards */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <Card className="border-border/40 bg-success/5">
-              <CardContent className="p-4">
-                <div className="flex items-center gap-2 text-success text-sm mb-1"><DollarSign className="h-4 w-4" /> Total Revenue (MTD)</div>
-                <p className="text-2xl font-bold">$1.24M</p>
-              </CardContent>
-            </Card>
-            <Card className="border-border/40">
-              <CardContent className="p-4">
-                <p className="text-sm text-muted-foreground mb-1">Platform Fees</p>
-                <p className="text-2xl font-bold">$890K</p>
-              </CardContent>
-            </Card>
-            <Card className="border-border/40">
-              <CardContent className="p-4">
-                <p className="text-sm text-muted-foreground mb-1">Withdrawal Fees</p>
-                <p className="text-2xl font-bold">$125K</p>
-              </CardContent>
-            </Card>
-            <Card className="border-border/40">
-              <CardContent className="p-4">
-                <p className="text-sm text-muted-foreground mb-1">Other Revenue</p>
-                <p className="text-2xl font-bold">$225K</p>
-              </CardContent>
-            </Card>
           </div>
 
           {/* Revenue Trend chart */}
@@ -221,7 +191,7 @@ export const AdminAnalytics = () => {
 
         {/* Users & Funnel = User Analytics + Funnel merged */}
         <TabsContent value="users-funnel" className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
             {userMetrics.map((metric) => (
               <Card key={metric.metric} className="border-border/40">
                 <CardContent className="p-4">

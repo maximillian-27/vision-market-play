@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -69,6 +70,7 @@ const statusBadge = (status: string) => {
 };
 
 export const AdminMarketing = () => {
+  const [showAllEvents, setShowAllEvents] = useState(false);
   const completedSeo = seoChecklist.filter(s => s.done).length;
   const totalSeo = seoChecklist.length;
 
@@ -117,7 +119,7 @@ export const AdminMarketing = () => {
                 </tr>
               </thead>
               <tbody>
-                {trackedEvents.map((evt) => (
+                {(showAllEvents ? trackedEvents : trackedEvents.slice(0, 5)).map((evt) => (
                   <tr key={evt.name} className="border-b border-border/20 hover:bg-muted/30 transition-colors">
                     <td className="p-2 font-mono text-sm text-primary">{evt.name}</td>
                     <td className="p-2 text-sm">{evt.category}</td>
@@ -128,7 +130,14 @@ export const AdminMarketing = () => {
               </tbody>
             </table>
           </div>
-          <p className="text-xs text-muted-foreground mt-3">Events sync with GTM dataLayer → GA4. See src/lib/analytics.ts for implementation.</p>
+          <div className="flex items-center justify-between mt-3">
+            <p className="text-xs text-muted-foreground">Events sync with GTM dataLayer → GA4.</p>
+            {trackedEvents.length > 5 && (
+              <Button variant="ghost" size="sm" className="text-xs h-7" onClick={() => setShowAllEvents(!showAllEvents)}>
+                {showAllEvents ? "Show less" : `Show all (${trackedEvents.length})`}
+              </Button>
+            )}
+          </div>
         </CardContent>
       </Card>
 
