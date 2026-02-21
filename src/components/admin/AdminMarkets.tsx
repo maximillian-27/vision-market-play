@@ -91,8 +91,8 @@ export const AdminMarkets = () => {
                     <th className="p-4 font-medium">Market</th>
                     <th className="p-4 font-medium">Creator</th>
                     <th className="p-4 font-medium">Status</th>
-                    <th className="p-4 font-medium">Volume</th>
-                    <th className="p-4 font-medium">Trades</th>
+                    <th className="p-4 font-medium">Pot Size</th>
+                    <th className="p-4 font-medium">Tickets</th>
                     <th className="p-4 font-medium">End Date</th>
                     <th className="p-4 font-medium text-right">Actions</th>
                   </tr>
@@ -187,7 +187,7 @@ export const AdminMarkets = () => {
                   </div>
                   <div className="grid grid-cols-2 gap-y-1 text-sm">
                     <span className="text-muted-foreground">Markets</span><span className="text-right font-medium">{cat.markets}</span>
-                    <span className="text-muted-foreground">Volume</span><span className="text-right font-medium">${(cat.volume / 1000000).toFixed(1)}M</span>
+                    <span className="text-muted-foreground">Pot Size</span><span className="text-right font-medium">${(cat.volume / 1000000).toFixed(1)}M</span>
                   </div>
                 </CardContent>
               </Card>

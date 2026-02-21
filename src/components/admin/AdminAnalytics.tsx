@@ -6,7 +6,7 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import {
-  BarChart3, TrendingUp, TrendingDown, Users, DollarSign, Activity,
+  BarChart3, TrendingUp, TrendingDown, Users, DollarSign,
   ArrowUpRight, ArrowDownRight, Download, Target, Zap, Megaphone
 } from "lucide-react";
 import { AdminMarketing } from "./AdminMarketing";
@@ -19,7 +19,7 @@ import {
 const kpis = {
   revenue: { value: 124500, change: 12.5, label: "Revenue (24h)" },
   users: { value: 8450, change: 8.3, label: "Active Users (24h)" },
-  volume: { value: 234000, change: -3.2, label: "Trading Volume (24h)" },
+  volume: { value: 234000, change: -3.2, label: "Pot Size (24h)" },
   signups: { value: 347, change: 15.7, label: "New Signups (24h)" },
   retention: { value: 78.5, change: 2.1, label: "Retention Rate %" },
   avgSession: { value: 12.5, change: 5.4, label: "Avg Session (min)" },
@@ -54,7 +54,7 @@ const conversionFunnel = [
   { stage: "Signups", count: 12500, rate: 10 },
   { stage: "Verified", count: 8750, rate: 70 },
   { stage: "First Deposit", count: 5250, rate: 60 },
-  { stage: "Active Traders", count: 3675, rate: 70 },
+  { stage: "Active Players", count: 3675, rate: 70 },
 ];
 
 const userActivityData = [
@@ -98,6 +98,9 @@ const revenueData = [
   { date: "Jan 29", revenue: 58000 },
 ];
 
+const tooltipStyle = { backgroundColor: 'hsl(var(--popover))', border: '1px solid hsl(var(--border))', borderRadius: '8px', color: 'hsl(var(--popover-foreground))' };
+const tickStyle = { fill: 'hsl(var(--muted-foreground))', fontSize: 12 };
+
 export const AdminAnalytics = () => {
   return (
     <div className="space-y-6">
@@ -119,17 +122,16 @@ export const AdminAnalytics = () => {
         </div>
       </div>
 
-      <Tabs defaultValue="overview" className="space-y-4">
+      <Tabs defaultValue="performance" className="space-y-4">
         <TabsList className="bg-muted/50 p-1 flex-wrap h-auto gap-1">
-          <TabsTrigger value="overview" className="data-[state=active]:bg-background gap-2"><BarChart3 className="h-4 w-4" /> Overview</TabsTrigger>
-          <TabsTrigger value="users" className="data-[state=active]:bg-background gap-2"><Users className="h-4 w-4" /> User Analytics</TabsTrigger>
-          <TabsTrigger value="markets" className="data-[state=active]:bg-background gap-2"><TrendingUp className="h-4 w-4" /> Market Analytics</TabsTrigger>
-          <TabsTrigger value="revenue" className="data-[state=active]:bg-background gap-2"><DollarSign className="h-4 w-4" /> Revenue</TabsTrigger>
-          <TabsTrigger value="funnel" className="data-[state=active]:bg-background gap-2"><Target className="h-4 w-4" /> Funnel</TabsTrigger>
+          <TabsTrigger value="performance" className="data-[state=active]:bg-background gap-2"><BarChart3 className="h-4 w-4" /> Performance</TabsTrigger>
+          <TabsTrigger value="users-funnel" className="data-[state=active]:bg-background gap-2"><Users className="h-4 w-4" /> Users & Funnel</TabsTrigger>
+          <TabsTrigger value="markets" className="data-[state=active]:bg-background gap-2"><TrendingUp className="h-4 w-4" /> Markets</TabsTrigger>
           <TabsTrigger value="marketing" className="data-[state=active]:bg-background gap-2"><Megaphone className="h-4 w-4" /> Marketing</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="overview" className="space-y-4">
+        {/* Performance = Overview + Revenue merged */}
+        <TabsContent value="performance" className="space-y-4">
           <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
             {Object.entries(kpis).map(([key, kpi]) => (
               <Card key={key} className="border-border/40">
@@ -150,6 +152,55 @@ export const AdminAnalytics = () => {
             ))}
           </div>
 
+          {/* Revenue breakdown cards */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <Card className="border-border/40 bg-success/5">
+              <CardContent className="p-4">
+                <div className="flex items-center gap-2 text-success text-sm mb-1"><DollarSign className="h-4 w-4" /> Total Revenue (MTD)</div>
+                <p className="text-2xl font-bold">$1.24M</p>
+              </CardContent>
+            </Card>
+            <Card className="border-border/40">
+              <CardContent className="p-4">
+                <p className="text-sm text-muted-foreground mb-1">Platform Fees</p>
+                <p className="text-2xl font-bold">$890K</p>
+              </CardContent>
+            </Card>
+            <Card className="border-border/40">
+              <CardContent className="p-4">
+                <p className="text-sm text-muted-foreground mb-1">Withdrawal Fees</p>
+                <p className="text-2xl font-bold">$125K</p>
+              </CardContent>
+            </Card>
+            <Card className="border-border/40">
+              <CardContent className="p-4">
+                <p className="text-sm text-muted-foreground mb-1">Other Revenue</p>
+                <p className="text-2xl font-bold">$225K</p>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Revenue Trend chart */}
+          <Card className="border-border/40">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base">Revenue Trend</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={revenueData}>
+                    <CartesianGrid strokeDasharray="3 3" className="stroke-border/40" />
+                    <XAxis dataKey="date" tick={tickStyle} />
+                    <YAxis tick={tickStyle} tickFormatter={(v) => `$${(v / 1000).toFixed(0)}K`} />
+                    <Tooltip contentStyle={tooltipStyle} formatter={(value: number) => [`$${value.toLocaleString()}`, 'Revenue']} />
+                    <Area type="monotone" dataKey="revenue" stroke="hsl(var(--success))" fill="hsl(var(--success) / 0.1)" strokeWidth={2} />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Traffic Sources */}
           <Card className="border-border/40">
             <CardHeader className="pb-3">
               <CardTitle className="text-base">Traffic Sources</CardTitle>
@@ -168,7 +219,8 @@ export const AdminAnalytics = () => {
           </Card>
         </TabsContent>
 
-        <TabsContent value="users" className="space-y-4">
+        {/* Users & Funnel = User Analytics + Funnel merged */}
+        <TabsContent value="users-funnel" className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {userMetrics.map((metric) => (
               <Card key={metric.metric} className="border-border/40">
@@ -186,6 +238,56 @@ export const AdminAnalytics = () => {
             ))}
           </div>
 
+          {/* Conversion Funnel */}
+          <Card className="border-border/40">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base">Conversion Funnel</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {conversionFunnel.map((stage, index) => (
+                <div key={stage.stage} className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-xs font-medium text-primary">{index + 1}</div>
+                      <span className="font-medium">{stage.stage}</span>
+                    </div>
+                    <div className="text-right">
+                      <span className="font-medium">{stage.count.toLocaleString()}</span>
+                      {index > 0 && <span className="text-sm text-muted-foreground ml-2">({stage.rate}% conversion)</span>}
+                    </div>
+                  </div>
+                  <Progress value={(stage.count / conversionFunnel[0].count) * 100} className="h-3" />
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+
+          {/* Funnel insight cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Card className="border-border/40 bg-success/5">
+              <CardContent className="p-4">
+                <div className="flex items-center gap-2 text-success text-sm mb-1"><Zap className="h-4 w-4" /> Best Performing</div>
+                <p className="font-medium">Signups → Verified</p>
+                <p className="text-2xl font-bold">70%</p>
+              </CardContent>
+            </Card>
+            <Card className="border-border/40 bg-warning/5">
+              <CardContent className="p-4">
+                <div className="flex items-center gap-2 text-warning text-sm mb-1"><Target className="h-4 w-4" /> Needs Improvement</div>
+                <p className="font-medium">Visitors → Signups</p>
+                <p className="text-2xl font-bold">10%</p>
+              </CardContent>
+            </Card>
+            <Card className="border-border/40">
+              <CardContent className="p-4">
+                <p className="text-sm text-muted-foreground mb-1">Overall Conversion</p>
+                <p className="text-2xl font-bold">2.94%</p>
+                <p className="text-xs text-muted-foreground">Visitors → Active Players</p>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* User Activity chart */}
           <Card className="border-border/40">
             <CardHeader className="pb-3">
               <CardTitle className="text-base">User Activity Over Time</CardTitle>
@@ -195,9 +297,9 @@ export const AdminAnalytics = () => {
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={userActivityData}>
                     <CartesianGrid strokeDasharray="3 3" className="stroke-border/40" />
-                    <XAxis dataKey="day" className="text-xs" tick={{ fill: 'hsl(var(--muted-foreground))' }} />
-                    <YAxis className="text-xs" tick={{ fill: 'hsl(var(--muted-foreground))' }} />
-                    <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--popover))', border: '1px solid hsl(var(--border))', borderRadius: '8px', color: 'hsl(var(--popover-foreground))' }} />
+                    <XAxis dataKey="day" tick={tickStyle} />
+                    <YAxis tick={tickStyle} />
+                    <Tooltip contentStyle={tooltipStyle} />
                     <Legend />
                     <Line type="monotone" dataKey="dau" name="Daily Active Users" stroke="hsl(var(--primary))" strokeWidth={2} dot={false} />
                     <Line type="monotone" dataKey="newUsers" name="New Users" stroke="hsl(var(--success))" strokeWidth={2} dot={false} />
@@ -208,6 +310,7 @@ export const AdminAnalytics = () => {
           </Card>
         </TabsContent>
 
+        {/* Markets */}
         <TabsContent value="markets" className="space-y-4">
           <Card className="border-border/40">
             <CardHeader className="pb-3">
@@ -219,8 +322,8 @@ export const AdminAnalytics = () => {
                   <thead>
                     <tr className="border-b border-border/40 text-left text-sm text-muted-foreground">
                       <th className="p-3 font-medium">Market</th>
-                      <th className="p-3 font-medium">Volume</th>
-                      <th className="p-3 font-medium">Trades</th>
+                      <th className="p-3 font-medium">Pot Size</th>
+                      <th className="p-3 font-medium">Tickets</th>
                       <th className="p-3 font-medium">Trend</th>
                     </tr>
                   </thead>
@@ -255,7 +358,7 @@ export const AdminAnalytics = () => {
                           <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                         ))}
                       </Pie>
-                      <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--popover))', border: '1px solid hsl(var(--border))', borderRadius: '8px', color: 'hsl(var(--popover-foreground))' }} />
+                      <Tooltip contentStyle={tooltipStyle} />
                       <Legend />
                     </PieChart>
                   </ResponsiveContainer>
@@ -264,117 +367,20 @@ export const AdminAnalytics = () => {
             </Card>
             <Card className="border-border/40">
               <CardHeader className="pb-3">
-                <CardTitle className="text-base">Volume Over Time</CardTitle>
+                <CardTitle className="text-base">Pot Size Over Time</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="h-48">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={volumeData}>
                       <CartesianGrid strokeDasharray="3 3" className="stroke-border/40" />
-                      <XAxis dataKey="week" tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} />
-                      <YAxis tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} tickFormatter={(v) => `$${(v / 1000000).toFixed(1)}M`} />
-                      <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--popover))', border: '1px solid hsl(var(--border))', borderRadius: '8px', color: 'hsl(var(--popover-foreground))' }} formatter={(value: number) => [`$${(value / 1000000).toFixed(2)}M`, 'Volume']} />
+                      <XAxis dataKey="week" tick={tickStyle} />
+                      <YAxis tick={tickStyle} tickFormatter={(v) => `$${(v / 1000000).toFixed(1)}M`} />
+                      <Tooltip contentStyle={tooltipStyle} formatter={(value: number) => [`$${(value / 1000000).toFixed(2)}M`, 'Pot Size']} />
                       <Bar dataKey="volume" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
-
-        <TabsContent value="revenue" className="space-y-4">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <Card className="border-border/40 bg-success/5">
-              <CardContent className="p-4">
-                <div className="flex items-center gap-2 text-success text-sm mb-1"><DollarSign className="h-4 w-4" /> Total Revenue (MTD)</div>
-                <p className="text-2xl font-bold">$1.24M</p>
-              </CardContent>
-            </Card>
-            <Card className="border-border/40">
-              <CardContent className="p-4">
-                <p className="text-sm text-muted-foreground mb-1">Trading Fees</p>
-                <p className="text-2xl font-bold">$890K</p>
-              </CardContent>
-            </Card>
-            <Card className="border-border/40">
-              <CardContent className="p-4">
-                <p className="text-sm text-muted-foreground mb-1">Withdrawal Fees</p>
-                <p className="text-2xl font-bold">$125K</p>
-              </CardContent>
-            </Card>
-            <Card className="border-border/40">
-              <CardContent className="p-4">
-                <p className="text-sm text-muted-foreground mb-1">Other Revenue</p>
-                <p className="text-2xl font-bold">$225K</p>
-              </CardContent>
-            </Card>
-          </div>
-
-          <Card className="border-border/40">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base">Revenue Trend</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="h-64">
-                <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={revenueData}>
-                    <CartesianGrid strokeDasharray="3 3" className="stroke-border/40" />
-                    <XAxis dataKey="date" tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} />
-                    <YAxis tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} tickFormatter={(v) => `$${(v / 1000).toFixed(0)}K`} />
-                    <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--popover))', border: '1px solid hsl(var(--border))', borderRadius: '8px', color: 'hsl(var(--popover-foreground))' }} formatter={(value: number) => [`$${value.toLocaleString()}`, 'Revenue']} />
-                    <Area type="monotone" dataKey="revenue" stroke="hsl(var(--success))" fill="hsl(var(--success) / 0.1)" strokeWidth={2} />
-                  </AreaChart>
-                </ResponsiveContainer>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="funnel" className="space-y-4">
-          <Card className="border-border/40">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base">Conversion Funnel</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {conversionFunnel.map((stage, index) => (
-                <div key={stage.stage} className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-xs font-medium text-primary">{index + 1}</div>
-                      <span className="font-medium">{stage.stage}</span>
-                    </div>
-                    <div className="text-right">
-                      <span className="font-medium">{stage.count.toLocaleString()}</span>
-                      {index > 0 && <span className="text-sm text-muted-foreground ml-2">({stage.rate}% conversion)</span>}
-                    </div>
-                  </div>
-                  <Progress value={(stage.count / conversionFunnel[0].count) * 100} className="h-3" />
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Card className="border-border/40 bg-success/5">
-              <CardContent className="p-4">
-                <div className="flex items-center gap-2 text-success text-sm mb-1"><Zap className="h-4 w-4" /> Best Performing</div>
-                <p className="font-medium">Signups → Verified</p>
-                <p className="text-2xl font-bold">70%</p>
-              </CardContent>
-            </Card>
-            <Card className="border-border/40 bg-warning/5">
-              <CardContent className="p-4">
-                <div className="flex items-center gap-2 text-warning text-sm mb-1"><Target className="h-4 w-4" /> Needs Improvement</div>
-                <p className="font-medium">Visitors → Signups</p>
-                <p className="text-2xl font-bold">10%</p>
-              </CardContent>
-            </Card>
-            <Card className="border-border/40">
-              <CardContent className="p-4">
-                <p className="text-sm text-muted-foreground mb-1">Overall Conversion</p>
-                <p className="text-2xl font-bold">2.94%</p>
-                <p className="text-xs text-muted-foreground">Visitors → Active Traders</p>
               </CardContent>
             </Card>
           </div>
