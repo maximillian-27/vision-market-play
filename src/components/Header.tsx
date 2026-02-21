@@ -227,11 +227,11 @@ export function Header() {
                   {/* Balance Section */}
                   <div className="px-2 py-2.5 space-y-2 bg-secondary rounded-lg mb-1.5">
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">Portfolio</span>
+                      <span className="text-muted-foreground">Total Value</span>
                       <span className="font-semibold text-primary">${portfolioValue.toLocaleString()}</span>
                     </div>
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">Cash</span>
+                      <span className="text-muted-foreground">Balance</span>
                       <span className="font-semibold">${cashBalance.toLocaleString()}</span>
                     </div>
                   </div>

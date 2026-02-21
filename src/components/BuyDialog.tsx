@@ -127,20 +127,10 @@ export function BuyDialog({ open, onOpenChange, outcome, marketTitle, marketId }
           <span className="text-muted-foreground">Tickets</span>
           <span className="font-semibold">{shares.toLocaleString()}</span>
         </div>
-        <div className="flex justify-between text-sm">
-          <span className="text-muted-foreground">Ticket Price</span>
-          <span className="font-semibold">{outcome.price}¢</span>
-        </div>
         <Separator className="my-2" />
         <div className="flex justify-between text-sm">
-          <span className="text-muted-foreground">Max Payout</span>
-          <span className="font-semibold">${potentialPayout.toFixed(2)}</span>
-        </div>
-        <div className="flex justify-between text-sm">
-          <span className="text-muted-foreground">Est. Payout</span>
-          <span className={`font-semibold ${potentialProfit > 0 ? 'text-success' : ''}`}>
-            ${potentialProfit.toFixed(2)}
-          </span>
+          <span className="text-muted-foreground">If you win</span>
+          <span className="font-semibold text-success">${potentialPayout.toFixed(2)}</span>
         </div>
       </div>
 

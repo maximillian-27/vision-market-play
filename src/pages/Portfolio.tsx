@@ -1,68 +1,42 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { PageHeader } from "@/components/PageHeader";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { 
-  TrendingUp, 
-  TrendingDown, 
   DollarSign, 
-  ArrowUpRight, 
   ArrowDownRight,
-  Clock,
+  ArrowUpRight,
   Wallet,
-  PieChart,
-  BarChart3,
+  Trophy,
   Download,
   Upload,
-  Filter,
   ChevronRight,
-  ChevronDown
+  Ticket
 } from "lucide-react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 // Mock data
 const portfolioStats = {
   totalValue: 12450,
   cashBalance: 5230,
-  investedAmount: 7220,
-  totalPnL: 1847,
-  totalPnLPercent: 17.4,
-  todayPnL: 234,
-  todayPnLPercent: 1.9,
+  totalWinnings: 1847,
 };
 
-// Stats by timeline
-const statsByTimeline = {
-  daily: { winRate: 75, pnl: 234, pnlPercent: 1.9 },
-  weekly: { winRate: 71, pnl: 892, pnlPercent: 7.8 },
-  monthly: { winRate: 68, pnl: 1847, pnlPercent: 17.4 },
-  "90days": { winRate: 65, pnl: 3241, pnlPercent: 32.1 },
-  yearly: { winRate: 62, pnl: 5890, pnlPercent: 58.2 },
-};
-
-const positions = [
-  { id: 1, market: "Will Bitcoin reach $100k by 2025?", position: "Yes", shares: 150, avgPrice: 0.45, currentPrice: 0.62, pnl: 25.5, pnlPercent: 37.8 },
-  { id: 2, market: "Fed rate cut in March 2025?", position: "No", shares: 200, avgPrice: 0.38, currentPrice: 0.41, pnl: 6, pnlPercent: 7.9 },
-  { id: 3, market: "Tesla Q4 earnings beat?", position: "Yes", shares: 100, avgPrice: 0.55, currentPrice: 0.48, pnl: -7, pnlPercent: -12.7 },
-  { id: 4, market: "NBA Championship - Lakers?", position: "Yes", shares: 75, avgPrice: 0.22, currentPrice: 0.28, pnl: 4.5, pnlPercent: 27.3 },
+const entries = [
+  { id: 1, market: "Will Bitcoin reach $100k by 2025?", outcome: "Yes", tickets: 150, ticketPrice: 0.45, potentialPayout: 150, status: "active" },
+  { id: 2, market: "Fed rate cut in March 2025?", outcome: "No", tickets: 200, ticketPrice: 0.38, potentialPayout: 200, status: "active" },
+  { id: 3, market: "Tesla Q4 earnings beat?", outcome: "Yes", tickets: 100, ticketPrice: 0.55, potentialPayout: 100, status: "active" },
+  { id: 4, market: "NBA Championship - Lakers?", outcome: "Lakers", tickets: 75, ticketPrice: 0.22, potentialPayout: 75, status: "active" },
 ];
 
-const tradeHistory = [
-  { id: 1, date: "2024-01-15", market: "Bitcoin $100k", type: "Buy", position: "Yes", shares: 50, price: 0.42, total: 21, pnl: null },
-  { id: 2, date: "2024-01-14", market: "Fed rate cut", type: "Sell", position: "Yes", shares: 100, price: 0.58, total: 58, pnl: 12 },
-  { id: 3, date: "2024-01-13", market: "Tesla earnings", type: "Buy", position: "Yes", shares: 100, price: 0.55, total: 55, pnl: null },
-  { id: 4, date: "2024-01-12", market: "Bitcoin $100k", type: "Sell", position: "No", shares: 80, price: 0.35, total: 28, pnl: -8 },
-  { id: 5, date: "2024-01-10", market: "NBA Championship", type: "Buy", position: "Yes", shares: 75, price: 0.22, total: 16.5, pnl: null },
+const pastEntries = [
+  { id: 1, date: "2024-01-15", market: "Bitcoin $80k by Dec?", outcome: "Yes", tickets: 50, amountPaid: 21, result: "won", payout: 50 },
+  { id: 2, date: "2024-01-14", market: "Fed holds rates in Jan?", outcome: "Yes", tickets: 100, amountPaid: 58, result: "won", payout: 100 },
+  { id: 3, date: "2024-01-13", market: "Tesla beats Q3 earnings?", outcome: "Yes", tickets: 100, amountPaid: 55, result: "lost", payout: 0 },
+  { id: 4, date: "2024-01-12", market: "ETH above $3k by Nov?", outcome: "No", tickets: 80, amountPaid: 28, result: "won", payout: 80 },
+  { id: 5, date: "2024-01-10", market: "Lakers win game 5?", outcome: "Yes", tickets: 75, amountPaid: 16.5, result: "pending", payout: null },
 ];
 
 const transactions = [
@@ -72,26 +46,19 @@ const transactions = [
   { id: 4, date: "2023-12-28", type: "Deposit", method: "Crypto", amount: 1000, status: "Completed" },
 ];
 
-type StatsTimeframe = "daily" | "weekly" | "monthly" | "90days" | "yearly";
-
 const Portfolio = () => {
-  const [timeframe, setTimeframe] = useState("all");
-  const [statsTimeframe, setStatsTimeframe] = useState<StatsTimeframe>("monthly");
-  const [showDetails, setShowDetails] = useState(false);
   const navigate = useNavigate();
-  
-  const currentStats = statsByTimeline[statsTimeframe];
 
   return (
     <div className="min-h-screen bg-background pb-20 sm:pb-6">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
         <PageHeader 
           title="Portfolio" 
-          subtitle="Track your trading performance and manage your funds"
+          subtitle="Your entries and balances"
         />
 
-        {/* Stats Overview - Mobile optimized */}
-        <div className="grid grid-cols-2 gap-2 sm:gap-4 mb-4 sm:mb-6">
+        {/* Stats Overview */}
+        <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-4 sm:mb-6">
           <Card className="border-border/40">
             <CardContent className="p-3 sm:p-4">
               <div className="flex items-center gap-1.5 text-muted-foreground text-[11px] sm:text-sm mb-0.5 sm:mb-1">
@@ -111,93 +78,17 @@ const Portfolio = () => {
               <p className="text-lg sm:text-2xl font-bold">${portfolioStats.cashBalance.toLocaleString()}</p>
             </CardContent>
           </Card>
-          
-        </div>
 
-        {/* Performance Card - Minimalistic with expandable details */}
-        <Collapsible open={showDetails} onOpenChange={setShowDetails}>
-          <div className="rounded-lg border border-border/40 bg-card mb-4 sm:mb-6">
-            <div className="p-3 sm:p-4">
-              {/* Main P&L Display */}
-              <div className="flex items-center justify-between">
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="text-xs text-muted-foreground">P&L</span>
-                    <div className="flex gap-1">
-                      {[
-                        { key: "daily", label: "1D" },
-                        { key: "weekly", label: "1W" },
-                        { key: "monthly", label: "1M" },
-                        { key: "90days", label: "90D" },
-                        { key: "yearly", label: "1Y" },
-                      ].map((item) => (
-                        <button
-                          key={item.key}
-                          onClick={() => setStatsTimeframe(item.key as StatsTimeframe)}
-                          className={`px-1.5 sm:px-2 py-0.5 text-[9px] sm:text-[10px] font-medium rounded transition-colors ${
-                            statsTimeframe === item.key
-                              ? "bg-primary/10 text-primary"
-                              : "text-muted-foreground/60 hover:text-muted-foreground"
-                          }`}
-                        >
-                          {item.label}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="flex items-baseline gap-2">
-                    <span className={`text-2xl sm:text-3xl font-bold tracking-tight ${currentStats.pnl >= 0 ? 'text-success' : 'text-destructive'}`}>
-                      {currentStats.pnl >= 0 ? '+' : ''}${currentStats.pnl.toLocaleString()}
-                    </span>
-                    <span className={`text-xs sm:text-sm font-medium ${currentStats.pnlPercent >= 0 ? 'text-success/70' : 'text-destructive/70'}`}>
-                      {currentStats.pnlPercent >= 0 ? '+' : ''}{currentStats.pnlPercent}%
-                    </span>
-                  </div>
-                </div>
-                
-                <CollapsibleTrigger asChild>
-                  <button className="p-2 hover:bg-muted/50 rounded-md transition-colors">
-                    <ChevronDown className={`h-4 w-4 text-muted-foreground transition-transform duration-200 ${showDetails ? 'rotate-180' : ''}`} />
-                  </button>
-                </CollapsibleTrigger>
+          <Card className="border-border/40">
+            <CardContent className="p-3 sm:p-4">
+              <div className="flex items-center gap-1.5 text-muted-foreground text-[11px] sm:text-sm mb-0.5 sm:mb-1">
+                <Trophy className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                Winnings
               </div>
-            </div>
-            
-            {/* Expandable Details */}
-            <CollapsibleContent>
-              <div className="px-3 sm:px-4 pb-3 sm:pb-4 pt-0">
-                <div className="border-t border-border/30 pt-3 sm:pt-4">
-                  <div className="grid grid-cols-3 gap-3 sm:gap-4">
-                    <div>
-                      <p className="text-[10px] sm:text-xs text-muted-foreground mb-0.5">Win Rate</p>
-                      <p className="text-sm sm:text-lg font-semibold text-success">{currentStats.winRate}%</p>
-                    </div>
-                    <div>
-                      <p className="text-[10px] sm:text-xs text-muted-foreground mb-0.5">Avg Return</p>
-                      <p className="text-sm sm:text-lg font-semibold text-success">+24.3%</p>
-                    </div>
-                    <div>
-                      <p className="text-[10px] sm:text-xs text-muted-foreground mb-0.5">Total Trades</p>
-                      <p className="text-sm sm:text-lg font-semibold">127</p>
-                    </div>
-                    <div>
-                      <p className="text-[10px] sm:text-xs text-muted-foreground mb-0.5">Best Trade</p>
-                      <p className="text-sm sm:text-lg font-semibold text-success">+$847</p>
-                    </div>
-                    <div>
-                      <p className="text-[10px] sm:text-xs text-muted-foreground mb-0.5">Worst Trade</p>
-                      <p className="text-sm sm:text-lg font-semibold text-destructive">-$156</p>
-                    </div>
-                    <div>
-                      <p className="text-[10px] sm:text-xs text-muted-foreground mb-0.5">Top Category</p>
-                      <p className="text-sm sm:text-lg font-semibold">Crypto</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </CollapsibleContent>
-          </div>
-        </Collapsible>
+              <p className="text-lg sm:text-2xl font-bold text-success">+${portfolioStats.totalWinnings.toLocaleString()}</p>
+            </CardContent>
+          </Card>
+        </div>
 
         {/* Quick Actions */}
         <div className="flex gap-2 sm:gap-3 mb-4 sm:mb-6">
@@ -212,93 +103,74 @@ const Portfolio = () => {
         </div>
 
         {/* Main Content Tabs */}
-        <Tabs defaultValue="positions" className="space-y-4 sm:space-y-6">
+        <Tabs defaultValue="entries" className="space-y-4 sm:space-y-6">
           <TabsList className="bg-muted/50 p-1 w-full grid grid-cols-3">
-            <TabsTrigger value="positions" className="data-[state=active]:bg-background text-xs sm:text-sm">
-              Positions
+            <TabsTrigger value="entries" className="data-[state=active]:bg-background text-xs sm:text-sm">
+              My Entries
             </TabsTrigger>
-            <TabsTrigger value="history" className="data-[state=active]:bg-background text-xs sm:text-sm">
-              History
+            <TabsTrigger value="past" className="data-[state=active]:bg-background text-xs sm:text-sm">
+              Past Entries
             </TabsTrigger>
             <TabsTrigger value="transactions" className="data-[state=active]:bg-background text-xs sm:text-sm">
               Deposits
             </TabsTrigger>
           </TabsList>
 
-          {/* Active Positions */}
-          <TabsContent value="positions" className="space-y-3 sm:space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-sm sm:text-lg font-semibold">Active ({positions.length})</h3>
-              <Select value={timeframe} onValueChange={setTimeframe}>
-                <SelectTrigger className="w-24 sm:w-32 h-8 sm:h-9 text-xs sm:text-sm">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Time</SelectItem>
-                  <SelectItem value="month">This Month</SelectItem>
-                  <SelectItem value="week">This Week</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+          {/* My Entries */}
+          <TabsContent value="entries" className="space-y-3 sm:space-y-4">
+            <h3 className="text-sm sm:text-lg font-semibold">Active ({entries.length})</h3>
 
             <div className="space-y-2 sm:space-y-3">
-              {positions.map((position) => (
+              {entries.map((entry) => (
                 <Card 
-                  key={position.id} 
+                  key={entry.id} 
                   className="border-border/40 hover:border-border/60 transition-colors cursor-pointer active:scale-[0.99]"
-                  onClick={() => navigate(`/market/${position.id}`)}
+                  onClick={() => navigate(`/market/${entry.id}`)}
                 >
                   <CardContent className="p-3 sm:p-4">
-                    {/* Mobile: Stacked layout */}
+                    {/* Mobile */}
                     <div className="sm:hidden">
                       <div className="flex items-start justify-between gap-2 mb-2">
-                        <p className="font-medium text-sm leading-tight line-clamp-2 flex-1">{position.market}</p>
+                        <p className="font-medium text-sm leading-tight line-clamp-2 flex-1">{entry.market}</p>
                         <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0 mt-0.5" />
                       </div>
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <Badge 
-                            variant={position.position === "Yes" ? "default" : "secondary"} 
-                            className={`text-[10px] px-1.5 ${position.position === "Yes" ? "bg-success/15 text-success border-success/30" : ""}`}
+                            variant="secondary"
+                            className="text-[10px] px-1.5 bg-primary/10 text-primary border-primary/20"
                           >
-                            {position.position}
+                            {entry.outcome}
                           </Badge>
-                          <span className="text-[11px] text-muted-foreground">{position.shares} @ ${position.avgPrice}</span>
-                        </div>
-                        <div className={`flex items-center gap-1 ${position.pnl >= 0 ? 'text-success' : 'text-destructive'}`}>
-                          <span className="text-sm font-bold">
-                            {position.pnl >= 0 ? '+' : ''}${Math.abs(position.pnl).toFixed(0)}
-                          </span>
-                          <span className="text-[10px] font-medium opacity-80">
-                            {position.pnlPercent >= 0 ? '+' : ''}{position.pnlPercent}%
+                          <span className="text-[11px] text-muted-foreground flex items-center gap-1">
+                            <Ticket className="h-3 w-3" />
+                            {entry.tickets} tickets
                           </span>
                         </div>
+                        <span className="text-sm font-bold text-success">
+                          Wins ${entry.potentialPayout}
+                        </span>
                       </div>
                     </div>
                     
-                    {/* Desktop: Row layout */}
+                    {/* Desktop */}
                     <div className="hidden sm:flex items-center justify-between">
                       <div className="flex-1">
-                        <p className="font-medium mb-1">{position.market}</p>
+                        <p className="font-medium mb-1">{entry.market}</p>
                         <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                          <Badge variant={position.position === "Yes" ? "default" : "secondary"} className="text-xs">
-                            {position.position}
+                          <Badge variant="secondary" className="text-xs bg-primary/10 text-primary border-primary/20">
+                            {entry.outcome}
                           </Badge>
-                          <span>{position.shares} shares @ ${position.avgPrice}</span>
-                          <span className="text-muted-foreground/60">→</span>
-                          <span>Now ${position.currentPrice}</span>
+                          <span className="flex items-center gap-1">
+                            <Ticket className="h-3.5 w-3.5" />
+                            {entry.tickets} tickets
+                          </span>
                         </div>
                       </div>
                       <div className="text-right flex items-center gap-4">
-                        <div className={`flex items-center gap-1.5 ${position.pnl >= 0 ? 'text-success' : 'text-destructive'}`}>
-                          {position.pnl >= 0 ? <ArrowUpRight className="h-4 w-4" /> : <ArrowDownRight className="h-4 w-4" />}
-                          <span className="text-lg font-bold">
-                            {position.pnl >= 0 ? '+' : ''}${Math.abs(position.pnl).toFixed(0)}
-                          </span>
-                          <span className="text-sm font-medium opacity-75">
-                            {position.pnlPercent >= 0 ? '+' : ''}{position.pnlPercent}%
-                          </span>
-                        </div>
+                        <span className="text-lg font-bold text-success">
+                          If {entry.outcome} wins: ${entry.potentialPayout}
+                        </span>
                         <ChevronRight className="h-4 w-4 text-muted-foreground" />
                       </div>
                     </div>
@@ -308,42 +180,39 @@ const Portfolio = () => {
             </div>
           </TabsContent>
 
-          {/* Trade History */}
-          <TabsContent value="history" className="space-y-3 sm:space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-sm sm:text-lg font-semibold">Trade History</h3>
-              <Button variant="outline" size="sm" className="gap-1.5 h-7 sm:h-8 text-[10px] sm:text-xs">
-                <Filter className="h-3 w-3 sm:h-4 sm:w-4" />
-                Filter
-              </Button>
-            </div>
+          {/* Past Entries */}
+          <TabsContent value="past" className="space-y-3 sm:space-y-4">
+            <h3 className="text-sm sm:text-lg font-semibold">Past Entries</h3>
 
             {/* Mobile: Card layout */}
             <div className="sm:hidden space-y-2">
-              {tradeHistory.map((trade) => {
-                const isSell = trade.type === "Sell";
-                return (
-                  <div key={trade.id} className="p-3 rounded-lg border border-border/40 bg-background">
-                    <div className="flex items-start justify-between gap-2 mb-2">
-                      <div className="flex-1 min-w-0">
-                        <p className="font-medium text-sm truncate">{trade.market}</p>
-                        <p className="text-[10px] text-muted-foreground">{trade.date}</p>
-                      </div>
-                      <span className={`text-sm font-bold ${isSell ? 'text-success' : 'text-destructive'}`}>
-                        {isSell ? '+' : '-'}${trade.total}
-                      </span>
+              {pastEntries.map((entry) => (
+                <div key={entry.id} className="p-3 rounded-lg border border-border/40 bg-background">
+                  <div className="flex items-start justify-between gap-2 mb-2">
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-sm truncate">{entry.market}</p>
+                      <p className="text-[10px] text-muted-foreground">{entry.date}</p>
                     </div>
-                    <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
-                      <Badge variant={trade.type === "Buy" ? "default" : "secondary"} className="text-[9px] px-1.5 h-4">
-                        {trade.type}
-                      </Badge>
-                      <span>{trade.position}</span>
-                      <span>•</span>
-                      <span>{trade.shares} @ ${trade.price}</span>
-                    </div>
+                    <Badge 
+                      variant="secondary" 
+                      className={`text-[9px] px-1.5 h-5 ${
+                        entry.result === 'won' ? 'bg-success/10 text-success' : 
+                        entry.result === 'lost' ? 'bg-destructive/10 text-destructive' : 
+                        'bg-muted text-muted-foreground'
+                      }`}
+                    >
+                      {entry.result === 'won' ? `Won $${entry.payout}` : entry.result === 'lost' ? 'Lost' : 'Pending'}
+                    </Badge>
                   </div>
-                );
-              })}
+                  <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
+                    <span>{entry.outcome}</span>
+                    <span>•</span>
+                    <span>{entry.tickets} tickets</span>
+                    <span>•</span>
+                    <span>Paid ${entry.amountPaid}</span>
+                  </div>
+                </div>
+              ))}
             </div>
 
             {/* Desktop: Table layout */}
@@ -354,36 +223,34 @@ const Portfolio = () => {
                     <tr className="border-b border-border/40 text-left text-sm text-muted-foreground">
                       <th className="p-4 font-medium">Date</th>
                       <th className="p-4 font-medium">Market</th>
-                      <th className="p-4 font-medium">Type</th>
-                      <th className="p-4 font-medium">Position</th>
-                      <th className="p-4 font-medium">Shares</th>
-                      <th className="p-4 font-medium">Price</th>
-                      <th className="p-4 font-medium text-right">Total</th>
+                      <th className="p-4 font-medium">Outcome</th>
+                      <th className="p-4 font-medium">Tickets</th>
+                      <th className="p-4 font-medium">Paid</th>
+                      <th className="p-4 font-medium text-right">Result</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {tradeHistory.map((trade) => {
-                      const isSell = trade.type === "Sell";
-                      return (
-                        <tr key={trade.id} className="border-b border-border/20 hover:bg-muted/30 transition-colors">
-                          <td className="p-4 text-sm">{trade.date}</td>
-                          <td className="p-4 text-sm font-medium">{trade.market}</td>
-                          <td className="p-4">
-                            <Badge variant={trade.type === "Buy" ? "default" : "secondary"} className="text-xs">
-                              {trade.type}
-                            </Badge>
-                          </td>
-                          <td className="p-4 text-sm">{trade.position}</td>
-                          <td className="p-4 text-sm">{trade.shares}</td>
-                          <td className="p-4 text-sm">${trade.price}</td>
-                          <td className="p-4 text-right">
-                            <span className={`text-sm font-semibold ${isSell ? 'text-success' : 'text-destructive'}`}>
-                              {isSell ? '+' : '-'}${trade.total}
-                            </span>
-                          </td>
-                        </tr>
-                      );
-                    })}
+                    {pastEntries.map((entry) => (
+                      <tr key={entry.id} className="border-b border-border/20 hover:bg-muted/30 transition-colors">
+                        <td className="p-4 text-sm">{entry.date}</td>
+                        <td className="p-4 text-sm font-medium">{entry.market}</td>
+                        <td className="p-4 text-sm">{entry.outcome}</td>
+                        <td className="p-4 text-sm">{entry.tickets}</td>
+                        <td className="p-4 text-sm">${entry.amountPaid}</td>
+                        <td className="p-4 text-right">
+                          <Badge 
+                            variant="secondary"
+                            className={`text-xs ${
+                              entry.result === 'won' ? 'bg-success/10 text-success' : 
+                              entry.result === 'lost' ? 'bg-destructive/10 text-destructive' : 
+                              'bg-muted text-muted-foreground'
+                            }`}
+                          >
+                            {entry.result === 'won' ? `Won $${entry.payout}` : entry.result === 'lost' ? 'Lost' : 'Pending'}
+                          </Badge>
+                        </td>
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
               </div>
