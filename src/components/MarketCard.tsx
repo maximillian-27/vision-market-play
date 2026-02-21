@@ -91,7 +91,7 @@ export function MarketCard({ id, creator, title, subtitle, image, outcomes, yesP
             <div className="flex items-center gap-3 text-xs text-muted-foreground mt-1.5 mb-2">
               <span className="flex items-center gap-1">
                 <TrendingUp className="h-3.5 w-3.5" />
-                {volume}
+                {volume} Pot
               </span>
               <span className="flex items-center gap-1">
                 <Clock className="h-3.5 w-3.5" />
@@ -113,7 +113,7 @@ export function MarketCard({ id, creator, title, subtitle, image, outcomes, yesP
                       }`}
                       onClick={(e) => e.stopPropagation()}
                     >
-                      <div className="text-lg font-bold">{outcome.price}¢</div>
+                      <div className="text-lg font-bold">${(outcome.price / 100).toFixed(2)}</div>
                       <div className="text-[10px] font-medium">{outcome.label}</div>
                     </button>
                   ))}

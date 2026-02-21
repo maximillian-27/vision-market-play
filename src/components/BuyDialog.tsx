@@ -34,11 +34,14 @@ export function BuyDialog({ open, onOpenChange, outcome, marketTitle, marketId }
   const [amount, setAmount] = useState("10");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Calculate shares and potential payout
+  // Calculate tickets and potential payout
   const amountNum = parseFloat(amount) || 0;
-  const shares = outcome.price > 0 ? Math.floor((amountNum * 100) / outcome.price) : 0;
-  const potentialPayout = shares;
-  const potentialProfit = potentialPayout - amountNum;
+  const ticketPrice = outcome.price / 100;
+  const tickets = ticketPrice > 0 ? Math.floor(amountNum / ticketPrice) : 0;
+  const totalTicketsForOutcome = 15000; // mock
+  const totalPot = 125000; // mock
+  const potShare = tickets > 0 ? (tickets / (totalTicketsForOutcome + tickets)) * 100 : 0;
+  const estPayout = tickets > 0 ? (tickets / (totalTicketsForOutcome + tickets)) * totalPot : 0;
 
   const handleBuy = () => {
     try {
@@ -50,7 +53,7 @@ export function BuyDialog({ open, onOpenChange, outcome, marketTitle, marketId }
       setTimeout(() => {
         toast({
           title: "Order placed",
-          description: `You bought ${shares} shares of "${outcome.label}" for $${amountNum.toFixed(2)}`,
+          description: `You bought ${tickets} tickets of "${outcome.label}" for $${amountNum.toFixed(2)}`,
         });
         onOpenChange(false);
         setIsSubmitting(false);
@@ -84,7 +87,7 @@ export function BuyDialog({ open, onOpenChange, outcome, marketTitle, marketId }
         <h3 className="text-sm font-medium text-muted-foreground">Buying</h3>
         <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30 border">
           <span className="font-semibold">{outcome.label}</span>
-          <span className="text-lg font-bold">{outcome.price}¢</span>
+          <span className="text-lg font-bold">${ticketPrice.toFixed(2)}</span>
         </div>
       </div>
 
@@ -124,22 +127,22 @@ export function BuyDialog({ open, onOpenChange, outcome, marketTitle, marketId }
       {/* Order Summary */}
       <div className="space-y-2 p-4 rounded-lg bg-muted/20">
         <div className="flex justify-between text-sm">
-          <span className="text-muted-foreground">Shares</span>
-          <span className="font-semibold">{shares.toLocaleString()}</span>
+          <span className="text-muted-foreground">Tickets</span>
+          <span className="font-semibold">{tickets.toLocaleString()}</span>
         </div>
         <div className="flex justify-between text-sm">
-          <span className="text-muted-foreground">Avg. price</span>
-          <span className="font-semibold">{outcome.price}¢</span>
+          <span className="text-muted-foreground">Ticket price</span>
+          <span className="font-semibold">${ticketPrice.toFixed(2)}</span>
         </div>
         <Separator className="my-2" />
         <div className="flex justify-between text-sm">
-          <span className="text-muted-foreground">Potential payout</span>
-          <span className="font-semibold">${potentialPayout.toFixed(2)}</span>
+          <span className="text-muted-foreground">Pot share</span>
+          <span className="font-semibold">{potShare.toFixed(2)}%</span>
         </div>
         <div className="flex justify-between text-sm">
-          <span className="text-muted-foreground">Potential profit</span>
-          <span className={`font-semibold ${potentialProfit > 0 ? 'text-success' : ''}`}>
-            ${potentialProfit.toFixed(2)}
+          <span className="text-muted-foreground">Est. payout</span>
+          <span className={`font-semibold ${estPayout > amountNum ? 'text-success' : ''}`}>
+            ${estPayout.toFixed(2)}
           </span>
         </div>
       </div>
@@ -162,7 +165,7 @@ export function BuyDialog({ open, onOpenChange, outcome, marketTitle, marketId }
         onClick={handleBuy}
         disabled={isSubmitting || amountNum < 1 || amountNum > 10000}
       >
-        {isSubmitting ? "Placing order..." : `Buy ${outcome.label} for $${amountNum.toFixed(2)}`}
+        {isSubmitting ? "Buying..." : `Buy ${tickets} ${outcome.label} Tickets`}
       </Button>
     </div>
   );
@@ -172,7 +175,7 @@ export function BuyDialog({ open, onOpenChange, outcome, marketTitle, marketId }
       <Drawer open={open} onOpenChange={onOpenChange}>
         <DrawerContent className="px-4 pb-6 flex flex-col max-h-[85vh]">
           <DrawerHeader className="px-0 pb-4 flex-shrink-0">
-            <DrawerTitle>Place Order</DrawerTitle>
+            <DrawerTitle>Buy Tickets</DrawerTitle>
           </DrawerHeader>
           <div className="overflow-y-auto flex-1 -mx-4 px-4">
             {contentWithoutButton}
@@ -183,7 +186,7 @@ export function BuyDialog({ open, onOpenChange, outcome, marketTitle, marketId }
               onClick={handleBuy}
               disabled={isSubmitting || amountNum < 1 || amountNum > 10000}
             >
-              {isSubmitting ? "Placing order..." : `Buy ${outcome.label} for $${amountNum.toFixed(2)}`}
+              {isSubmitting ? "Buying..." : `Buy ${tickets} ${outcome.label} Tickets`}
             </Button>
           </div>
         </DrawerContent>
@@ -195,7 +198,7 @@ export function BuyDialog({ open, onOpenChange, outcome, marketTitle, marketId }
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Place Order</DialogTitle>
+          <DialogTitle>Buy Tickets</DialogTitle>
         </DialogHeader>
         {content}
       </DialogContent>
