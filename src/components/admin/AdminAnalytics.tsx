@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/select";
 import {
   BarChart3, TrendingUp, TrendingDown, Users, DollarSign,
-  ArrowUpRight, ArrowDownRight, Download, Target, Zap, Megaphone, Percent, Star,
+  ArrowUpRight, ArrowDownRight, Download, Target, Zap, Megaphone, Percent, Star, UserPlus,
 } from "lucide-react";
 import { toast } from "sonner";
 import { AdminMarketing } from "./AdminMarketing";
@@ -24,6 +24,9 @@ const kpis = {
   volume: { value: 4150000, change: -3.2, label: "Trading Volume" },
   signups: { value: 347, change: 15.7, label: "New Signups" },
   retention: { value: 78.5, change: 2.1, label: "Retention Rate %" },
+  avgTradeSize: { value: 491, change: 1.4, label: "Avg Trade Size" },
+  marketsCreated: { value: 42, change: 22.0, label: "Markets Created" },
+  takeRate: { value: 3.0, change: 0.0, label: "Platform Take Rate %" },
 };
 
 const trafficSources = [
@@ -48,6 +51,23 @@ const topCreators = [
   { name: "TechOracle", markets: 8, volume: 456000, feeRevenue: 13680, earnings: 2736 },
   { name: "PoliticalPredict", markets: 5, volume: 312000, feeRevenue: 9360, earnings: 1872 },
   { name: "MarketMaven", markets: 3, volume: 145000, feeRevenue: 4350, earnings: 870 },
+];
+
+const topAffiliates = [
+  { name: "PromoQueen", referrals: 1230, volume: 567000, feeRevenue: 17010, earnings: 3402, convRate: "8.2%" },
+  { name: "ReferKing", referrals: 890, volume: 234000, feeRevenue: 7020, earnings: 1404, convRate: "6.5%" },
+  { name: "CryptoInfluencer", referrals: 456, volume: 189000, feeRevenue: 5670, earnings: 1134, convRate: "7.1%" },
+  { name: "BetPromoter", referrals: 320, volume: 145000, feeRevenue: 4350, earnings: 870, convRate: "5.8%" },
+  { name: "SportsFan99", referrals: 210, volume: 98000, feeRevenue: 2940, earnings: 588, convRate: "4.9%" },
+];
+
+const creatorGrowthData = [
+  { month: "Aug", creators: 180, affiliates: 450 },
+  { month: "Sep", creators: 210, affiliates: 560 },
+  { month: "Oct", creators: 245, affiliates: 680 },
+  { month: "Nov", creators: 280, affiliates: 820 },
+  { month: "Dec", creators: 310, affiliates: 1050 },
+  { month: "Jan", creators: 342, affiliates: 1289 },
 ];
 
 const userMetrics = [
@@ -119,6 +139,7 @@ export const AdminAnalytics = () => {
             <TabsTrigger value="performance" className="data-[state=active]:bg-background gap-2"><BarChart3 className="h-4 w-4" /> Performance</TabsTrigger>
             <TabsTrigger value="users-funnel" className="data-[state=active]:bg-background gap-2"><Users className="h-4 w-4" /> Users & Funnel</TabsTrigger>
             <TabsTrigger value="markets" className="data-[state=active]:bg-background gap-2"><TrendingUp className="h-4 w-4" /> Markets</TabsTrigger>
+            <TabsTrigger value="creators-affiliates" className="data-[state=active]:bg-background gap-2"><Star className="h-4 w-4" /> Creators & Affiliates</TabsTrigger>
             <TabsTrigger value="marketing" className="data-[state=active]:bg-background gap-2"><Megaphone className="h-4 w-4" /> Marketing</TabsTrigger>
           </TabsList>
           <div className="flex items-center gap-3">
@@ -149,7 +170,8 @@ export const AdminAnalytics = () => {
                   <div className="flex items-center gap-2">
                     <p className="text-2xl font-bold">
                       {key === "revenue" || key === "creatorRevenue" || key === "volume" ? `$${(kpi.value / 1000).toFixed(0)}K` :
-                       key === "retention" ? `${kpi.value}%` : kpi.value.toLocaleString()}
+                       key === "avgTradeSize" ? `$${kpi.value}` :
+                       key === "retention" || key === "takeRate" ? `${kpi.value}%` : kpi.value.toLocaleString()}
                     </p>
                     <Badge className={`text-xs border-0 ${kpi.change >= 0 ? 'bg-success/10 text-success' : 'bg-destructive/10 text-destructive'}`}>
                       {kpi.change >= 0 ? <ArrowUpRight className="h-3 w-3 mr-1" /> : <ArrowDownRight className="h-3 w-3 mr-1" />}
@@ -312,7 +334,6 @@ export const AdminAnalytics = () => {
             </CardContent>
           </Card>
 
-          {/* Top Creators by Revenue */}
           <Card className="border-border/40">
             <CardHeader className="pb-3"><CardTitle className="text-base flex items-center gap-2"><Star className="h-4 w-4" /> Top Creators by Revenue</CardTitle></CardHeader>
             <CardContent>
@@ -343,44 +364,61 @@ export const AdminAnalytics = () => {
             </CardContent>
           </Card>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Card className="border-border/40">
-              <CardHeader className="pb-3"><CardTitle className="text-base">Markets by Category</CardTitle></CardHeader>
-              <CardContent>
-                <div className="h-48">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie data={categoryDistribution} cx="50%" cy="50%" innerRadius={40} outerRadius={70} paddingAngle={4} dataKey="value">
-                        {categoryDistribution.map((_, index) => (
-                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                        ))}
-                      </Pie>
-                      <Tooltip contentStyle={tooltipStyle} />
-                      <Legend />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </div>
-              </CardContent>
-            </Card>
-            <Card className="border-border/40">
-              <CardHeader className="pb-3"><CardTitle className="text-base">Trading Volume Over Time</CardTitle></CardHeader>
-              <CardContent>
-                <div className="h-48">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={volumeData}>
-                      <CartesianGrid strokeDasharray="3 3" className="stroke-border/40" />
-                      <XAxis dataKey="week" tick={tickStyle} />
-                      <YAxis tick={tickStyle} tickFormatter={(v) => `$${(v / 1000000).toFixed(1)}M`} />
-                      <Tooltip contentStyle={tooltipStyle} formatter={(value: number) => [`$${(value / 1000000).toFixed(2)}M`, 'Volume']} />
-                      <Bar dataKey="volume" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+          <Card className="border-border/40">
+            <CardHeader className="pb-3"><CardTitle className="text-base flex items-center gap-2"><UserPlus className="h-4 w-4" /> Top 5 Affiliates by Referral Volume</CardTitle></CardHeader>
+            <CardContent>
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b border-border/40 text-left text-sm text-muted-foreground">
+                      <th className="p-3 font-medium">#</th>
+                      <th className="p-3 font-medium">Affiliate</th>
+                      <th className="p-3 font-medium">Referrals</th>
+                      <th className="p-3 font-medium">Volume</th>
+                      <th className="p-3 font-medium">Fee Revenue</th>
+                      <th className="p-3 font-medium">Earnings (20%)</th>
+                      <th className="p-3 font-medium">Conv. Rate</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {topAffiliates.map((a, i) => (
+                      <tr key={i} className="border-b border-border/20 hover:bg-muted/30 transition-colors">
+                        <td className="p-3 text-sm font-medium">{i + 1}</td>
+                        <td className="p-3 font-medium">{a.name}</td>
+                        <td className="p-3 text-sm">{a.referrals.toLocaleString()}</td>
+                        <td className="p-3 text-sm">${(a.volume / 1000).toFixed(0)}K</td>
+                        <td className="p-3 text-sm font-medium text-success">${a.feeRevenue.toLocaleString()}</td>
+                        <td className="p-3 text-sm font-medium">${a.earnings.toLocaleString()}</td>
+                        <td className="p-3 text-sm">{a.convRate}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="border-border/40">
+            <CardHeader className="pb-3"><CardTitle className="text-base">Creator & Affiliate Growth</CardTitle></CardHeader>
+            <CardContent>
+              <div className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={creatorGrowthData}>
+                    <CartesianGrid strokeDasharray="3 3" className="stroke-border/40" />
+                    <XAxis dataKey="month" tick={tickStyle} />
+                    <YAxis tick={tickStyle} />
+                    <Tooltip contentStyle={tooltipStyle} />
+                    <Legend />
+                    <Line type="monotone" dataKey="creators" name="Creators" stroke="hsl(var(--primary))" strokeWidth={2} />
+                    <Line type="monotone" dataKey="affiliates" name="Affiliates" stroke="hsl(var(--success))" strokeWidth={2} />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </CardContent>
+          </Card>
         </TabsContent>
 
+        {/* Marketing */}
         <TabsContent value="marketing" className="space-y-4">
           <AdminMarketing />
         </TabsContent>
