@@ -7,24 +7,27 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import {
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+} from "@/components/ui/select";
+import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
   Search, MoreHorizontal, Eye, Pause, CheckCircle, XCircle,
   TrendingUp, Clock, Settings, Tag, Plus, ChevronLeft, ChevronRight,
-  AlertTriangle, MessageSquare, DollarSign, BarChart3,
+  AlertTriangle, MessageSquare, DollarSign, BarChart3, Star, Edit, Sparkles,
 } from "lucide-react";
 import { toast } from "sonner";
 
 const markets = [
-  { id: 1, title: "Will Bitcoin reach $100K by end of 2025?", creator: "CryptoGuru", status: "Active", potSize: 245000, trades: 4234, feeRevenue: 7350, dateCreated: "2024-11-01", endDate: "2025-12-31" },
-  { id: 2, title: "Will AI replace most software jobs by 2030?", creator: "TechOracle", status: "Active", potSize: 132000, trades: 2890, feeRevenue: 3960, dateCreated: "2024-10-15", endDate: "2030-01-01" },
-  { id: 3, title: "Will SpaceX land on Mars by 2026?", creator: "SpaceWatch", status: "Active", potSize: 98000, trades: 1756, feeRevenue: 2940, dateCreated: "2024-09-20", endDate: "2026-12-31" },
-  { id: 4, title: "US Election 2024 Winner", creator: "PoliticalPredict", status: "Resolved", potSize: 525000, trades: 15600, feeRevenue: 15750, dateCreated: "2024-01-10", endDate: "2024-11-05" },
-  { id: 5, title: "Super Bowl 2025 Champion", creator: "SportsAnalyst", status: "Active", potSize: 189000, trades: 5400, feeRevenue: 5670, dateCreated: "2024-08-01", endDate: "2025-02-11" },
-  { id: 6, title: "Will Tesla stock hit $300?", creator: "MarketMaven", status: "Paused", potSize: 45000, trades: 950, feeRevenue: 1350, dateCreated: "2024-06-15", endDate: "2025-06-30" },
-  { id: 7, title: "Will Ethereum flip Bitcoin?", creator: "CryptoGuru", status: "Active", potSize: 72000, trades: 1678, feeRevenue: 2160, dateCreated: "2024-12-01", endDate: "2025-12-31" },
-  { id: 8, title: "Next FIFA World Cup host?", creator: "SportsAnalyst", status: "Active", potSize: 58000, trades: 1220, feeRevenue: 1740, dateCreated: "2024-11-20", endDate: "2026-06-01" },
+  { id: 1, title: "Will Bitcoin reach $100K by end of 2025?", creator: "CryptoGuru", status: "Active", potSize: 245000, trades: 4234, feeRevenue: 7350, dateCreated: "2024-11-01", endDate: "2025-12-31", category: "Crypto" },
+  { id: 2, title: "Will AI replace most software jobs by 2030?", creator: "TechOracle", status: "Active", potSize: 132000, trades: 2890, feeRevenue: 3960, dateCreated: "2024-10-15", endDate: "2030-01-01", category: "Tech" },
+  { id: 3, title: "Will SpaceX land on Mars by 2026?", creator: "SpaceWatch", status: "Active", potSize: 98000, trades: 1756, feeRevenue: 2940, dateCreated: "2024-09-20", endDate: "2026-12-31", category: "Tech" },
+  { id: 4, title: "US Election 2024 Winner", creator: "PoliticalPredict", status: "Resolved", potSize: 525000, trades: 15600, feeRevenue: 15750, dateCreated: "2024-01-10", endDate: "2024-11-05", category: "Politics" },
+  { id: 5, title: "Super Bowl 2025 Champion", creator: "SportsAnalyst", status: "Active", potSize: 189000, trades: 5400, feeRevenue: 5670, dateCreated: "2024-08-01", endDate: "2025-02-11", category: "Sports" },
+  { id: 6, title: "Will Tesla stock hit $300?", creator: "MarketMaven", status: "Paused", potSize: 45000, trades: 950, feeRevenue: 1350, dateCreated: "2024-06-15", endDate: "2025-06-30", category: "Crypto" },
+  { id: 7, title: "Will Ethereum flip Bitcoin?", creator: "CryptoGuru", status: "Active", potSize: 72000, trades: 1678, feeRevenue: 2160, dateCreated: "2024-12-01", endDate: "2025-12-31", category: "Crypto" },
+  { id: 8, title: "Next FIFA World Cup host?", creator: "SportsAnalyst", status: "Active", potSize: 58000, trades: 1220, feeRevenue: 1740, dateCreated: "2024-11-20", endDate: "2026-06-01", category: "Sports" },
 ];
 
 const pendingMarkets = [
@@ -53,12 +56,12 @@ const disputeHistory = [
 ];
 
 const categories = [
-  { name: "Sports", markets: 234, volume: 1200000, active: true },
-  { name: "Crypto", markets: 189, volume: 3400000, active: true },
-  { name: "Politics", markets: 78, volume: 890000, active: true },
-  { name: "Tech", markets: 156, volume: 670000, active: true },
-  { name: "Entertainment", markets: 45, volume: 120000, active: true },
-  { name: "Science", markets: 23, volume: 56000, active: false },
+  { name: "Sports", markets: 234, volume: 1200000, active: true, activeMarkets: 198 },
+  { name: "Crypto", markets: 189, volume: 3400000, active: true, activeMarkets: 165 },
+  { name: "Politics", markets: 78, volume: 890000, active: true, activeMarkets: 42 },
+  { name: "Tech", markets: 156, volume: 670000, active: true, activeMarkets: 134 },
+  { name: "Entertainment", markets: 45, volume: 120000, active: true, activeMarkets: 38 },
+  { name: "Science", markets: 23, volume: 56000, active: false, activeMarkets: 0 },
 ];
 
 const priorityColors: Record<string, string> = {
@@ -73,11 +76,23 @@ const PAGE_SIZE = 5;
 export const AdminMarkets = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [page, setPage] = useState(1);
+  const [timePeriod, setTimePeriod] = useState("all");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [categoryFilter, setCategoryFilter] = useState("all");
+  const [sortBy, setSortBy] = useState("pot");
 
-  const filteredMarkets = markets.filter((m) =>
-    m.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    m.creator.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredMarkets = markets.filter((m) => {
+    const matchesSearch = m.title.toLowerCase().includes(searchQuery.toLowerCase()) || m.creator.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesStatus = statusFilter === "all" || m.status.toLowerCase() === statusFilter.toLowerCase();
+    const matchesCategory = categoryFilter === "all" || m.category.toLowerCase() === categoryFilter.toLowerCase();
+    return matchesSearch && matchesStatus && matchesCategory;
+  }).sort((a, b) => {
+    if (sortBy === "pot") return b.potSize - a.potSize;
+    if (sortBy === "trades") return b.trades - a.trades;
+    if (sortBy === "fee") return b.feeRevenue - a.feeRevenue;
+    if (sortBy === "created") return new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime();
+    return 0;
+  });
 
   const totalPages = Math.ceil(filteredMarkets.length / PAGE_SIZE);
   const paginatedMarkets = filteredMarkets.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
@@ -92,6 +107,15 @@ export const AdminMarkets = () => {
       <div className="relative max-w-md">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input placeholder="Search markets, creators..." value={searchQuery} onChange={(e) => { setSearchQuery(e.target.value); setPage(1); }} className="pl-9 h-9" />
+      </div>
+
+      {/* Time Period */}
+      <div className="flex items-center gap-2">
+        {["1d", "7d", "30d", "90d", "all"].map((p) => (
+          <Button key={p} variant={timePeriod === p ? "default" : "outline"} size="sm" onClick={() => setTimePeriod(p)}>
+            {p === "all" ? "All Time" : p}
+          </Button>
+        ))}
       </div>
 
       {/* Analytics row */}
@@ -135,6 +159,38 @@ export const AdminMarkets = () => {
 
         {/* Active Markets */}
         <TabsContent value="active" className="space-y-4">
+          {/* Filters */}
+          <div className="flex flex-wrap items-center gap-3">
+            <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setPage(1); }}>
+              <SelectTrigger className="w-36 h-9"><SelectValue placeholder="Status" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Statuses</SelectItem>
+                <SelectItem value="active">Active</SelectItem>
+                <SelectItem value="paused">Paused</SelectItem>
+                <SelectItem value="resolved">Resolved</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={categoryFilter} onValueChange={(v) => { setCategoryFilter(v); setPage(1); }}>
+              <SelectTrigger className="w-36 h-9"><SelectValue placeholder="Category" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Categories</SelectItem>
+                <SelectItem value="sports">Sports</SelectItem>
+                <SelectItem value="crypto">Crypto</SelectItem>
+                <SelectItem value="politics">Politics</SelectItem>
+                <SelectItem value="tech">Tech</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={sortBy} onValueChange={setSortBy}>
+              <SelectTrigger className="w-36 h-9"><SelectValue placeholder="Sort by" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="pot">Pot Size</SelectItem>
+                <SelectItem value="trades">Trades</SelectItem>
+                <SelectItem value="fee">Fee Revenue</SelectItem>
+                <SelectItem value="created">Date Created</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
           <Card className="border-border/40">
             <div className="overflow-x-auto">
               <table className="w-full">
@@ -169,6 +225,9 @@ export const AdminMarkets = () => {
                           <DropdownMenuTrigger asChild><Button variant="ghost" size="icon" className="h-8 w-8"><MoreHorizontal className="h-4 w-4" /></Button></DropdownMenuTrigger>
                           <DropdownMenuContent align="end" className="bg-popover">
                             <DropdownMenuItem className="gap-2" onClick={() => toast(`Opening market: ${market.title}`)}><Eye className="h-4 w-4" /> View</DropdownMenuItem>
+                            <DropdownMenuItem className="gap-2" onClick={() => toast(`Opening creator profile: ${market.creator}`)}><Star className="h-4 w-4" /> View Creator</DropdownMenuItem>
+                            <DropdownMenuItem className="gap-2" onClick={() => toast(`Opening market editor for "${market.title}"`)}><Edit className="h-4 w-4" /> Edit Market</DropdownMenuItem>
+                            <DropdownMenuItem className="gap-2" onClick={() => toast.success(`"${market.title}" featured on homepage`)}><Sparkles className="h-4 w-4" /> Feature Market</DropdownMenuItem>
                             <DropdownMenuItem className="gap-2" onClick={() => toast.success(`Market "${market.title}" paused`)}><Pause className="h-4 w-4" /> Pause</DropdownMenuItem>
                             <DropdownMenuItem className="gap-2" onClick={() => toast(`Opening resolution for "${market.title}"`)}><CheckCircle className="h-4 w-4" /> Resolve</DropdownMenuItem>
                             <DropdownMenuItem className="gap-2 text-destructive" onClick={() => toast.success(`Market "${market.title}" cancelled`)}><XCircle className="h-4 w-4" /> Cancel</DropdownMenuItem>
@@ -184,8 +243,8 @@ export const AdminMarkets = () => {
               <p className="text-sm text-muted-foreground">Showing {((page - 1) * PAGE_SIZE) + 1}–{Math.min(page * PAGE_SIZE, filteredMarkets.length)} of {filteredMarkets.length}</p>
               <div className="flex items-center gap-2">
                 <Button variant="outline" size="sm" disabled={page === 1} onClick={() => setPage(p => p - 1)}><ChevronLeft className="h-4 w-4" /></Button>
-                <span className="text-sm font-medium">{page} / {totalPages}</span>
-                <Button variant="outline" size="sm" disabled={page === totalPages} onClick={() => setPage(p => p + 1)}><ChevronRight className="h-4 w-4" /></Button>
+                <span className="text-sm font-medium">{page} / {totalPages || 1}</span>
+                <Button variant="outline" size="sm" disabled={page >= totalPages} onClick={() => setPage(p => p + 1)}><ChevronRight className="h-4 w-4" /></Button>
               </div>
             </div>
           </Card>
@@ -358,8 +417,10 @@ export const AdminMarkets = () => {
                     <Switch defaultChecked={cat.active} />
                   </div>
                   <div className="grid grid-cols-2 gap-y-1 text-sm">
-                    <span className="text-muted-foreground">Markets</span><span className="text-right font-medium">{cat.markets}</span>
+                    <span className="text-muted-foreground">Markets</span><span className="text-right font-medium">{cat.activeMarkets} / {cat.markets}</span>
                     <span className="text-muted-foreground">Pot Size</span><span className="text-right font-medium">${(cat.volume / 1000000).toFixed(1)}M</span>
+                    <span className="text-muted-foreground">Fee Revenue</span><span className="text-right font-medium text-success">${(cat.volume * 0.03 / 1000).toFixed(0)}K</span>
+                    <span className="text-muted-foreground">Avg Pot Size</span><span className="text-right font-medium">${cat.markets > 0 ? (cat.volume / cat.markets / 1000).toFixed(1) + "K" : "—"}</span>
                   </div>
                 </CardContent>
               </Card>
