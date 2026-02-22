@@ -4,11 +4,14 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+} from "@/components/ui/select";
+import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
   Ticket, BookOpen, MessageCircle, MoreHorizontal, Eye, UserPlus,
-  ArrowUp, CheckCircle, Clock, AlertTriangle, Search,
+  ArrowUp, CheckCircle, Clock, AlertTriangle, Search, Star, ThumbsUp,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
@@ -39,15 +42,23 @@ const priorityColors: Record<string, string> = {
 
 export const AdminSupport = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("all");
+  const [priorityFilter, setPriorityFilter] = useState("all");
+  const [statusFilter, setStatusFilter] = useState("all");
 
-  const filteredTickets = tickets.filter(t =>
-    t.subject.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    t.user.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    t.id.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredTickets = tickets.filter(t => {
+    const matchesSearch = t.subject.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      t.user.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      t.id.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCategory = categoryFilter === "all" || t.category.toLowerCase() === categoryFilter;
+    const matchesPriority = priorityFilter === "all" || t.priority.toLowerCase() === priorityFilter;
+    const matchesStatus = statusFilter === "all" || t.status.toLowerCase().replace(" ", "") === statusFilter;
+    return matchesSearch && matchesCategory && matchesPriority && matchesStatus;
+  });
 
   const openTickets = tickets.filter(t => t.status === "Open").length;
   const escalated = tickets.filter(t => t.status === "Escalated").length;
+  const ticketsToday = tickets.filter(t => t.created.startsWith("2025-01-15")).length;
 
   return (
     <div className="space-y-6">
@@ -60,16 +71,52 @@ export const AdminSupport = () => {
 
         {/* Tickets */}
         <TabsContent value="tickets" className="space-y-4">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-7 gap-4">
             <Card className="border-border/40 bg-warning/5"><CardContent className="p-4"><div className="flex items-center gap-2 text-warning text-sm mb-1"><Ticket className="h-4 w-4" /> Open Tickets</div><p className="text-2xl font-bold">{openTickets}</p></CardContent></Card>
             <Card className="border-border/40"><CardContent className="p-4"><p className="text-sm text-muted-foreground mb-1">Avg Response Time</p><p className="text-2xl font-bold">12 min</p></CardContent></Card>
             <Card className="border-border/40 bg-success/5"><CardContent className="p-4"><p className="text-sm text-muted-foreground mb-1">Resolution Rate</p><p className="text-2xl font-bold">94.2%</p></CardContent></Card>
             <Card className="border-border/40 bg-destructive/5"><CardContent className="p-4"><div className="flex items-center gap-2 text-destructive text-sm mb-1"><AlertTriangle className="h-4 w-4" /> Escalated</div><p className="text-2xl font-bold">{escalated}</p></CardContent></Card>
+            <Card className="border-border/40 bg-primary/5"><CardContent className="p-4"><div className="flex items-center gap-2 text-primary text-sm mb-1"><Ticket className="h-4 w-4" /> Tickets Today</div><p className="text-2xl font-bold">{ticketsToday}</p></CardContent></Card>
+            <Card className="border-border/40"><CardContent className="p-4"><div className="flex items-center gap-2 text-muted-foreground text-sm mb-1"><Clock className="h-4 w-4" /> First Response</div><p className="text-2xl font-bold">4 min</p></CardContent></Card>
+            <Card className="border-border/40 bg-success/5"><CardContent className="p-4"><div className="flex items-center gap-2 text-success text-sm mb-1"><ThumbsUp className="h-4 w-4" /> CSAT Score</div><p className="text-2xl font-bold">92%</p></CardContent></Card>
           </div>
 
-          <div className="relative max-w-md">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input placeholder="Search tickets..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-9 h-9" />
+          {/* Filters */}
+          <div className="flex items-center gap-3 flex-wrap">
+            <div className="relative flex-1 max-w-md">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input placeholder="Search tickets..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-9 h-9" />
+            </div>
+            <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+              <SelectTrigger className="w-36 h-9"><SelectValue placeholder="Category" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Categories</SelectItem>
+                <SelectItem value="account">Account</SelectItem>
+                <SelectItem value="market">Market</SelectItem>
+                <SelectItem value="payment">Payment</SelectItem>
+                <SelectItem value="other">Other</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={priorityFilter} onValueChange={setPriorityFilter}>
+              <SelectTrigger className="w-36 h-9"><SelectValue placeholder="Priority" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Priorities</SelectItem>
+                <SelectItem value="critical">Critical</SelectItem>
+                <SelectItem value="high">High</SelectItem>
+                <SelectItem value="medium">Medium</SelectItem>
+                <SelectItem value="low">Low</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="w-36 h-9"><SelectValue placeholder="Status" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Status</SelectItem>
+                <SelectItem value="open">Open</SelectItem>
+                <SelectItem value="inprogress">In Progress</SelectItem>
+                <SelectItem value="escalated">Escalated</SelectItem>
+                <SelectItem value="resolved">Resolved</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           <Card className="border-border/40">

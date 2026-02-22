@@ -12,7 +12,7 @@ import {
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Search, MoreHorizontal, Eye, Download, ArrowUpRight, ArrowDownRight, Receipt, Shield, ChevronLeft, ChevronRight, Wallet, Percent } from "lucide-react";
+import { Search, MoreHorizontal, Eye, Download, ArrowUpRight, ArrowDownRight, Receipt, Shield, ChevronLeft, ChevronRight, Wallet, Percent, AlertTriangle, CheckCircle, XCircle, Lock } from "lucide-react";
 import { toast } from "sonner";
 
 const transactions = [
@@ -32,10 +32,10 @@ const typeIcons: Record<string, any> = { Deposit: ArrowDownRight, Withdrawal: Ar
 const typeColors: Record<string, string> = { Deposit: "text-success", Withdrawal: "text-destructive", Fee: "text-primary" };
 
 const wallets = [
-  { name: "Hot Wallet (ETH)", address: "0x742d35Cc6634C0532925a3b844Bc9e7595f", balance: "$2,450,000", chain: "Ethereum" },
-  { name: "Hot Wallet (BTC)", address: "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh", balance: "$1,890,000", chain: "Bitcoin" },
-  { name: "Cold Storage", address: "0x89205A3A3b2A69De6Dbf7f01ED13B2108B2c43e7", balance: "$12,500,000", chain: "Multi-chain" },
-  { name: "USDT Reserve", address: "TN3W4H6rK2ce4vX9YnFQHwKENnHjoxb3m9", balance: "$5,200,000", chain: "Tron" },
+  { name: "Hot Wallet (ETH)", address: "0x742d35Cc6634C0532925a3b844Bc9e7595f", balance: "$2,450,000", chain: "Ethereum", inflow24h: "+$120K", outflow24h: "-$45K", lastTxn: "2 min ago" },
+  { name: "Hot Wallet (BTC)", address: "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh", balance: "$1,890,000", chain: "Bitcoin", inflow24h: "+$89K", outflow24h: "-$32K", lastTxn: "15 min ago" },
+  { name: "Cold Storage", address: "0x89205A3A3b2A69De6Dbf7f01ED13B2108B2c43e7", balance: "$12,500,000", chain: "Multi-chain", inflow24h: "+$0", outflow24h: "-$0", lastTxn: "3 days ago" },
+  { name: "USDT Reserve", address: "TN3W4H6rK2ce4vX9YnFQHwKENnHjoxb3m9", balance: "$5,200,000", chain: "Tron", inflow24h: "+$380K", outflow24h: "-$125K", lastTxn: "8 min ago" },
 ];
 
 const PAGE_SIZE = 5;
@@ -47,9 +47,7 @@ const downloadCSV = (data: typeof transactions) => {
   const blob = new Blob([csv], { type: "text/csv" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
-  a.href = url;
-  a.download = "transactions-export.csv";
-  a.click();
+  a.href = url; a.download = "transactions-export.csv"; a.click();
   URL.revokeObjectURL(url);
   toast.success("Transactions exported successfully");
 };
@@ -57,13 +55,15 @@ const downloadCSV = (data: typeof transactions) => {
 export const AdminTransactions = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [typeFilter, setTypeFilter] = useState("all");
+  const [statusFilter, setStatusFilter] = useState("all");
   const [timePeriod, setTimePeriod] = useState("all");
   const [page, setPage] = useState(1);
 
   const filteredTransactions = transactions.filter((txn) => {
     const matchesSearch = txn.user.toLowerCase().includes(searchQuery.toLowerCase()) || txn.id.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesType = typeFilter === "all" || txn.type.toLowerCase() === typeFilter;
-    return matchesSearch && matchesType;
+    const matchesStatus = statusFilter === "all" || txn.status.toLowerCase().replace(" ", "") === statusFilter;
+    return matchesSearch && matchesType && matchesStatus;
   });
 
   const totalPages = Math.ceil(filteredTransactions.length / PAGE_SIZE);
@@ -87,7 +87,7 @@ export const AdminTransactions = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
         <Card className="border-border/40 bg-success/5">
           <CardContent className="p-4">
             <div className="flex items-center gap-2 text-success text-sm mb-1"><ArrowDownRight className="h-4 w-4" /> Total Deposits</div>
@@ -112,6 +112,12 @@ export const AdminTransactions = () => {
             <p className="text-2xl font-bold">{pendingCount}</p>
           </CardContent>
         </Card>
+        <Card className="border-border/40 bg-primary/5">
+          <CardContent className="p-4">
+            <div className="flex items-center gap-2 text-primary text-sm mb-1"><Percent className="h-4 w-4" /> Fee Revenue (3%)</div>
+            <p className="text-2xl font-bold">${totalFees.toLocaleString()}</p>
+          </CardContent>
+        </Card>
       </div>
 
       <Tabs defaultValue="transactions" className="space-y-4">
@@ -134,6 +140,16 @@ export const AdminTransactions = () => {
                 <SelectItem value="deposit">Deposits</SelectItem>
                 <SelectItem value="withdrawal">Withdrawals</SelectItem>
                 <SelectItem value="fee">Fees</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setPage(1); }}>
+              <SelectTrigger className="w-36 h-9"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Status</SelectItem>
+                <SelectItem value="completed">Completed</SelectItem>
+                <SelectItem value="pending">Pending</SelectItem>
+                <SelectItem value="underreview">Under Review</SelectItem>
+                <SelectItem value="failed">Failed</SelectItem>
               </SelectContent>
             </Select>
             <Button variant="outline" size="sm" className="gap-2" onClick={() => downloadCSV(filteredTransactions)}>
@@ -175,6 +191,13 @@ export const AdminTransactions = () => {
                             <DropdownMenuTrigger asChild><Button variant="ghost" size="icon" className="h-8 w-8"><MoreHorizontal className="h-4 w-4" /></Button></DropdownMenuTrigger>
                             <DropdownMenuContent align="end" className="bg-popover">
                               <DropdownMenuItem className="gap-2" onClick={() => toast(`Opening transaction ${txn.id}`)}><Eye className="h-4 w-4" /> View Details</DropdownMenuItem>
+                              <DropdownMenuItem className="gap-2" onClick={() => toast.success(`Transaction ${txn.id} flagged for review`)}><AlertTriangle className="h-4 w-4" /> Flag Transaction</DropdownMenuItem>
+                              {(txn.status === "Pending" || txn.status === "Under Review") && (
+                                <DropdownMenuItem className="gap-2 text-success" onClick={() => toast.success(`Transaction ${txn.id} approved`)}><CheckCircle className="h-4 w-4" /> Approve</DropdownMenuItem>
+                              )}
+                              {(txn.status === "Pending" || txn.status === "Under Review") && (
+                                <DropdownMenuItem className="gap-2 text-destructive" onClick={() => toast.success(`Transaction ${txn.id} rejected`)}><XCircle className="h-4 w-4" /> Reject</DropdownMenuItem>
+                              )}
                             </DropdownMenuContent>
                           </DropdownMenu>
                         </td>
@@ -210,6 +233,13 @@ export const AdminTransactions = () => {
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between"><span className="text-muted-foreground">Address</span><code className="text-xs bg-muted px-2 py-1 rounded">{w.address.slice(0, 12)}...{w.address.slice(-6)}</code></div>
                     <div className="flex justify-between"><span className="text-muted-foreground">Balance</span><span className="font-bold text-primary">{w.balance}</span></div>
+                    <div className="flex justify-between"><span className="text-muted-foreground">24h In</span><span className="text-success font-medium">{w.inflow24h}</span></div>
+                    <div className="flex justify-between"><span className="text-muted-foreground">24h Out</span><span className="text-destructive font-medium">{w.outflow24h}</span></div>
+                    <div className="flex justify-between"><span className="text-muted-foreground">Last Txn</span><span>{w.lastTxn}</span></div>
+                  </div>
+                  <div className="flex gap-2 mt-3">
+                    <Button size="sm" variant="outline" className="gap-1 flex-1" onClick={() => toast(`Initiating transfer from ${w.name}`)}><ArrowUpRight className="h-3 w-3" /> Transfer</Button>
+                    <Button size="sm" variant="outline" className="gap-1 flex-1 text-destructive" onClick={() => toast.success(`${w.name} frozen`)}><Lock className="h-3 w-3" /> Freeze</Button>
                   </div>
                 </CardContent>
               </Card>

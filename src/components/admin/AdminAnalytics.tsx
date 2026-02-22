@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/select";
 import {
   BarChart3, TrendingUp, TrendingDown, Users, DollarSign,
-  ArrowUpRight, ArrowDownRight, Download, Target, Zap, Megaphone, Percent, Star,
+  ArrowUpRight, ArrowDownRight, Download, Target, Zap, Megaphone, Percent, Star, UserPlus,
 } from "lucide-react";
 import { toast } from "sonner";
 import { AdminMarketing } from "./AdminMarketing";
@@ -25,6 +25,12 @@ const kpis = {
   signups: { value: 347, change: 15.7, label: "New Signups" },
   retention: { value: 78.5, change: 2.1, label: "Retention Rate %" },
 };
+
+const performanceExtras = [
+  { label: "Avg Trade Size", value: "$485", change: 3.4 },
+  { label: "Markets Created", value: "47", change: 12.0 },
+  { label: "Platform Take Rate", value: "3.0%", change: 0 },
+];
 
 const trafficSources = [
   { source: "Organic Search", users: 34500, percentage: 35 },
@@ -48,6 +54,23 @@ const topCreators = [
   { name: "TechOracle", markets: 8, volume: 456000, feeRevenue: 13680, earnings: 2736 },
   { name: "PoliticalPredict", markets: 5, volume: 312000, feeRevenue: 9360, earnings: 1872 },
   { name: "MarketMaven", markets: 3, volume: 145000, feeRevenue: 4350, earnings: 870 },
+];
+
+const topAffiliates = [
+  { name: "PromoQueen", referrals: 312, volume: 567000, feeRevenue: 17010, earnings: 3402 },
+  { name: "ReferKing", referrals: 145, volume: 234000, feeRevenue: 7020, earnings: 1404 },
+  { name: "GrowthHacker", referrals: 89, volume: 156000, feeRevenue: 4680, earnings: 936 },
+  { name: "MarketingPro", referrals: 67, volume: 98000, feeRevenue: 2940, earnings: 588 },
+  { name: "InfluencerMax", referrals: 45, volume: 67000, feeRevenue: 2010, earnings: 402 },
+];
+
+const creatorGrowthData = [
+  { month: "Aug", creators: 42, affiliates: 18 },
+  { month: "Sep", creators: 58, affiliates: 25 },
+  { month: "Oct", creators: 78, affiliates: 34 },
+  { month: "Nov", creators: 102, affiliates: 48 },
+  { month: "Dec", creators: 128, affiliates: 62 },
+  { month: "Jan", creators: 156, affiliates: 89 },
 ];
 
 const userMetrics = [
@@ -111,6 +134,11 @@ const tooltipStyle = { backgroundColor: 'hsl(var(--popover))', border: '1px soli
 const tickStyle = { fill: 'hsl(var(--muted-foreground))', fontSize: 12 };
 
 export const AdminAnalytics = () => {
+  const totalCreatorVolume = topCreators.reduce((a, c) => a + c.volume, 0);
+  const totalAffiliateVolume = topAffiliates.reduce((a, c) => a + c.volume, 0);
+  const avgRevenuePerCreator = topCreators.length > 0 ? (totalCreatorVolume * 0.03) / topCreators.length : 0;
+  const avgRevenuePerAffiliate = topAffiliates.length > 0 ? (totalAffiliateVolume * 0.03) / topAffiliates.length : 0;
+
   return (
     <div className="space-y-6">
       <Tabs defaultValue="performance" className="space-y-4">
@@ -119,6 +147,7 @@ export const AdminAnalytics = () => {
             <TabsTrigger value="performance" className="data-[state=active]:bg-background gap-2"><BarChart3 className="h-4 w-4" /> Performance</TabsTrigger>
             <TabsTrigger value="users-funnel" className="data-[state=active]:bg-background gap-2"><Users className="h-4 w-4" /> Users & Funnel</TabsTrigger>
             <TabsTrigger value="markets" className="data-[state=active]:bg-background gap-2"><TrendingUp className="h-4 w-4" /> Markets</TabsTrigger>
+            <TabsTrigger value="creators-affiliates" className="data-[state=active]:bg-background gap-2"><Star className="h-4 w-4" /> Creators & Affiliates</TabsTrigger>
             <TabsTrigger value="marketing" className="data-[state=active]:bg-background gap-2"><Megaphone className="h-4 w-4" /> Marketing</TabsTrigger>
           </TabsList>
           <div className="flex items-center gap-3">
@@ -155,6 +184,26 @@ export const AdminAnalytics = () => {
                       {kpi.change >= 0 ? <ArrowUpRight className="h-3 w-3 mr-1" /> : <ArrowDownRight className="h-3 w-3 mr-1" />}
                       {Math.abs(kpi.change)}%
                     </Badge>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          {/* Extra Performance KPIs */}
+          <div className="grid grid-cols-3 gap-4">
+            {performanceExtras.map((kpi) => (
+              <Card key={kpi.label} className="border-border/40">
+                <CardContent className="p-4">
+                  <p className="text-sm text-muted-foreground mb-1">{kpi.label}</p>
+                  <div className="flex items-center gap-2">
+                    <p className="text-2xl font-bold">{kpi.value}</p>
+                    {kpi.change !== 0 && (
+                      <Badge className={`text-xs border-0 ${kpi.change >= 0 ? 'bg-success/10 text-success' : 'bg-destructive/10 text-destructive'}`}>
+                        {kpi.change >= 0 ? <ArrowUpRight className="h-3 w-3 mr-1" /> : <ArrowDownRight className="h-3 w-3 mr-1" />}
+                        {Math.abs(kpi.change)}%
+                      </Badge>
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -379,6 +428,131 @@ export const AdminAnalytics = () => {
               </CardContent>
             </Card>
           </div>
+        </TabsContent>
+
+        {/* Creators & Affiliates Analytics */}
+        <TabsContent value="creators-affiliates" className="space-y-4">
+          {/* Creator KPIs */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <Card className="border-border/40"><CardContent className="p-4"><div className="flex items-center gap-2 text-muted-foreground text-sm mb-1"><Star className="h-4 w-4" /> Total Creators</div><p className="text-2xl font-bold">156</p></CardContent></Card>
+            <Card className="border-border/40 bg-success/5"><CardContent className="p-4"><p className="text-sm text-muted-foreground mb-1">Avg Revenue/Creator</p><p className="text-2xl font-bold">${avgRevenuePerCreator.toLocaleString(undefined, {maximumFractionDigits: 0})}</p></CardContent></Card>
+            <Card className="border-border/40"><CardContent className="p-4"><p className="text-sm text-muted-foreground mb-1">Top Creator Revenue</p><p className="text-2xl font-bold">${topCreators[0]?.feeRevenue.toLocaleString()}</p></CardContent></Card>
+            <Card className="border-border/40 bg-warning/5"><CardContent className="p-4"><p className="text-sm text-muted-foreground mb-1">Creator Churn Rate</p><p className="text-2xl font-bold">2.8%</p></CardContent></Card>
+          </div>
+
+          {/* Affiliate KPIs */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <Card className="border-border/40"><CardContent className="p-4"><div className="flex items-center gap-2 text-muted-foreground text-sm mb-1"><UserPlus className="h-4 w-4" /> Total Affiliates</div><p className="text-2xl font-bold">89</p></CardContent></Card>
+            <Card className="border-border/40 bg-success/5"><CardContent className="p-4"><p className="text-sm text-muted-foreground mb-1">Avg Revenue/Affiliate</p><p className="text-2xl font-bold">${avgRevenuePerAffiliate.toLocaleString(undefined, {maximumFractionDigits: 0})}</p></CardContent></Card>
+            <Card className="border-border/40"><CardContent className="p-4"><p className="text-sm text-muted-foreground mb-1">Top Affiliate Revenue</p><p className="text-2xl font-bold">${topAffiliates[0]?.feeRevenue.toLocaleString()}</p></CardContent></Card>
+            <Card className="border-border/40 bg-primary/5"><CardContent className="p-4"><p className="text-sm text-muted-foreground mb-1">Affiliate Conversion Rate</p><p className="text-2xl font-bold">14.2%</p></CardContent></Card>
+          </div>
+
+          {/* Creator vs Organic Revenue */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Card className="border-border/40 bg-primary/5">
+              <CardContent className="p-4">
+                <p className="text-sm text-muted-foreground mb-1">Creator-Driven Revenue</p>
+                <p className="text-2xl font-bold">${(totalCreatorVolume * 0.03 / 1000).toFixed(0)}K</p>
+                <p className="text-xs text-muted-foreground mt-1">From creator markets (3% fee on ${(totalCreatorVolume / 1000000).toFixed(1)}M volume)</p>
+              </CardContent>
+            </Card>
+            <Card className="border-border/40 bg-success/5">
+              <CardContent className="p-4">
+                <p className="text-sm text-muted-foreground mb-1">Affiliate-Driven Revenue</p>
+                <p className="text-2xl font-bold">${(totalAffiliateVolume * 0.03 / 1000).toFixed(0)}K</p>
+                <p className="text-xs text-muted-foreground mt-1">From referred users (3% fee on ${(totalAffiliateVolume / 1000000).toFixed(1)}M volume)</p>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Top 5 Creators */}
+          <Card className="border-border/40">
+            <CardHeader className="pb-3"><CardTitle className="text-base flex items-center gap-2"><Star className="h-4 w-4" /> Top 5 Creators by Volume</CardTitle></CardHeader>
+            <CardContent>
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b border-border/40 text-left text-sm text-muted-foreground">
+                      <th className="p-3 font-medium">#</th>
+                      <th className="p-3 font-medium">Creator</th>
+                      <th className="p-3 font-medium">Markets</th>
+                      <th className="p-3 font-medium">Volume</th>
+                      <th className="p-3 font-medium">Fee Revenue</th>
+                      <th className="p-3 font-medium">Earnings (20%)</th>
+                      <th className="p-3 font-medium">Avg Pot/Market</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {topCreators.map((c, i) => (
+                      <tr key={i} className="border-b border-border/20 hover:bg-muted/30 transition-colors">
+                        <td className="p-3 text-sm font-bold text-muted-foreground">{i + 1}</td>
+                        <td className="p-3 font-medium">{c.name}</td>
+                        <td className="p-3 text-sm">{c.markets}</td>
+                        <td className="p-3 text-sm font-bold text-primary">${(c.volume / 1000).toFixed(0)}K</td>
+                        <td className="p-3 text-sm font-medium text-success">${c.feeRevenue.toLocaleString()}</td>
+                        <td className="p-3 text-sm">${c.earnings.toLocaleString()}</td>
+                        <td className="p-3 text-sm">${(c.volume / c.markets / 1000).toFixed(0)}K</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Top 5 Affiliates */}
+          <Card className="border-border/40">
+            <CardHeader className="pb-3"><CardTitle className="text-base flex items-center gap-2"><UserPlus className="h-4 w-4" /> Top 5 Affiliates by Referral Volume</CardTitle></CardHeader>
+            <CardContent>
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b border-border/40 text-left text-sm text-muted-foreground">
+                      <th className="p-3 font-medium">#</th>
+                      <th className="p-3 font-medium">Affiliate</th>
+                      <th className="p-3 font-medium">Referrals</th>
+                      <th className="p-3 font-medium">Referred Volume</th>
+                      <th className="p-3 font-medium">Fee Revenue</th>
+                      <th className="p-3 font-medium">Earnings (20%)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {topAffiliates.map((a, i) => (
+                      <tr key={i} className="border-b border-border/20 hover:bg-muted/30 transition-colors">
+                        <td className="p-3 text-sm font-bold text-muted-foreground">{i + 1}</td>
+                        <td className="p-3 font-medium">{a.name}</td>
+                        <td className="p-3 text-sm">{a.referrals}</td>
+                        <td className="p-3 text-sm font-bold text-primary">${(a.volume / 1000).toFixed(0)}K</td>
+                        <td className="p-3 text-sm font-medium text-success">${a.feeRevenue.toLocaleString()}</td>
+                        <td className="p-3 text-sm">${a.earnings.toLocaleString()}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Creator Growth Chart */}
+          <Card className="border-border/40">
+            <CardHeader className="pb-3"><CardTitle className="text-base">Creator & Affiliate Growth</CardTitle></CardHeader>
+            <CardContent>
+              <div className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={creatorGrowthData}>
+                    <CartesianGrid strokeDasharray="3 3" className="stroke-border/40" />
+                    <XAxis dataKey="month" tick={tickStyle} />
+                    <YAxis tick={tickStyle} />
+                    <Tooltip contentStyle={tooltipStyle} />
+                    <Legend />
+                    <Line type="monotone" dataKey="creators" name="Creators" stroke="hsl(var(--primary))" strokeWidth={2} />
+                    <Line type="monotone" dataKey="affiliates" name="Affiliates" stroke="hsl(var(--success))" strokeWidth={2} />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </CardContent>
+          </Card>
         </TabsContent>
 
         <TabsContent value="marketing" className="space-y-4">
