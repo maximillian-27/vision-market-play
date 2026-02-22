@@ -4,31 +4,23 @@ import { Settings } from "lucide-react";
 import { toast } from "sonner";
 import { AdminSidebar, MobileAdminSidebar } from "@/components/admin/AdminSidebar";
 import { AdminDashboard } from "@/components/admin/AdminDashboard";
-import { AdminUsers } from "@/components/admin/AdminUsers";
 import { AdminMarkets } from "@/components/admin/AdminMarkets";
-import { AdminDisputesResolutions } from "@/components/admin/AdminDisputesResolutions";
 import { AdminTransactions } from "@/components/admin/AdminTransactions";
 import { AdminCRM } from "@/components/admin/AdminCRM";
-import { AdminCommissions } from "@/components/admin/AdminCommissions";
-import { AdminCreators } from "@/components/admin/AdminCreators";
-import { AdminPartners } from "@/components/admin/AdminPartners";
 import { AdminBonusManagement } from "@/components/admin/AdminBonusManagement";
 import { AdminAnalytics } from "@/components/admin/AdminAnalytics";
-import { AdminUAT } from "@/components/admin/AdminUAT";
+import { AdminSecurity } from "@/components/admin/AdminSecurity";
+import { AdminSupport } from "@/components/admin/AdminSupport";
 
 const sectionTitles: Record<string, { title: string; description: string }> = {
   dashboard: { title: "Dashboard", description: "Platform overview and key metrics" },
-  users: { title: "Users", description: "Manage all platform users" },
-  markets: { title: "Prediction Markets", description: "Manage markets, categories and settings" },
-  disputes: { title: "Disputes & Resolutions", description: "Handle disputes and market resolutions" },
-  transactions: { title: "Transactions & PSPs", description: "Transactions, PSP config and risk management" },
-  crm: { title: "CRM", description: "Customer relationship management and channels" },
-  commissions: { title: "Commissions", description: "Commission rates for creators, partners and RAF" },
-  creators: { title: "Creators Platform", description: "Creator management, reporting and tracking" },
-  partners: { title: "Partners Platform", description: "Partner management, reporting and tracking" },
-  bonuses: { title: "Bonus Management", description: "Bonuses, promotions and loyalty tiers" },
+  markets: { title: "Markets", description: "Manage markets, disputes, resolutions and categories" },
+  transactions: { title: "Transactions", description: "Crypto deposits, withdrawals and fee collections" },
+  crm: { title: "CRM", description: "Users, creators, affiliates and payouts" },
+  bonuses: { title: "Loyalty & Bonuses", description: "Bonuses, promotions and loyalty tiers" },
   analytics: { title: "Analytics & BI", description: "Business intelligence and insights" },
-  uat: { title: "UAT Console", description: "Device and browser compatibility testing" },
+  security: { title: "Security", description: "Wallet monitoring, fraud detection and audit log" },
+  support: { title: "Customer Support", description: "Tickets, knowledge base and live chat" },
 };
 
 const Admin = () => {
@@ -38,18 +30,14 @@ const Admin = () => {
   const renderSectionContent = () => {
     switch (activeSection) {
       case "dashboard": return <AdminDashboard onNavigate={setActiveSection} />;
-      case "users": return <AdminUsers />;
       case "markets": return <AdminMarkets />;
-      case "disputes": return <AdminDisputesResolutions />;
       case "transactions": return <AdminTransactions />;
       case "crm": return <AdminCRM />;
-      case "commissions": return <AdminCommissions />;
-      case "creators": return <AdminCreators />;
-      case "partners": return <AdminPartners />;
       case "bonuses": return <AdminBonusManagement />;
       case "analytics": return <AdminAnalytics />;
-      case "uat": return <AdminUAT />;
-      default: return <AdminDashboard />;
+      case "security": return <AdminSecurity />;
+      case "support": return <AdminSupport />;
+      default: return <AdminDashboard onNavigate={setActiveSection} />;
     }
   };
 
@@ -65,7 +53,6 @@ const Admin = () => {
       />
 
       <div className="flex-1 overflow-auto">
-        {/* Mobile Header */}
         <div className="sticky top-0 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border/40 p-4 md:hidden">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -84,7 +71,6 @@ const Admin = () => {
           </div>
         </div>
 
-        {/* Desktop Header */}
         <div className="hidden md:block p-6">
           <div className="flex items-center justify-between mb-6">
             <div>
@@ -98,7 +84,6 @@ const Admin = () => {
           </div>
         </div>
 
-        {/* Content */}
         <div className="p-4 md:px-6 md:pt-0">
           {renderSectionContent()}
         </div>

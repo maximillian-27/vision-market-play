@@ -14,9 +14,9 @@ import { toast } from "sonner";
 
 const activeBonuses = [
   { id: 1, name: "Welcome Bonus", type: "Deposit Match", value: "100%", maxValue: "$500", eligible: "New Users", used: 1240, budget: 50000, spent: 32000, active: true },
-  { id: 2, name: "Weekend Free Bet", type: "Free Bet", value: "$10", maxValue: "$10", eligible: "All Users", used: 3400, budget: 34000, spent: 28000, active: true },
+  { id: 2, name: "Weekend Free Ticket", type: "Free Ticket", value: "$10", maxValue: "$10", eligible: "All Users", used: 3400, budget: 34000, spent: 28000, active: true },
   { id: 3, name: "VIP Cashback", type: "Cashback", value: "5%", maxValue: "$1000", eligible: "VIP Tier", used: 89, budget: 20000, spent: 8900, active: true },
-  { id: 4, name: "Crypto Boost", type: "Deposit Match", value: "50%", maxValue: "$250", eligible: "Crypto Depositors", used: 456, budget: 15000, spent: 12300, active: false },
+  { id: 4, name: "Crypto Deposit Boost", type: "Deposit Match", value: "50%", maxValue: "$250", eligible: "Crypto Depositors", used: 456, budget: 15000, spent: 12300, active: false },
 ];
 
 const loyaltyTiers = [
@@ -77,16 +77,16 @@ export const AdminBonusManagement = () => {
             <CardContent className="p-6 space-y-4">
               <h3 className="font-semibold text-lg">Create New Bonus</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div><Label>Bonus Name</Label><Input placeholder="e.g. Summer Special" className="mt-1" /></div>
+                <div><Label>Bonus Name</Label><Input placeholder="e.g. Crypto Welcome Bonus" className="mt-1" /></div>
                 <div>
                   <Label>Type</Label>
                   <Select value={bonusType} onValueChange={setBonusType}>
                     <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="deposit_match">Deposit Match</SelectItem>
-                      <SelectItem value="free_bet">Free Bet</SelectItem>
+                      <SelectItem value="free_ticket">Free Ticket</SelectItem>
                       <SelectItem value="cashback">Cashback</SelectItem>
-                      <SelectItem value="risk_free">Risk Free Bet</SelectItem>
+                      <SelectItem value="risk_free">Risk Free Ticket</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -103,6 +103,7 @@ export const AdminBonusManagement = () => {
                       <SelectItem value="new">New Users</SelectItem>
                       <SelectItem value="vip">VIP Tier</SelectItem>
                       <SelectItem value="inactive">Inactive 30d+</SelectItem>
+                      <SelectItem value="crypto">Crypto Depositors</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -121,7 +122,7 @@ export const AdminBonusManagement = () => {
             <Card className="border-border/40">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between mb-2"><span className="font-semibold">Super Bowl Special</span><Badge className="text-xs">Active</Badge></div>
-                <p className="text-sm text-muted-foreground mb-3">Bet $50 on any Super Bowl market, get $10 free bet</p>
+                <p className="text-sm text-muted-foreground mb-3">Buy $50 in tickets on any Super Bowl market, get $10 free ticket</p>
                 <div className="flex justify-between text-sm"><span className="text-muted-foreground">Claims: 890</span><span className="text-muted-foreground">Ends: Mar 15</span></div>
               </CardContent>
             </Card>

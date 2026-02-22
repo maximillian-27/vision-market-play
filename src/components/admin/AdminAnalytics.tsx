@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/select";
 import {
   BarChart3, TrendingUp, TrendingDown, Users, DollarSign,
-  ArrowUpRight, ArrowDownRight, Download, Target, Zap, Megaphone
+  ArrowUpRight, ArrowDownRight, Download, Target, Zap, Megaphone, Percent, Star,
 } from "lucide-react";
 import { toast } from "sonner";
 import { AdminMarketing } from "./AdminMarketing";
@@ -18,28 +18,36 @@ import {
 } from "recharts";
 
 const kpis = {
-  revenue: { value: 124500, change: 12.5, label: "Revenue (24h)" },
-  users: { value: 8450, change: 8.3, label: "Active Users (24h)" },
-  volume: { value: 234000, change: -3.2, label: "Pot Size (24h)" },
-  signups: { value: 347, change: 15.7, label: "New Signups (24h)" },
+  revenue: { value: 124500, change: 12.5, label: "Fee Revenue (3%)" },
+  creatorRevenue: { value: 24900, change: 8.1, label: "Creator Payouts" },
+  users: { value: 8450, change: 8.3, label: "Active Users" },
+  volume: { value: 4150000, change: -3.2, label: "Trading Volume" },
+  signups: { value: 347, change: 15.7, label: "New Signups" },
   retention: { value: 78.5, change: 2.1, label: "Retention Rate %" },
-  avgSession: { value: 12.5, change: 5.4, label: "Avg Session (min)" },
 };
 
 const trafficSources = [
   { source: "Organic Search", users: 34500, percentage: 35 },
   { source: "Direct", users: 28900, percentage: 29 },
-  { source: "Referral", users: 18600, percentage: 19 },
+  { source: "Referral / Affiliate", users: 18600, percentage: 19 },
   { source: "Social Media", users: 12400, percentage: 12 },
   { source: "Paid Ads", users: 4900, percentage: 5 },
 ];
 
 const topMarkets = [
-  { name: "Bitcoin Price EOY", volume: 125000, trades: 4560, trend: "up" },
-  { name: "US Election 2024", volume: 98000, trades: 3200, trend: "up" },
-  { name: "Tesla Stock Q1", volume: 67000, trades: 2100, trend: "down" },
-  { name: "AI Breakthrough", volume: 54000, trades: 1890, trend: "up" },
-  { name: "Fed Rate Decision", volume: 45000, trades: 1560, trend: "down" },
+  { name: "Bitcoin Price EOY", volume: 525000, trades: 15600, trend: "up" },
+  { name: "US Election 2024", volume: 498000, trades: 13200, trend: "up" },
+  { name: "ETH Merge Impact", volume: 267000, trades: 8100, trend: "down" },
+  { name: "AI Breakthrough 2025", volume: 154000, trades: 5890, trend: "up" },
+  { name: "Fed Rate Decision", volume: 145000, trades: 4560, trend: "down" },
+];
+
+const topCreators = [
+  { name: "SportsAnalyst", markets: 15, volume: 1200000, feeRevenue: 36000, earnings: 7200 },
+  { name: "CryptoGuru", markets: 12, volume: 890000, feeRevenue: 26700, earnings: 5340 },
+  { name: "TechOracle", markets: 8, volume: 456000, feeRevenue: 13680, earnings: 2736 },
+  { name: "PoliticalPredict", markets: 5, volume: 312000, feeRevenue: 9360, earnings: 1872 },
+  { name: "MarketMaven", markets: 3, volume: 145000, feeRevenue: 4350, earnings: 870 },
 ];
 
 const userMetrics = [
@@ -53,7 +61,7 @@ const userMetrics = [
 const conversionFunnel = [
   { stage: "Visitors", count: 125000, rate: 100 },
   { stage: "Signups", count: 12500, rate: 10 },
-  { stage: "Verified", count: 8750, rate: 70 },
+  { stage: "Wallet Connected", count: 8750, rate: 70 },
   { stage: "First Deposit", count: 5250, rate: 60 },
   { stage: "Active Players", count: 3675, rate: 70 },
 ];
@@ -108,19 +116,21 @@ export const AdminAnalytics = () => {
       <Tabs defaultValue="performance" className="space-y-4">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <TabsList className="bg-muted/50 p-1 flex-wrap h-auto gap-1">
-          <TabsTrigger value="performance" className="data-[state=active]:bg-background gap-2"><BarChart3 className="h-4 w-4" /> Performance</TabsTrigger>
-          <TabsTrigger value="users-funnel" className="data-[state=active]:bg-background gap-2"><Users className="h-4 w-4" /> Users & Funnel</TabsTrigger>
-          <TabsTrigger value="markets" className="data-[state=active]:bg-background gap-2"><TrendingUp className="h-4 w-4" /> Markets</TabsTrigger>
-          <TabsTrigger value="marketing" className="data-[state=active]:bg-background gap-2"><Megaphone className="h-4 w-4" /> Marketing</TabsTrigger>
+            <TabsTrigger value="performance" className="data-[state=active]:bg-background gap-2"><BarChart3 className="h-4 w-4" /> Performance</TabsTrigger>
+            <TabsTrigger value="users-funnel" className="data-[state=active]:bg-background gap-2"><Users className="h-4 w-4" /> Users & Funnel</TabsTrigger>
+            <TabsTrigger value="markets" className="data-[state=active]:bg-background gap-2"><TrendingUp className="h-4 w-4" /> Markets</TabsTrigger>
+            <TabsTrigger value="marketing" className="data-[state=active]:bg-background gap-2"><Megaphone className="h-4 w-4" /> Marketing</TabsTrigger>
           </TabsList>
           <div className="flex items-center gap-3">
             <Select defaultValue="7d">
               <SelectTrigger className="w-32 h-9"><SelectValue /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="24h">Last 24h</SelectItem>
+                <SelectItem value="1d">Last 24h</SelectItem>
                 <SelectItem value="7d">Last 7 days</SelectItem>
                 <SelectItem value="30d">Last 30 days</SelectItem>
                 <SelectItem value="90d">Last 90 days</SelectItem>
+                <SelectItem value="1y">Last Year</SelectItem>
+                <SelectItem value="all">All Time</SelectItem>
               </SelectContent>
             </Select>
             <Button variant="outline" size="sm" className="gap-2" onClick={() => toast("Exporting analytics report...")}>
@@ -129,7 +139,7 @@ export const AdminAnalytics = () => {
           </div>
         </div>
 
-        {/* Performance = Overview + Revenue merged */}
+        {/* Performance */}
         <TabsContent value="performance" className="space-y-4">
           <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
             {Object.entries(kpis).map(([key, kpi]) => (
@@ -138,8 +148,8 @@ export const AdminAnalytics = () => {
                   <p className="text-sm text-muted-foreground mb-1">{kpi.label}</p>
                   <div className="flex items-center gap-2">
                     <p className="text-2xl font-bold">
-                      {key === "revenue" || key === "volume" ? `$${(kpi.value / 1000).toFixed(0)}K` :
-                       key === "retention" || key === "avgSession" ? kpi.value : kpi.value.toLocaleString()}
+                      {key === "revenue" || key === "creatorRevenue" || key === "volume" ? `$${(kpi.value / 1000).toFixed(0)}K` :
+                       key === "retention" ? `${kpi.value}%` : kpi.value.toLocaleString()}
                     </p>
                     <Badge className={`text-xs border-0 ${kpi.change >= 0 ? 'bg-success/10 text-success' : 'bg-destructive/10 text-destructive'}`}>
                       {kpi.change >= 0 ? <ArrowUpRight className="h-3 w-3 mr-1" /> : <ArrowDownRight className="h-3 w-3 mr-1" />}
@@ -151,11 +161,8 @@ export const AdminAnalytics = () => {
             ))}
           </div>
 
-          {/* Revenue Trend chart */}
           <Card className="border-border/40">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base">Revenue Trend</CardTitle>
-            </CardHeader>
+            <CardHeader className="pb-3"><CardTitle className="text-base">Fee Revenue Trend</CardTitle></CardHeader>
             <CardContent>
               <div className="h-64">
                 <ResponsiveContainer width="100%" height="100%">
@@ -163,7 +170,7 @@ export const AdminAnalytics = () => {
                     <CartesianGrid strokeDasharray="3 3" className="stroke-border/40" />
                     <XAxis dataKey="date" tick={tickStyle} />
                     <YAxis tick={tickStyle} tickFormatter={(v) => `$${(v / 1000).toFixed(0)}K`} />
-                    <Tooltip contentStyle={tooltipStyle} formatter={(value: number) => [`$${value.toLocaleString()}`, 'Revenue']} />
+                    <Tooltip contentStyle={tooltipStyle} formatter={(value: number) => [`$${value.toLocaleString()}`, 'Fee Revenue']} />
                     <Area type="monotone" dataKey="revenue" stroke="hsl(var(--success))" fill="hsl(var(--success) / 0.1)" strokeWidth={2} />
                   </AreaChart>
                 </ResponsiveContainer>
@@ -171,11 +178,8 @@ export const AdminAnalytics = () => {
             </CardContent>
           </Card>
 
-          {/* Traffic Sources */}
           <Card className="border-border/40">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base">Traffic Sources</CardTitle>
-            </CardHeader>
+            <CardHeader className="pb-3"><CardTitle className="text-base">Traffic Sources</CardTitle></CardHeader>
             <CardContent className="space-y-4">
               {trafficSources.map((source) => (
                 <div key={source.source} className="space-y-2">
@@ -190,7 +194,7 @@ export const AdminAnalytics = () => {
           </Card>
         </TabsContent>
 
-        {/* Users & Funnel = User Analytics + Funnel merged */}
+        {/* Users & Funnel */}
         <TabsContent value="users-funnel" className="space-y-4">
           <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
             {userMetrics.map((metric) => (
@@ -209,11 +213,8 @@ export const AdminAnalytics = () => {
             ))}
           </div>
 
-          {/* Conversion Funnel */}
           <Card className="border-border/40">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base">Conversion Funnel</CardTitle>
-            </CardHeader>
+            <CardHeader className="pb-3"><CardTitle className="text-base">Conversion Funnel</CardTitle></CardHeader>
             <CardContent className="space-y-4">
               {conversionFunnel.map((stage, index) => (
                 <div key={stage.stage} className="space-y-2">
@@ -233,12 +234,11 @@ export const AdminAnalytics = () => {
             </CardContent>
           </Card>
 
-          {/* Funnel insight cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Card className="border-border/40 bg-success/5">
               <CardContent className="p-4">
                 <div className="flex items-center gap-2 text-success text-sm mb-1"><Zap className="h-4 w-4" /> Best Performing</div>
-                <p className="font-medium">Signups → Verified</p>
+                <p className="font-medium">Signups → Wallet Connected</p>
                 <p className="text-2xl font-bold">70%</p>
               </CardContent>
             </Card>
@@ -258,11 +258,8 @@ export const AdminAnalytics = () => {
             </Card>
           </div>
 
-          {/* User Activity chart */}
           <Card className="border-border/40">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base">User Activity Over Time</CardTitle>
-            </CardHeader>
+            <CardHeader className="pb-3"><CardTitle className="text-base">User Activity Over Time</CardTitle></CardHeader>
             <CardContent>
               <div className="h-64">
                 <ResponsiveContainer width="100%" height="100%">
@@ -284,9 +281,7 @@ export const AdminAnalytics = () => {
         {/* Markets */}
         <TabsContent value="markets" className="space-y-4">
           <Card className="border-border/40">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base">Top Performing Markets</CardTitle>
-            </CardHeader>
+            <CardHeader className="pb-3"><CardTitle className="text-base">Top Performing Markets</CardTitle></CardHeader>
             <CardContent>
               <div className="overflow-x-auto">
                 <table className="w-full">
@@ -294,7 +289,8 @@ export const AdminAnalytics = () => {
                     <tr className="border-b border-border/40 text-left text-sm text-muted-foreground">
                       <th className="p-3 font-medium">Market</th>
                       <th className="p-3 font-medium">Pot Size</th>
-                      <th className="p-3 font-medium">Tickets</th>
+                      <th className="p-3 font-medium">Trades</th>
+                      <th className="p-3 font-medium">Fee Revenue</th>
                       <th className="p-3 font-medium">Trend</th>
                     </tr>
                   </thead>
@@ -302,8 +298,9 @@ export const AdminAnalytics = () => {
                     {topMarkets.map((market, index) => (
                       <tr key={index} className="border-b border-border/20 hover:bg-muted/30 transition-colors">
                         <td className="p-3 font-medium">{market.name}</td>
-                        <td className="p-3 text-sm">${market.volume.toLocaleString()}</td>
+                        <td className="p-3 text-sm font-bold text-primary">${market.volume.toLocaleString()}</td>
                         <td className="p-3 text-sm">{market.trades.toLocaleString()}</td>
+                        <td className="p-3 text-sm font-medium text-success">${(market.volume * 0.03).toLocaleString()}</td>
                         <td className="p-3">
                           {market.trend === "up" ? <TrendingUp className="h-4 w-4 text-success" /> : <TrendingDown className="h-4 w-4 text-destructive" />}
                         </td>
@@ -315,11 +312,40 @@ export const AdminAnalytics = () => {
             </CardContent>
           </Card>
 
+          {/* Top Creators by Revenue */}
+          <Card className="border-border/40">
+            <CardHeader className="pb-3"><CardTitle className="text-base flex items-center gap-2"><Star className="h-4 w-4" /> Top Creators by Revenue</CardTitle></CardHeader>
+            <CardContent>
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b border-border/40 text-left text-sm text-muted-foreground">
+                      <th className="p-3 font-medium">Creator</th>
+                      <th className="p-3 font-medium">Markets</th>
+                      <th className="p-3 font-medium">Volume</th>
+                      <th className="p-3 font-medium">Fee Revenue</th>
+                      <th className="p-3 font-medium">Creator Earnings (20%)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {topCreators.map((c, i) => (
+                      <tr key={i} className="border-b border-border/20 hover:bg-muted/30 transition-colors">
+                        <td className="p-3 font-medium">{c.name}</td>
+                        <td className="p-3 text-sm">{c.markets}</td>
+                        <td className="p-3 text-sm">${(c.volume / 1000).toFixed(0)}K</td>
+                        <td className="p-3 text-sm font-medium text-success">${c.feeRevenue.toLocaleString()}</td>
+                        <td className="p-3 text-sm font-medium">${c.earnings.toLocaleString()}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </CardContent>
+          </Card>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Card className="border-border/40">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-base">Markets by Category</CardTitle>
-              </CardHeader>
+              <CardHeader className="pb-3"><CardTitle className="text-base">Markets by Category</CardTitle></CardHeader>
               <CardContent>
                 <div className="h-48">
                   <ResponsiveContainer width="100%" height="100%">
@@ -337,9 +363,7 @@ export const AdminAnalytics = () => {
               </CardContent>
             </Card>
             <Card className="border-border/40">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-base">Pot Size Over Time</CardTitle>
-              </CardHeader>
+              <CardHeader className="pb-3"><CardTitle className="text-base">Trading Volume Over Time</CardTitle></CardHeader>
               <CardContent>
                 <div className="h-48">
                   <ResponsiveContainer width="100%" height="100%">
@@ -347,7 +371,7 @@ export const AdminAnalytics = () => {
                       <CartesianGrid strokeDasharray="3 3" className="stroke-border/40" />
                       <XAxis dataKey="week" tick={tickStyle} />
                       <YAxis tick={tickStyle} tickFormatter={(v) => `$${(v / 1000000).toFixed(1)}M`} />
-                      <Tooltip contentStyle={tooltipStyle} formatter={(value: number) => [`$${(value / 1000000).toFixed(2)}M`, 'Pot Size']} />
+                      <Tooltip contentStyle={tooltipStyle} formatter={(value: number) => [`$${(value / 1000000).toFixed(2)}M`, 'Volume']} />
                       <Bar dataKey="volume" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
                     </BarChart>
                   </ResponsiveContainer>
