@@ -1,20 +1,16 @@
 import { cn } from "@/lib/utils";
 import {
   LayoutDashboard,
-  Users,
   TrendingUp,
-  AlertTriangle,
   Receipt,
   ChevronLeft,
   ChevronRight,
   Contact,
-  UserPlus,
   Gift,
   BarChart3,
   Menu,
-  DollarSign,
-  Handshake,
-  Monitor,
+  Shield,
+  HeadphonesIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -28,34 +24,26 @@ interface AdminSidebarProps {
   onToggleCollapse: () => void;
 }
 
-const coreItems = [
+const operationsItems = [
   { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { id: "users", label: "Users", icon: Users },
-  { id: "markets", label: "Prediction Markets", icon: TrendingUp },
-  { id: "disputes", label: "Disputes & Resolutions", icon: AlertTriangle },
-  { id: "transactions", label: "Transactions & PSPs", icon: Receipt },
+  { id: "markets", label: "Markets", icon: TrendingUp },
+  { id: "transactions", label: "Transactions", icon: Receipt },
 ];
 
-const crmItems = [
+const peopleItems = [
   { id: "crm", label: "CRM", icon: Contact },
-];
-
-const growthItems = [
-  { id: "commissions", label: "Commissions", icon: DollarSign },
-  { id: "creators", label: "Creators", icon: UserPlus },
-  { id: "partners", label: "Partners", icon: Handshake },
-  { id: "bonuses", label: "Bonus Management", icon: Gift },
+  { id: "bonuses", label: "Loyalty & Bonuses", icon: Gift },
 ];
 
 const intelligenceItems = [
   { id: "analytics", label: "Analytics & BI", icon: BarChart3 },
-  { id: "uat", label: "UAT", icon: Monitor },
+  { id: "security", label: "Security", icon: Shield },
+  { id: "support", label: "Support", icon: HeadphonesIcon },
 ];
 
 const sections = [
-  { label: "Core Operations", items: coreItems },
-  { label: "CRM & Channels", items: crmItems },
-  { label: "Growth & Revenue", items: growthItems },
+  { label: "Operations", items: operationsItems },
+  { label: "People", items: peopleItems },
   { label: "Intelligence", items: intelligenceItems },
 ];
 
@@ -107,7 +95,6 @@ const SidebarContent = ({
   );
 };
 
-// Mobile sidebar using Sheet
 export const MobileAdminSidebar = ({
   activeSection,
   onSectionChange,
@@ -139,7 +126,6 @@ export const MobileAdminSidebar = ({
   );
 };
 
-// Desktop sidebar
 export const AdminSidebar = ({
   activeSection,
   onSectionChange,

@@ -7,15 +7,13 @@ import {
   TrendingUp,
   BarChart3,
   ArrowUpRight,
-  ArrowDownRight,
   Activity,
   Clock,
   AlertTriangle,
   CheckCircle,
-  Zap,
   Server,
-  CreditCard,
   Shield,
+  Percent,
 } from "lucide-react";
 
 interface AdminDashboardProps {
@@ -26,38 +24,38 @@ const dashboardStats = {
   totalUsers: 124500,
   usersGrowth: 12.3,
   activeUsers: 45200,
-  totalVolume: 15600000,
-  volumeGrowth: 24.7,
+  totalPotSize: 15600000,
+  potGrowth: 24.7,
   totalMarkets: 1247,
   pendingMarkets: 23,
   disputes: 8,
   pendingResolutions: 15,
-  dailyRevenue: 12450,
+  dailyVolume: 415000,
+  dailyFeeRevenue: 12450,
   ggr: 890000,
   ngr: 645000,
-  todaySignups: 347,
-  todayDeposits: 189,
 };
 
 const recentActivity = [
-  { id: 1, type: "user", message: "New user registration: john@example.com", time: "2 min ago" },
-  { id: 2, type: "market", message: "Market 'Bitcoin Price' resolved", time: "5 min ago" },
-  { id: 3, type: "dispute", message: "New dispute raised on market #1234", time: "12 min ago" },
-  { id: 4, type: "transaction", message: "Large withdrawal: $15,000", time: "18 min ago" },
-  { id: 5, type: "creator", message: "Creator application: CryptoGuru", time: "25 min ago" },
+  { id: 1, type: "user", message: "Wallet connected: 0x7a2...f3e1 (ETH)", time: "2 min ago" },
+  { id: 2, type: "market", message: "Market resolved: 'Bitcoin Price EOY' → Yes", time: "5 min ago" },
+  { id: 3, type: "deposit", message: "Large deposit: 5.2 BTC ($312,000)", time: "8 min ago" },
+  { id: 4, type: "creator", message: "New market created by CryptoGuru: 'ETH Merge Impact'", time: "12 min ago" },
+  { id: 5, type: "dispute", message: "Dispute raised on market #1234 by john@example.com", time: "18 min ago" },
+  { id: 6, type: "withdrawal", message: "Withdrawal approved: 12,500 USDT to 0x3b1...c8d2", time: "25 min ago" },
 ];
 
 const platformHealth = [
   { name: "API", status: "Healthy", uptime: "99.98%" },
-  { name: "Stripe", status: "Healthy", uptime: "99.99%" },
-  { name: "Coinbase", status: "Degraded", uptime: "98.2%" },
+  { name: "Blockchain RPC", status: "Healthy", uptime: "99.95%" },
+  { name: "Wallet Service", status: "Degraded", uptime: "98.2%" },
   { name: "Database", status: "Healthy", uptime: "100%" },
 ];
 
 export const AdminDashboard = ({ onNavigate }: AdminDashboardProps) => {
   return (
     <div className="space-y-6">
-      {/* Platform Health Bar */}
+      {/* Platform Health */}
       <Card className="border-border/40">
         <CardContent className="p-4">
           <div className="flex items-center gap-4 flex-wrap">
@@ -78,7 +76,7 @@ export const AdminDashboard = ({ onNavigate }: AdminDashboardProps) => {
         </CardContent>
       </Card>
 
-      {/* Revenue Stats - GGR/NGR */}
+      {/* Revenue Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <Card className="border-border/40 bg-success/5 cursor-pointer hover:bg-success/10 transition-colors" onClick={() => onNavigate?.("analytics")}>
           <CardContent className="p-4">
@@ -98,35 +96,36 @@ export const AdminDashboard = ({ onNavigate }: AdminDashboardProps) => {
             <p className="text-2xl font-bold">${(dashboardStats.ngr / 1000).toFixed(0)}K</p>
           </CardContent>
         </Card>
-        <Card className="border-border/40 cursor-pointer hover:bg-muted/30 transition-colors" onClick={() => onNavigate?.("transactions")}>
+        <Card className="border-border/40 cursor-pointer hover:bg-muted/30 transition-colors" onClick={() => onNavigate?.("markets")}>
           <CardContent className="p-4">
             <div className="flex items-center gap-2 text-muted-foreground text-sm mb-1">
               <DollarSign className="h-4 w-4" />
               Total Pot Size
             </div>
             <div className="flex items-center gap-2">
-              <p className="text-2xl font-bold">${(dashboardStats.totalVolume / 1000000).toFixed(1)}M</p>
+              <p className="text-2xl font-bold">${(dashboardStats.totalPotSize / 1000000).toFixed(1)}M</p>
               <Badge className="text-xs bg-success/10 text-success border-0">
                 <ArrowUpRight className="h-3 w-3 mr-1" />
-                {dashboardStats.volumeGrowth}%
+                {dashboardStats.potGrowth}%
               </Badge>
             </div>
           </CardContent>
         </Card>
-        <Card className="border-border/40 cursor-pointer hover:bg-muted/30 transition-colors" onClick={() => onNavigate?.("analytics")}>
+        <Card className="border-border/40 cursor-pointer hover:bg-muted/30 transition-colors" onClick={() => onNavigate?.("transactions")}>
           <CardContent className="p-4">
             <div className="flex items-center gap-2 text-muted-foreground text-sm mb-1">
-              <TrendingUp className="h-4 w-4" />
-              Daily Revenue
+              <Percent className="h-4 w-4" />
+              Daily Fee Revenue
+              <Badge variant="outline" className="text-[10px] px-1 py-0">3%</Badge>
             </div>
-            <p className="text-2xl font-bold">${dashboardStats.dailyRevenue.toLocaleString()}</p>
+            <p className="text-2xl font-bold">${dashboardStats.dailyFeeRevenue.toLocaleString()}</p>
           </CardContent>
         </Card>
       </div>
 
-      {/* Stats Grid - Clickable */}
+      {/* Stats Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="border-border/40 cursor-pointer hover:bg-muted/30 transition-colors" onClick={() => onNavigate?.("users")}>
+        <Card className="border-border/40 cursor-pointer hover:bg-muted/30 transition-colors" onClick={() => onNavigate?.("crm")}>
           <CardContent className="p-4">
             <div className="flex items-center gap-2 text-muted-foreground text-sm mb-1">
               <Users className="h-4 w-4" />
@@ -141,8 +140,7 @@ export const AdminDashboard = ({ onNavigate }: AdminDashboardProps) => {
             </div>
           </CardContent>
         </Card>
-
-        <Card className="border-border/40 cursor-pointer hover:bg-muted/30 transition-colors" onClick={() => onNavigate?.("users")}>
+        <Card className="border-border/40 cursor-pointer hover:bg-muted/30 transition-colors" onClick={() => onNavigate?.("crm")}>
           <CardContent className="p-4">
             <div className="flex items-center gap-2 text-muted-foreground text-sm mb-1">
               <Activity className="h-4 w-4" />
@@ -151,7 +149,6 @@ export const AdminDashboard = ({ onNavigate }: AdminDashboardProps) => {
             <p className="text-2xl font-bold">{(dashboardStats.activeUsers / 1000).toFixed(1)}K</p>
           </CardContent>
         </Card>
-
         <Card className="border-border/40 cursor-pointer hover:bg-muted/30 transition-colors" onClick={() => onNavigate?.("markets")}>
           <CardContent className="p-4">
             <div className="flex items-center gap-2 text-muted-foreground text-sm mb-1">
@@ -161,15 +158,13 @@ export const AdminDashboard = ({ onNavigate }: AdminDashboardProps) => {
             <p className="text-2xl font-bold">{dashboardStats.totalMarkets.toLocaleString()}</p>
           </CardContent>
         </Card>
-
-        <Card className="border-border/40">
+        <Card className="border-border/40 cursor-pointer hover:bg-muted/30 transition-colors" onClick={() => onNavigate?.("analytics")}>
           <CardContent className="p-4">
             <div className="flex items-center gap-2 text-muted-foreground text-sm mb-1">
-              <Zap className="h-4 w-4" />
-              Signup → Deposit
+              <TrendingUp className="h-4 w-4" />
+              24h Volume
             </div>
-            <p className="text-2xl font-bold">{((dashboardStats.todayDeposits / dashboardStats.todaySignups) * 100).toFixed(1)}%</p>
-            <p className="text-xs text-muted-foreground">{dashboardStats.todaySignups} signups → {dashboardStats.todayDeposits} deposits today</p>
+            <p className="text-2xl font-bold">${(dashboardStats.dailyVolume / 1000).toFixed(0)}K</p>
           </CardContent>
         </Card>
       </div>
@@ -188,8 +183,7 @@ export const AdminDashboard = ({ onNavigate }: AdminDashboardProps) => {
             </div>
           </CardContent>
         </Card>
-
-        <Card className="border-border/40 bg-destructive/5 cursor-pointer hover:bg-destructive/10 transition-colors" onClick={() => onNavigate?.("disputes")}>
+        <Card className="border-border/40 bg-destructive/5 cursor-pointer hover:bg-destructive/10 transition-colors" onClick={() => onNavigate?.("markets")}>
           <CardContent className="p-4">
             <div className="flex items-center gap-2 text-destructive text-sm mb-1">
               <AlertTriangle className="h-4 w-4" />
@@ -201,8 +195,7 @@ export const AdminDashboard = ({ onNavigate }: AdminDashboardProps) => {
             </div>
           </CardContent>
         </Card>
-
-        <Card className="border-border/40 bg-primary/5 cursor-pointer hover:bg-primary/10 transition-colors" onClick={() => onNavigate?.("disputes")}>
+        <Card className="border-border/40 bg-primary/5 cursor-pointer hover:bg-primary/10 transition-colors" onClick={() => onNavigate?.("markets")}>
           <CardContent className="p-4">
             <div className="flex items-center gap-2 text-primary text-sm mb-1">
               <CheckCircle className="h-4 w-4" />
@@ -214,8 +207,7 @@ export const AdminDashboard = ({ onNavigate }: AdminDashboardProps) => {
             </div>
           </CardContent>
         </Card>
-
-        <Card className="border-border/40 cursor-pointer hover:bg-muted/30 transition-colors" onClick={() => onNavigate?.("users")}>
+        <Card className="border-border/40 cursor-pointer hover:bg-muted/30 transition-colors" onClick={() => onNavigate?.("crm")}>
           <CardContent className="p-4">
             <div className="flex items-center gap-2 text-muted-foreground text-sm mb-1">
               <Shield className="h-4 w-4" />
@@ -229,7 +221,7 @@ export const AdminDashboard = ({ onNavigate }: AdminDashboardProps) => {
         </Card>
       </div>
 
-      {/* Recent Activity - Full Width */}
+      {/* Recent Activity */}
       <Card className="border-border/40">
         <CardHeader className="pb-3">
           <CardTitle className="text-base">Recent Activity</CardTitle>
