@@ -2,13 +2,17 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+} from "@/components/ui/select";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
   Wallet, AlertTriangle, Bug, ClipboardList, Eye, Shield, Ban, Search as SearchIcon,
-  MoreHorizontal, Plus, ChevronLeft, ChevronRight,
+  MoreHorizontal, Plus, Download, DollarSign,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -18,6 +22,8 @@ const walletBalances = [
   { name: "Cold Storage", balance: "$12,500,000", change: "+$0 (24h)", status: "Secure" },
   { name: "USDT Reserve", balance: "$5,200,000", change: "+$380K (24h)", status: "Normal" },
 ];
+
+const totalHoldings = "$22,040,000";
 
 const largeTransactions = [
   { id: 1, user: "0x7a2...f3e1", amount: "$312,000", type: "Deposit", asset: "BTC", time: "8 min ago", flagged: true },
@@ -55,6 +61,29 @@ const severityColors: Record<string, string> = {
 };
 
 export const AdminSecurity = () => {
+  const [fraudStatusFilter, setFraudStatusFilter] = useState("all");
+  const [fraudRiskFilter, setFraudRiskFilter] = useState("all");
+  const [auditSearch, setAuditSearch] = useState("");
+  const [auditAdminFilter, setAuditAdminFilter] = useState("all");
+
+  const filteredSuspicious = suspiciousActivity.filter(s => {
+    const matchesStatus = fraudStatusFilter === "all" || s.status.toLowerCase() === fraudStatusFilter;
+    const matchesRisk = fraudRiskFilter === "all" ||
+      (fraudRiskFilter === "critical" && s.riskScore >= 80) ||
+      (fraudRiskFilter === "high" && s.riskScore >= 60 && s.riskScore < 80) ||
+      (fraudRiskFilter === "medium" && s.riskScore >= 40 && s.riskScore < 60) ||
+      (fraudRiskFilter === "low" && s.riskScore < 40);
+    return matchesStatus && matchesRisk;
+  });
+
+  const filteredAudit = auditLog.filter(e => {
+    const matchesSearch = auditSearch === "" || e.action.toLowerCase().includes(auditSearch.toLowerCase());
+    const matchesAdmin = auditAdminFilter === "all" || e.admin === auditAdminFilter;
+    return matchesSearch && matchesAdmin;
+  });
+
+  const uniqueAdmins = [...new Set(auditLog.map(e => e.admin))];
+
   return (
     <div className="space-y-6">
       <Tabs defaultValue="wallets" className="space-y-4">
@@ -67,6 +96,14 @@ export const AdminSecurity = () => {
 
         {/* Wallet Monitoring */}
         <TabsContent value="wallets" className="space-y-4">
+          {/* Total Platform Holdings */}
+          <Card className="border-border/40 bg-primary/5">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-2 text-primary text-sm mb-1"><DollarSign className="h-4 w-4" /> Total Platform Holdings</div>
+              <p className="text-3xl font-bold text-primary">{totalHoldings}</p>
+            </CardContent>
+          </Card>
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {walletBalances.map((w) => (
               <Card key={w.name} className="border-border/40">
@@ -126,6 +163,30 @@ export const AdminSecurity = () => {
             <Card className="border-border/40 bg-success/5"><CardContent className="p-4"><p className="text-sm text-muted-foreground mb-1">Resolved</p><p className="text-2xl font-bold">{suspiciousActivity.filter(s => s.status === "Resolved").length}</p></CardContent></Card>
           </div>
 
+          {/* Fraud Filters */}
+          <div className="flex items-center gap-3 flex-wrap">
+            <Select value={fraudStatusFilter} onValueChange={setFraudStatusFilter}>
+              <SelectTrigger className="w-40 h-9"><SelectValue placeholder="Status" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Status</SelectItem>
+                <SelectItem value="investigating">Investigating</SelectItem>
+                <SelectItem value="flagged">Flagged</SelectItem>
+                <SelectItem value="monitoring">Monitoring</SelectItem>
+                <SelectItem value="resolved">Resolved</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={fraudRiskFilter} onValueChange={setFraudRiskFilter}>
+              <SelectTrigger className="w-40 h-9"><SelectValue placeholder="Risk Level" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Risk Levels</SelectItem>
+                <SelectItem value="critical">Critical (80+)</SelectItem>
+                <SelectItem value="high">High (60-79)</SelectItem>
+                <SelectItem value="medium">Medium (40-59)</SelectItem>
+                <SelectItem value="low">Low (&lt;40)</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
           <Card className="border-border/40">
             <div className="overflow-x-auto">
               <table className="w-full">
@@ -140,7 +201,7 @@ export const AdminSecurity = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {suspiciousActivity.map((s) => (
+                  {filteredSuspicious.map((s) => (
                     <tr key={s.id} className="border-b border-border/20 hover:bg-muted/30 transition-colors">
                       <td className="p-4 text-sm font-mono">{s.user}</td>
                       <td className="p-4 text-sm">{s.reason}</td>
@@ -205,13 +266,34 @@ export const AdminSecurity = () => {
 
         {/* Audit Log */}
         <TabsContent value="audit" className="space-y-4">
+          <div className="flex items-center justify-between flex-wrap gap-3">
+            <div className="flex items-center gap-3 flex-wrap">
+              <div className="relative">
+                <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input placeholder="Search audit log..." value={auditSearch} onChange={(e) => setAuditSearch(e.target.value)} className="pl-9 h-9 w-64" />
+              </div>
+              <Select value={auditAdminFilter} onValueChange={setAuditAdminFilter}>
+                <SelectTrigger className="w-48 h-9"><SelectValue placeholder="Admin" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Admins</SelectItem>
+                  {uniqueAdmins.map(admin => (
+                    <SelectItem key={admin} value={admin}>{admin}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <Button variant="outline" size="sm" className="gap-2" onClick={() => toast.success("Audit log exported")}>
+              <Download className="h-4 w-4" /> Export
+            </Button>
+          </div>
+
           <Card className="border-border/40">
             <CardHeader className="pb-3">
               <CardTitle className="text-base">Admin Actions Log</CardTitle>
             </CardHeader>
             <CardContent className="p-0">
               <div className="divide-y divide-border/40">
-                {auditLog.map((entry) => (
+                {filteredAudit.map((entry) => (
                   <div key={entry.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 hover:bg-muted/30 transition-colors gap-1">
                     <div>
                       <p className="text-sm">{entry.action}</p>

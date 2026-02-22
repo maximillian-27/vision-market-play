@@ -9,21 +9,25 @@ import { Label } from "@/components/ui/label";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
-import { Gift, Plus, Trophy, Tag, Star } from "lucide-react";
+import {
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Gift, Plus, Trophy, Tag, Star, MoreHorizontal, Copy, Pause, Trash2, Edit } from "lucide-react";
 import { toast } from "sonner";
+import { Progress } from "@/components/ui/progress";
 
 const activeBonuses = [
-  { id: 1, name: "Welcome Bonus", type: "Deposit Match", value: "100%", maxValue: "$500", eligible: "New Users", used: 1240, budget: 50000, spent: 32000, active: true },
-  { id: 2, name: "Weekend Free Ticket", type: "Free Ticket", value: "$10", maxValue: "$10", eligible: "All Users", used: 3400, budget: 34000, spent: 28000, active: true },
-  { id: 3, name: "VIP Cashback", type: "Cashback", value: "5%", maxValue: "$1000", eligible: "VIP Tier", used: 89, budget: 20000, spent: 8900, active: true },
-  { id: 4, name: "Crypto Deposit Boost", type: "Deposit Match", value: "50%", maxValue: "$250", eligible: "Crypto Depositors", used: 456, budget: 15000, spent: 12300, active: false },
+  { id: 1, name: "Welcome Bonus", type: "Deposit Match", value: "100%", maxValue: "$500", eligible: "New Users", used: 1240, budget: 50000, spent: 32000, active: true, revenueFromUsers: 85000 },
+  { id: 2, name: "Weekend Free Ticket", type: "Free Ticket", value: "$10", maxValue: "$10", eligible: "All Users", used: 3400, budget: 34000, spent: 28000, active: true, revenueFromUsers: 42000 },
+  { id: 3, name: "VIP Cashback", type: "Cashback", value: "5%", maxValue: "$1000", eligible: "VIP Tier", used: 89, budget: 20000, spent: 8900, active: true, revenueFromUsers: 34000 },
+  { id: 4, name: "Crypto Deposit Boost", type: "Deposit Match", value: "50%", maxValue: "$250", eligible: "Crypto Depositors", used: 456, budget: 15000, spent: 12300, active: false, revenueFromUsers: 18000 },
 ];
 
 const loyaltyTiers = [
-  { name: "Bronze", minPoints: 0, users: 45000, perks: "Basic access" },
-  { name: "Silver", minPoints: 1000, users: 12000, perks: "5% cashback, priority support" },
-  { name: "Gold", minPoints: 5000, users: 3400, perks: "10% cashback, exclusive markets" },
-  { name: "Platinum", minPoints: 25000, users: 340, perks: "15% cashback, personal manager" },
+  { name: "Bronze", minPoints: 0, users: 45000, perks: "Basic access", revenueFromTier: 125000, avgVolumePerUser: 2800, upgradeRate: 12.5 },
+  { name: "Silver", minPoints: 1000, users: 12000, perks: "5% cashback, priority support", revenueFromTier: 340000, avgVolumePerUser: 28300, upgradeRate: 8.2 },
+  { name: "Gold", minPoints: 5000, users: 3400, perks: "10% cashback, exclusive markets", revenueFromTier: 520000, avgVolumePerUser: 152900, upgradeRate: 4.1 },
+  { name: "Platinum", minPoints: 25000, users: 340, perks: "15% cashback, personal manager", revenueFromTier: 890000, avgVolumePerUser: 2617600, upgradeRate: 0 },
 ];
 
 export const AdminBonusManagement = () => {
@@ -51,21 +55,52 @@ export const AdminBonusManagement = () => {
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-border/40 text-left text-sm text-muted-foreground">
-                    <th className="p-4 font-medium">Bonus</th><th className="p-4 font-medium">Type</th><th className="p-4 font-medium">Value</th><th className="p-4 font-medium">Eligible</th><th className="p-4 font-medium">Claims</th><th className="p-4 font-medium">Budget</th><th className="p-4 font-medium">Active</th>
+                    <th className="p-4 font-medium">Bonus</th>
+                    <th className="p-4 font-medium">Type</th>
+                    <th className="p-4 font-medium">Value</th>
+                    <th className="p-4 font-medium">Eligible</th>
+                    <th className="p-4 font-medium">Claims</th>
+                    <th className="p-4 font-medium">Budget Progress</th>
+                    <th className="p-4 font-medium">ROI</th>
+                    <th className="p-4 font-medium">Active</th>
+                    <th className="p-4 font-medium text-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {activeBonuses.map((b) => (
-                    <tr key={b.id} className="border-b border-border/20 hover:bg-muted/30 transition-colors">
-                      <td className="p-4 font-medium">{b.name}</td>
-                      <td className="p-4"><Badge variant="outline" className="text-xs">{b.type}</Badge></td>
-                      <td className="p-4 text-sm">{b.value} (max {b.maxValue})</td>
-                      <td className="p-4 text-sm">{b.eligible}</td>
-                      <td className="p-4 text-sm">{b.used.toLocaleString()}</td>
-                      <td className="p-4 text-sm">${b.spent.toLocaleString()} / ${b.budget.toLocaleString()}</td>
-                      <td className="p-4"><Switch defaultChecked={b.active} onCheckedChange={(checked) => toast.success(`${b.name} ${checked ? "activated" : "deactivated"}`)} /></td>
-                    </tr>
-                  ))}
+                  {activeBonuses.map((b) => {
+                    const roi = b.spent > 0 ? ((b.revenueFromUsers - b.spent) / b.spent * 100) : 0;
+                    const budgetPercent = (b.spent / b.budget) * 100;
+                    return (
+                      <tr key={b.id} className="border-b border-border/20 hover:bg-muted/30 transition-colors">
+                        <td className="p-4 font-medium">{b.name}</td>
+                        <td className="p-4"><Badge variant="outline" className="text-xs">{b.type}</Badge></td>
+                        <td className="p-4 text-sm">{b.value} (max {b.maxValue})</td>
+                        <td className="p-4 text-sm">{b.eligible}</td>
+                        <td className="p-4 text-sm">{b.used.toLocaleString()}</td>
+                        <td className="p-4">
+                          <div className="space-y-1">
+                            <Progress value={budgetPercent} className="h-2" />
+                            <p className="text-xs text-muted-foreground">${b.spent.toLocaleString()} / ${b.budget.toLocaleString()}</p>
+                          </div>
+                        </td>
+                        <td className="p-4">
+                          <span className={`text-sm font-medium ${roi >= 0 ? 'text-success' : 'text-destructive'}`}>{roi >= 0 ? '+' : ''}{roi.toFixed(0)}%</span>
+                        </td>
+                        <td className="p-4"><Switch defaultChecked={b.active} onCheckedChange={(checked) => toast.success(`${b.name} ${checked ? "activated" : "deactivated"}`)} /></td>
+                        <td className="p-4 text-right">
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild><Button variant="ghost" size="icon" className="h-8 w-8"><MoreHorizontal className="h-4 w-4" /></Button></DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="bg-popover">
+                              <DropdownMenuItem className="gap-2" onClick={() => toast(`Editing ${b.name}`)}><Edit className="h-4 w-4" /> Edit</DropdownMenuItem>
+                              <DropdownMenuItem className="gap-2" onClick={() => toast.success(`${b.name} duplicated`)}><Copy className="h-4 w-4" /> Duplicate</DropdownMenuItem>
+                              <DropdownMenuItem className="gap-2" onClick={() => toast.success(`${b.name} deactivated`)}><Pause className="h-4 w-4" /> Deactivate</DropdownMenuItem>
+                              <DropdownMenuItem className="gap-2 text-destructive" onClick={() => toast.success(`${b.name} deleted`)}><Trash2 className="h-4 w-4" /> Delete</DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
@@ -143,8 +178,15 @@ export const AdminBonusManagement = () => {
                 <CardContent className="p-4">
                   <div className="flex items-center gap-2 mb-2"><Star className="h-4 w-4 text-warning" /><span className="font-semibold">{tier.name}</span></div>
                   <p className="text-xs text-muted-foreground mb-3">{tier.perks}</p>
-                  <div className="flex justify-between text-sm"><span className="text-muted-foreground">Min Points</span><span className="font-medium">{tier.minPoints.toLocaleString()}</span></div>
-                  <div className="flex justify-between text-sm mt-1"><span className="text-muted-foreground">Users</span><span className="font-medium">{tier.users.toLocaleString()}</span></div>
+                  <div className="space-y-1 text-sm">
+                    <div className="flex justify-between"><span className="text-muted-foreground">Min Points</span><span className="font-medium">{tier.minPoints.toLocaleString()}</span></div>
+                    <div className="flex justify-between"><span className="text-muted-foreground">Users</span><span className="font-medium">{tier.users.toLocaleString()}</span></div>
+                    <div className="flex justify-between"><span className="text-muted-foreground">Revenue</span><span className="font-medium text-success">${(tier.revenueFromTier / 1000).toFixed(0)}K</span></div>
+                    <div className="flex justify-between"><span className="text-muted-foreground">Avg Vol/User</span><span className="font-medium">${tier.avgVolumePerUser.toLocaleString()}</span></div>
+                    {tier.upgradeRate > 0 && (
+                      <div className="flex justify-between"><span className="text-muted-foreground">Upgrade Rate</span><span className="font-medium text-primary">{tier.upgradeRate}%</span></div>
+                    )}
+                  </div>
                 </CardContent>
               </Card>
             ))}
