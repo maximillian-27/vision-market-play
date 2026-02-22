@@ -11,15 +11,19 @@ import { AdminBonusManagement } from "@/components/admin/AdminBonusManagement";
 import { AdminAnalytics } from "@/components/admin/AdminAnalytics";
 import { AdminSecurity } from "@/components/admin/AdminSecurity";
 import { AdminSupport } from "@/components/admin/AdminSupport";
+import { AdminMarketing } from "@/components/admin/AdminMarketing";
+import { AdminCompliance } from "@/components/admin/AdminCompliance";
 
 const sectionTitles: Record<string, { title: string; description: string }> = {
-  dashboard: { title: "Dashboard", description: "Platform overview and key metrics" },
+  dashboard: { title: "Dashboard", description: "Platform overview, P&L, and key metrics" },
   markets: { title: "Markets", description: "Manage markets, disputes, resolutions and categories" },
-  transactions: { title: "Transactions", description: "Crypto deposits, withdrawals and fee collections" },
+  transactions: { title: "Transactions", description: "Crypto deposits, withdrawals, treasury and fee collections" },
   crm: { title: "CRM", description: "Users, creators, affiliates and payouts" },
   bonuses: { title: "Loyalty & Bonuses", description: "Bonuses, promotions and loyalty tiers" },
-  analytics: { title: "Analytics & BI", description: "Business intelligence and insights" },
+  analytics: { title: "Analytics & BI", description: "Business intelligence, financials and insights" },
+  marketing: { title: "Marketing", description: "SEO, campaigns, tracking and social presence" },
   security: { title: "Security", description: "Wallet monitoring, fraud detection and audit log" },
+  compliance: { title: "Compliance", description: "KYC/AML, regulatory readiness and admin access" },
   support: { title: "Customer Support", description: "Tickets, knowledge base and live chat" },
 };
 
@@ -35,7 +39,9 @@ const Admin = () => {
       case "crm": return <AdminCRM />;
       case "bonuses": return <AdminBonusManagement />;
       case "analytics": return <AdminAnalytics />;
+      case "marketing": return <AdminMarketing />;
       case "security": return <AdminSecurity />;
+      case "compliance": return <AdminCompliance />;
       case "support": return <AdminSupport />;
       default: return <AdminDashboard onNavigate={setActiveSection} />;
     }

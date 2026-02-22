@@ -11,6 +11,8 @@ import {
   Menu,
   Shield,
   HeadphonesIcon,
+  Megaphone,
+  Scale,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -35,15 +37,21 @@ const peopleItems = [
   { id: "bonuses", label: "Loyalty & Bonuses", icon: Gift },
 ];
 
-const intelligenceItems = [
+const growthItems = [
   { id: "analytics", label: "Analytics & BI", icon: BarChart3 },
+  { id: "marketing", label: "Marketing", icon: Megaphone },
+];
+
+const intelligenceItems = [
   { id: "security", label: "Security", icon: Shield },
+  { id: "compliance", label: "Compliance", icon: Scale },
   { id: "support", label: "Support", icon: HeadphonesIcon },
 ];
 
 const sections = [
   { label: "Operations", items: operationsItems },
   { label: "People", items: peopleItems },
+  { label: "Growth", items: growthItems },
   { label: "Intelligence", items: intelligenceItems },
 ];
 
