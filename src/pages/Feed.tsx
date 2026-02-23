@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Timer, Users, ArrowRight, Trophy, Ticket, Zap } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { WeeklyDrawCard } from "@/components/WeeklyDrawCard";
 import bitcoinImage from "@/assets/bitcoin-market.jpg";
 import nbaImage from "@/assets/nba-championship.jpg";
 import iphoneImage from "@/assets/foldable-iphone.jpg";
@@ -810,7 +811,10 @@ export default function Feed() {
           </div>
         </div>
 
-        {/* 3. Gradient Banner Divider */}
+        {/* 3. Weekly Prize Draw */}
+        <WeeklyDrawCard totalVolume={mockMarkets.filter(m => m.status === "open" || m.status === "closing").reduce((s, m) => s + m.pot, 0)} />
+
+        {/* 4. Gradient Banner Divider */}
         <GradientDivider />
 
         {/* 4. Market Grid/List */}
