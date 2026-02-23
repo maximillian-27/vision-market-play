@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Timer, Users, ArrowRight, Trophy, Ticket, Zap } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { WeeklyDrawCard } from "@/components/WeeklyDrawCard";
 import bitcoinImage from "@/assets/bitcoin-market.jpg";
 import nbaImage from "@/assets/nba-championship.jpg";
 import iphoneImage from "@/assets/foldable-iphone.jpg";
@@ -801,14 +800,13 @@ export default function Feed() {
             </div>
           </div>
 
-          {/* Right — Sponsored + Weekly Draw */}
+          {/* Right — Two stacked sponsored cards */}
           <div className="lg:col-span-2 flex flex-row lg:flex-col gap-3">
-            <div className="flex-1">
-              <CompactFeaturedCard market={sponsoredMarkets[0]} />
-            </div>
-            <div className="flex-1">
-              <WeeklyDrawCard />
-            </div>
+            {sponsoredMarkets.map(market => (
+              <div key={market.id} className="flex-1">
+                <CompactFeaturedCard market={market} />
+              </div>
+            ))}
           </div>
         </div>
 
