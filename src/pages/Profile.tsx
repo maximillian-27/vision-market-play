@@ -191,12 +191,12 @@ export default function Profile() {
         {/* Profile Header Card */}
         <Card className="border-border/40 overflow-hidden">
           {/* Cover gradient */}
-          <div className="h-24 md:h-32 bg-gradient-to-br from-primary/20 via-primary/10 to-accent/20" />
+          <div className="h-16 sm:h-24 md:h-32 bg-gradient-to-br from-primary/20 via-primary/10 to-accent/20" />
           
           <CardContent className="pt-0 pb-6">
             {/* Avatar overlapping cover */}
-            <div className="flex flex-col md:flex-row md:items-end gap-4 -mt-12 md:-mt-16">
-              <Avatar className="h-24 w-24 md:h-32 md:w-32 border-4 border-background ring-2 ring-border/20">
+            <div className="flex flex-col md:flex-row md:items-end gap-3 sm:gap-4 -mt-10 sm:-mt-12 md:-mt-16">
+              <Avatar className="h-20 w-20 sm:h-24 sm:w-24 md:h-32 md:w-32 border-4 border-background ring-2 ring-border/20">
                 <AvatarImage src={userData.avatar} alt={displayName} />
                 <AvatarFallback className="text-2xl">{displayName.slice(0, 2).toUpperCase()}</AvatarFallback>
               </Avatar>
@@ -288,12 +288,12 @@ export default function Profile() {
               <div className="grid grid-cols-2 gap-6">
                 <div>
                   <p className="text-sm text-muted-foreground mb-1">Balance</p>
-                  <p className="text-3xl font-bold">${userData.portfolioValue.toLocaleString()}</p>
+                  <p className="text-2xl sm:text-3xl font-bold">${userData.portfolioValue.toLocaleString()}</p>
                   <p className="text-sm text-success mt-1">{userData.totalProfit} total winnings</p>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground mb-1">Available</p>
-                  <p className="text-3xl font-bold">${userData.cashBalance.toLocaleString()}</p>
+                  <p className="text-2xl sm:text-3xl font-bold">${userData.cashBalance.toLocaleString()}</p>
                   <p className="text-sm text-muted-foreground mt-1">Available to play</p>
                 </div>
               </div>

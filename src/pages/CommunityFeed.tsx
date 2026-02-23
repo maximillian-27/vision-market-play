@@ -149,7 +149,7 @@ export default function CommunityFeed() {
           {/* Composer */}
           <div className="border-b border-border/40 px-4 py-3">
             <div className="flex gap-3">
-              <Avatar className="h-10 w-10 flex-shrink-0">
+              <Avatar className="h-8 w-8 sm:h-10 sm:w-10 flex-shrink-0">
                 <AvatarImage src={currentUser.avatar} alt={currentUser.name} />
                 <AvatarFallback>{currentUser.name.slice(0, 2)}</AvatarFallback>
               </Avatar>
@@ -158,7 +158,7 @@ export default function CommunityFeed() {
                   placeholder="What's happening?"
                   value={postContent}
                   onChange={(e) => setPostContent(e.target.value)}
-                  className="min-h-[44px] text-base bg-transparent border-0 resize-none focus-visible:ring-0 p-0 placeholder:text-muted-foreground/50"
+                  className="min-h-[36px] sm:min-h-[44px] text-sm sm:text-base bg-transparent border-0 resize-none focus-visible:ring-0 p-0 placeholder:text-muted-foreground/50"
                   maxLength={280}
                 />
                 {selectedMarketData && (
