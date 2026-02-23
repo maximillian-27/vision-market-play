@@ -299,83 +299,39 @@ function GradientDivider() {
   );
 }
 
-/* ── Hero Outcome Buttons ── */
-function HeroOutcomes({ market, onDark = false }: { market: Market; onDark?: boolean }) {
-  const navigate = useNavigate();
-  const isBinary = !market.outcomes;
-  
-  const handleClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    navigate(`/market/${market.id}`);
-  };
-
-  if (isBinary) {
-    return (
-      <div className="flex gap-2 mt-2">
-        <button onClick={handleClick} className={`flex-1 rounded-lg py-1.5 text-center text-xs font-bold transition-all active:scale-[0.98] ${onDark ? 'bg-yes/25 hover:bg-yes/40 text-green-300 border border-yes/30' : 'bg-yes/15 hover:bg-yes/25 text-yes border border-yes/30'}`}>
-          Yes {market.yesPrice}%
-        </button>
-        <button onClick={handleClick} className={`flex-1 rounded-lg py-1.5 text-center text-xs font-bold transition-all active:scale-[0.98] ${onDark ? 'bg-no/25 hover:bg-no/40 text-red-300 border border-no/30' : 'bg-no/15 hover:bg-no/25 text-no border border-no/30'}`}>
-          No {market.noPrice}%
-        </button>
-      </div>
-    );
-  }
-
-  return (
-    <div className="flex flex-col gap-1 mt-2">
-      {market.outcomes!.slice(0, 3).map((outcome, i) => (
-        <button key={i} onClick={handleClick} className={`flex items-center justify-between rounded-lg px-2.5 py-1 text-xs transition-all active:scale-[0.98] ${onDark ? 'bg-white/10 hover:bg-white/20 text-white' : 'bg-secondary/60 hover:bg-secondary text-foreground'}`}>
-          <span className="font-medium truncate">{outcome.label}</span>
-          <span className="font-bold text-primary ml-2">{outcome.price}%</span>
-        </button>
-      ))}
-    </div>
-  );
-}
-
 /* ── Compact Featured Card (right side) ── */
 function CompactFeaturedCard({ market }: { market: Market }) {
   const navigate = useNavigate();
-  const topProb = market.yesPrice || (market.outcomes ? Math.max(...market.outcomes.map(o => o.price)) : 0);
 
   return (
     <div
       onClick={() => navigate(`/market/${market.id}`)}
-      className="flex flex-col p-3 rounded-xl border border-border/60 bg-card hover:bg-accent/30 cursor-pointer transition-colors h-full"
+      className="flex gap-3 p-3 rounded-xl border border-border/60 bg-card hover:bg-accent/30 cursor-pointer transition-colors h-full"
     >
-      <div className="flex items-start gap-2.5">
-        <img
-          src={market.image}
-          alt={market.title}
-          className="w-12 h-12 rounded-lg object-cover shrink-0"
-        />
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center justify-between gap-1">
-            <div className="flex items-center gap-1.5">
-              <img src={market.creator.avatar} alt="" className="w-3.5 h-3.5 rounded-full" />
-              <span className="text-[10px] text-muted-foreground truncate">{market.creator.name}</span>
-            </div>
-            {topProb > 0 && (
-              <span className="px-1.5 py-0.5 rounded-full bg-yes/15 text-yes text-[10px] font-bold shrink-0">
-                {topProb}%
-              </span>
-            )}
+      <img
+        src={market.image}
+        alt={market.title}
+        className="w-20 h-full min-h-[72px] rounded-lg object-cover shrink-0"
+      />
+      <div className="flex flex-col justify-between flex-1 min-w-0 py-0.5">
+        <div>
+          <div className="flex items-center gap-1.5 mb-1">
+            <img src={market.creator.avatar} alt="" className="w-4 h-4 rounded-full" />
+            <span className="text-[10px] text-muted-foreground truncate">{market.creator.name}</span>
           </div>
-          <h4 className="text-xs font-semibold leading-tight line-clamp-2 text-foreground mt-0.5">
+          <h4 className="text-xs font-semibold leading-tight line-clamp-2 text-foreground">
             {market.title}
           </h4>
         </div>
-      </div>
-      
-      <HeroOutcomes market={market} />
-
-      <div className="flex items-center justify-between mt-auto pt-1.5 text-[9px] text-muted-foreground">
-        <span className="font-bold text-foreground text-[10px]">Vol. {formatPot(market.pot)}</span>
-        <div className="flex items-center gap-1.5">
-          <Users className="h-2.5 w-2.5" />
-          <span>{market.players.toLocaleString()}</span>
-          <span className="ml-0.5">{market.endsIn}</span>
+        <div className="flex items-center justify-between mt-1.5">
+          <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-bold">
+            {formatPot(market.pot)} Pot
+          </span>
+          <div className="flex items-center gap-1.5 text-[9px] text-muted-foreground">
+            <Users className="h-3 w-3" />
+            <span>{market.players.toLocaleString()}</span>
+            <span className="ml-1">{market.endsIn}</span>
+          </div>
         </div>
       </div>
     </div>
@@ -515,7 +471,7 @@ export default function Feed() {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
               <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-5">
-                <div className="flex items-center gap-2 mb-1.5">
+                <div className="flex items-center gap-2 mb-2">
                   {mainFeatured.status === "closing" && (
                     <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-500/20 border border-amber-500/30 text-amber-400 text-xs font-semibold">
                       <Timer className="h-3 w-3" />
@@ -526,16 +482,9 @@ export default function Feed() {
                     {formatPot(mainFeatured.pot)} Pot
                   </span>
                 </div>
-                <div className="flex items-center gap-2 mb-1">
-                  <img src={mainFeatured.creator.avatar} alt="" className="w-4 h-4 rounded-full" />
-                  <span className="text-white/70 text-xs">{mainFeatured.creator.name}</span>
-                </div>
                 <h2 className="text-white text-lg sm:text-xl font-bold leading-snug line-clamp-2 max-w-2xl">
                   {mainFeatured.title}
                 </h2>
-                
-                <HeroOutcomes market={mainFeatured} onDark />
-
                 <div className="flex items-center justify-between mt-2">
                   <div className="flex items-center gap-4 text-white/70 text-xs">
                     <span className="flex items-center gap-1"><Users className="h-3 w-3" />{mainFeatured.players.toLocaleString()} players</span>

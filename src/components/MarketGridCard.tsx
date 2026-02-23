@@ -209,117 +209,147 @@ export function MarketGridCard({
         }`}
         onClick={handleCardClick}
       >
-        {/* Desktop Layout — Compact with inline outcome rows */}
-        <div className="sm:flex hidden flex-col p-2.5 h-full">
-          {/* Header: thumb + title + creator */}
-          <div className="flex items-start gap-2.5 mb-2">
+        {/* Desktop Layout */}
+        <div className="sm:flex hidden flex-col p-3 h-full">
+          {/* Header with image, title, pot */}
+          <div className="flex items-start gap-3 mb-2.5">
             <div className="relative w-10 h-10 rounded-lg overflow-hidden bg-secondary flex-shrink-0">
               <img src={image} alt={title} className="h-full w-full object-cover" />
             </div>
+            
             <div className="flex-1 min-w-0">
-              <h3 className="text-[13px] font-semibold leading-snug line-clamp-2 group-hover:text-primary transition-colors">
-                {title}
-              </h3>
-              <span className="text-[10px] text-muted-foreground">by {creator.name}</span>
+              <div className="flex items-start justify-between gap-2">
+                <h3 className="text-sm font-semibold leading-snug line-clamp-2 group-hover:text-primary transition-colors flex-1">
+                  {title}
+                </h3>
+              </div>
             </div>
           </div>
 
-          {/* Outcome rows */}
-          <div className="flex-1 flex flex-col justify-center space-y-1">
+          {/* Pot size pill */}
+          <div className="mb-2">
+            <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-extrabold">
+              {potDisplay} Pot
+            </span>
+          </div>
+
+          {/* Content area */}
+          <div className="flex-1 flex flex-col justify-center">
             {isClosedOrResolved ? (
-              <div className="flex items-center justify-between py-1 px-2 rounded-md bg-secondary/50">
-                <span className="text-[11px] text-muted-foreground">Outcome</span>
-                <span className={`text-xs font-bold ${
-                  resolution?.toLowerCase() === "yes" ? 'text-yes' : 
-                  resolution?.toLowerCase() === "no" ? 'text-no' : 'text-primary'
-                }`}>
-                  {resolution}
-                </span>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between py-1.5 px-2 rounded-lg bg-secondary/50">
+                  <span className="text-xs text-muted-foreground">Outcome</span>
+                  <span className={`text-sm font-bold ${
+                    resolution?.toLowerCase() === "yes" ? 'text-yes' : 
+                    resolution?.toLowerCase() === "no" ? 'text-no' : 'text-primary'
+                  }`}>
+                    {resolution}
+                  </span>
+                </div>
+                
+                {status === "closed" && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full text-orange-600 border-orange-500/30 hover:bg-orange-500/10 hover:border-orange-500/50 text-xs h-7"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setShowResolvedDialog(true);
+                    }}
+                  >
+                    <AlertTriangle className="h-3 w-3 mr-1" />
+                    Dispute
+                  </Button>
+                )}
               </div>
             ) : isAwaitingResolution ? (
-              <>
-                <div className="flex items-center justify-between py-1 px-1.5 rounded-md bg-secondary/40">
-                  <span className="text-[11px] font-medium">Yes</span>
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-[11px] font-bold">{yesPercent}%</span>
-                    <span className="px-2 py-0.5 rounded-full bg-muted text-muted-foreground text-[10px] font-medium">Locked</span>
-                  </div>
+              <div className="flex items-center gap-2">
+                <div className="flex-1 rounded-md py-1.5 text-center bg-yes/10 text-yes/70 border border-yes/20 cursor-default">
+                  <span className="text-xs font-bold">Yes {yesPercent}%</span>
                 </div>
-                <div className="flex items-center justify-between py-1 px-1.5 rounded-md bg-secondary/40">
-                  <span className="text-[11px] font-medium">No</span>
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-[11px] font-bold">{noPercent}%</span>
-                    <span className="px-2 py-0.5 rounded-full bg-muted text-muted-foreground text-[10px] font-medium">Locked</span>
-                  </div>
+                <div className="flex-1 rounded-md py-1.5 text-center bg-no/10 text-no/70 border border-no/20 cursor-default">
+                  <span className="text-xs font-bold">No {noPercent}%</span>
                 </div>
-              </>
+              </div>
+            ) : isBinary ? (
+              <div className="flex items-center gap-2">
+                <button 
+                  className="flex-1 rounded-md py-1.5 text-center bg-yes/15 dark:bg-yes/25 hover:bg-yes text-yes hover:text-yes-foreground border border-yes/30 dark:border-yes/40 hover:border-yes transition-all active:scale-[0.98]"
+                  onClick={handleOutcomeClick}
+                >
+                  <span className="text-xs font-bold">Yes {yesPercent}%</span>
+                </button>
+                <button 
+                  className="flex-1 rounded-md py-1.5 text-center bg-no/15 dark:bg-no/25 hover:bg-no text-no hover:text-no-foreground border border-no/30 dark:border-no/40 hover:border-no transition-all active:scale-[0.98]"
+                  onClick={handleOutcomeClick}
+                >
+                  <span className="text-xs font-bold">No {noPercent}%</span>
+                </button>
+              </div>
             ) : (
-              <>
-                {displayOutcomes.slice(0, isBinary ? 2 : 4).map((outcome, index) => (
-                  <div key={index} className="flex items-center justify-between py-1 px-1.5 rounded-md bg-secondary/40 hover:bg-secondary/60 transition-colors">
-                    <span className="text-[11px] font-medium truncate flex-1">{outcome.label}</span>
-                    <div className="flex items-center gap-1.5 ml-2">
-                      <span className="text-[11px] font-bold">{outcome.price}%</span>
-                      <button
-                        className="px-2 py-0.5 rounded-full bg-yes/15 text-yes text-[10px] font-bold hover:bg-yes/30 transition-colors active:scale-95"
-                        onClick={handleOutcomeClick}
-                      >
-                        Yes
-                      </button>
-                      {isBinary && (
-                        <button
-                          className="px-2 py-0.5 rounded-full bg-no/15 text-no text-[10px] font-bold hover:bg-no/30 transition-colors active:scale-95"
-                          onClick={handleOutcomeClick}
-                        >
-                          No
-                        </button>
-                      )}
-                    </div>
-                  </div>
+              <div className="space-y-1">
+                {displayOutcomes.slice(0, 2).map((outcome, index) => (
+                  <button 
+                    key={index}
+                    className="w-full flex items-center justify-between text-xs py-1.5 px-2 rounded-lg bg-secondary/50 hover:bg-secondary transition-all"
+                    onClick={handleOutcomeClick}
+                  >
+                    <span className="font-medium truncate flex-1 text-left">{outcome.label}</span>
+                    <span className="font-bold text-primary">{outcome.price}%</span>
+                  </button>
                 ))}
-                {!isBinary && displayOutcomes.length > 4 && (
-                  <p className="text-[9px] text-muted-foreground pl-1.5">+{displayOutcomes.length - 4} more</p>
+                {displayOutcomes.length > 2 && (
+                  <p className="text-[10px] text-muted-foreground">+{displayOutcomes.length - 2} more</p>
                 )}
-              </>
+              </div>
             )}
           </div>
 
-          {/* Footer: Vol + players + timer + icons */}
-          <div className="flex items-center justify-between text-[9px] text-muted-foreground mt-1.5 pt-1.5 border-t border-border/60">
-            <div className="flex items-center gap-2.5">
-              <span className="font-bold text-foreground text-[10px]">Vol. {potDisplay}</span>
-              <span className="flex items-center gap-0.5">
-                <Users className="h-2.5 w-2.5" />
-                {players > 0 ? players.toLocaleString() : '0'}
+          {/* "Win up to" teaser */}
+          {winUpTo && !isBettingDisabled && (
+            <p className="text-[10px] text-primary/80 font-semibold mt-1.5">
+              Win up to {winUpTo}
+            </p>
+          )}
+          
+          {/* Stats footer */}
+          <div className="flex items-center gap-3 text-[10px] text-muted-foreground mt-2 pt-2 border-t border-border">
+            <span className="flex items-center gap-1">
+              <Users className="h-2.5 w-2.5" />
+              {players > 0 ? players.toLocaleString() : '0'} players
+            </span>
+            {getStatusBadge() ? (
+              getStatusBadge()
+            ) : (
+              <span className="flex items-center gap-1">
+                <Clock className="h-2.5 w-2.5" />
+                {endsIn}
               </span>
-              {getStatusBadge() || (
-                <span className="flex items-center gap-0.5">
-                  <Clock className="h-2.5 w-2.5" />
-                  {endsIn}
-                </span>
-              )}
-            </div>
-            <div className="flex items-center gap-0.5">
-              <button 
-                className="p-1 rounded hover:bg-secondary transition-colors"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  navigator.clipboard.writeText(`${window.location.origin}/market/${id}`);
-                  toast({ title: "Link copied!" });
-                }}
-              >
-                <Share2 className="h-3 w-3" />
-              </button>
-              <button 
-                className="p-1 rounded hover:bg-secondary transition-colors"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  toast({ title: "Saved to watchlist" });
-                }}
-              >
-                <Bookmark className="h-3 w-3" />
-              </button>
-            </div>
+            )}
+            {/* Action buttons */}
+            {!isClosedOrResolved && (
+              <div className="ml-auto flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                <button 
+                  className="p-1 rounded hover:bg-secondary transition-colors"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigator.clipboard.writeText(`${window.location.origin}/market/${id}`);
+                    toast({ title: "Link copied!" });
+                  }}
+                >
+                  <Share2 className="h-3 w-3" />
+                </button>
+                <button 
+                  className="p-1 rounded hover:bg-secondary transition-colors"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toast({ title: "Saved to watchlist" });
+                  }}
+                >
+                  <Bookmark className="h-3 w-3" />
+                </button>
+              </div>
+            )}
           </div>
         </div>
 
