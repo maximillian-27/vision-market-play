@@ -49,8 +49,31 @@ function formatPot(pot: number): string {
   return `$${pot}`;
 }
 
+function getPotTier(pot: number): "standard" | "hot" | "jackpot" {
+  if (pot >= 1000000) return "jackpot";
+  if (pot >= 100000) return "hot";
+  return "standard";
+}
 
-export function MarketGridCard({ 
+function PotBadge({ pot, volume }: { pot: number; volume: string }) {
+  const display = pot > 0 ? formatPot(pot) : volume;
+  const tier = pot > 0 ? getPotTier(pot) : "standard";
+
+  const tierStyles = {
+    standard: "bg-primary/10 text-primary",
+    hot: "bg-gradient-to-r from-pollgy-green to-pollgy-blue text-white font-bold",
+    jackpot: "bg-gradient-to-r from-pollgy-green to-pollgy-blue text-white font-bold pot-shimmer",
+  };
+
+  return (
+    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold ${tierStyles[tier]} ${tier === "jackpot" ? "text-[11px]" : ""}`}>
+      <span className="uppercase tracking-wider text-[8px] opacity-80">Pot</span>
+      {display}
+    </span>
+  );
+}
+
+export function MarketGridCard({
   id, 
   creator,
   title, 
@@ -86,7 +109,7 @@ export function MarketGridCard({
   const isBinary = displayOutcomes.length === 2 && !outcomes;
   const isClosingSoon = status === "closing";
 
-  const potDisplay = pot > 0 ? formatPot(pot) : volume;
+  
 
   const handleCardClick = () => {
     if (isClosedOrResolved) {
@@ -291,7 +314,7 @@ export function MarketGridCard({
 
           {/* Stats footer */}
           <div className="flex items-center gap-3 text-[10px] text-muted-foreground mt-2 pt-2 border-t border-border">
-            <span className="font-bold text-foreground">{potDisplay}</span>
+            <PotBadge pot={pot} volume={volume} />
             <span className="text-muted-foreground/40">·</span>
             <span className="flex items-center gap-1">
               <Users className="h-2.5 w-2.5" />
@@ -430,7 +453,7 @@ export function MarketGridCard({
           {/* Row 3: Footer — Pot + icons */}
           <div className="flex items-center justify-between mt-2 text-[11px] text-muted-foreground">
             <div className="flex items-center gap-3">
-              <span className="font-semibold text-foreground">Pot {potDisplay}</span>
+              <PotBadge pot={pot} volume={volume} />
               <span className="flex items-center gap-1">
                 <Users className="h-3 w-3" />
                 {players > 0 ? players.toLocaleString() : '0'}
