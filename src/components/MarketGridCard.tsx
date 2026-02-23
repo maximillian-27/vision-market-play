@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Clock, AlertTriangle, CheckCircle2, Timer, Bookmark, Share2, Users, Ticket, Trophy } from "lucide-react";
+import { Clock, AlertTriangle, CheckCircle2, Timer, Bookmark, Share2, Users, Ticket } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { MarketDialog } from "@/components/MarketDialog";
 import { ResolvedMarketDialog } from "@/components/ResolvedMarketDialog";
@@ -57,6 +57,8 @@ function formatWinUpTo(pot: number, outcomes: Outcome[]): string {
   return `$${payout.toFixed(0)}`;
 }
 
+const MAX_VISIBLE_OUTCOMES = 3;
+
 export function MarketGridCard({ 
   id, creator, title, image, outcomes, yesPrice, noPrice, 
   volume, pot = 0, players = 0, endsIn, status = "open",
@@ -83,9 +85,6 @@ export function MarketGridCard({
   const potDisplay = pot > 0 ? formatPot(pot) : volume;
   const winUpTo = pot > 0 && !isBettingDisabled ? formatWinUpTo(pot, displayOutcomes) : "";
 
-  const yesPercent = isBinary ? displayOutcomes[0].price : 50;
-  const noPercent = isBinary ? displayOutcomes[1].price : 50;
-
   const handleCardClick = () => {
     if (isClosedOrResolved) { setShowResolvedDialog(true); return; }
     if (isMobile) navigate(`/market/${id}`);
@@ -104,124 +103,141 @@ export function MarketGridCard({
     volume, pot, players, endsIn, status, resolutionDate,
   };
 
-  const StatusBadge = () => {
-    switch (status) {
-      case "closing":
-        return (
-          <span className="flex items-center gap-1 text-amber-500 text-[10px] font-semibold whitespace-nowrap">
-            <Timer className="h-2.5 w-2.5 animate-pulse" />
-            {endsIn}
-          </span>
-        );
-      case "awaiting_resolution":
-        return (
-          <span className="flex items-center gap-1 text-pollgy-blue text-[10px] font-medium whitespace-nowrap">
-            <Clock className="h-2.5 w-2.5" />
-            Awaiting
-          </span>
-        );
-      case "closed":
-        return (
-          <span className="flex items-center gap-1 text-amber-600 text-[10px] font-medium">
-            <AlertTriangle className="h-2.5 w-2.5" />
-            Dispute: {disputeEndsIn}
-          </span>
-        );
-      case "resolved":
-        return (
-          <span className="flex items-center gap-1 text-muted-foreground text-[10px] font-medium">
-            <CheckCircle2 className="h-2.5 w-2.5" />
-            Resolved
-          </span>
-        );
-      default: return null;
-    }
+  /* ── Resolved / Closed result ── */
+  const ResolvedDisplay = () => {
+    if (!isClosedOrResolved) return null;
+    return (
+      <div className="flex items-center justify-between py-1.5 px-2.5 rounded-md bg-secondary/50">
+        <span className="text-[10px] text-muted-foreground">Result</span>
+        <span className={`text-xs font-bold ${
+          resolution?.toLowerCase() === "yes" ? 'text-yes' : 
+          resolution?.toLowerCase() === "no" ? 'text-no' : 'text-primary'
+        }`}>
+          {resolution}
+        </span>
+      </div>
+    );
   };
 
-  /* ── Outcome Buttons (shared logic) ── */
-  const OutcomeButtons = ({ compact = false }: { compact?: boolean }) => {
-    if (isClosedOrResolved) {
-      return (
-        <div className="space-y-1.5">
-          <div className="flex items-center justify-between py-2 px-3 rounded-lg bg-secondary/50">
-            <span className="text-xs text-muted-foreground">Winner</span>
-            <span className={`text-sm font-bold ${
-              resolution?.toLowerCase() === "yes" ? 'text-yes' : 
-              resolution?.toLowerCase() === "no" ? 'text-no' : 'text-primary'
-            }`}>
-              {resolution}
-            </span>
-          </div>
-          {status === "closed" && (
-            <Button
-              variant="outline" size="sm"
-              className="w-full text-amber-600 border-amber-500/30 hover:bg-amber-500/10 text-xs h-7"
-              onClick={(e) => { e.stopPropagation(); setShowResolvedDialog(true); }}
-            >
-              <AlertTriangle className="h-3 w-3 mr-1" />
-              Dispute
-            </Button>
-          )}
-        </div>
-      );
-    }
+  /* ── Outcome Buttons ── */
+  const OutcomeButtons = () => {
+    if (isClosedOrResolved) return <ResolvedDisplay />;
 
     if (isAwaitingResolution) {
+      if (isBinary) {
+        return (
+          <div className="flex gap-1.5">
+            <div className="flex-1 rounded-md py-1.5 text-center bg-yes/10 text-yes/60 border border-yes/20">
+              <span className="text-[11px] font-bold">Yes {displayOutcomes[0].price}%</span>
+            </div>
+            <div className="flex-1 rounded-md py-1.5 text-center bg-no/10 text-no/60 border border-no/20">
+              <span className="text-[11px] font-bold">No {displayOutcomes[1].price}%</span>
+            </div>
+          </div>
+        );
+      }
       return (
-        <div className="flex gap-2">
-          <div className="flex-1 rounded-lg py-2 text-center bg-yes/10 text-yes/60 border border-yes/20">
-            <span className="text-xs font-bold">Yes {yesPercent}%</span>
-          </div>
-          <div className="flex-1 rounded-lg py-2 text-center bg-no/10 text-no/60 border border-no/20">
-            <span className="text-xs font-bold">No {noPercent}%</span>
-          </div>
+        <div className="space-y-1">
+          {displayOutcomes.slice(0, MAX_VISIBLE_OUTCOMES).map((o, i) => (
+            <div key={i} className="flex items-center justify-between px-2 py-1 rounded-md bg-secondary/40 text-muted-foreground">
+              <span className="text-[11px] truncate">{o.label}</span>
+              <span className="text-[11px] font-semibold">{o.price}%</span>
+            </div>
+          ))}
         </div>
       );
     }
 
     if (isBinary) {
       return (
-        <div className="flex gap-2">
+        <div className="flex gap-1.5">
           <button 
-            className={`flex-1 rounded-lg ${compact ? 'py-2' : 'py-2.5'} text-center bg-yes/15 dark:bg-yes/25 hover:bg-yes text-yes hover:text-yes-foreground border border-yes/30 dark:border-yes/40 hover:border-yes transition-all active:scale-[0.98]`}
+            className="flex-1 rounded-md py-1.5 text-center bg-yes/15 dark:bg-yes/25 hover:bg-yes text-yes hover:text-yes-foreground border border-yes/30 dark:border-yes/40 hover:border-yes transition-all active:scale-[0.98]"
             onClick={handleOutcomeClick}
           >
-            <span className={`${compact ? 'text-xs' : 'text-[13px]'} font-bold`}>Yes {yesPercent}%</span>
+            <span className="text-[11px] font-bold">Yes {displayOutcomes[0].price}%</span>
           </button>
           <button 
-            className={`flex-1 rounded-lg ${compact ? 'py-2' : 'py-2.5'} text-center bg-no/15 dark:bg-no/25 hover:bg-no text-no hover:text-no-foreground border border-no/30 dark:border-no/40 hover:border-no transition-all active:scale-[0.98]`}
+            className="flex-1 rounded-md py-1.5 text-center bg-no/15 dark:bg-no/25 hover:bg-no text-no hover:text-no-foreground border border-no/30 dark:border-no/40 hover:border-no transition-all active:scale-[0.98]"
             onClick={handleOutcomeClick}
           >
-            <span className={`${compact ? 'text-xs' : 'text-[13px]'} font-bold`}>No {noPercent}%</span>
+            <span className="text-[11px] font-bold">No {displayOutcomes[1].price}%</span>
           </button>
         </div>
       );
     }
 
-    // Multi-outcome: every outcome is a clickable button
+    // Multi-outcome: compact list with "more" 
+    const visible = displayOutcomes.slice(0, MAX_VISIBLE_OUTCOMES);
+    const remaining = displayOutcomes.length - MAX_VISIBLE_OUTCOMES;
+
     return (
-      <div className={`grid ${compact ? 'grid-cols-2 gap-1.5' : 'grid-cols-2 gap-2'}`}>
-        {displayOutcomes.map((outcome, index) => (
+      <div className="space-y-1">
+        {visible.map((outcome, index) => (
           <button
             key={index}
-            className={`flex items-center justify-between gap-1.5 rounded-lg ${compact ? 'px-2.5 py-1.5' : 'px-3 py-2'} bg-secondary/60 hover:bg-primary/10 border border-border/60 hover:border-primary/30 transition-all active:scale-[0.98] group/btn`}
+            className="w-full flex items-center justify-between px-2.5 py-1.5 rounded-md bg-secondary/50 hover:bg-primary/10 border border-border/40 hover:border-primary/30 transition-all active:scale-[0.98]"
             onClick={handleOutcomeClick}
           >
             <div className="flex items-center gap-1.5 min-w-0">
               {outcome.logo ? (
-                <img src={outcome.logo} alt={outcome.label} className="h-4 w-4 object-contain rounded-sm flex-shrink-0" />
+                <img src={outcome.logo} alt={outcome.label} className="h-3.5 w-3.5 object-contain rounded-sm flex-shrink-0" />
               ) : (
-                <div className="h-4 w-4 rounded-full bg-primary/10 flex items-center justify-center text-[9px] font-bold text-primary flex-shrink-0">
+                <span className="h-3.5 w-3.5 rounded-full bg-primary/10 flex items-center justify-center text-[8px] font-bold text-primary flex-shrink-0">
                   {outcome.label.charAt(0)}
-                </div>
+                </span>
               )}
-              <span className={`${compact ? 'text-[11px]' : 'text-xs'} font-medium truncate`}>{outcome.label}</span>
+              <span className="text-[11px] font-medium truncate">{outcome.label}</span>
             </div>
-            <span className={`${compact ? 'text-[11px]' : 'text-xs'} font-bold text-primary flex-shrink-0`}>{outcome.price}%</span>
+            <span className="text-[11px] font-bold text-primary flex-shrink-0">{outcome.price}%</span>
           </button>
         ))}
+        {remaining > 0 && (
+          <button
+            className="w-full text-center text-[10px] font-medium text-muted-foreground hover:text-primary py-1 transition-colors"
+            onClick={handleOutcomeClick}
+          >
+            +{remaining} more
+          </button>
+        )}
       </div>
     );
+  };
+
+  /* ── Status line ── */
+  const statusLine = () => {
+    switch (status) {
+      case "closing":
+        return (
+          <span className="flex items-center gap-1 text-amber-500 text-[10px] font-semibold animate-pulse">
+            <Timer className="h-2.5 w-2.5" />{endsIn}
+          </span>
+        );
+      case "awaiting_resolution":
+        return (
+          <span className="flex items-center gap-1 text-pollgy-blue text-[10px] font-medium">
+            <Clock className="h-2.5 w-2.5" />Awaiting
+          </span>
+        );
+      case "closed":
+        return (
+          <span className="flex items-center gap-1 text-amber-600 text-[10px] font-medium">
+            <AlertTriangle className="h-2.5 w-2.5" />Dispute: {disputeEndsIn}
+          </span>
+        );
+      case "resolved":
+        return (
+          <span className="flex items-center gap-1 text-muted-foreground text-[10px]">
+            <CheckCircle2 className="h-2.5 w-2.5" />Resolved
+          </span>
+        );
+      default:
+        return (
+          <span className="flex items-center gap-1 text-muted-foreground text-[10px]">
+            <Clock className="h-2.5 w-2.5" />{endsIn}
+          </span>
+        );
+    }
   };
 
   return (
@@ -242,57 +258,38 @@ export function MarketGridCard({
         }`}
         onClick={handleCardClick}
       >
-        {/* ── Desktop Layout ── */}
-        <div className="sm:flex hidden flex-col p-3 h-full">
-          {/* Header: image + title */}
-          <div className="flex items-start gap-3 mb-2">
-            <div className="relative w-10 h-10 rounded-lg overflow-hidden bg-secondary flex-shrink-0">
-              <img src={image} alt={title} className="h-full w-full object-cover" />
-              {isClosingSoon && (
-                <div className="absolute inset-0 bg-amber-500/20 animate-pulse" />
-              )}
-            </div>
-            <h3 className="text-sm font-semibold leading-snug line-clamp-2 group-hover:text-primary transition-colors flex-1">
-              {title}
-            </h3>
-          </div>
+        {/* ── Desktop/Tablet ── */}
+        <div className="sm:flex hidden flex-col p-3 h-full gap-2">
+          {/* Title */}
+          <h3 className="text-[13px] font-semibold leading-snug line-clamp-2 group-hover:text-primary transition-colors">
+            {title}
+          </h3>
 
-          {/* Pot + Players row — the hero element */}
-          <div className="flex items-center gap-2 mb-2.5">
-            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-extrabold">
-              <Trophy className="h-3 w-3" />
-              {potDisplay}
-            </span>
+          {/* Pot highlight */}
+          <div className="flex items-center justify-between">
+            <span className="text-primary text-sm font-extrabold">{potDisplay} <span className="text-[10px] font-medium text-muted-foreground">pot</span></span>
             <span className="text-[10px] text-muted-foreground flex items-center gap-1">
-              <Users className="h-2.5 w-2.5" />
-              {players > 0 ? players.toLocaleString() : '0'}
+              <Users className="h-2.5 w-2.5" />{players.toLocaleString()}
             </span>
           </div>
 
-          {/* Outcomes — all tradable buttons */}
+          {/* Outcomes */}
           <div className="flex-1 flex flex-col justify-center">
-            <OutcomeButtons compact />
+            <OutcomeButtons />
           </div>
 
-          {/* Win up to hook */}
-          {winUpTo && (
-            <p className="text-[10px] text-primary font-semibold mt-2 flex items-center gap-1">
-              <Ticket className="h-3 w-3" />
-              Win up to {winUpTo} from $10
-            </p>
-          )}
-          
-          {/* Footer */}
-          <div className="flex items-center gap-3 text-[10px] text-muted-foreground mt-2 pt-2 border-t border-border">
-            <StatusBadge />
-            {!StatusBadge() && (
-              <span className="flex items-center gap-1">
-                <Clock className="h-2.5 w-2.5" />
-                {endsIn}
-              </span>
-            )}
+          {/* Footer: win up to + timer + actions */}
+          <div className="flex items-center justify-between pt-1.5 border-t border-border/50 text-[10px]">
+            <div className="flex items-center gap-2.5">
+              {winUpTo && (
+                <span className="text-primary font-semibold flex items-center gap-0.5">
+                  <Ticket className="h-2.5 w-2.5" />Win up to {winUpTo}
+                </span>
+              )}
+              {statusLine()}
+            </div>
             {!isClosedOrResolved && (
-              <div className="ml-auto flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
                 <button 
                   className="p-1 rounded hover:bg-secondary transition-colors"
                   onClick={(e) => {
@@ -301,89 +298,39 @@ export function MarketGridCard({
                     toast({ title: "Link copied!" });
                   }}
                 >
-                  <Share2 className="h-3 w-3" />
+                  <Share2 className="h-3 w-3 text-muted-foreground" />
                 </button>
                 <button 
                   className="p-1 rounded hover:bg-secondary transition-colors"
                   onClick={(e) => { e.stopPropagation(); toast({ title: "Saved to watchlist" }); }}
                 >
-                  <Bookmark className="h-3 w-3" />
+                  <Bookmark className="h-3 w-3 text-muted-foreground" />
                 </button>
               </div>
             )}
           </div>
         </div>
 
-        {/* ── Mobile Layout — flat list item ── */}
-        <div className="sm:hidden py-3 px-4">
-          {/* Row 1: Thumbnail + Title + Pot */}
-          <div className="flex gap-3">
-            <div className="relative w-10 h-10 rounded-lg overflow-hidden bg-secondary flex-shrink-0">
-              <img src={image} alt={title} className="h-full w-full object-cover" />
-              {isClosingSoon && (
-                <div className="absolute inset-0 bg-amber-500/20 animate-pulse" />
-              )}
-            </div>
+        {/* ── Mobile ── */}
+        <div className="sm:hidden py-2.5 px-4">
+          <div className="flex gap-3 mb-2">
             <div className="flex-1 min-w-0">
-              <h3 className="text-[13px] font-semibold leading-snug line-clamp-2">
-                {title}
-              </h3>
+              <h3 className="text-[13px] font-semibold leading-snug line-clamp-2">{title}</h3>
               <div className="flex items-center gap-2 mt-1">
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[11px] font-extrabold">
-                  <Trophy className="h-2.5 w-2.5" />
-                  {potDisplay}
-                </span>
+                <span className="text-primary text-xs font-extrabold">{potDisplay}</span>
                 <span className="text-[10px] text-muted-foreground flex items-center gap-1">
-                  <Users className="h-2.5 w-2.5" />
-                  {players > 0 ? players.toLocaleString() : '0'}
+                  <Users className="h-2.5 w-2.5" />{players.toLocaleString()}
                 </span>
+                {statusLine()}
               </div>
             </div>
           </div>
-
-          {/* Row 2: Outcomes */}
-          <div className="mt-2.5">
-            <OutcomeButtons />
-          </div>
-
-          {/* Row 3: Win up to + footer */}
-          <div className="flex items-center justify-between mt-2 text-[11px] text-muted-foreground">
-            <div className="flex items-center gap-2">
-              {winUpTo && (
-                <span className="text-primary font-semibold flex items-center gap-1">
-                  <Ticket className="h-3 w-3" />
-                  Win up to {winUpTo}
-                </span>
-              )}
-              {!winUpTo && <StatusBadge />}
-              {!winUpTo && !StatusBadge() && (
-                <span className="flex items-center gap-1">
-                  <Clock className="h-3 w-3" />
-                  {endsIn}
-                </span>
-              )}
-            </div>
-            {!isClosedOrResolved && (
-              <div className="flex items-center gap-1">
-                <button 
-                  className="p-1 rounded hover:bg-secondary transition-colors"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    navigator.clipboard.writeText(`${window.location.origin}/market/${id}`);
-                    toast({ title: "Link copied!" });
-                  }}
-                >
-                  <Share2 className="h-3.5 w-3.5" />
-                </button>
-                <button 
-                  className="p-1 rounded hover:bg-secondary transition-colors"
-                  onClick={(e) => { e.stopPropagation(); toast({ title: "Saved to watchlist" }); }}
-                >
-                  <Bookmark className="h-3.5 w-3.5" />
-                </button>
-              </div>
-            )}
-          </div>
+          <OutcomeButtons />
+          {winUpTo && (
+            <p className="text-[10px] text-primary font-semibold mt-1.5 flex items-center gap-0.5">
+              <Ticket className="h-2.5 w-2.5" />Win up to {winUpTo} per ticket
+            </p>
+          )}
         </div>
       </Card>
     </>
