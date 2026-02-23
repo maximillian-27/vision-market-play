@@ -204,8 +204,8 @@ export function MarketGridCard({
       )}
       
       <Card 
-        className={`group overflow-hidden cursor-pointer border-border/50 bg-card card-hover h-full ${
-          isClosingSoon ? 'ring-1 ring-amber-500/25' : ''
+        className={`group overflow-hidden cursor-pointer border-border bg-card card-hover h-full ${
+          isClosingSoon ? 'ring-1 ring-amber-500/30' : ''
         }`}
         onClick={handleCardClick}
       >
@@ -228,7 +228,7 @@ export function MarketGridCard({
 
           {/* Pot size pill */}
           <div className="mb-2">
-            <span className="inline-flex items-center px-2.5 py-1 rounded-md bg-primary/15 dark:bg-primary/20 text-primary text-xs font-extrabold tracking-tight">
+            <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-extrabold">
               {potDisplay} Pot
             </span>
           </div>
@@ -273,14 +273,14 @@ export function MarketGridCard({
               </div>
             ) : isBinary ? (
               <div className="flex items-center gap-2">
-              <button 
-                  className="flex-1 rounded-md py-2 text-center bg-yes/10 dark:bg-yes/20 hover:bg-yes text-yes hover:text-yes-foreground border border-yes/25 dark:border-yes/35 hover:border-yes transition-all duration-150 active:scale-[0.97]"
+                <button 
+                  className="flex-1 rounded-md py-1.5 text-center bg-yes/15 dark:bg-yes/25 hover:bg-yes text-yes hover:text-yes-foreground border border-yes/30 dark:border-yes/40 hover:border-yes transition-all active:scale-[0.98]"
                   onClick={handleOutcomeClick}
                 >
                   <span className="text-xs font-bold">Yes {yesPercent}%</span>
                 </button>
                 <button 
-                  className="flex-1 rounded-md py-2 text-center bg-no/10 dark:bg-no/20 hover:bg-no text-no hover:text-no-foreground border border-no/25 dark:border-no/35 hover:border-no transition-all duration-150 active:scale-[0.97]"
+                  className="flex-1 rounded-md py-1.5 text-center bg-no/15 dark:bg-no/25 hover:bg-no text-no hover:text-no-foreground border border-no/30 dark:border-no/40 hover:border-no transition-all active:scale-[0.98]"
                   onClick={handleOutcomeClick}
                 >
                   <span className="text-xs font-bold">No {noPercent}%</span>
@@ -291,7 +291,7 @@ export function MarketGridCard({
                 {displayOutcomes.slice(0, 2).map((outcome, index) => (
                   <button 
                     key={index}
-                    className="w-full flex items-center justify-between text-xs py-2 px-2.5 rounded-lg bg-muted/60 hover:bg-muted transition-all duration-150"
+                    className="w-full flex items-center justify-between text-xs py-1.5 px-2 rounded-lg bg-secondary/50 hover:bg-secondary transition-all"
                     onClick={handleOutcomeClick}
                   >
                     <span className="font-medium truncate flex-1 text-left">{outcome.label}</span>
@@ -307,7 +307,7 @@ export function MarketGridCard({
 
           {/* "Win up to" teaser */}
           {winUpTo && !isBettingDisabled && (
-            <p className="text-[10px] text-primary/70 font-medium mt-1.5">
+            <p className="text-[10px] text-primary/80 font-semibold mt-1.5">
               Win up to {winUpTo}
             </p>
           )}
@@ -391,7 +391,7 @@ export function MarketGridCard({
               </h3>
 
               {/* Pot size */}
-              <span className="inline-flex items-center w-fit px-2 py-0.5 rounded-md bg-primary/15 dark:bg-primary/20 text-primary text-[11px] font-extrabold tracking-tight">
+              <span className="inline-flex items-center w-fit px-2 py-0.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[11px] font-extrabold">
                 {potDisplay} Pot
               </span>
             </div>
