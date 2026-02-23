@@ -8,9 +8,9 @@ import {
 import {
   BarChart3, TrendingUp, TrendingDown, Users, DollarSign,
   ArrowUpRight, ArrowDownRight, Download, Target, Zap, Megaphone, Percent, Star, UserPlus,
-  Banknote, PieChart as PieChartIcon, Scale,
 } from "lucide-react";
 import { toast } from "sonner";
+import { AdminMarketing } from "./AdminMarketing";
 import { Progress } from "@/components/ui/progress";
 import {
   LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, AreaChart, Area,
@@ -79,7 +79,6 @@ const userMetrics = [
   { metric: "Churn Rate (30d)", value: "4.2%", benchmark: "5%", status: "good" },
   { metric: "Customer Acquisition Cost", value: "$28", benchmark: "$25", status: "warning" },
   { metric: "Lifetime Value", value: "$890", benchmark: "$750", status: "good" },
-  { metric: "LTV:CAC Ratio", value: "31.8x", benchmark: ">3x", status: "good" },
 ];
 
 const conversionFunnel = [
@@ -131,40 +130,6 @@ const revenueData = [
   { date: "Jan 29", revenue: 58000 },
 ];
 
-// Financial P&L Data
-const plMonthly = [
-  { month: "Aug", revenue: 68000, costs: 28000, profit: 40000 },
-  { month: "Sep", revenue: 82000, costs: 33000, profit: 49000 },
-  { month: "Oct", revenue: 95000, costs: 38000, profit: 57000 },
-  { month: "Nov", revenue: 108000, costs: 42000, profit: 66000 },
-  { month: "Dec", revenue: 115000, costs: 45000, profit: 70000 },
-  { month: "Jan", revenue: 124500, costs: 48000, profit: 76500 },
-];
-
-const costBreakdown = [
-  { name: "Creator Payouts", value: 24900, percent: 51.9 },
-  { name: "Affiliate Payouts", value: 10080, percent: 21.0 },
-  { name: "Infrastructure", value: 5200, percent: 10.8 },
-  { name: "Support Staff", value: 4800, percent: 10.0 },
-  { name: "Marketing Spend", value: 3020, percent: 6.3 },
-];
-
-const revenueBySource = [
-  { source: "Organic Users", volume: 8500000, revenue: 255000, percent: 52.1 },
-  { source: "Creator Markets", volume: 6300000, revenue: 189000, percent: 38.6 },
-  { source: "Affiliate Referrals", volume: 3100000, revenue: 93000, percent: 19.0 },
-  { source: "VIP/Whale Users", volume: 2800000, revenue: 84000, percent: 17.2 },
-];
-
-const unitEconomics = [
-  { label: "Revenue per Trade", value: "$14.85", change: 2.1 },
-  { label: "Revenue per Market", value: "$2,450", change: 5.3 },
-  { label: "Revenue per Creator", value: "$5,128", change: 8.1 },
-  { label: "Revenue per Affiliate", value: "$3,370", change: 4.2 },
-  { label: "Cost per User Acquired", value: "$28", change: -3.5 },
-  { label: "Payback Period (days)", value: "18", change: -12.0 },
-];
-
 const tooltipStyle = { backgroundColor: 'hsl(var(--popover))', border: '1px solid hsl(var(--border))', borderRadius: '8px', color: 'hsl(var(--popover-foreground))' };
 const tickStyle = { fill: 'hsl(var(--muted-foreground))', fontSize: 12 };
 
@@ -180,10 +145,10 @@ export const AdminAnalytics = () => {
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <TabsList className="bg-muted/50 p-1 flex-wrap h-auto gap-1">
             <TabsTrigger value="performance" className="data-[state=active]:bg-background gap-2"><BarChart3 className="h-4 w-4" /> Performance</TabsTrigger>
-            <TabsTrigger value="financial" className="data-[state=active]:bg-background gap-2"><Banknote className="h-4 w-4" /> Financial</TabsTrigger>
             <TabsTrigger value="users-funnel" className="data-[state=active]:bg-background gap-2"><Users className="h-4 w-4" /> Users & Funnel</TabsTrigger>
             <TabsTrigger value="markets" className="data-[state=active]:bg-background gap-2"><TrendingUp className="h-4 w-4" /> Markets</TabsTrigger>
             <TabsTrigger value="creators-affiliates" className="data-[state=active]:bg-background gap-2"><Star className="h-4 w-4" /> Creators & Affiliates</TabsTrigger>
+            <TabsTrigger value="marketing" className="data-[state=active]:bg-background gap-2"><Megaphone className="h-4 w-4" /> Marketing</TabsTrigger>
           </TabsList>
           <div className="flex items-center gap-3">
             <Select defaultValue="7d">
@@ -225,6 +190,7 @@ export const AdminAnalytics = () => {
             ))}
           </div>
 
+          {/* Extra Performance KPIs */}
           <div className="grid grid-cols-3 gap-4">
             {performanceExtras.map((kpi) => (
               <Card key={kpi.label} className="border-border/40">
@@ -273,130 +239,6 @@ export const AdminAnalytics = () => {
                   <Progress value={source.percentage} className="h-2" />
                 </div>
               ))}
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* Financial — CFO Critical */}
-        <TabsContent value="financial" className="space-y-4">
-          {/* P&L Summary Cards */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <Card className="border-border/40 bg-success/5">
-              <CardContent className="p-4">
-                <div className="flex items-center gap-2 text-success text-sm mb-1"><DollarSign className="h-4 w-4" /> Gross Revenue</div>
-                <p className="text-2xl font-bold">$124.5K</p>
-                <Badge className="text-xs bg-success/10 text-success border-0 mt-1"><ArrowUpRight className="h-3 w-3 mr-1" />12.5%</Badge>
-              </CardContent>
-            </Card>
-            <Card className="border-border/40 bg-destructive/5">
-              <CardContent className="p-4">
-                <div className="flex items-center gap-2 text-destructive text-sm mb-1"><ArrowDownRight className="h-4 w-4" /> Total Costs</div>
-                <p className="text-2xl font-bold">$48.0K</p>
-                <p className="text-xs text-muted-foreground mt-1">38.6% of revenue</p>
-              </CardContent>
-            </Card>
-            <Card className="border-border/40 bg-success/5">
-              <CardContent className="p-4">
-                <div className="flex items-center gap-2 text-success text-sm mb-1"><Banknote className="h-4 w-4" /> Net Profit</div>
-                <p className="text-2xl font-bold">$76.5K</p>
-                <Badge className="text-xs bg-success/10 text-success border-0 mt-1"><ArrowUpRight className="h-3 w-3 mr-1" />61.4% margin</Badge>
-              </CardContent>
-            </Card>
-            <Card className="border-border/40">
-              <CardContent className="p-4">
-                <div className="flex items-center gap-2 text-muted-foreground text-sm mb-1"><Scale className="h-4 w-4" /> Burn Rate</div>
-                <p className="text-2xl font-bold">$0</p>
-                <p className="text-xs text-success mt-1">Cash flow positive ✓</p>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* P&L Chart */}
-          <Card className="border-border/40">
-            <CardHeader className="pb-3"><CardTitle className="text-base">Monthly P&L Trend</CardTitle></CardHeader>
-            <CardContent>
-              <div className="h-64">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={plMonthly}>
-                    <CartesianGrid strokeDasharray="3 3" className="stroke-border/40" />
-                    <XAxis dataKey="month" tick={tickStyle} />
-                    <YAxis tick={tickStyle} tickFormatter={(v) => `$${(v / 1000).toFixed(0)}K`} />
-                    <Tooltip contentStyle={tooltipStyle} formatter={(value: number) => [`$${value.toLocaleString()}`, '']} />
-                    <Legend />
-                    <Bar dataKey="revenue" name="Revenue" fill="hsl(var(--success))" radius={[4, 4, 0, 0]} />
-                    <Bar dataKey="costs" name="Costs" fill="hsl(var(--destructive))" radius={[4, 4, 0, 0]} />
-                    <Bar dataKey="profit" name="Net Profit" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Cost Breakdown + Revenue by Source */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            <Card className="border-border/40">
-              <CardHeader className="pb-3"><CardTitle className="text-base flex items-center gap-2"><PieChartIcon className="h-4 w-4" /> Cost Breakdown</CardTitle></CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {costBreakdown.map((cost) => (
-                    <div key={cost.name} className="space-y-1">
-                      <div className="flex items-center justify-between text-sm">
-                        <span>{cost.name}</span>
-                        <span className="font-medium">${cost.value.toLocaleString()} ({cost.percent}%)</span>
-                      </div>
-                      <Progress value={cost.percent} className="h-2" />
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-            <Card className="border-border/40">
-              <CardHeader className="pb-3"><CardTitle className="text-base">Revenue by Source</CardTitle></CardHeader>
-              <CardContent>
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead>
-                      <tr className="border-b border-border/40 text-left text-sm text-muted-foreground">
-                        <th className="p-2 font-medium">Source</th>
-                        <th className="p-2 font-medium">Volume</th>
-                        <th className="p-2 font-medium">Revenue (3%)</th>
-                        <th className="p-2 font-medium">Share</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {revenueBySource.map((r) => (
-                        <tr key={r.source} className="border-b border-border/20">
-                          <td className="p-2 text-sm font-medium">{r.source}</td>
-                          <td className="p-2 text-sm">${(r.volume / 1000000).toFixed(1)}M</td>
-                          <td className="p-2 text-sm font-medium text-success">${(r.revenue / 1000).toFixed(0)}K</td>
-                          <td className="p-2 text-sm">{r.percent}%</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Unit Economics */}
-          <Card className="border-border/40">
-            <CardHeader className="pb-3"><CardTitle className="text-base">Unit Economics</CardTitle></CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-                {unitEconomics.map((ue) => (
-                  <div key={ue.label} className="p-3 rounded-lg bg-muted/30">
-                    <p className="text-sm text-muted-foreground mb-1">{ue.label}</p>
-                    <div className="flex items-center gap-2">
-                      <p className="text-xl font-bold">{ue.value}</p>
-                      <Badge className={`text-xs border-0 ${ue.change >= 0 ? 'bg-success/10 text-success' : 'bg-destructive/10 text-destructive'}`}>
-                        {ue.change >= 0 ? <ArrowUpRight className="h-3 w-3 mr-1" /> : <ArrowDownRight className="h-3 w-3 mr-1" />}
-                        {Math.abs(ue.change)}%
-                      </Badge>
-                    </div>
-                  </div>
-                ))}
-              </div>
             </CardContent>
           </Card>
         </TabsContent>
@@ -519,6 +361,7 @@ export const AdminAnalytics = () => {
             </CardContent>
           </Card>
 
+          {/* Top Creators by Revenue */}
           <Card className="border-border/40">
             <CardHeader className="pb-3"><CardTitle className="text-base flex items-center gap-2"><Star className="h-4 w-4" /> Top Creators by Revenue</CardTitle></CardHeader>
             <CardContent>
@@ -589,6 +432,7 @@ export const AdminAnalytics = () => {
 
         {/* Creators & Affiliates Analytics */}
         <TabsContent value="creators-affiliates" className="space-y-4">
+          {/* Creator KPIs */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             <Card className="border-border/40"><CardContent className="p-4"><div className="flex items-center gap-2 text-muted-foreground text-sm mb-1"><Star className="h-4 w-4" /> Total Creators</div><p className="text-2xl font-bold">156</p></CardContent></Card>
             <Card className="border-border/40 bg-success/5"><CardContent className="p-4"><p className="text-sm text-muted-foreground mb-1">Avg Revenue/Creator</p><p className="text-2xl font-bold">${avgRevenuePerCreator.toLocaleString(undefined, {maximumFractionDigits: 0})}</p></CardContent></Card>
@@ -596,6 +440,7 @@ export const AdminAnalytics = () => {
             <Card className="border-border/40 bg-warning/5"><CardContent className="p-4"><p className="text-sm text-muted-foreground mb-1">Creator Churn Rate</p><p className="text-2xl font-bold">2.8%</p></CardContent></Card>
           </div>
 
+          {/* Affiliate KPIs */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             <Card className="border-border/40"><CardContent className="p-4"><div className="flex items-center gap-2 text-muted-foreground text-sm mb-1"><UserPlus className="h-4 w-4" /> Total Affiliates</div><p className="text-2xl font-bold">89</p></CardContent></Card>
             <Card className="border-border/40 bg-success/5"><CardContent className="p-4"><p className="text-sm text-muted-foreground mb-1">Avg Revenue/Affiliate</p><p className="text-2xl font-bold">${avgRevenuePerAffiliate.toLocaleString(undefined, {maximumFractionDigits: 0})}</p></CardContent></Card>
@@ -603,6 +448,7 @@ export const AdminAnalytics = () => {
             <Card className="border-border/40 bg-primary/5"><CardContent className="p-4"><p className="text-sm text-muted-foreground mb-1">Affiliate Conversion Rate</p><p className="text-2xl font-bold">14.2%</p></CardContent></Card>
           </div>
 
+          {/* Creator vs Organic Revenue */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Card className="border-border/40 bg-primary/5">
               <CardContent className="p-4">
@@ -620,6 +466,7 @@ export const AdminAnalytics = () => {
             </Card>
           </div>
 
+          {/* Top 5 Creators */}
           <Card className="border-border/40">
             <CardHeader className="pb-3"><CardTitle className="text-base flex items-center gap-2"><Star className="h-4 w-4" /> Top 5 Creators by Volume</CardTitle></CardHeader>
             <CardContent>
@@ -654,6 +501,7 @@ export const AdminAnalytics = () => {
             </CardContent>
           </Card>
 
+          {/* Top 5 Affiliates */}
           <Card className="border-border/40">
             <CardHeader className="pb-3"><CardTitle className="text-base flex items-center gap-2"><UserPlus className="h-4 w-4" /> Top 5 Affiliates by Referral Volume</CardTitle></CardHeader>
             <CardContent>
@@ -686,6 +534,7 @@ export const AdminAnalytics = () => {
             </CardContent>
           </Card>
 
+          {/* Creator Growth Chart */}
           <Card className="border-border/40">
             <CardHeader className="pb-3"><CardTitle className="text-base">Creator & Affiliate Growth</CardTitle></CardHeader>
             <CardContent>
@@ -704,6 +553,10 @@ export const AdminAnalytics = () => {
               </div>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="marketing" className="space-y-4">
+          <AdminMarketing />
         </TabsContent>
       </Tabs>
     </div>
