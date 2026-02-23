@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { PageHeader } from "@/components/PageHeader";
 import { Card, CardContent } from "@/components/ui/card";
@@ -24,9 +25,16 @@ import {
 
 // Mock data - ticket/gambling model
 const balance = 5230;
-const totalWinnings = 3847;
-const totalSpent = 2190;
-const netProfit = totalWinnings - totalSpent;
+
+const winningsByPeriod = {
+  "1d": { winnings: 128, spent: 45 },
+  "7d": { winnings: 261, spent: 120 },
+  "30d": { winnings: 1420, spent: 680 },
+  "90d": { winnings: 2890, spent: 1450 },
+  "all": { winnings: 3847, spent: 2190 },
+};
+
+type WinningsPeriod = keyof typeof winningsByPeriod;
 
 const quickStats = {
   activeEntries: 4,
@@ -65,6 +73,10 @@ const pastNet = pastTotalWon - pastTotalSpent;
 
 const Portfolio = () => {
   const navigate = useNavigate();
+  const [winPeriod, setWinPeriod] = useState<WinningsPeriod>("all");
+
+  const currentWin = winningsByPeriod[winPeriod];
+  const netProfit = currentWin.winnings - currentWin.spent;
 
   const totalAtStake = entries.reduce((sum, e) => sum + e.tickets * e.ticketPrice, 0);
   const totalPotentialPayout = entries.reduce((sum, e) => sum + e.potentialPayout, 0);
@@ -98,17 +110,32 @@ const Portfolio = () => {
 
           <Card className="border-border/40">
             <CardContent className="p-3 sm:p-4">
-              <div className="flex items-center gap-1.5 text-muted-foreground text-[11px] sm:text-xs mb-1">
-                <Trophy className="h-3.5 w-3.5" />
-                Total Winnings
+              <div className="flex items-center justify-between mb-1">
+                <div className="flex items-center gap-1.5 text-muted-foreground text-[11px] sm:text-xs">
+                  <Trophy className="h-3.5 w-3.5" />
+                  Winnings
+                </div>
+                <div className="flex gap-0.5">
+                  {(["1d", "7d", "30d", "90d", "all"] as WinningsPeriod[]).map((p) => (
+                    <button
+                      key={p}
+                      onClick={() => setWinPeriod(p)}
+                      className={`px-1.5 py-0.5 text-[8px] sm:text-[9px] font-medium rounded transition-colors ${
+                        winPeriod === p
+                          ? "bg-primary/10 text-primary"
+                          : "text-muted-foreground/50 hover:text-muted-foreground"
+                      }`}
+                    >
+                      {p === "all" ? "All" : p.toUpperCase()}
+                    </button>
+                  ))}
+                </div>
               </div>
-              <p className="text-xl sm:text-2xl font-bold text-success tracking-tight">${totalWinnings.toLocaleString()}</p>
-              <div className="flex items-center gap-2 mt-1.5">
-                <span className={`text-[10px] sm:text-xs font-medium flex items-center gap-0.5 ${netProfit >= 0 ? 'text-success' : 'text-destructive'}`}>
-                  <TrendingUp className="h-3 w-3" />
-                  {netProfit >= 0 ? '+' : ''}${netProfit.toLocaleString()} net
-                </span>
-              </div>
+              <p className="text-xl sm:text-2xl font-bold text-success tracking-tight">${currentWin.winnings.toLocaleString()}</p>
+              <span className={`text-[10px] sm:text-xs font-medium flex items-center gap-0.5 mt-1 ${netProfit >= 0 ? 'text-success/70' : 'text-destructive'}`}>
+                <TrendingUp className="h-3 w-3" />
+                {netProfit >= 0 ? '+' : ''}${netProfit.toLocaleString()} net
+              </span>
             </CardContent>
           </Card>
         </div>
