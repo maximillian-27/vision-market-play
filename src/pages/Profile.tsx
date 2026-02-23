@@ -123,7 +123,7 @@ const mockUserActivity: ActivityItem[] = [
     id: "a3",
     type: "post",
     timestamp: "3d",
-    content: "Just got into prediction markets last month and already seeing great returns. The key is doing your research!",
+    content: "Just got into prediction games last month and already seeing great picks. The key is doing your research!",
     likes: 67,
     comments: 12,
     reposts: 5,
@@ -287,14 +287,14 @@ export default function Profile() {
             <CardContent className="p-6">
               <div className="grid grid-cols-2 gap-6">
                 <div>
-                  <p className="text-sm text-muted-foreground mb-1">Portfolio Value</p>
+                  <p className="text-sm text-muted-foreground mb-1">Balance</p>
                   <p className="text-3xl font-bold">${userData.portfolioValue.toLocaleString()}</p>
-                  <p className="text-sm text-success mt-1">{userData.totalProfit} profit</p>
+                  <p className="text-sm text-success mt-1">{userData.totalProfit} total winnings</p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground mb-1">Cash Balance</p>
+                  <p className="text-sm text-muted-foreground mb-1">Available</p>
                   <p className="text-3xl font-bold">${userData.cashBalance.toLocaleString()}</p>
-                  <p className="text-sm text-muted-foreground mt-1">Available to trade</p>
+                  <p className="text-sm text-muted-foreground mt-1">Available to play</p>
                 </div>
               </div>
             </CardContent>
@@ -326,7 +326,7 @@ export default function Profile() {
 
         {/* Content Tabs */}
         <Card className="border-border/40">
-          <Tabs defaultValue={isCreator ? "markets" : "positions"} className="w-full">
+          <Tabs defaultValue={isCreator ? "markets" : "entries"} className="w-full">
             <CardHeader className="pb-0">
               <TabsList className="grid w-full grid-cols-3">
                 {isCreator ? (
@@ -337,7 +337,7 @@ export default function Profile() {
                   </>
                 ) : (
                   <>
-                    <TabsTrigger value="positions">Positions</TabsTrigger>
+                    <TabsTrigger value="entries">Entries</TabsTrigger>
                     <TabsTrigger value="posts">Posts</TabsTrigger>
                     <TabsTrigger value="achievements">Achievements</TabsTrigger>
                   </>
@@ -354,9 +354,9 @@ export default function Profile() {
               </TabsContent>
             )}
             
-            {/* Positions Tab - Traders */}
+            {/* Entries Tab - Players */}
             {!isCreator && (
-              <TabsContent value="positions" className="p-0">
+              <TabsContent value="entries" className="p-0">
                 <div className="divide-y divide-border/40">
                   {isOwnProfile ? (
                     <>
@@ -366,11 +366,13 @@ export default function Profile() {
                       >
                         <div className="flex-1 min-w-0 pr-4">
                           <h3 className="font-medium text-sm leading-snug">Bitcoin reaches $100K by 2025?</h3>
-                          <p className="text-xs text-muted-foreground mt-0.5">Yes at 68¢ · 3mo left</p>
+                          <p className="text-xs text-muted-foreground mt-0.5">
+                            <Badge variant="success" className="text-[10px] px-1.5 py-0 mr-1.5">YES</Badge>
+                            25 tickets · 3mo left
+                          </p>
                         </div>
                         <div className="text-right shrink-0">
-                          <div className="text-sm font-semibold text-success">+$124</div>
-                          <div className="text-[11px] text-muted-foreground">+15.2%</div>
+                          <div className="text-sm font-semibold text-success">If you win: $312</div>
                         </div>
                       </div>
                       <div 
@@ -379,11 +381,13 @@ export default function Profile() {
                       >
                         <div className="flex-1 min-w-0 pr-4">
                           <h3 className="font-medium text-sm leading-snug">Lakers make NBA playoffs?</h3>
-                          <p className="text-xs text-muted-foreground mt-0.5">No at 55¢ · 2w left</p>
+                          <p className="text-xs text-muted-foreground mt-0.5">
+                            <Badge variant="destructive" className="text-[10px] px-1.5 py-0 mr-1.5">NO</Badge>
+                            10 tickets · 2w left
+                          </p>
                         </div>
                         <div className="text-right shrink-0">
-                          <div className="text-sm font-semibold text-destructive">-$45</div>
-                          <div className="text-[11px] text-muted-foreground">-8.1%</div>
+                          <div className="text-sm font-semibold text-success">If you win: $185</div>
                         </div>
                       </div>
                     </>
@@ -395,11 +399,13 @@ export default function Profile() {
                       >
                         <div className="flex-1 min-w-0 pr-4">
                           <h3 className="font-medium text-sm leading-snug">Will AI replace 50% of jobs by 2030?</h3>
-                          <p className="text-xs text-muted-foreground mt-0.5">Yes at 42¢ · 5y left</p>
+                          <p className="text-xs text-muted-foreground mt-0.5">
+                            <Badge variant="success" className="text-[10px] px-1.5 py-0 mr-1.5">YES</Badge>
+                            40 tickets · 5y left
+                          </p>
                         </div>
                         <div className="text-right shrink-0">
-                          <div className="text-sm font-semibold text-success">+$89</div>
-                          <div className="text-[11px] text-muted-foreground">+21.2%</div>
+                          <div className="text-sm font-semibold text-success">If you win: $520</div>
                         </div>
                       </div>
                       <div 
@@ -408,11 +414,13 @@ export default function Profile() {
                       >
                         <div className="flex-1 min-w-0 pr-4">
                           <h3 className="font-medium text-sm leading-snug">Tesla stock above $300 by Q2 2025?</h3>
-                          <p className="text-xs text-muted-foreground mt-0.5">No at 61¢ · 6mo left</p>
+                          <p className="text-xs text-muted-foreground mt-0.5">
+                            <Badge variant="destructive" className="text-[10px] px-1.5 py-0 mr-1.5">NO</Badge>
+                            15 tickets · 6mo left
+                          </p>
                         </div>
                         <div className="text-right shrink-0">
-                          <div className="text-sm font-semibold text-success">+$156</div>
-                          <div className="text-[11px] text-muted-foreground">+25.6%</div>
+                          <div className="text-sm font-semibold text-success">If you win: $245</div>
                         </div>
                       </div>
                       <div 
@@ -421,11 +429,13 @@ export default function Profile() {
                       >
                         <div className="flex-1 min-w-0 pr-4">
                           <h3 className="font-medium text-sm leading-snug">Fed cuts rates before March 2025?</h3>
-                          <p className="text-xs text-muted-foreground mt-0.5">Yes at 73¢ · 3mo left</p>
+                          <p className="text-xs text-muted-foreground mt-0.5">
+                            <Badge variant="success" className="text-[10px] px-1.5 py-0 mr-1.5">YES</Badge>
+                            30 tickets · 3mo left
+                          </p>
                         </div>
                         <div className="text-right shrink-0">
-                          <div className="text-sm font-semibold text-destructive">-$32</div>
-                          <div className="text-[11px] text-muted-foreground">-4.4%</div>
+                          <div className="text-sm font-semibold text-success">If you win: $410</div>
                         </div>
                       </div>
                     </>
@@ -519,14 +529,14 @@ export default function Profile() {
                   <h4 className="font-semibold mb-2">About</h4>
                   <p className="text-muted-foreground leading-relaxed">{creatorStats.description}</p>
                 </div>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t">
                   <div className="text-center">
                     <p className="text-2xl font-bold">{creatorStats.markets}</p>
                     <p className="text-sm text-muted-foreground">Markets</p>
                   </div>
                   <div className="text-center">
                     <p className="text-2xl font-bold text-success">{creatorStats.volume}</p>
-                    <p className="text-sm text-muted-foreground">Volume</p>
+                    <p className="text-sm text-muted-foreground">Pot Generated</p>
                   </div>
                   <div className="text-center">
                     <p className="text-2xl font-bold">{creatorStats.followers.toLocaleString()}</p>
@@ -546,23 +556,23 @@ export default function Profile() {
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                   <Card className="border-border/40 bg-gradient-to-br from-yellow-500/10 to-yellow-500/5">
                     <CardContent className="p-4 text-center">
-                      <div className="text-3xl mb-2">🏆</div>
-                      <p className="font-semibold text-sm">First Trade</p>
-                      <p className="text-xs text-muted-foreground">Completed your first trade</p>
+                      <div className="text-3xl mb-2">🎟️</div>
+                      <p className="font-semibold text-sm">First Entry</p>
+                      <p className="text-xs text-muted-foreground">Placed your first ticket</p>
                     </CardContent>
                   </Card>
                   <Card className="border-border/40 bg-gradient-to-br from-blue-500/10 to-blue-500/5">
                     <CardContent className="p-4 text-center">
-                      <div className="text-3xl mb-2">🎯</div>
-                      <p className="font-semibold text-sm">Sharp Shooter</p>
-                      <p className="text-xs text-muted-foreground">70%+ accuracy</p>
+                      <div className="text-3xl mb-2">🔥</div>
+                      <p className="font-semibold text-sm">Hot Streak</p>
+                      <p className="text-xs text-muted-foreground">5+ wins in a row</p>
                     </CardContent>
                   </Card>
                   <Card className="border-border/40 bg-gradient-to-br from-green-500/10 to-green-500/5">
                     <CardContent className="p-4 text-center">
                       <div className="text-3xl mb-2">💰</div>
                       <p className="font-semibold text-sm">Big Winner</p>
-                      <p className="text-xs text-muted-foreground">$1000+ profit</p>
+                      <p className="text-xs text-muted-foreground">$1,000+ in winnings</p>
                     </CardContent>
                   </Card>
                 </div>

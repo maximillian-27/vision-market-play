@@ -196,14 +196,14 @@ const getCreatorAchievements = () => [
     id: "1",
     icon: "🏆",
     title: "Top Creator",
-    description: "Ranked in top 10 creators by volume",
+    description: "Ranked in top 10 creators by pot generated",
     date: "Dec 2024",
   },
   {
     id: "2",
     icon: "🎯",
     title: "Prediction Master",
-    description: "85%+ accuracy on resolved markets",
+    description: "85%+ resolution accuracy on markets",
     date: "Nov 2024",
   },
   {
@@ -215,9 +215,9 @@ const getCreatorAchievements = () => [
   },
   {
     id: "4",
-    icon: "💎",
-    title: "Diamond Hands",
-    description: "Held positions through 5 major swings",
+    icon: "🕰️",
+    title: "Loyal Creator",
+    description: "Markets active for 6+ months",
     date: "Sep 2024",
   },
   {

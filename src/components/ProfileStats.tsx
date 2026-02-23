@@ -1,5 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { TrendingUp, Target, Award, BarChart3, Users, Eye, DollarSign, Zap } from "lucide-react";
+import { TrendingUp, Target, Award, BarChart3, Users, Eye, DollarSign, Zap, Ticket } from "lucide-react";
 
 interface ProfileStatsProps {
   type: "trader" | "creator";
@@ -31,7 +31,7 @@ export function ProfileStats({ type, stats }: ProfileStatsProps) {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <StatCard
           icon={<DollarSign className="h-4 w-4" />}
-          label="Volume"
+          label="Pot Generated"
           value={stats.totalVolume || "$0"}
           valueClassName="text-success"
         />
@@ -47,7 +47,7 @@ export function ProfileStats({ type, stats }: ProfileStatsProps) {
         />
         <StatCard
           icon={<TrendingUp className="h-4 w-4" />}
-          label="Avg Vol / Market"
+          label="Avg Pot / Market"
           value={stats.avgVolume || "$0"}
         />
       </div>
@@ -58,18 +58,18 @@ export function ProfileStats({ type, stats }: ProfileStatsProps) {
     <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
       <StatCard
         icon={<TrendingUp className="h-4 w-4" />}
-        label="Total P&L"
+        label="Total Winnings"
         value={stats.totalProfit || "$0"}
         valueClassName={stats.totalProfit?.startsWith("+") ? "text-success" : stats.totalProfit?.startsWith("-") ? "text-destructive" : ""}
       />
       <StatCard
         icon={<Target className="h-4 w-4" />}
-        label="Accuracy"
-        value={`${stats.accuracy || 0}%`}
+        label="Win Rate"
+        value={`${stats.winRate || stats.accuracy || 0}%`}
       />
       <StatCard
-        icon={<BarChart3 className="h-4 w-4" />}
-        label="Total Trades"
+        icon={<Ticket className="h-4 w-4" />}
+        label="Markets Entered"
         value={stats.totalTrades?.toString() || "0"}
       />
       <StatCard
