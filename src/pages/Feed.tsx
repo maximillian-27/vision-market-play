@@ -555,7 +555,7 @@ export default function Feed() {
             </div>
 
             {/* Desktop: grid */}
-            <div className="hidden sm:grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-3">
+            <div className="hidden sm:columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-2 sm:gap-3 sm:block">
               {filteredMarkets.map((market) => (
                 <MarketGridCard
                   key={market.id}
