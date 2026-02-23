@@ -39,7 +39,7 @@ export function WeeklyDrawCard() {
       {/* Glow */}
       <div className="absolute -top-10 -right-10 w-28 h-28 rounded-full bg-primary/5 blur-2xl pointer-events-none" />
 
-      {/* Header: Title + Countdown */}
+      {/* Header */}
       <div className="flex items-center justify-between mb-1.5">
         <div className="flex items-center gap-1.5">
           <Trophy className="h-3.5 w-3.5 text-primary" />
@@ -47,63 +47,69 @@ export function WeeklyDrawCard() {
         </div>
         <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-muted/60 text-[9px] text-muted-foreground font-medium">
           <Timer className="h-2.5 w-2.5" />
-          {COUNTDOWN}
+          {COUNTDOWN} left
         </div>
       </div>
 
       {/* Prize pool */}
-      <div className="flex items-baseline gap-1.5 mb-1">
-        <span className="text-lg font-extrabold text-primary leading-none">
+      <div className="mb-2">
+        <div className="text-lg font-extrabold text-primary leading-none">
           ${WEEKLY_POT.toLocaleString()}
-        </span>
-        <span className="text-[8px] text-muted-foreground font-medium">prize pool</span>
+        </div>
+        <div className="text-[9px] text-muted-foreground mt-0.5">
+          Prize pool · drawn every Sunday
+        </div>
       </div>
 
-      {/* Split — compact inline pills */}
-      <div className="flex items-center gap-1 mb-2">
-        {distribution.map((d, i) => (
-          <span
-            key={d.place}
-            className="text-[7px] font-semibold px-1 py-[1px] rounded-sm"
-            style={{
-              backgroundColor: `hsl(var(--primary) / ${0.12 - i * 0.02})`,
-              color: `hsl(var(--primary))`,
-            }}
-          >
-            {d.place} {d.pct}%
-          </span>
-        ))}
+      {/* Winner split */}
+      <div className="mb-2">
+        <div className="text-[8px] text-muted-foreground font-medium mb-0.5">Winner split</div>
+        <div className="flex items-center gap-1">
+          {distribution.map((d, i) => (
+            <span
+              key={d.place}
+              className="text-[7px] font-semibold px-1 py-[1px] rounded-sm"
+              style={{
+                backgroundColor: `hsl(var(--primary) / ${0.12 - i * 0.02})`,
+                color: `hsl(var(--primary))`,
+              }}
+            >
+              {d.place} {d.pct}%
+            </span>
+          ))}
+        </div>
       </div>
 
-      {/* Your progress + total entries */}
-      <div className="flex items-center gap-2 text-[9px] mb-2">
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <span className="flex items-center gap-0.5 font-bold text-foreground cursor-help">
-                <Ticket className="h-2.5 w-2.5 text-primary" />
-                {MY_TICKETS}/{ENTRY_COST}
-              </span>
-            </TooltipTrigger>
-            <TooltipContent side="bottom" className="text-xs max-w-[180px]">
-              You have {MY_TICKETS} of {ENTRY_COST} tickets needed for your next entry.
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-
-        {/* Mini progress */}
-        <div className="flex-1 h-[3px] rounded-full bg-muted overflow-hidden">
+      {/* Your tickets toward next entry */}
+      <div className="mb-2">
+        <div className="flex items-center justify-between text-[8px] mb-0.5">
+          <span className="text-muted-foreground font-medium">Your tickets</span>
+          <span className="font-semibold text-foreground">{MY_TICKETS} / {ENTRY_COST} for next entry</span>
+        </div>
+        <div className="h-[3px] rounded-full bg-muted overflow-hidden">
           <div
             className="h-full rounded-full bg-primary transition-all"
             style={{ width: `${(MY_TICKETS / ENTRY_COST) * 100}%` }}
           />
         </div>
+      </div>
 
-        <span className="text-muted-foreground">
-          <span className="font-semibold text-foreground">{MY_ENTRIES}</span> entries
-        </span>
-        <span className="text-muted-foreground/60">·</span>
-        <span className="text-muted-foreground">{ELIGIBLE_ENTRIES.toLocaleString()} total</span>
+      {/* Entries summary */}
+      <div className="flex items-center justify-between text-[9px] mb-2">
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <span className="flex items-center gap-0.5 text-muted-foreground cursor-help">
+                <Ticket className="h-2.5 w-2.5 text-primary" />
+                Buy {ENTRY_COST} tickets = 1 draw entry
+              </span>
+            </TooltipTrigger>
+            <TooltipContent side="bottom" className="text-xs max-w-[200px]">
+              Every {ENTRY_COST} tickets you purchase earns you one entry into the weekly prize draw. More entries = better odds.
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+        <span className="font-semibold text-foreground">{MY_ENTRIES} entries</span>
       </div>
 
       {/* Actions */}
@@ -112,7 +118,7 @@ export function WeeklyDrawCard() {
           <DialogTrigger asChild>
             <button className="flex items-center gap-0.5 text-[8px] text-muted-foreground hover:text-foreground transition-colors">
               <History className="h-2.5 w-2.5" />
-              Previous
+              Previous winners
             </button>
           </DialogTrigger>
           <DialogContent className="max-w-xs">
@@ -183,10 +189,9 @@ export function WeeklyDrawCard() {
           </DialogContent>
         </Dialog>
 
-        <button className="ml-auto flex items-center gap-0.5 text-[8px] text-primary font-semibold hover:underline">
-          {ELIGIBLE_ENTRIES.toLocaleString()} entries
-          <ChevronRight className="h-2.5 w-2.5" />
-        </button>
+        <span className="ml-auto text-[8px] text-muted-foreground">
+          {ELIGIBLE_ENTRIES.toLocaleString()} total entries
+        </span>
       </div>
     </div>
   );
