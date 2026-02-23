@@ -571,13 +571,13 @@ function CompactFeaturedCard({ market }: { market: Market }) {
       {isBinary ? (
         <div className="flex gap-1">
           <button
-            className="flex-1 rounded py-1 text-center bg-yes/15 hover:bg-yes text-yes hover:text-yes-foreground border border-yes/30 hover:border-yes transition-all active:scale-[0.98] text-[10px] font-bold"
+            className="flex-1 rounded py-0.5 text-center bg-yes/15 hover:bg-yes text-yes hover:text-yes-foreground border border-yes/30 hover:border-yes transition-all active:scale-[0.98] text-[10px] font-bold"
             onClick={(e) => { e.stopPropagation(); navigate(`/market/${market.id}`); }}
           >
             Yes {displayOutcomes[0].price}%
           </button>
           <button
-            className="flex-1 rounded py-1 text-center bg-no/15 hover:bg-no text-no hover:text-no-foreground border border-no/30 hover:border-no transition-all active:scale-[0.98] text-[10px] font-bold"
+            className="flex-1 rounded py-0.5 text-center bg-no/15 hover:bg-no text-no hover:text-no-foreground border border-no/30 hover:border-no transition-all active:scale-[0.98] text-[10px] font-bold"
             onClick={(e) => { e.stopPropagation(); navigate(`/market/${market.id}`); }}
           >
             No {displayOutcomes[1].price}%
