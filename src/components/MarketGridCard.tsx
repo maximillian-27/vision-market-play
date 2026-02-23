@@ -204,8 +204,8 @@ export function MarketGridCard({
       )}
       
       <Card 
-        className={`group overflow-hidden cursor-pointer border-border bg-card card-hover h-full ${
-          isClosingSoon ? 'ring-1 ring-amber-500/30' : ''
+        className={`group overflow-hidden cursor-pointer border-border bg-card card-hover h-full sm:border sm:rounded-lg border-0 rounded-none shadow-none sm:shadow-sm ${
+          isClosingSoon ? 'sm:ring-1 sm:ring-amber-500/30' : ''
         }`}
         onClick={handleCardClick}
       >
@@ -353,24 +353,19 @@ export function MarketGridCard({
           </div>
         </div>
 
-        {/* Mobile Layout */}
-        <div className="sm:hidden flex flex-col">
-          <div className="flex gap-3 p-3 pb-2">
-            {/* Thumbnail */}
-            <div className={`relative w-20 h-20 rounded-lg overflow-hidden bg-secondary flex-shrink-0 ${isClosingSoon ? 'ring-1 ring-amber-500/40' : ''}`}>
+        {/* Mobile Layout — flat list item */}
+        <div className="sm:hidden py-3 px-4">
+          {/* Row 1: Thumbnail + Title */}
+          <div className="flex gap-3">
+            <div className="relative w-10 h-10 rounded-lg overflow-hidden bg-secondary flex-shrink-0">
               <img src={image} alt={title} className="h-full w-full object-cover" />
-              {getStatusBadge() && (
-                <div className="absolute top-1 left-1 scale-75 origin-top-left">
-                  {getStatusBadge()}
-                </div>
-              )}
             </div>
-
-            {/* Content */}
-            <div className="flex-1 min-w-0 flex flex-col gap-1">
-              {/* Creator */}
+            <div className="flex-1 min-w-0">
+              <h3 className="text-[13px] font-semibold leading-snug line-clamp-2 group-hover:text-primary transition-colors">
+                {title}
+              </h3>
               <button 
-                className="flex items-center gap-1.5 hover:opacity-70 transition-opacity w-fit"
+                className="flex items-center gap-1 mt-0.5 hover:opacity-70 transition-opacity"
                 onClick={(e) => {
                   e.stopPropagation();
                   const profilePath = creator.isCreator !== false 
@@ -379,26 +374,13 @@ export function MarketGridCard({
                   navigate(profilePath);
                 }}
               >
-                <Avatar className="h-4 w-4">
-                  <AvatarImage src={creator.avatar} alt={creator.name} />
-                  <AvatarFallback className="text-[6px]">{creator.name.slice(0, 2)}</AvatarFallback>
-                </Avatar>
-                <span className="text-[11px] text-muted-foreground font-medium truncate max-w-[140px]">{creator.name}</span>
+                <span className="text-[11px] text-muted-foreground">by {creator.name}</span>
               </button>
-              
-              <h3 className="text-[13px] font-semibold leading-snug line-clamp-2 group-hover:text-primary transition-colors">
-                {title}
-              </h3>
-
-              {/* Pot size */}
-              <span className="inline-flex items-center w-fit px-2 py-0.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[11px] font-extrabold">
-                {potDisplay} Pot
-              </span>
             </div>
           </div>
-          
-          {/* Outcomes section */}
-          <div className="px-3 pb-2">
+
+          {/* Row 2: Outcomes */}
+          <div className="mt-2.5">
             {isClosedOrResolved ? (
               <div className="flex items-center gap-2">
                 <span className="text-xs text-muted-foreground">Outcome:</span>
@@ -410,7 +392,7 @@ export function MarketGridCard({
                 </span>
                 {status === "closed" && (
                   <button 
-                    className="ml-auto px-2 py-1 rounded-md bg-orange-500/10 text-orange-600 border border-orange-500/20 text-[10px] font-medium"
+                    className="ml-auto px-2.5 py-1 rounded-md bg-orange-500/10 text-orange-600 border border-orange-500/20 text-[11px] font-medium"
                     onClick={(e) => {
                       e.stopPropagation();
                       setShowResolvedDialog(true);
@@ -421,76 +403,87 @@ export function MarketGridCard({
                 )}
               </div>
             ) : isAwaitingResolution ? (
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-bold text-yes/70">{yesPercent}%</span>
-                <div className="flex-1 h-1.5 rounded-full bg-no-muted/50 overflow-hidden">
-                  <div className="h-full rounded-full bg-yes/60" style={{ width: `${yesPercent}%` }} />
+              <div className="flex gap-2">
+                <div className="flex-1 rounded-lg py-2 text-center bg-yes/10 text-yes/60 border border-yes/20">
+                  <span className="text-[13px] font-bold">Yes {yesPercent}%</span>
                 </div>
-                <div className="flex gap-1.5">
-                  <span className="px-2.5 py-1 rounded-md bg-yes/10 text-yes/60 border border-yes/20 text-[11px] font-bold">Yes</span>
-                  <span className="px-2.5 py-1 rounded-md bg-no/10 text-no/60 border border-no/20 text-[11px] font-bold">No</span>
+                <div className="flex-1 rounded-lg py-2 text-center bg-no/10 text-no/60 border border-no/20">
+                  <span className="text-[13px] font-bold">No {noPercent}%</span>
                 </div>
               </div>
             ) : isBinary ? (
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-bold text-yes">{yesPercent}%</span>
-                <div className="flex-1 h-1.5 rounded-full bg-no-muted overflow-hidden">
-                  <div className="h-full rounded-full bg-yes" style={{ width: `${yesPercent}%` }} />
-                </div>
-                <div className="flex gap-1.5">
-                  <button 
-                    className="px-2.5 py-1 rounded-md bg-yes/15 dark:bg-yes/25 text-yes border border-yes/30 dark:border-yes/40 text-[11px] font-bold active:scale-95 transition-transform"
-                    onClick={handleOutcomeClick}
-                  >
-                    Yes
-                  </button>
-                  <button 
-                    className="px-2.5 py-1 rounded-md bg-no/15 dark:bg-no/25 text-no border border-no/30 dark:border-no/40 text-[11px] font-bold active:scale-95 transition-transform"
-                    onClick={handleOutcomeClick}
-                  >
-                    No
-                  </button>
-                </div>
+              <div className="flex gap-2">
+                <button 
+                  className="flex-1 rounded-lg py-2.5 text-center bg-yes/10 hover:bg-yes/20 text-yes border border-yes/20 active:scale-[0.98] transition-all"
+                  onClick={handleOutcomeClick}
+                >
+                  <span className="text-[13px] font-bold">Yes {yesPercent}%</span>
+                </button>
+                <button 
+                  className="flex-1 rounded-lg py-2.5 text-center bg-no/10 hover:bg-no/20 text-no border border-no/20 active:scale-[0.98] transition-all"
+                  onClick={handleOutcomeClick}
+                >
+                  <span className="text-[13px] font-bold">No {noPercent}%</span>
+                </button>
               </div>
             ) : (
-              <div className="flex gap-2 overflow-x-auto scrollbar-hide -mr-3 pr-3">
-                {displayOutcomes.slice(0, 2).map((outcome, index) => (
+              <div className="flex gap-2 overflow-x-auto scrollbar-hide">
+                {displayOutcomes.slice(0, 3).map((outcome, index) => (
                   <button 
                     key={index}
-                    className="flex items-center gap-1.5 rounded-md px-2 py-1.5 bg-secondary border border-border text-[11px] active:scale-95 transition-transform flex-shrink-0"
+                    className="flex items-center gap-1.5 rounded-lg px-3 py-2 bg-secondary/60 border border-border text-[12px] active:scale-[0.98] transition-all flex-shrink-0"
                     onClick={handleOutcomeClick}
                   >
                     {outcome.logo && (
-                      <img src={outcome.logo} alt={outcome.label} className="h-4 w-4 object-contain rounded-sm flex-shrink-0" />
+                      <img src={outcome.logo} alt={outcome.label} className="h-4 w-4 object-contain rounded-sm" />
                     )}
-                    <span className="font-medium truncate">{outcome.label}</span>
-                    <span className="font-bold text-primary flex-shrink-0">{outcome.price}%</span>
+                    <span className="font-medium">{outcome.label}</span>
+                    <span className="font-bold text-primary">{outcome.price}%</span>
                   </button>
                 ))}
-                {displayOutcomes.length > 2 && (
-                  <span className="text-[10px] text-muted-foreground self-center flex-shrink-0">+{displayOutcomes.length - 2}</span>
+                {displayOutcomes.length > 3 && (
+                  <span className="text-[10px] text-muted-foreground self-center flex-shrink-0">+{displayOutcomes.length - 3}</span>
                 )}
               </div>
             )}
           </div>
 
-          {/* Win up to teaser */}
-          {winUpTo && !isBettingDisabled && (
-            <div className="px-3 pb-1">
-              <p className="text-[10px] text-primary/80 font-semibold">Win up to {winUpTo}</p>
+          {/* Row 3: Footer — Pot + icons */}
+          <div className="flex items-center justify-between mt-2 text-[11px] text-muted-foreground">
+            <div className="flex items-center gap-3">
+              <span className="font-semibold text-foreground">Pot {potDisplay}</span>
+              <span className="flex items-center gap-1">
+                <Users className="h-3 w-3" />
+                {players > 0 ? players.toLocaleString() : '0'}
+              </span>
+              <span className="flex items-center gap-1">
+                <Clock className="h-3 w-3" />
+                {endsIn}
+              </span>
             </div>
-          )}
-
-          {/* Bottom stats bar */}
-          <div className="flex items-center justify-between px-3 py-2 border-t border-border text-[11px] text-muted-foreground">
-            <span className="flex items-center gap-1 font-medium">
-              <Users className="h-3 w-3" />
-              {players > 0 ? players.toLocaleString() : '0'}
-            </span>
-            <span className="flex items-center gap-1">
-              <Clock className="h-3 w-3" />
-              {endsIn}
-            </span>
+            {!isClosedOrResolved && (
+              <div className="flex items-center gap-1">
+                <button 
+                  className="p-1 rounded hover:bg-secondary transition-colors"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigator.clipboard.writeText(`${window.location.origin}/market/${id}`);
+                    toast({ title: "Link copied!" });
+                  }}
+                >
+                  <Share2 className="h-3.5 w-3.5" />
+                </button>
+                <button 
+                  className="p-1 rounded hover:bg-secondary transition-colors"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toast({ title: "Saved to watchlist" });
+                  }}
+                >
+                  <Bookmark className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </Card>
