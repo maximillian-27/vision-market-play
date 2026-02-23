@@ -446,42 +446,30 @@ export default function MarketDetail() {
         <Separator className="mx-4" />
 
         {/* Revenue Distribution */}
-        <div className="px-4 py-4">
-          <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground mb-3">
-            <PieChartIcon className="h-3.5 w-3.5" />
-            <span>Where Your Entry Goes</span>
+        <div className="px-4 py-4 space-y-3">
+          <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+            <PieChartIcon className="h-3 w-3" />
+            <span>Transparency: Where your entry goes</span>
           </div>
-          <div className="flex items-center gap-4">
-            {/* Donut Chart */}
-            <div className="w-24 h-24 flex-shrink-0">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={revenueData}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={28}
-                    outerRadius={44}
-                    paddingAngle={2}
-                    dataKey="value"
-                    strokeWidth={0}
-                  >
-                    {revenueData.map((entry, index) => (
-                      <Cell key={index} fill={entry.color} />
-                    ))}
-                  </Pie>
-                </PieChart>
-              </ResponsiveContainer>
+          
+          <div className="space-y-2">
+            <div className="flex rounded-full overflow-hidden h-2">
+              {revenueData.map((item, i) => (
+                <div 
+                  key={i} 
+                  style={{ width: `${item.value}%`, backgroundColor: item.color }} 
+                  className="h-full first:rounded-l-full last:rounded-r-full"
+                />
+              ))}
             </div>
-            {/* Legend */}
-            <div className="flex-1 grid grid-cols-2 gap-x-4 gap-y-2">
-              {revenueData.map((item) => (
-                <div key={item.name} className="flex items-center gap-2">
-                  <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: item.color }} />
-                  <div className="min-w-0">
-                    <div className="text-xs font-semibold">{item.value}%</div>
-                    <div className="text-[10px] text-muted-foreground leading-tight">{item.name}</div>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {revenueData.map((item, i) => (
+                <div key={i} className="flex flex-col">
+                  <div className="flex items-center gap-1.5 mb-0.5">
+                    <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: item.color }} />
+                    <span className="text-[10px] font-bold">{item.value}%</span>
                   </div>
+                  <span className="text-[9px] text-muted-foreground whitespace-nowrap">{item.name}</span>
                 </div>
               ))}
             </div>
