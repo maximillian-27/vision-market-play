@@ -37,12 +37,12 @@ import {
 
 // ── Mock Data ──────────────────────────────────────────────
 
-const earningsByPeriod: Record<string, { gross: number; fees: number; net: number }> = {
-  "1d": { gross: 127, fees: 12.70, net: 114.30 },
-  "7d": { gross: 843, fees: 84.30, net: 758.70 },
-  "30d": { gross: 4250, fees: 425, net: 3825 },
-  "90d": { gross: 11200, fees: 1120, net: 10080 },
-  all: { gross: 24800, fees: 2480, net: 22320 },
+const earningsByPeriod: Record<string, number> = {
+  "1d": 127,
+  "7d": 843,
+  "30d": 4250,
+  "90d": 11200,
+  all: 24800,
 };
 
 const creatorStats = {
@@ -55,6 +55,7 @@ const creatorStats = {
   totalViews: 847000,
   viewsGrowth: 12.5,
   resolvedMarkets: 38,
+  avgOdds: 62,
   currentBalance: 1847.32,
 };
 
@@ -141,7 +142,6 @@ const CreatorDashboard = () => {
 
   const earnings = earningsByPeriod[earningsPeriod];
   const totalAll = marketsByStatus.open + marketsByStatus.resolved + marketsByStatus.disputing + marketsByStatus.cancelled;
-  const resolutionRate = Math.round((creatorStats.resolvedMarkets / creatorStats.marketsCreated) * 100);
 
   const filteredMarkets = recentMarkets
     .filter((m) => {
@@ -225,13 +225,8 @@ const CreatorDashboard = () => {
                 </div>
               </div>
               <p className="text-2xl sm:text-3xl font-bold text-primary mb-1">
-                ${earnings.gross.toLocaleString()}
+                ${earnings.toLocaleString()}
               </p>
-              <div className="flex items-center gap-2 text-[10px] sm:text-xs text-muted-foreground">
-                <span>Fees: ${earnings.fees.toLocaleString()}</span>
-                <span>•</span>
-                <span className="text-success font-medium">Net: ${earnings.net.toLocaleString()}</span>
-              </div>
               <div className="flex items-center gap-1.5 mt-3 pt-3 border-t border-border/30 text-[9px] sm:text-[11px] text-muted-foreground">
                 <Clock className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
                 <span>Auto-withdraw every Friday 12AM EST</span>
@@ -363,12 +358,12 @@ const CreatorDashboard = () => {
                 <CardContent className="p-3 sm:p-4">
                   <div className="flex items-center gap-1.5 text-muted-foreground text-[10px] sm:text-xs mb-1">
                     <Target className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
-                    Resolution Rate
+                    Avg Odds
                   </div>
                   <div className="flex items-center gap-2">
-                    <p className="text-lg sm:text-2xl font-bold">{resolutionRate}%</p>
+                    <p className="text-lg sm:text-2xl font-bold">{creatorStats.avgOdds}%</p>
                     <span className="text-[10px] sm:text-xs text-muted-foreground">
-                      {creatorStats.resolvedMarkets}/{creatorStats.marketsCreated}
+                      across markets
                     </span>
                   </div>
                 </CardContent>
