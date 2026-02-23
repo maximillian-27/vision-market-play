@@ -39,27 +39,25 @@ export function WeeklyDrawCard() {
       <div className="absolute -top-10 -right-10 w-28 h-28 rounded-full bg-primary/5 blur-2xl pointer-events-none" />
 
       {/* Row 1: Title + Timer */}
-      <div className="flex items-center justify-between mb-1.5">
+      <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-1.5">
           <Trophy className="h-3.5 w-3.5 text-primary" />
           <span className="text-[10px] uppercase tracking-wider font-bold text-primary">Weekly Draw</span>
         </div>
-        <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/10 text-[9px] text-primary font-semibold">
+        <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-muted/60 text-[9px] text-muted-foreground font-medium">
           <Timer className="h-2.5 w-2.5" />
-          <span>{COUNTDOWN} left</span>
+          <span>{COUNTDOWN}</span>
         </div>
       </div>
 
       {/* Row 2: Pot */}
-      <div className="flex items-baseline gap-1.5 mb-2">
-        <span className="text-lg font-extrabold text-foreground leading-none">
-          ${WEEKLY_POT.toLocaleString()}
-        </span>
-        <span className="text-[9px] text-muted-foreground font-medium">prize pool</span>
+      <div className="text-lg font-extrabold text-primary leading-none">
+        ${WEEKLY_POT.toLocaleString()}
       </div>
+      <div className="text-[9px] text-muted-foreground mt-0.5 mb-2">Prize pool this week</div>
 
       {/* Row 3: Distribution bar + legend */}
-      <div className="space-y-1 mb-2">
+      <div className="space-y-0.5 mb-2">
         <div className="flex rounded-full overflow-hidden h-[5px]">
           {distribution.map((d, i) => (
             <div
@@ -72,35 +70,33 @@ export function WeeklyDrawCard() {
             />
           ))}
         </div>
-        <div className="flex items-center justify-between text-[8px] text-muted-foreground">
+        <div className="flex items-center justify-between text-[7px] text-muted-foreground">
           {distribution.map((d) => (
-            <span key={d.place} className="flex items-center gap-0.5">
-              <span className="font-bold text-foreground">{d.place}</span>
-              <span>{d.pct}%</span>
+            <span key={d.place}>
+              <span className="font-semibold text-foreground">{d.place}</span> {d.pct}%
             </span>
           ))}
         </div>
       </div>
 
-      {/* Row 4: Your entries */}
-      <div className="flex items-center justify-between text-[9px] mb-2 px-2 py-1.5 rounded-lg bg-muted/50">
+      {/* Row 4: Entry info strip */}
+      <div className="flex items-center gap-1.5 text-[9px] mb-2">
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <span className="flex items-center gap-1 text-muted-foreground cursor-help">
-                <Ticket className="h-2.5 w-2.5 text-primary" />
-                <span>Your entries</span>
+              <span className="flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-primary/10 text-primary font-bold cursor-help">
+                <Ticket className="h-2.5 w-2.5" />
+                {ENTRY_COST} tickets = 1 entry
               </span>
             </TooltipTrigger>
             <TooltipContent side="bottom" className="text-xs max-w-[180px]">
-              Every {ENTRY_COST} tickets you buy earns 1 draw entry. More entries = better odds.
+              Purchase {ENTRY_COST} tickets in a week to earn one draw entry. More tickets = more entries.
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
-        <div className="flex items-center gap-1.5">
-          <span className="font-bold text-foreground">{MY_ENTRIES}</span>
-          <span className="text-muted-foreground">of {ELIGIBLE_ENTRIES.toLocaleString()} total</span>
-        </div>
+        <span className="text-muted-foreground">·</span>
+        <span className="font-semibold text-foreground">{MY_ENTRIES} entries</span>
+        <span className="text-muted-foreground">/ {ELIGIBLE_ENTRIES.toLocaleString()} total</span>
       </div>
 
       {/* Row 5: Actions */}
