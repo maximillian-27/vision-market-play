@@ -327,19 +327,15 @@ function HeroOutcomes({ market }: { market: Market }) {
   }
 
   return (
-    <div className="space-y-1 mt-2">
-      {outcomes.slice(0, 2).map((o, i) => (
-        <button key={i} onClick={handleClick} className="w-full flex items-center justify-between text-xs py-1 px-2 rounded-lg bg-white/10 hover:bg-white/20 transition-all">
-          <span className="font-medium text-white/90 truncate">{o.label}</span>
-          <div className="flex items-center gap-2 shrink-0">
-            <span className="font-bold text-white">{o.price}%</span>
-            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-yes/20 text-yes">Yes</span>
-            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-no/20 text-no">No</span>
-          </div>
+    <div className="flex flex-wrap gap-1.5 mt-2">
+      {outcomes.slice(0, 3).map((o, i) => (
+        <button key={i} onClick={handleClick} className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 border border-white/10 hover:border-white/30 transition-all text-xs">
+          <span className="font-medium text-white/90">{o.label}</span>
+          <span className="font-bold text-white">{o.price}%</span>
         </button>
       ))}
-      {outcomes.length > 2 && (
-        <p className="text-[10px] text-white/50 pl-2">+{outcomes.length - 2} more outcomes</p>
+      {outcomes.length > 3 && (
+        <span className="text-[10px] text-white/50 self-center">+{outcomes.length - 3}</span>
       )}
     </div>
   );
@@ -382,22 +378,18 @@ function CompactFeaturedCard({ market }: { market: Market }) {
       {isBinary ? (
         <div className="flex gap-2 mt-auto">
           <button onClick={handleOutcomeClick} className="flex-1 py-1.5 rounded-lg text-center bg-yes/10 hover:bg-yes text-yes hover:text-yes-foreground border border-yes/20 hover:border-yes transition-all text-xs font-bold">
-            Yes
+            Yes {yesPrice}%
           </button>
           <button onClick={handleOutcomeClick} className="flex-1 py-1.5 rounded-lg text-center bg-no/10 hover:bg-no text-no hover:text-no-foreground border border-no/20 hover:border-no transition-all text-xs font-bold">
-            No
+            No {noPrice}%
           </button>
         </div>
       ) : (
         <div className="space-y-1 mt-auto">
           {(market.outcomes || []).slice(0, 2).map((o, i) => (
-            <button key={i} onClick={handleOutcomeClick} className="w-full flex items-center justify-between text-[11px] py-1 px-2 rounded-lg bg-secondary/50 hover:bg-secondary transition-all">
+            <button key={i} onClick={handleOutcomeClick} className="w-full flex items-center justify-between text-[11px] py-1 px-2 rounded-lg bg-secondary/50 hover:bg-primary/5 hover:border-primary/20 border border-transparent transition-all">
               <span className="font-medium truncate">{o.label}</span>
-              <div className="flex items-center gap-1.5">
-                <span className="font-bold">{o.price}%</span>
-                <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-yes/10 text-yes">Yes</span>
-                <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-no/10 text-no">No</span>
-              </div>
+              <span className="font-bold text-primary">{o.price}%</span>
             </button>
           ))}
         </div>
@@ -405,7 +397,7 @@ function CompactFeaturedCard({ market }: { market: Market }) {
 
       {/* Footer */}
       <div className="flex items-center justify-between mt-2 pt-1.5 border-t border-border/50 text-[10px] text-muted-foreground">
-        <span className="font-semibold text-foreground">Vol. {formatPot(market.pot)}</span>
+        <span className="inline-flex items-center px-1.5 py-0.5 rounded-md bg-primary/10 text-primary text-[10px] font-extrabold">{formatPot(market.pot)}</span>
         <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
           <button className="p-0.5 rounded hover:bg-secondary" onClick={(e) => { e.stopPropagation(); navigator.clipboard.writeText(`${window.location.origin}/market/${market.id}`); toast({ title: "Link copied!" }); }}>
             <Share2 className="h-3 w-3" />
