@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { NewsFilters } from "@/components/NewsFilters";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { MarketCard } from "@/components/MarketCard";
-import { HottestMarkets } from "@/components/HottestMarkets";
+import { MarketsSidebar } from "@/components/MarketsSidebar";
 import { ActivitySidebar } from "@/components/ActivitySidebar";
 import { PageHeader } from "@/components/PageHeader";
 import { Separator } from "@/components/ui/separator";
@@ -122,7 +122,7 @@ export default function News() {
           </div>
         </div>
         
-        <HottestMarkets />
+        <MarketsSidebar />
       </div>
 
       {/* Article Dialog */}

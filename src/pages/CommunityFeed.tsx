@@ -3,7 +3,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { FollowingSidebar } from "@/components/FollowingSidebar";
-import { TrendingSidebar } from "@/components/TrendingSidebar";
+import { MarketsSidebar } from "@/components/MarketsSidebar";
 import { CommunityPost, CommunityPostData } from "@/components/CommunityPost";
 import { Image, ChartBar, X } from "lucide-react";
 import {
@@ -212,7 +212,7 @@ export default function CommunityFeed() {
           </div>
         </div>
 
-        <TrendingSidebar />
+        <MarketsSidebar />
       </div>
     </div>
   );
