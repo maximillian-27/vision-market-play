@@ -1,69 +1,75 @@
 
 
-# Portfolio Page Redesign for Ticket-Based Gambling Model
+# Settings Page Optimization
 
-## Problem
-The current portfolio uses trading jargon (P&L, shares, positions, trades, win rate, avg return) that doesn't match the pari-mutuel gambling model. It needs to feel like a fun, engaging dashboard where users see their balance, active entries, winnings, and ticket activity.
+## Issues Found
+1. **Trading jargon** -- "Trading Notifications", "Price Alerts", "positions", "trades" don't match the ticket/gambling model
+2. **Missing features** -- No responsible gambling tools (deposit limits, self-exclusion, session reminders), no 2FA/security section, no referral/affiliate settings, no odds format preference
+3. **Privacy labels outdated** -- "Show Active Positions" and "portfolio value" should reference entries and winnings
+4. **Payment tab is thin** -- Only a card on file and a withdrawal dropdown; could include deposit limits and transaction history link
 
-## New Structure
+## Plan
 
-### 1. Top Section: Balance Overview (2 cards)
-- **Balance** (replaces "Total Value"): Total funds available to play with, with Deposit/Withdraw buttons inline
-- **Total Winnings** (replaces "Cash"): Lifetime winnings amount with a fun upward trend indicator
+### 1. Rename and update Notifications tab
+- "Trading Notifications" becomes "Activity Alerts"
+- "Price Alerts" becomes "Odds Changes" (when odds shift on your entries)
+- "Market Resolution" stays (core feature)
+- Add "Draw Results" notification (weekly draw outcomes)
+- Add "Entry Confirmations" toggle (get notified when tickets are confirmed)
 
-### 2. Quick Stats Strip (horizontal row of 4 small metrics)
-- **Active Entries** - number of markets currently entered
-- **Markets Won** - total wins count
-- **Win Rate** - percentage
-- **Biggest Win** - single largest payout
-- No collapsible complexity, just a clean single row
+### 2. Update Privacy labels
+- "Show Portfolio Value" becomes "Show Winnings"
+- "Show Active Positions" becomes "Show Active Entries"  
+- "your current trades" becomes "your current entries"
 
-### 3. Tabs: My Entries | Past Entries | Wallet
+### 3. Add Responsible Gambling section (new card inside Privacy tab)
+- Daily deposit limit (input with dollar amount)
+- Weekly deposit limit
+- Session time reminder toggle + interval selector (30min, 1hr, 2hr)
+- Self-exclusion button (cool-off period: 24h, 7d, 30d)
+- This is important for a gambling platform and shows legitimacy
 
-**My Entries** (replaces "Positions")
-- Each row shows: Market name, outcome picked (Yes/No badge), tickets bought, potential payout ("If you win: $X"), and time remaining
-- No P&L percentages or current price -- just what they picked, what they spent, and what they could win
-- Clean card rows with market thumbnail
+### 4. Add Security card to Account tab
+- Two-factor authentication toggle (with badge showing enabled/disabled)
+- Change password button
+- Active sessions info (last login device/time)
 
-**Past Entries** (replaces "History")  
-- Each row: Market name, outcome picked, result (Won/Lost badge in green/red), amount spent, amount won (or $0)
-- Simple and clear -- did you win or lose, and how much
+### 5. Enhance Payment tab
+- Add crypto wallet address field (for crypto withdrawals)
+- Add deposit limits display that ties into the responsible gambling settings
+- Add link to "View transaction history" that navigates to Portfolio wallet tab
 
-**Wallet** (replaces "Deposits")
-- Deposit/Withdrawal history unchanged in structure, just cleaner labels
-
-### 4. Data Model Changes
-- `positions` becomes `entries` with fields: market, outcome, tickets, ticketPrice, potentialPayout, endsIn
-- `tradeHistory` becomes `pastEntries` with fields: market, outcome, result (won/lost), spent, payout
-- Remove all P&L calculations, share counts, avg/current price logic
-- Remove the performance collapsible section entirely
-
----
+### 6. Add Preferences card to Account tab
+- Odds display format selector: Percentage / Decimal / Fractional
+- Default ticket quantity (1, 5, 10)
+- These are small but useful for power users
 
 ## Technical Details
 
-### File: `src/pages/Portfolio.tsx` (full rewrite)
+### File: `src/pages/Settings.tsx`
 
-**Mock data replacements:**
-- `portfolioStats` -> `{ balance: 5230, totalWinnings: 3847 }`
-- `positions` -> `entries` array with `{ market, outcome, tickets, ticketPrice, potentialPayout, endsIn, image }`
-- `tradeHistory` -> `pastEntries` array with `{ market, outcome, result: "won"|"lost", spent, payout, date }`
-- `transactions` stays similar
-- Remove `statsByTimeline`, `StatsTimeframe`, collapsible state, timeframe selectors
+**New state additions:**
+- `security: { twoFactor: false }` 
+- `responsible: { dailyLimit: "", weeklyLimit: "", sessionReminder: false, reminderInterval: "1hr" }`
+- `preferences: { oddsFormat: "percentage", defaultTickets: "1" }`
 
-**Removed components/imports:**
-- `Collapsible`, `CollapsibleContent`, `CollapsibleTrigger`
-- `PieChart`, `BarChart3`, `TrendingUp`, `TrendingDown`, `Filter`
-- P&L timeframe buttons and performance card
+**Updated notification keys:**
+- `priceAlerts` renamed to `oddsChanges` with label "Odds Changes" / "When odds shift on markets you've entered"
+- Add `drawResults: true` with label "Draw Results" / "Weekly draw winners and your results"
+- Add `entryConfirmations: true` with label "Entry Confirmations" / "When your ticket purchase is confirmed"
 
-**New layout:**
-- Balance card with inline Deposit/Withdraw CTAs
-- Total Winnings card with trophy icon
-- Horizontal stats strip (4 items in a grid)
-- 3-tab interface: My Entries, Past Entries, Wallet
-- Entry cards show ticket count, potential payout, and countdown
-- Past entry cards show Won/Lost result with green/red badge and actual payout
+**Updated privacy labels:**
+- "Show Portfolio Value" to "Show Winnings"
+- "Show Active Positions" to "Show Active Entries"  
+- Descriptions updated accordingly
 
-**New imports needed:**
-- `Trophy`, `Ticket`, `Target`, `Timer` from lucide-react
+**New cards (in order of appearance):**
+1. Security card -- added to Account tab after Language & Region
+2. Preferences card -- added to Account tab after Security
+3. Responsible Gambling card -- added to Privacy tab before Danger Zone
+4. Crypto wallet + transaction history link -- added to Payment tab
+
+**New imports:**
+- `Lock`, `Smartphone`, `Timer`, `Ticket`, `AlertTriangle` from lucide-react
+- `useNavigate` from react-router-dom (for transaction history link)
 
