@@ -52,10 +52,10 @@ export function FeedFilters({ filters, onFiltersChange }: FeedFiltersProps) {
             <button
               key={category}
               onClick={() => updateFilter('category', category)}
-              className={`whitespace-nowrap font-medium px-3 py-1.5 text-sm rounded-full transition-all ${
+              className={`whitespace-nowrap font-medium px-3.5 py-1.5 text-sm rounded-full transition-all duration-150 ${
                 category === filters.category 
-                  ? "bg-primary text-primary-foreground" 
-                  : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+                  ? "bg-foreground text-background shadow-sm" 
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted"
               }`}
             >
               {category}
