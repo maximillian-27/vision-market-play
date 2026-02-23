@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Clock, TrendingUp, AlertTriangle, CheckCircle2, Timer, Bookmark, Share2, Repeat2 } from "lucide-react";
+import { Clock, AlertTriangle, CheckCircle2, Timer, Bookmark, Share2, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { MarketDialog } from "@/components/MarketDialog";
@@ -10,7 +9,6 @@ import { ResolvedMarketDialog } from "@/components/ResolvedMarketDialog";
 import { QuickTradeSheet } from "@/components/QuickTradeSheet";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { QuoteRepostDialog } from "@/components/QuoteRepostDialog";
 
 type MarketStatus = "open" | "closing" | "awaiting_resolution" | "closed" | "resolved";
 
@@ -35,12 +33,30 @@ interface MarketGridCardProps {
   yesPrice?: number;
   noPrice?: number;
   volume: string;
+  pot?: number;
+  players?: number;
   endsIn: string;
   status?: MarketStatus;
   resolution?: string;
   disputeEndsIn?: string;
   resolvedAt?: string;
   resolutionDate?: string;
+}
+
+function formatPot(pot: number): string {
+  if (pot >= 1000000) return `$${(pot / 1000000).toFixed(1)}M`;
+  if (pot >= 1000) return `$${(pot / 1000).toFixed(0)}K`;
+  return `$${pot}`;
+}
+
+function getWinUpTo(pot: number, outcomes: Outcome[]): string {
+  // Estimate: if you bet $10 on lowest-probability outcome
+  const lowestPrice = Math.min(...outcomes.map(o => o.price).filter(p => p > 0));
+  if (lowestPrice <= 0) return "";
+  const payout = (10 / (lowestPrice / 100)) * (pot > 0 ? 1 : 0);
+  if (payout >= 1000000) return `$${(payout / 1000000).toFixed(0)}M`;
+  if (payout >= 1000) return `$${(payout / 1000).toFixed(0)}K`;
+  return `$${payout.toFixed(0)}`;
 }
 
 export function MarketGridCard({ 
@@ -52,6 +68,8 @@ export function MarketGridCard({
   yesPrice, 
   noPrice, 
   volume, 
+  pot = 0,
+  players = 0,
   endsIn,
   status = "open",
   resolution,
@@ -65,7 +83,6 @@ export function MarketGridCard({
   const [showMarketDialog, setShowMarketDialog] = useState(false);
   const [showQuickTrade, setShowQuickTrade] = useState(false);
   const [showResolvedDialog, setShowResolvedDialog] = useState(false);
-  const [showRepostDialog, setShowRepostDialog] = useState(false);
   
   const displayOutcomes = outcomes || [
     { label: "Yes", price: yesPrice || 0, color: "success" },
@@ -76,6 +93,10 @@ export function MarketGridCard({
   const isAwaitingResolution = status === "awaiting_resolution";
   const isBettingDisabled = isClosedOrResolved || isAwaitingResolution;
   const isBinary = displayOutcomes.length === 2 && !outcomes;
+  const isClosingSoon = status === "closing";
+
+  const potDisplay = pot > 0 ? formatPot(pot) : volume;
+  const winUpTo = pot > 0 && !isBettingDisabled ? getWinUpTo(pot, displayOutcomes) : "";
 
   const handleCardClick = () => {
     if (isClosedOrResolved) {
@@ -104,8 +125,8 @@ export function MarketGridCard({
       case "closing":
         return (
           <span className="flex items-center gap-1 text-amber-500 text-[10px] font-medium whitespace-nowrap">
-            <Timer className="h-2.5 w-2.5 flex-shrink-0" />
-            Closing
+            <Timer className="h-2.5 w-2.5 flex-shrink-0 animate-pulse" />
+            {endsIn}
           </span>
         );
       case "awaiting_resolution":
@@ -141,6 +162,8 @@ export function MarketGridCard({
     creator,
     outcomes: displayOutcomes,
     volume,
+    pot,
+    players,
     endsIn,
     status,
     resolutionDate,
@@ -164,6 +187,7 @@ export function MarketGridCard({
           id,
           title,
           outcomes: displayOutcomes,
+          pot,
         }}
       />
       
@@ -180,43 +204,39 @@ export function MarketGridCard({
       )}
       
       <Card 
-        className={`group overflow-hidden cursor-pointer border-border bg-card card-hover h-full`}
+        className={`group overflow-hidden cursor-pointer border-border bg-card card-hover h-full ${
+          isClosingSoon ? 'ring-1 ring-amber-500/30' : ''
+        }`}
         onClick={handleCardClick}
       >
-        {/* Desktop Layout - Compact with small image */}
+        {/* Desktop Layout */}
         <div className="sm:flex hidden flex-col p-3 h-full">
-          {/* Header with image, title */}
+          {/* Header with image, title, pot */}
           <div className="flex items-start gap-3 mb-2.5">
-            {/* Small square image */}
             <div className="relative w-10 h-10 rounded-lg overflow-hidden bg-secondary flex-shrink-0">
-              <img 
-                src={image} 
-                alt={title}
-                className="h-full w-full object-cover"
-              />
+              <img src={image} alt={title} className="h-full w-full object-cover" />
             </div>
             
-            {/* Title */}
             <div className="flex-1 min-w-0">
               <div className="flex items-start justify-between gap-2">
                 <h3 className="text-sm font-semibold leading-snug line-clamp-2 group-hover:text-primary transition-colors flex-1">
                   {title}
                 </h3>
-                {isBinary && !isClosedOrResolved && !isAwaitingResolution && (
-                  <span className="text-sm font-bold text-primary flex-shrink-0">{yesPercent}%</span>
-                )}
-                {isAwaitingResolution && isBinary && (
-                  <span className="text-sm font-bold text-primary/70 flex-shrink-0">{yesPercent}%</span>
-                )}
               </div>
             </div>
           </div>
 
-          {/* Content area - grows to push footer down */}
+          {/* Pot size pill */}
+          <div className="mb-2">
+            <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-extrabold">
+              {potDisplay} Pot
+            </span>
+          </div>
+
+          {/* Content area */}
           <div className="flex-1 flex flex-col justify-center">
             {isClosedOrResolved ? (
               <div className="space-y-2">
-                {/* Resolution Result */}
                 <div className="flex items-center justify-between py-1.5 px-2 rounded-lg bg-secondary/50">
                   <span className="text-xs text-muted-foreground">Outcome</span>
                   <span className={`text-sm font-bold ${
@@ -227,7 +247,6 @@ export function MarketGridCard({
                   </span>
                 </div>
                 
-                {/* Dispute button for closed markets */}
                 {status === "closed" && (
                   <Button
                     variant="outline"
@@ -258,13 +277,13 @@ export function MarketGridCard({
                   className="flex-1 rounded-md py-1.5 text-center bg-yes/15 dark:bg-yes/25 hover:bg-yes text-yes hover:text-yes-foreground border border-yes/30 dark:border-yes/40 hover:border-yes transition-all active:scale-[0.98]"
                   onClick={handleOutcomeClick}
                 >
-                  <span className="text-xs font-bold">Yes</span>
+                  <span className="text-xs font-bold">Yes {yesPercent}%</span>
                 </button>
                 <button 
                   className="flex-1 rounded-md py-1.5 text-center bg-no/15 dark:bg-no/25 hover:bg-no text-no hover:text-no-foreground border border-no/30 dark:border-no/40 hover:border-no transition-all active:scale-[0.98]"
                   onClick={handleOutcomeClick}
                 >
-                  <span className="text-xs font-bold">No</span>
+                  <span className="text-xs font-bold">No {noPercent}%</span>
                 </button>
               </div>
             ) : (
@@ -285,10 +304,20 @@ export function MarketGridCard({
               </div>
             )}
           </div>
+
+          {/* "Win up to" teaser */}
+          {winUpTo && !isBettingDisabled && (
+            <p className="text-[10px] text-primary/80 font-semibold mt-1.5">
+              Win up to {winUpTo}
+            </p>
+          )}
           
           {/* Stats footer */}
           <div className="flex items-center gap-3 text-[10px] text-muted-foreground mt-2 pt-2 border-t border-border">
-            <span className="font-medium">{volume} Vol.</span>
+            <span className="flex items-center gap-1">
+              <Users className="h-2.5 w-2.5" />
+              {players > 0 ? players.toLocaleString() : '0'} players
+            </span>
             {getStatusBadge() ? (
               getStatusBadge()
             ) : (
@@ -314,15 +343,6 @@ export function MarketGridCard({
                   className="p-1 rounded hover:bg-secondary transition-colors"
                   onClick={(e) => {
                     e.stopPropagation();
-                    setShowRepostDialog(true);
-                  }}
-                >
-                  <Repeat2 className="h-3 w-3" />
-                </button>
-                <button 
-                  className="p-1 rounded hover:bg-secondary transition-colors"
-                  onClick={(e) => {
-                    e.stopPropagation();
                     toast({ title: "Saved to watchlist" });
                   }}
                 >
@@ -333,16 +353,12 @@ export function MarketGridCard({
           </div>
         </div>
 
-        {/* Mobile Layout - Compact horizontal */}
+        {/* Mobile Layout */}
         <div className="sm:hidden flex flex-col">
           <div className="flex gap-3 p-3 pb-2">
             {/* Thumbnail */}
-            <div className={`relative w-20 h-20 rounded-lg overflow-hidden bg-secondary flex-shrink-0`}>
-              <img 
-                src={image} 
-                alt={title}
-                className="h-full w-full object-cover"
-              />
+            <div className={`relative w-20 h-20 rounded-lg overflow-hidden bg-secondary flex-shrink-0 ${isClosingSoon ? 'ring-1 ring-amber-500/40' : ''}`}>
+              <img src={image} alt={title} className="h-full w-full object-cover" />
               {getStatusBadge() && (
                 <div className="absolute top-1 left-1 scale-75 origin-top-left">
                   {getStatusBadge()}
@@ -351,7 +367,7 @@ export function MarketGridCard({
             </div>
 
             {/* Content */}
-            <div className="flex-1 min-w-0 flex flex-col gap-1.5">
+            <div className="flex-1 min-w-0 flex flex-col gap-1">
               {/* Creator */}
               <button 
                 className="flex items-center gap-1.5 hover:opacity-70 transition-opacity w-fit"
@@ -374,98 +390,102 @@ export function MarketGridCard({
                 {title}
               </h3>
 
-              {isClosedOrResolved ? (
-                <div className="flex items-center gap-2 mt-auto">
-                  <span className="text-xs text-muted-foreground">Outcome:</span>
-                  <span className={`font-bold text-xs ${
-                    resolution?.toLowerCase() === "yes" ? 'text-yes' : 
-                    resolution?.toLowerCase() === "no" ? 'text-no' : 'text-primary'
-                  }`}>
-                    {resolution}
-                  </span>
-                  {status === "closed" && (
-                    <button 
-                      className="ml-auto px-2 py-1 rounded-md bg-orange-500/10 text-orange-600 border border-orange-500/20 text-[10px] font-medium"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setShowResolvedDialog(true);
-                      }}
-                    >
-                      Dispute
-                    </button>
-                  )}
-                </div>
-              ) : isAwaitingResolution ? (
-                <div className="flex items-center gap-2 mt-auto">
-                  <span className="text-xs font-bold text-yes/70">{yesPercent}%</span>
-                  <div className="flex-1 h-1.5 rounded-full bg-no-muted/50 overflow-hidden">
-                    <div 
-                      className="h-full rounded-full bg-yes/60"
-                      style={{ width: `${yesPercent}%` }}
-                    />
-                  </div>
-                  <div className="flex gap-1.5">
-                    <span className="px-2.5 py-1 rounded-md bg-yes/10 text-yes/60 border border-yes/20 text-[11px] font-bold">
-                      Yes
-                    </span>
-                    <span className="px-2.5 py-1 rounded-md bg-no/10 text-no/60 border border-no/20 text-[11px] font-bold">
-                      No
-                    </span>
-                  </div>
-                </div>
-              ) : isBinary ? (
-                <div className="flex items-center gap-2 mt-auto">
-                  <span className="text-xs font-bold text-yes">{yesPercent}%</span>
-                  <div className="flex-1 h-1.5 rounded-full bg-no-muted overflow-hidden">
-                    <div 
-                      className="h-full rounded-full bg-yes"
-                      style={{ width: `${yesPercent}%` }}
-                    />
-                  </div>
-                  <div className="flex gap-1.5">
-                    <button 
-                      className="px-2.5 py-1 rounded-md bg-yes/15 dark:bg-yes/25 text-yes border border-yes/30 dark:border-yes/40 text-[11px] font-bold active:scale-95 transition-transform"
-                      onClick={handleOutcomeClick}
-                    >
-                      Yes
-                    </button>
-                    <button 
-                      className="px-2.5 py-1 rounded-md bg-no/15 dark:bg-no/25 text-no border border-no/30 dark:border-no/40 text-[11px] font-bold active:scale-95 transition-transform"
-                      onClick={handleOutcomeClick}
-                    >
-                      No
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <div className="flex gap-2 overflow-x-auto scrollbar-hide mt-auto -mr-3 pr-3">
-                  {displayOutcomes.slice(0, 2).map((outcome, index) => (
-                    <button 
-                      key={index}
-                      className="flex items-center gap-1.5 rounded-md px-2 py-1.5 bg-secondary border border-border text-[11px] active:scale-95 transition-transform flex-shrink-0"
-                      style={{ maxWidth: index === 0 ? '55%' : '45%' }}
-                      onClick={handleOutcomeClick}
-                    >
-                      {outcome.logo && (
-                        <img src={outcome.logo} alt={outcome.label} className="h-4 w-4 object-contain rounded-sm flex-shrink-0" />
-                      )}
-                      <span className="font-medium truncate">{outcome.label}</span>
-                      <span className="font-bold text-primary flex-shrink-0">{outcome.price}%</span>
-                    </button>
-                  ))}
-                  {displayOutcomes.length > 2 && (
-                    <span className="text-[10px] text-muted-foreground self-center flex-shrink-0">+{displayOutcomes.length - 2}</span>
-                  )}
-                </div>
-              )}
+              {/* Pot size */}
+              <span className="inline-flex items-center w-fit px-2 py-0.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[11px] font-extrabold">
+                {potDisplay} Pot
+              </span>
             </div>
           </div>
+          
+          {/* Outcomes section */}
+          <div className="px-3 pb-2">
+            {isClosedOrResolved ? (
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-muted-foreground">Outcome:</span>
+                <span className={`font-bold text-xs ${
+                  resolution?.toLowerCase() === "yes" ? 'text-yes' : 
+                  resolution?.toLowerCase() === "no" ? 'text-no' : 'text-primary'
+                }`}>
+                  {resolution}
+                </span>
+                {status === "closed" && (
+                  <button 
+                    className="ml-auto px-2 py-1 rounded-md bg-orange-500/10 text-orange-600 border border-orange-500/20 text-[10px] font-medium"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setShowResolvedDialog(true);
+                    }}
+                  >
+                    Dispute
+                  </button>
+                )}
+              </div>
+            ) : isAwaitingResolution ? (
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold text-yes/70">{yesPercent}%</span>
+                <div className="flex-1 h-1.5 rounded-full bg-no-muted/50 overflow-hidden">
+                  <div className="h-full rounded-full bg-yes/60" style={{ width: `${yesPercent}%` }} />
+                </div>
+                <div className="flex gap-1.5">
+                  <span className="px-2.5 py-1 rounded-md bg-yes/10 text-yes/60 border border-yes/20 text-[11px] font-bold">Yes</span>
+                  <span className="px-2.5 py-1 rounded-md bg-no/10 text-no/60 border border-no/20 text-[11px] font-bold">No</span>
+                </div>
+              </div>
+            ) : isBinary ? (
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold text-yes">{yesPercent}%</span>
+                <div className="flex-1 h-1.5 rounded-full bg-no-muted overflow-hidden">
+                  <div className="h-full rounded-full bg-yes" style={{ width: `${yesPercent}%` }} />
+                </div>
+                <div className="flex gap-1.5">
+                  <button 
+                    className="px-2.5 py-1 rounded-md bg-yes/15 dark:bg-yes/25 text-yes border border-yes/30 dark:border-yes/40 text-[11px] font-bold active:scale-95 transition-transform"
+                    onClick={handleOutcomeClick}
+                  >
+                    Yes
+                  </button>
+                  <button 
+                    className="px-2.5 py-1 rounded-md bg-no/15 dark:bg-no/25 text-no border border-no/30 dark:border-no/40 text-[11px] font-bold active:scale-95 transition-transform"
+                    onClick={handleOutcomeClick}
+                  >
+                    No
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="flex gap-2 overflow-x-auto scrollbar-hide -mr-3 pr-3">
+                {displayOutcomes.slice(0, 2).map((outcome, index) => (
+                  <button 
+                    key={index}
+                    className="flex items-center gap-1.5 rounded-md px-2 py-1.5 bg-secondary border border-border text-[11px] active:scale-95 transition-transform flex-shrink-0"
+                    onClick={handleOutcomeClick}
+                  >
+                    {outcome.logo && (
+                      <img src={outcome.logo} alt={outcome.label} className="h-4 w-4 object-contain rounded-sm flex-shrink-0" />
+                    )}
+                    <span className="font-medium truncate">{outcome.label}</span>
+                    <span className="font-bold text-primary flex-shrink-0">{outcome.price}%</span>
+                  </button>
+                ))}
+                {displayOutcomes.length > 2 && (
+                  <span className="text-[10px] text-muted-foreground self-center flex-shrink-0">+{displayOutcomes.length - 2}</span>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Win up to teaser */}
+          {winUpTo && !isBettingDisabled && (
+            <div className="px-3 pb-1">
+              <p className="text-[10px] text-primary/80 font-semibold">Win up to {winUpTo}</p>
+            </div>
+          )}
 
           {/* Bottom stats bar */}
           <div className="flex items-center justify-between px-3 py-2 border-t border-border text-[11px] text-muted-foreground">
             <span className="flex items-center gap-1 font-medium">
-              <TrendingUp className="h-3 w-3" />
-              {volume}
+              <Users className="h-3 w-3" />
+              {players > 0 ? players.toLocaleString() : '0'}
             </span>
             <span className="flex items-center gap-1">
               <Clock className="h-3 w-3" />
@@ -474,13 +494,6 @@ export function MarketGridCard({
           </div>
         </div>
       </Card>
-
-      <QuoteRepostDialog
-        open={showRepostDialog}
-        onOpenChange={setShowRepostDialog}
-        marketTitle={title}
-        marketImage={image}
-      />
     </>
   );
 }

@@ -1,9 +1,9 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { FeedFilters, FilterState } from "@/components/FeedFilters";
 import { MarketGridCard } from "@/components/MarketGridCard";
-import { PageHeader } from "@/components/PageHeader";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { ChevronLeft, ChevronRight, Timer } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import bitcoinImage from "@/assets/bitcoin-market.jpg";
 import nbaImage from "@/assets/nba-championship.jpg";
 import iphoneImage from "@/assets/foldable-iphone.jpg";
@@ -27,12 +27,13 @@ interface Market {
   yesPrice?: number;
   noPrice?: number;
   volume: string;
+  pot: number; // raw pot number for sorting
   endsIn: string;
   likes: number;
   comments: number;
   category: string;
   status: MarketStatus;
-  // For closed/resolved markets
+  players: number;
   resolution?: "yes" | "no" | string;
   disputeEndsIn?: string;
   resolvedAt?: string;
@@ -40,7 +41,6 @@ interface Market {
 }
 
 const mockMarkets: Market[] = [
-  // Open Markets
   {
     id: "1",
     creator: { name: "Sarah Chen", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah", id: "sarah-chen", isCreator: true },
@@ -50,11 +50,13 @@ const mockMarkets: Market[] = [
     yesPrice: 68,
     noPrice: 32,
     volume: "$2.4M",
+    pot: 2400000,
     endsIn: "3 months",
     likes: 142,
     comments: 38,
     category: "Crypto",
     status: "open",
+    players: 12400,
   },
   {
     id: "2",
@@ -69,11 +71,13 @@ const mockMarkets: Market[] = [
       { label: "Other", price: 22 },
     ],
     volume: "$890K",
+    pot: 890000,
     endsIn: "2 months",
     likes: 89,
     comments: 24,
     category: "Sports",
     status: "open",
+    players: 8200,
   },
   {
     id: "3",
@@ -84,11 +88,13 @@ const mockMarkets: Market[] = [
     yesPrice: 23,
     noPrice: 77,
     volume: "$1.2M",
+    pot: 1200000,
     endsIn: "11 months",
     likes: 203,
     comments: 67,
     category: "Tech",
     status: "open",
+    players: 6800,
   },
   {
     id: "4",
@@ -102,11 +108,13 @@ const mockMarkets: Market[] = [
       { label: "Raise", price: 17, color: "destructive" },
     ],
     volume: "$3.1M",
+    pot: 3100000,
     endsIn: "1 month",
     likes: 321,
     comments: 95,
     category: "Finance",
     status: "open",
+    players: 15200,
   },
   {
     id: "5",
@@ -117,14 +125,15 @@ const mockMarkets: Market[] = [
     yesPrice: 71,
     noPrice: 29,
     volume: "$1.8M",
+    pot: 1800000,
     endsIn: "Ended",
     likes: 176,
     comments: 52,
     category: "Tech",
     status: "awaiting_resolution",
+    players: 9800,
     resolutionDate: "Jan 15, 2026",
   },
-  // Closing Soon
   {
     id: "6",
     creator: { name: "Taylor Swift", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Taylor", id: "taylor-swift", isCreator: true },
@@ -133,13 +142,14 @@ const mockMarkets: Market[] = [
     yesPrice: 42,
     noPrice: 58,
     volume: "$987K",
+    pot: 987000,
     endsIn: "2 hours",
     likes: 154,
     comments: 41,
     category: "Tech",
     status: "closing",
+    players: 5400,
   },
-  // Closed Markets (Dispute Period)
   {
     id: "7",
     creator: { name: "David Park", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=David", id: "david-park", isCreator: true },
@@ -148,11 +158,13 @@ const mockMarkets: Market[] = [
     yesPrice: 100,
     noPrice: 0,
     volume: "$1.7M",
+    pot: 1700000,
     endsIn: "Ended",
     likes: 187,
     comments: 56,
     category: "Crypto",
     status: "closed",
+    players: 7200,
     resolution: "yes",
     disputeEndsIn: "18 hours",
   },
@@ -164,15 +176,16 @@ const mockMarkets: Market[] = [
     yesPrice: 0,
     noPrice: 100,
     volume: "$2.3M",
+    pot: 2300000,
     endsIn: "Ended",
     likes: 234,
     comments: 89,
     category: "Finance",
     status: "closed",
+    players: 11200,
     resolution: "no",
     disputeEndsIn: "6 hours",
   },
-  // Resolved Markets
   {
     id: "9",
     creator: { name: "Chris Thompson", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Chris", id: "chris-thompson", isCreator: true },
@@ -181,11 +194,13 @@ const mockMarkets: Market[] = [
     yesPrice: 100,
     noPrice: 0,
     volume: "$3.2M",
+    pot: 3200000,
     endsIn: "Resolved",
     likes: 421,
     comments: 156,
     category: "Tech",
     status: "resolved",
+    players: 18400,
     resolution: "yes",
     resolvedAt: "Sep 15, 2024",
   },
@@ -197,11 +212,13 @@ const mockMarkets: Market[] = [
     yesPrice: 0,
     noPrice: 100,
     volume: "$5.8M",
+    pot: 5800000,
     endsIn: "Resolved",
     likes: 567,
     comments: 234,
     category: "Politics",
     status: "resolved",
+    players: 32000,
     resolution: "no",
     resolvedAt: "Jul 21, 2024",
   },
@@ -217,11 +234,13 @@ const mockMarkets: Market[] = [
       { label: "Other", price: 0 },
     ],
     volume: "$4.1M",
+    pot: 4100000,
     endsIn: "Resolved",
     likes: 389,
     comments: 178,
     category: "Sports",
     status: "resolved",
+    players: 22000,
     resolution: "Celtics",
     resolvedAt: "Jun 18, 2024",
   },
@@ -233,17 +252,32 @@ const mockMarkets: Market[] = [
     yesPrice: 100,
     noPrice: 0,
     volume: "$2.9M",
+    pot: 2900000,
     endsIn: "Resolved",
     likes: 445,
     comments: 167,
     category: "Tech",
     status: "resolved",
+    players: 16800,
     resolution: "yes",
     resolvedAt: "Mar 14, 2024",
   },
 ];
 
+// Featured markets = top 3 by pot size that are open/closing
+const featuredMarkets = [...mockMarkets]
+  .filter(m => m.status === "open" || m.status === "closing")
+  .sort((a, b) => b.pot - a.pot)
+  .slice(0, 3);
+
+function formatPot(pot: number): string {
+  if (pot >= 1000000) return `$${(pot / 1000000).toFixed(1)}M`;
+  if (pot >= 1000) return `$${(pot / 1000).toFixed(0)}K`;
+  return `$${pot}`;
+}
+
 export default function Feed() {
+  const navigate = useNavigate();
   const [filters, setFilters] = useState<FilterState>({
     category: "All",
     sortBy: "trending",
@@ -251,36 +285,45 @@ export default function Feed() {
     status: "all",
     timeframe: "all",
   });
+  const [featuredIndex, setFeaturedIndex] = useState(0);
+
+  // Auto-cycle featured market
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setFeaturedIndex(prev => (prev + 1) % featuredMarkets.length);
+    }, 6000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const currentFeatured = featuredMarkets[featuredIndex];
 
   const filteredMarkets = useMemo(() => {
     let result = [...mockMarkets];
 
-    // Filter by category
     if (filters.category !== "All") {
-      if (filters.category === "Following") {
-        // Mock: just show first 3 for "Following"
+      if (filters.category === "My Markets") {
         result = result.slice(0, 3);
       } else if (filters.category === "Hot") {
-        // Mock: sort by volume/likes
-        result = result.sort((a, b) => b.likes - a.likes);
+        result = result.sort((a, b) => b.pot - a.pot);
+      } else if (filters.category === "Closing Soon") {
+        result = result.filter(m => m.status === "closing" || m.status === "open");
+        result = result.sort((a, b) => {
+          if (a.status === "closing" && b.status !== "closing") return -1;
+          if (b.status === "closing" && a.status !== "closing") return 1;
+          return 0;
+        });
       } else {
         result = result.filter(m => m.category === filters.category);
       }
     }
 
-    // Filter by status
     if (filters.status !== "all") {
       result = result.filter(m => m.status === filters.status);
     }
 
-    // Sort
     switch (filters.sortBy) {
       case "volume":
-        result = result.sort((a, b) => {
-          const volA = parseFloat(a.volume.replace(/[$,KM]/g, ''));
-          const volB = parseFloat(b.volume.replace(/[$,KM]/g, ''));
-          return volB - volA;
-        });
+        result = result.sort((a, b) => b.pot - a.pot);
         break;
       case "newest":
         result = result.reverse();
@@ -289,7 +332,7 @@ export default function Feed() {
         result = result.filter(m => m.status === "open" || m.status === "closing");
         break;
       case "active":
-        result = result.sort((a, b) => b.comments - a.comments);
+        result = result.sort((a, b) => b.players - a.players);
         break;
     }
 
@@ -299,6 +342,69 @@ export default function Feed() {
   return (
     <div className="w-full max-w-[1600px] mx-auto px-4 md:px-6 lg:px-8">
       <div className="space-y-4">
+        {/* Featured Market Hero Banner */}
+        <div 
+          className="relative rounded-2xl overflow-hidden cursor-pointer group"
+          onClick={() => navigate(`/market/${currentFeatured.id}`)}
+        >
+          <div className="aspect-[21/9] sm:aspect-[3/1] relative">
+            <img 
+              src={currentFeatured.image} 
+              alt={currentFeatured.title}
+              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+            />
+            {/* Gradient overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+            
+            {/* Content overlay */}
+            <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6">
+              <div className="flex items-center gap-2 mb-2">
+                {currentFeatured.status === "closing" && (
+                  <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-500/20 border border-amber-500/30 text-amber-400 text-xs font-semibold">
+                    <Timer className="h-3 w-3" />
+                    Closing Soon
+                  </span>
+                )}
+                <span className="px-2.5 py-0.5 rounded-full bg-primary/20 border border-primary/30 text-primary text-xs font-bold">
+                  {formatPot(currentFeatured.pot)} Pot
+                </span>
+              </div>
+              <h2 className="text-white text-lg sm:text-xl font-bold leading-snug line-clamp-2 max-w-2xl">
+                {currentFeatured.title}
+              </h2>
+              <div className="flex items-center gap-4 mt-2 text-white/70 text-xs">
+                <span>{currentFeatured.players.toLocaleString()} players</span>
+                <span>Ends {currentFeatured.endsIn}</span>
+              </div>
+            </div>
+
+            {/* Navigation dots */}
+            <div className="absolute bottom-4 right-4 sm:bottom-6 sm:right-6 flex items-center gap-2">
+              <button 
+                onClick={(e) => { e.stopPropagation(); setFeaturedIndex(prev => (prev - 1 + featuredMarkets.length) % featuredMarkets.length); }}
+                className="h-7 w-7 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white/20 transition-colors"
+              >
+                <ChevronLeft className="h-4 w-4 text-white" />
+              </button>
+              <div className="flex gap-1.5">
+                {featuredMarkets.map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={(e) => { e.stopPropagation(); setFeaturedIndex(i); }}
+                    className={`h-1.5 rounded-full transition-all ${i === featuredIndex ? 'w-6 bg-white' : 'w-1.5 bg-white/40'}`}
+                  />
+                ))}
+              </div>
+              <button 
+                onClick={(e) => { e.stopPropagation(); setFeaturedIndex(prev => (prev + 1) % featuredMarkets.length); }}
+                className="h-7 w-7 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white/20 transition-colors"
+              >
+                <ChevronRight className="h-4 w-4 text-white" />
+              </button>
+            </div>
+          </div>
+        </div>
+
         <FeedFilters filters={filters} onFiltersChange={setFilters} />
         
         {filteredMarkets.length === 0 ? (
@@ -324,6 +430,8 @@ export default function Feed() {
                 yesPrice={market.yesPrice}
                 noPrice={market.noPrice}
                 volume={market.volume}
+                pot={market.pot}
+                players={market.players}
                 endsIn={market.endsIn}
                 status={market.status}
                 resolution={market.resolution}

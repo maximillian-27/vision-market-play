@@ -3,7 +3,6 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
@@ -11,12 +10,9 @@ import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
 import { ResponsiveContainer, AreaChart, Area, XAxis, Tooltip } from "recharts";
 import { 
-  TrendingUp, 
   Clock, 
   Users, 
   BadgeCheck, 
-  Check, 
-  X,
   Wallet,
   Share2,
   ChevronDown,
@@ -27,11 +23,10 @@ import {
   Heart,
   MessageCircle,
   ExternalLink,
-  Zap,
-  Repeat2
+  Bookmark,
+  Timer
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { QuoteRepostDialog } from "@/components/QuoteRepostDialog";
 
 interface Outcome {
   label: string;
@@ -63,6 +58,8 @@ interface MarketDialogProps {
     };
     outcomes: Outcome[];
     volume: string;
+    pot?: number;
+    players?: number;
     endsIn: string;
     traders?: number;
     description?: string;
@@ -74,10 +71,15 @@ interface MarketDialogProps {
   };
 }
 
-// Mock data for enhanced market info
+function formatPot(pot: number): string {
+  if (pot >= 1000000) return `$${(pot / 1000000).toFixed(1)}M`;
+  if (pot >= 1000) return `$${(pot / 1000).toFixed(0)}K`;
+  return `$${pot}`;
+}
+
 const getMockMarketDetails = (marketId: string) => ({
   description: "This market tracks the prediction outcome based on official announcements and verified data sources. The resolution will be determined by the primary outcome at the specified end date.",
-  resolutionCriteria: "This market resolves to YES if the specified outcome occurs before the end date. Resolution is based on official announcements from primary sources. In case of ambiguity, the market creator will consult with the resolution committee.",
+  resolutionCriteria: "This market resolves to YES if the specified outcome occurs before the end date. Resolution is based on official announcements from primary sources.",
   priceHistory: [
     { date: "Jan 1", price: 42 },
     { date: "Jan 15", price: 45 },
@@ -112,8 +114,8 @@ const getMockMarketDetails = (marketId: string) => ({
 
 const buySchema = z.object({
   amount: z.number()
-    .min(1, { message: "Minimum amount is $1" })
-    .max(10000, { message: "Maximum amount is $10,000" })
+    .min(1, { message: "Minimum entry is $1" })
+    .max(10000, { message: "Maximum entry is $10,000" })
 });
 
 export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) {
@@ -125,7 +127,6 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
   const [showResolution, setShowResolution] = useState(false);
   const [showComments, setShowComments] = useState(false);
   const [commentText, setCommentText] = useState("");
-  const [showRepostDialog, setShowRepostDialog] = useState(false);
 
   const mockDetails = getMockMarketDetails(market.id);
   const description = market.description || mockDetails.description;
@@ -140,17 +141,16 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
   const isAwaitingResolution = market.status === "awaiting_resolution";
 
   const amountNum = parseFloat(amount) || 0;
-  const shares = selectedOutcome && selectedOutcome.price > 0 
-    ? Math.floor((amountNum * 100) / selectedOutcome.price) 
-    : 0;
-  const potentialPayout = shares;
-  const potentialProfit = potentialPayout - amountNum;
+  const selectedPrice = selectedOutcome?.price || 0;
+  const payout = selectedPrice > 0 ? amountNum / (selectedPrice / 100) : 0;
+  const winnings = payout - amountNum;
+  const potDisplay = market.pot ? formatPot(market.pot) : market.volume;
 
   const handleBuy = () => {
     if (!selectedOutcome) {
       toast({
         title: "Select an outcome",
-        description: "Please select an outcome before placing an order",
+        description: "Please select an outcome before placing an entry",
         variant: "destructive"
       });
       return;
@@ -163,8 +163,8 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
       
       setTimeout(() => {
         toast({
-          title: "Order placed!",
-          description: `You bought ${shares} shares of "${selectedOutcome.label}" for $${amountNum.toFixed(2)}`,
+          title: "Entry placed!",
+          description: `You entered $${amountNum.toFixed(2)} on "${selectedOutcome.label}"`,
         });
         onOpenChange(false);
         setIsSubmitting(false);
@@ -193,7 +193,7 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
     setCommentText("");
   };
 
-  const quickAmounts = [5, 10, 25, 50];
+  const quickAmounts = [5, 10, 25, 50, 100];
 
   const handleClose = (isOpen: boolean) => {
     if (!isOpen) {
@@ -232,10 +232,10 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
             <Button 
               variant="outline" 
               size="icon" 
-              className="h-8 w-8" 
-              onClick={() => setShowRepostDialog(true)}
+              className="h-8 w-8"
+              onClick={() => toast({ title: "Added to watchlist" })}
             >
-              <Repeat2 className="h-4 w-4" />
+              <Bookmark className="h-4 w-4" />
             </Button>
           </div>
         </div>
@@ -245,18 +245,18 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
           {/* LEFT: Market Info */}
           <ScrollArea className="flex-1 sm:border-r border-border/40">
             <div className="p-4 space-y-4">
-              {/* Title & Stats */}
+              {/* Title & Pot */}
               <div className="space-y-2">
                 <h2 className="text-base font-bold leading-tight">{market.title}</h2>
+                <div className="flex items-center gap-2">
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-extrabold">
+                    {potDisplay} Pot
+                  </span>
+                </div>
                 <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
                   <div className="flex items-center gap-1">
-                    <TrendingUp className="h-3.5 w-3.5 text-primary" />
-                    <span className="font-semibold text-foreground">{market.volume}</span>
-                    <span>volume</span>
-                  </div>
-                  <div className="flex items-center gap-1">
                     <Users className="h-3.5 w-3.5" />
-                    <span>{market.traders?.toLocaleString() || "1.2K"} traders</span>
+                    <span>{market.players?.toLocaleString() || market.traders?.toLocaleString() || "1.2K"} players</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <Clock className="h-3.5 w-3.5" />
@@ -265,7 +265,7 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
                 </div>
               </div>
 
-              {/* Chart with timeframe filters */}
+              {/* Chart */}
               <div className="space-y-2">
                 <div className="flex items-center gap-1.5">
                   {["1D", "1W", "1M", "All"].map((tf) => (
@@ -301,8 +301,8 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
                           fontSize: "11px",
                           padding: "6px 10px"
                         }}
-                        formatter={(value: any) => [`${value}%`, "Price"]}
-                        labelFormatter={(label) => `Date: ${label}`}
+                        formatter={(value: any) => [`${value}% chance`, "Probability"]}
+                        labelFormatter={(label) => `${label}`}
                       />
                       <Area 
                         type="monotone" 
@@ -347,7 +347,7 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
                 </CollapsibleContent>
               </Collapsible>
 
-              {/* Comments Preview */}
+              {/* Comments */}
               <Collapsible open={showComments} onOpenChange={setShowComments}>
                 <CollapsibleTrigger className="flex items-center justify-between w-full py-2 px-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors">
                   <div className="flex items-center gap-1.5 text-xs font-medium">
@@ -382,7 +382,6 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
                       </div>
                     ))}
                     
-                    {/* Add comment */}
                     <div className="flex items-center gap-2 pt-2">
                       <Input
                         placeholder="Add a comment..."
@@ -403,32 +402,32 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
             </div>
           </ScrollArea>
 
-          {/* RIGHT: Quick Trade Panel - Always Visible */}
+          {/* RIGHT: Entry Panel */}
           <div className="w-full sm:w-[260px] flex-shrink-0 bg-muted/20 flex flex-col">
             <div className="p-4 space-y-4 flex-1">
-              {/* Quick Trade Header */}
-              <div className="flex items-center gap-2">
-                <Zap className="h-4 w-4 text-primary" />
-                <span className="text-sm font-semibold">Quick Trade</span>
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-semibold">Place Entry</span>
+                <button onClick={handleViewFullPage} className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1">
+                  <ExternalLink className="h-3 w-3" />
+                  Full page
+                </button>
               </div>
 
-              {/* Awaiting Resolution State */}
+              {/* Awaiting Resolution */}
               {isAwaitingResolution ? (
                 <div className="space-y-4">
-                  {/* Status Banner */}
                   <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20 text-center">
                     <Clock className="h-5 w-5 text-blue-500 mx-auto mb-1.5" />
-                    <p className="text-sm font-semibold text-blue-600 dark:text-blue-400">Betting Closed</p>
+                    <p className="text-sm font-semibold text-blue-600 dark:text-blue-400">Entries Closed</p>
                     <p className="text-xs text-muted-foreground mt-0.5">Awaiting resolution</p>
                     {market.resolutionDate && (
                       <p className="text-xs text-blue-500 mt-1">{market.resolutionDate}</p>
                     )}
                   </div>
                   
-                  {/* Final Prices Display */}
                   {isBinary && (
                     <div className="space-y-2">
-                      <p className="text-xs text-muted-foreground text-center">Final Prices</p>
+                      <p className="text-xs text-muted-foreground text-center">Final Probability</p>
                       <div className="grid grid-cols-2 gap-2 opacity-75">
                         {market.outcomes.map((outcome, index) => {
                           const isYes = outcome.label.toLowerCase() === "yes";
@@ -452,7 +451,6 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
                 </div>
               ) : isBinary ? (
                 <div className="space-y-2">
-                  {/* Probability bar */}
                   <div className="flex items-center gap-2 text-xs font-bold">
                     <span className="text-success w-10">{market.outcomes.find(o => o.label.toLowerCase() === "yes")?.price || 50}%</span>
                     <div className="flex-1 h-2 rounded-full bg-muted overflow-hidden">
@@ -464,7 +462,6 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
                     <span className="text-muted-foreground w-10 text-right">{market.outcomes.find(o => o.label.toLowerCase() === "no")?.price || 50}%</span>
                   </div>
                   
-                  {/* Outcome buttons */}
                   <div className="grid grid-cols-2 gap-2">
                     {market.outcomes.map((outcome, index) => {
                       const isYes = outcome.label.toLowerCase() === "yes";
@@ -524,7 +521,7 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
               {!isAwaitingResolution && (
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-xs">
-                  <span className="text-muted-foreground">Amount</span>
+                  <span className="text-muted-foreground">Entry Amount</span>
                   <div className="flex items-center gap-1 text-muted-foreground">
                     <Wallet className="h-3 w-3" />
                     <span>$5,230</span>
@@ -544,7 +541,7 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
                   />
                 </div>
                 
-                <div className="grid grid-cols-4 gap-1">
+                <div className="grid grid-cols-5 gap-1">
                   {quickAmounts.map((quickAmount) => (
                     <Button
                       key={quickAmount}
@@ -560,29 +557,29 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
               </div>
               )}
 
-              {/* Order Summary - Always visible */}
+              {/* "If You Win" Summary */}
               {!isAwaitingResolution && (
               <div className="p-2.5 rounded-lg bg-background border border-border/50 space-y-1.5">
                 <div className="flex justify-between text-xs">
-                  <span className="text-muted-foreground">Shares</span>
-                  <span className="font-semibold">{selectedOutcome ? shares.toLocaleString() : "—"}</span>
+                  <span className="text-muted-foreground">Your Entry</span>
+                  <span className="font-semibold">${amountNum.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-xs">
-                  <span className="text-muted-foreground">Avg price</span>
-                  <span className="font-semibold">{selectedOutcome ? `${selectedOutcome.price}¢` : "—"}</span>
+                  <span className="text-muted-foreground">If you win</span>
+                  <span className="font-bold">{selectedOutcome ? `$${payout.toFixed(2)}` : "—"}</span>
                 </div>
                 <Separator className="my-1.5" />
                 <div className="flex justify-between text-xs">
-                  <span className="text-muted-foreground">Potential profit</span>
-                  <span className={`font-bold ${selectedOutcome && potentialProfit > 0 ? 'text-success' : ''}`}>
-                    {selectedOutcome ? `+$${potentialProfit.toFixed(2)}` : "—"}
+                  <span className="text-muted-foreground">Potential Winnings</span>
+                  <span className={`font-bold ${selectedOutcome && winnings > 0 ? 'text-success' : ''}`}>
+                    {selectedOutcome ? `+$${winnings.toFixed(2)}` : "—"}
                   </span>
                 </div>
               </div>
               )}
             </div>
 
-            {/* Sticky Buy Button */}
+            {/* Sticky Enter Button */}
             {!isAwaitingResolution && (
             <div className="p-4 pt-0">
               <Button
@@ -591,10 +588,10 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
                 disabled={!selectedOutcome || isSubmitting || amountNum < 1 || amountNum > 10000}
               >
                 {isSubmitting 
-                  ? "Placing order..." 
+                  ? "Placing entry..." 
                   : selectedOutcome 
-                    ? `Buy ${selectedOutcome.label} • $${amountNum.toFixed(2)}`
-                    : "Select outcome to trade"
+                    ? `Enter ${selectedOutcome.label} • $${amountNum.toFixed(2)}`
+                    : "Select outcome to enter"
                 }
               </Button>
             </div>
@@ -602,13 +599,6 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
           </div>
         </div>
       </DialogContent>
-
-      <QuoteRepostDialog
-        open={showRepostDialog}
-        onOpenChange={setShowRepostDialog}
-        marketTitle={market.title}
-        marketImage={market.image}
-      />
     </Dialog>
   );
 }
