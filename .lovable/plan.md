@@ -1,176 +1,218 @@
 
 
-# Admin Panel Enhancement - Deep Analytics, Filters & Missing Tools
+# Markets Page & Market Detail - Casino-Inspired Pari-Mutuel Redesign
 
-Adding richer analytics, comprehensive filters, and missing tools across all admin sections. All existing data and features are preserved -- this only adds on top.
-
-## 1. CRM - Creators & Affiliates Tab (Major Enhancement)
-
-### Add 2 new analytics cards (8 total, from current 6)
-- **Avg Revenue per Creator**: (total creator volume x 3%) / number of creators
-- **Avg Revenue per Affiliate**: (total affiliate volume x 3%) / number of affiliates
-
-### Add filters bar between analytics and table
-- **Type filter** dropdown: All, Creators Only, Affiliates Only
-- **Status filter** dropdown: All, Active, Pending, Suspended
-- **Time period** buttons: 1d, 7d, 30d, 90d, All Time
-- **Sort by** dropdown: Name, Volume, Earnings, Markets, Last Online
-
-### Add table columns
-- **Revenue Generated** (volume x 3%)
-- **Avg Pot per Market** (creators only: volume / markets)
-- **Referrals** (number of users referred)
-- **Tier** badge (Bronze/Silver/Gold/Platinum/Diamond)
-
-### Add actions to dropdown
-- Edit Commission, View Referrals, View Earnings History
-
-### Expand commission tiers to full 5-tier table
-Bronze ($0+), Silver ($50K+), Gold ($250K+), Platinum ($1M+), Diamond ($5M+) with escalating rates from 20% to 30%
-
-### Add Creator Applications sub-section
-Mini table below main table showing pending applications: Name, Email, Bio, Date Applied, Approve/Reject buttons
+Tailoring both pages to the dynamic pari-mutuel ticket model with casino-grade UX. Replacing all trading jargon with the correct terminology (Pot, Tickets, Players, Winnings). Making pot size the hero element. Adding visual excitement while keeping things clean and minimalist.
 
 ---
 
-## 2. CRM - Users Tab Enhancements
+## Terminology Changes (Global across both pages)
 
-### Add filters bar
-- Status (All/Active/Suspended/Unverified), Time period (1d/7d/30d/90d/All), Sort by (Name/Volume/Trades/Joined)
-
-### Add 2 analytics cards (8 total)
-- Avg Volume per User, Unverified Users count
-
-### Add table columns
-- Deposits (total deposited), P&L (net profit/loss)
-
----
-
-## 3. CRM - Payouts Tab Enhancements
-
-### Add filters
-- Type (All/Creator/Affiliate), Status (All/Pending/Paid/Failed), Time period
-
-### Add 3 analytics cards (7 total)
-- Total Paid All Time, Avg Payout Size, Failed Payouts
-
-### Add action buttons
-- Approve All Pending, Export Payouts (CSV)
+All instances updated:
+- "Volume" becomes **"Pot"** (with a pot/trophy-free, high-contrast pill style)
+- "Shares" becomes **"Tickets"**
+- "Traders" becomes **"Players"**
+- "P&L" / "Profit" becomes **"Winnings"**
+- "Positions" / "Trades" becomes **"Entries"**
+- "Buy" becomes **"Enter"** or **"Place Entry"**
+- "Quick Trade" becomes **"Place Entry"**
+- Price display: show as **percentage** (e.g., "68%") not cents
 
 ---
 
-## 4. Dashboard Enhancements
+## 1. Markets Feed Page (Feed.tsx + MarketGridCard.tsx)
 
-### Add quick stats row (between revenue cards and stats grid)
-4 cards: Total Creators, Total Affiliates, Avg Revenue per User, Platform Fee Collected Today
+### A. Feed Layout Improvements
 
-### Enhanced activity log
-- Add colored type badges (Deposit=green, Market=blue, Creator=purple, Dispute=red, Withdrawal=orange)
-- Make entries clickable (toast with details)
+**Hero Banner Section** (new, above filters):
+- Rotating featured market card at top -- larger format, showing the market with the biggest pot
+- Shows: market image (large), title, pot size prominently, countdown timer, and a "Enter Now" CTA
+- Auto-cycles through top 3 markets by pot size
+- Clean, minimal design -- just an image with overlay text, no clutter
 
----
+**Category Filters Enhancement** (FeedFilters.tsx):
+- Replace "Following" with "My Markets" (markets user has entries in)
+- Add "Closing Soon" as a category pill (urgent timer feel)
+- Add "Biggest Pots" as a sort option
+- Remove "Region" filter (not relevant for this product)
+- Keep filter panel but simplify: Sort By, Status, Timeframe only (3 filters instead of 4)
 
-## 5. Markets Enhancements
+### B. Market Card Redesign (MarketGridCard.tsx)
 
-### Add time period filter above analytics
-Buttons: 1d, 7d, 30d, 90d, All Time
+**Pot Size as Hero Element:**
+- Move pot size to a prominent position -- displayed as a bold pill/badge at the top-right of each card
+- Format: green pill with "$2.4M Pot" in bold
+- This is the first thing users should notice
 
-### Add filters to Active tab
-- Status dropdown (All/Active/Paused/Resolved)
-- Category dropdown (All/Sports/Crypto/Politics/Tech/Entertainment)
-- Sort by dropdown (Pot Size/Trades/Fee Revenue/Created)
+**Card Structure (Desktop):**
+1. Header row: Small image + Title + Pot Size pill (top-right)
+2. Outcome buttons (unchanged layout, but show % not cents)
+3. Footer: Players count + End date + Share/Bookmark icons
 
-### Add actions to market dropdown
-- View Creator, Edit Market, Feature Market
+**Card Structure (Mobile):**
+1. Thumbnail left + Title + Pot pill (bold, below title)
+2. Probability bar + outcome buttons
+3. Footer: Players count + End date
 
-### Enhance category cards
-- Add Fee Revenue (volume x 3%), Active vs Total markets count, Avg Pot Size
+**"If You Win" Teaser:**
+- Below outcome buttons, add a subtle line: "Win up to $X" calculated from pot / outcome tickets
+- This creates excitement and conversion motivation
 
----
+**Closing Soon Treatment:**
+- Cards with < 24h left get a subtle pulsing border or amber glow
+- Countdown shown as "2h 15m left" in amber text
 
-## 6. Transactions Enhancements
+**Remove from cards:**
+- All trading jargon (shares, volume, cents)
+- Engagement row (likes, comments, repost) -- keep only on detail page
 
-### Add status filter alongside type filter
-All, Completed, Pending, Under Review, Failed
-
-### Add 5th analytics card
-Fee Revenue (3%): total fees collected in selected period
-
-### Add actions to transaction dropdown
-- Flag Transaction, Approve (for pending), Reject (for pending)
-
-### Enhance wallet cards
-- 24h In/Out flow indicators, Last Transaction timestamp, Transfer + Freeze action buttons
-
----
-
-## 7. Analytics & BI Enhancements
-
-### New 5th tab: "Creators & Affiliates"
-- Creator KPIs: Total Creators, Avg Revenue/Creator, Top Creator Revenue, Creator Churn Rate
-- Affiliate KPIs: Total Affiliates, Avg Revenue/Affiliate, Top Affiliate Revenue, Conversion Rate
-- Creator vs Organic Revenue comparison cards
-- Top 5 Creators by Volume table
-- Top 5 Affiliates by Referral Volume table
-- Creator Growth line chart (new creators over time)
-
-### Performance tab additions
-3 new KPI cards: Avg Trade Size, Markets Created (period), Platform Take Rate
+### C. Feed Sorting Improvements
+- Default sort: "Trending" (mix of pot size + recent activity)
+- Add "Biggest Pots" sort (descending pot size)
+- Add "Closing Soon" sort (ascending time remaining)
+- Add "Newest" sort (most recently created)
 
 ---
 
-## 8. Security Enhancements
+## 2. Market Detail Page (MarketDetail.tsx)
 
-### Wallet Monitoring
-- Add Total Platform Holdings summary card summing all wallets
+### A. Page Header Redesign
 
-### Fraud Detection
-- Add Status filter (All/Investigating/Flagged/Monitoring/Resolved)
-- Add Risk Level filter (All/Critical 80+/High 60-79/Medium 40-59/Low <40)
+**Hero Section:**
+- Market image as a wide banner (16:9 aspect ratio, max height ~200px) with gradient overlay
+- Title overlaid on bottom of image (white text on gradient) -- or below image cleanly
+- Creator row below with avatar, name, verified badge
+- Status badge (Live / Closing Soon / Awaiting Resolution)
 
-### Audit Log
-- Add search bar, date range filter, admin filter dropdown, Export button
+**Pot Size Highlight:**
+- Large, prominent pot display directly below title
+- Format: "$2.4M" in large bold text with "Total Pot" label
+- Styled with primary color background pill or high-contrast treatment
+- This is THE number users care about
+
+### B. Key Stats Row
+Replace current stats grid with a single clean row:
+- **Pot Size** (hero, primary color, bold) 
+- **Players** (count)
+- **24h Activity** (new entries in last 24h)  
+- **Ends** (date/countdown)
+
+Remove the duplicate stats grid below the chart (currently showing Volume, Traders, 24h Vol redundantly).
+
+### C. Chart Section
+- Keep the probability chart as-is (it works well)
+- Change Y-axis label from "Price" to "Probability"
+- Tooltip: show "68% chance" instead of "68%" / "Price"
+
+### D. Outcome Selection & Entry Panel (Bottom Sticky)
+
+**Rename "Quick Trade" to "Place Entry"**
+
+**Binary Markets:**
+- Keep probability bar (clean, works well)
+- Keep Yes/No buttons
+- Change "Buy" button text to "Enter" or "Place Entry"
+
+**Multi-Outcome Markets:**
+- Horizontal scrollable outcome chips (keep current design)
+- Each chip shows: logo/initial + name + probability %
+
+**Entry Input:**
+- Dollar amount input (keep current)
+- Quick amount buttons: $5, $10, $25, $50, $100
+- Add $100 to quick amounts (casino users bet bigger)
+
+**"If You Win" Display (replaces current order summary):**
+- Replace shares/avg/profit with:
+  - **"Your Entry"**: $10
+  - **"If you win"**: $14.70 (absolute dollar payout)
+  - **"Potential Winnings"**: +$4.70
+- Formula: Payout = (Your Entry / Total Outcome Entries) x Total Pot
+- Show this in a highlighted card with green accent for winnings
+- Remove "shares" and "avg price" -- users don't need to know ticket mechanics
+
+### E. Description & Resolution
+- Keep collapsible resolution criteria (works well)
+- Keep description section
+- Add "Created by" link to creator profile in description area
+
+### F. Comments Section
+- Keep current collapsible comments (works well)
+- No changes needed
+
+### G. Social/Engagement Row
+- Keep like, comment, share buttons
+- Add bookmark button
+- Remove repost button (less relevant for casino feel)
 
 ---
 
-## 9. Support Enhancements
+## 3. Market Dialog (MarketDialog.tsx - Desktop Quick View)
 
-### Ticket filters
-- Category (All/Account/Market/Payment/Other)
-- Priority (All/Critical/High/Medium/Low)
-- Status (All/Open/In Progress/Escalated/Resolved)
-
-### Add 3 more stat cards (7 total)
-- Tickets Today, First Response Time, CSAT Score
-
----
-
-## 10. Loyalty & Bonuses Enhancements
-
-### Active Bonuses
-- Add ROI column: (revenue from bonus users - cost) / cost
-- Add Budget Progress bar per bonus
-- Add Actions dropdown: Edit, Duplicate, Deactivate, Delete
-
-### Loyalty Tiers
-- Add Revenue from Tier, Avg Volume per User in tier, Upgrade Rate %
+### Same Terminology Updates:
+- "Quick Trade" becomes "Place Entry"
+- Shares/Avg/Profit becomes Entry/If You Win/Winnings
+- Add "If you win: $X" prominent display
+- Pot size shown prominently in stats row
+- Add $100 quick amount button
 
 ---
 
-## Technical Details
+## 4. Quick Trade Sheet (QuickTradeSheet.tsx - Mobile)
 
-### Files modified (8 total, 0 new, 0 deleted)
+### Same Updates:
+- Rename to "Place Entry"
+- Same "If you win" display
+- Same pot size prominence
+- Same terminology
 
-| File | Scope |
-|------|-------|
-| AdminCRM.tsx | Filters bar, 2 extra analytics, 4 extra table columns, expanded commission tiers, creator applications, payouts filters + actions |
-| AdminDashboard.tsx | Quick stats row (4 cards), activity type badges, clickable entries |
-| AdminMarkets.tsx | Time period filter, status/category/sort filters, enhanced actions, category card metrics |
-| AdminTransactions.tsx | Status filter, fee revenue card, enhanced actions, wallet card details |
-| AdminAnalytics.tsx | New Creators & Affiliates tab with KPIs/tables/chart, 3 performance KPIs |
-| AdminSecurity.tsx | Platform holdings card, fraud filters, audit search/export |
-| AdminSupport.tsx | 3 ticket filters, 3 extra stat cards |
-| AdminBonusManagement.tsx | ROI column, budget progress bars, bonus actions dropdown, tier revenue metrics |
+---
 
-All changes are additive -- existing data, columns, actions, and layouts are fully preserved.
+## 5. Hottest Markets Sidebar (HottestMarkets.tsx)
+
+- Rename "Trending Now" to "Biggest Pots"
+- Sort by pot size descending
+- Show pot size prominently (bold, primary color)
+- Remove "Yes 68c" -- show "68%" instead
+- Add player count
+
+---
+
+## Files Modified
+
+| File | Changes |
+|------|---------|
+| Feed.tsx | Add hero featured market banner, terminology updates, remove "Region" filter usage |
+| FeedFilters.tsx | Remove Region filter, add "Closing Soon" + "My Markets" categories, add "Biggest Pots" sort |
+| MarketGridCard.tsx | Pot size as hero pill, "Win up to $X" teaser, terminology updates, remove engagement row, closing soon pulse, % not cents |
+| MarketDetail.tsx | Hero image banner, pot size highlight, "If you win" display, terminology updates, add $100 quick amount, remove redundant stats |
+| MarketDialog.tsx | Same terminology and "If you win" updates as MarketDetail |
+| QuickTradeSheet.tsx | Same terminology and "If you win" updates |
+| HottestMarkets.tsx | "Biggest Pots" rename, pot size prominence, % display |
+| BuyDialog.tsx | Terminology updates (tickets, entry, winnings), "If you win" display |
+
+**Total: 8 files modified, 0 new files**
+
+---
+
+## Technical Notes
+
+**Pari-Mutuel Payout Calculation:**
+```
+Payout = (userEntry / totalOutcomeEntries) * totalPot
+Winnings = Payout - userEntry
+```
+
+Display as: "If you win: $14.70" (absolute, never show ticket count to end users)
+
+**Pot Size Formatting:**
+- Under $1K: "$500"
+- $1K-$999K: "$2.4K" 
+- $1M+: "$2.4M"
+- Always use primary color, font-extrabold, pill background
+
+**Closing Soon Logic:**
+- Less than 24h: amber pulsing indicator
+- Less than 1h: red urgent indicator  
+- Show countdown format: "2h 15m" or "45m"
 
