@@ -268,12 +268,12 @@ export function MarketGridCard({
             </h3>
           </div>
 
-          {/* Pot + Players */}
+          {/* Players + Pot */}
           <div className="flex items-center justify-between">
-            <span className="text-primary text-xs font-extrabold">{potDisplay} <span className="text-[9px] font-medium text-muted-foreground">pot</span></span>
             <span className="text-[9px] text-muted-foreground flex items-center gap-0.5">
-              <Users className="h-2.5 w-2.5" />{players.toLocaleString()}
+              <Users className="h-2.5 w-2.5" />{players.toLocaleString()} players
             </span>
+            <span className="text-primary text-xs font-extrabold">{potDisplay} <span className="text-[9px] font-medium text-muted-foreground">pot</span></span>
           </div>
 
           {/* Outcomes */}
@@ -284,11 +284,6 @@ export function MarketGridCard({
           {/* Footer */}
           <div className="flex items-center justify-between text-[9px]">
             <div className="flex items-center gap-2">
-              {winUpTo && (
-                <span className="text-pollgy-green font-bold flex items-center gap-0.5">
-                  Win up to {winUpTo} / <Ticket className="h-2.5 w-2.5" />
-                </span>
-              )}
               {statusLine()}
             </div>
             {!isClosedOrResolved && (
@@ -320,20 +315,15 @@ export function MarketGridCard({
             <div className="flex-1 min-w-0">
               <h3 className="text-[13px] font-semibold leading-snug line-clamp-2">{title}</h3>
               <div className="flex items-center gap-2 mt-1">
-                <span className="text-primary text-xs font-extrabold">{potDisplay}</span>
                 <span className="text-[10px] text-muted-foreground flex items-center gap-1">
                   <Users className="h-2.5 w-2.5" />{players.toLocaleString()}
                 </span>
+                <span className="text-primary text-xs font-extrabold">{potDisplay}</span>
                 {statusLine()}
               </div>
             </div>
           </div>
           <OutcomeButtons />
-          {winUpTo && (
-            <p className="text-[10px] text-pollgy-green font-bold mt-1.5 flex items-center gap-0.5">
-              Win up to {winUpTo} / <Ticket className="h-2.5 w-2.5" />
-            </p>
-          )}
         </div>
       </Card>
     </>
