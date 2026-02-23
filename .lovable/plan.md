@@ -1,27 +1,52 @@
 
-# Fix: Remove Gap Between Header and Filters on Mobile
 
-## Root Cause
-The Feed.tsx wrapper (line 686) has `-mt-14 pt-14` -- the `-mt-14` pulls the container up to cancel the main element's `pt-14`, but then `pt-14` adds 56px of internal padding back, pushing the filters down. This creates the visible empty space between the header and the category pills.
+# Mobile Hero Section Redesign
 
-## Fix (single line change in `src/pages/Feed.tsx`)
+## Current Problem
+On mobile, only the hero slideshow is visible. The **Weekly Draw**, **Sponsored market**, and **gradient banner** are all hidden inside the desktop-only `hidden sm:grid` block. Mobile users miss key features.
 
-**Line 686** -- Change the wrapper classes so `-mt-14 pt-14` only applies on desktop (where it may be needed for spacing), and on mobile there is zero top padding:
+## Proposed Layout (top to bottom)
 
+```text
++----------------------------------+
+| Weekly Draw (compact strip)      |
++----------------------------------+
+| Hero Slideshow (biggest markets) |
+| [swipeable, 200px, dot indicators]|
++----------------------------------+
+| Gradient Banner (Pollgy slogan)  |
++----------------------------------+
+| Sponsored Market (first item)    |
++----------------------------------+
+| Market 1                         |
+| Market 2                         |
+| Market 3 ...                     |
++----------------------------------+
 ```
-Before: -mt-14 pt-14 sm:mt-0 sm:pt-0
-After:  sm:-mt-14 sm:pt-14
-```
 
-Wait -- actually the logic is inverted. Currently it does `-mt-14 pt-14` on all screens then resets on `sm:`. Since the main already has `pt-14`, on mobile we just need no extra offset. Removing `-mt-14 pt-14` on mobile means the content starts right at the top of the main content area (which already has `pt-14` from App.tsx).
+## Changes (single file: `src/pages/Feed.tsx`)
 
-**Change line 686 from:**
-```
-className="w-full max-w-[1600px] mx-auto px-4 md:px-6 lg:px-8 pb-24 sm:pb-0 -mt-14 pt-14 sm:mt-0 sm:pt-0"
-```
-**To:**
-```
-className="w-full max-w-[1600px] mx-auto px-4 md:px-6 lg:px-8 pb-24 sm:pb-0"
-```
+### 1. Mobile Weekly Draw strip (new, above hero)
+- A compact single-line strip showing: Trophy icon, pot amount, countdown timer, and entry count
+- Reuses the same data constants already in WeeklyDrawCard
+- Styled as a small bordered row (~36px tall) matching the sidebar strip style from MarketsSidebar
 
-This removes the `-mt-14 pt-14 sm:mt-0 sm:pt-0` entirely since the main wrapper in App.tsx already provides the correct `pt-14` offset on all screen sizes. The extra negative margin / padding trick was unnecessary and was the source of the gap.
+### 2. Hero slideshow -- keep as-is
+- Already working well at 220px with dot indicators and outcome buttons
+
+### 3. Gradient Banner -- already renders for mobile
+- The `GradientDivider` component already shows on mobile (no `hidden` class), but it currently sits after the desktop hero block. Move it into the mobile section flow, right after the hero.
+
+### 4. Sponsored market card before regular list
+- Insert the first `sponsoredMarkets[0]` as a distinguished card at the top of the mobile market list
+- Add a small "Sponsored" label, image, title, outcome buttons, and pot/players -- reusing the `CompactFeaturedCard` layout but rendered inline in the mobile flow
+- Visually separated with a subtle accent border (`border-primary/20`)
+
+### 5. Regular market list continues below
+- No changes to the existing flat list
+
+### Technical approach
+- All changes within the mobile-only `sm:hidden` blocks in `Feed.tsx`
+- No new components needed -- inline the compact weekly draw strip and sponsored card
+- Desktop layout remains completely untouched
+
