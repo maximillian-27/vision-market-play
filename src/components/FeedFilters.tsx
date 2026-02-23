@@ -74,63 +74,19 @@ export function FeedFilters({ filters, onFiltersChange }: FeedFiltersProps) {
 
   return (
     <div className="space-y-1 sm:space-y-1.5 sticky top-14 z-10 bg-background py-1 sm:py-1.5 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
-      {/* Mobile: Search bar + icons */}
-      <div className="flex sm:hidden items-center gap-2">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input 
-            placeholder="Search markets..."
-            className="h-9 pl-9 pr-3 text-sm rounded-full bg-secondary/50 border-border"
-          />
-        </div>
+      {/* Mobile: Category pills + filter button in one row, no search bar */}
+      <div className="flex sm:hidden items-center gap-1.5">
         <Button 
           variant={showFilters ? "default" : "outline"} 
           size="icon"
-          className="h-9 w-9 flex-shrink-0 rounded-full"
+          className="h-7 w-7 flex-shrink-0 rounded-full relative"
           onClick={() => setShowFilters(!showFilters)}
         >
-          <SlidersHorizontal className="h-4 w-4" />
+          <SlidersHorizontal className="h-3.5 w-3.5" />
           {hasActiveFilters && (
-            <span className="absolute top-1 right-1 h-1.5 w-1.5 rounded-full bg-primary" />
+            <span className="absolute -top-0.5 -right-0.5 h-1.5 w-1.5 rounded-full bg-primary" />
           )}
         </Button>
-        <Button variant="outline" size="icon" className="h-9 w-9 flex-shrink-0 rounded-full">
-          <Bookmark className="h-4 w-4" />
-        </Button>
-      </div>
-
-      {/* Mobile: Category pills row */}
-      <div className="flex sm:hidden gap-1 overflow-x-auto pb-0.5 scrollbar-hide -mx-4 px-4">
-        {categories.map((category) => (
-          <button
-            key={category}
-            onClick={() => updateFilter('category', category)}
-            className={`whitespace-nowrap font-medium px-3 py-1 text-xs rounded-full transition-all ${
-              category === filters.category 
-                ? "bg-primary text-primary-foreground" 
-                : "text-muted-foreground hover:text-foreground hover:bg-secondary"
-            }`}
-          >
-            {category}
-          </button>
-        ))}
-      </div>
-
-      {/* Desktop: Original layout */}
-      <div className="hidden sm:flex gap-2 items-center">
-        <Button 
-          variant={showFilters ? "default" : "outline"} 
-          size="sm"
-          className="h-7 px-2.5 flex-shrink-0 gap-1 font-medium text-xs"
-          onClick={() => setShowFilters(!showFilters)}
-        >
-          <SlidersHorizontal className="h-3 w-3" />
-          <span>Filters</span>
-          {hasActiveFilters && (
-            <span className="h-1.5 w-1.5 rounded-full bg-primary-foreground ml-0.5" />
-          )}
-        </Button>
-
         <div className="flex gap-1 overflow-x-auto pb-0.5 scrollbar-hide">
           {categories.map((category) => (
             <button

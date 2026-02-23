@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect } from "react";
 import { FeedFilters, FilterState } from "@/components/FeedFilters";
 import { MarketGridCard } from "@/components/MarketGridCard";
 import { Button } from "@/components/ui/button";
-import { Timer, Users, ArrowRight, Trophy, Ticket, Zap } from "lucide-react";
+import { Timer, Users, ArrowRight, Trophy, Ticket, Zap, ChevronDown, Info, History, Gift, Calendar } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { WeeklyDrawCard } from "@/components/WeeklyDrawCard";
@@ -616,6 +616,7 @@ export default function Feed() {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const [activeSlide, setActiveSlide] = useState(0);
+  const [drawExpanded, setDrawExpanded] = useState(false);
   const [filters, setFilters] = useState<FilterState>({
     category: "All",
     sortBy: "trending",
@@ -689,21 +690,74 @@ export default function Feed() {
 
         {/* 2a. Mobile: Weekly Draw + Hero + Banner + Sponsored */}
         <div className="sm:hidden space-y-1.5">
-          {/* Weekly Draw compact strip */}
-          <div className="flex items-center justify-between rounded-xl border border-primary/20 bg-card px-3 py-2">
-            <div className="flex items-center gap-2">
-              <Trophy className="h-4 w-4 text-primary" />
-              <span className="text-sm font-bold text-primary">$48,600</span>
-              <span className="text-[10px] text-muted-foreground">prize pool</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] text-muted-foreground flex items-center gap-0.5">
-                <Ticket className="h-3 w-3" />3
-              </span>
-              <span className="text-[10px] text-muted-foreground flex items-center gap-0.5">
-                <Timer className="h-3 w-3" />3d 14h
-              </span>
-            </div>
+          {/* Weekly Draw — expandable strip */}
+          <div className="rounded-xl border border-primary/20 bg-card overflow-hidden">
+            <button
+              onClick={() => setDrawExpanded(!drawExpanded)}
+              className="w-full flex items-center justify-between px-3 py-2"
+            >
+              <div className="flex items-center gap-2">
+                <Trophy className="h-3.5 w-3.5 text-primary" />
+                <span className="text-xs font-bold text-primary">$48,600</span>
+                <span className="text-[10px] text-muted-foreground">weekly draw</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] text-muted-foreground flex items-center gap-0.5">
+                  <Timer className="h-3 w-3" />3d 14h
+                </span>
+                <ChevronDown className={`h-3.5 w-3.5 text-muted-foreground transition-transform ${drawExpanded ? 'rotate-180' : ''}`} />
+              </div>
+            </button>
+
+            {drawExpanded && (
+              <div className="px-3 pb-3 space-y-2.5 border-t border-border/30 pt-2.5 animate-in fade-in-0 slide-in-from-top-1 duration-200">
+                <p className="text-[10px] text-muted-foreground">Prize pool redistributed weekly to random participants</p>
+
+                {/* Distribution bar */}
+                <div>
+                  <div className="flex rounded-full overflow-hidden h-1">
+                    {[{ place: "1st", pct: 50 }, { place: "2nd", pct: 25 }, { place: "3rd", pct: 15 }, { place: "4–10th", pct: 10 }].map((d, i) => (
+                      <div key={d.place} className="h-full bg-primary" style={{ width: `${d.pct}%`, opacity: 1 - i * 0.2 }} />
+                    ))}
+                  </div>
+                  <div className="flex items-center justify-between mt-1 text-[8px] text-muted-foreground">
+                    {[{ place: "1st", pct: 50 }, { place: "2nd", pct: 25 }, { place: "3rd", pct: 15 }, { place: "4–10th", pct: 10 }].map((d) => (
+                      <span key={d.place}><span className="font-medium text-foreground">{d.place}</span> {d.pct}%</span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Entry info */}
+                <div className="flex items-center justify-between text-[10px]">
+                  <span className="flex items-center gap-1 text-muted-foreground">
+                    <Ticket className="h-3 w-3 text-primary" />
+                    <span><span className="font-semibold text-foreground">20</span> tickets = 1 entry</span>
+                  </span>
+                  <span className="text-muted-foreground">
+                    <span className="font-semibold text-foreground">3</span> / 1,284 entries
+                  </span>
+                </div>
+
+                {/* How it works summary */}
+                <div className="grid grid-cols-3 gap-1.5">
+                  <div className="flex flex-col items-center text-center p-2 rounded-lg bg-muted/40">
+                    <Gift className="h-3.5 w-3.5 text-primary mb-1" />
+                    <span className="text-[9px] font-medium text-foreground">2% funding</span>
+                    <span className="text-[8px] text-muted-foreground">per ticket</span>
+                  </div>
+                  <div className="flex flex-col items-center text-center p-2 rounded-lg bg-muted/40">
+                    <Ticket className="h-3.5 w-3.5 text-primary mb-1" />
+                    <span className="text-[9px] font-medium text-foreground">20 tickets</span>
+                    <span className="text-[8px] text-muted-foreground">= 1 entry</span>
+                  </div>
+                  <div className="flex flex-col items-center text-center p-2 rounded-lg bg-muted/40">
+                    <Calendar className="h-3.5 w-3.5 text-primary mb-1" />
+                    <span className="text-[9px] font-medium text-foreground">Sundays</span>
+                    <span className="text-[8px] text-muted-foreground">10 winners</span>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Hero Slideshow */}
