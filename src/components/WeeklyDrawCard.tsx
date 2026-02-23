@@ -53,30 +53,24 @@ export function WeeklyDrawCard() {
 
       {/* Prize pool */}
       <div className="flex items-baseline justify-between">
-        <div className="flex items-baseline gap-1.5">
-          <span className="text-2xl font-extrabold text-primary leading-none tracking-tight">
-            ${WEEKLY_POT.toLocaleString()}
-          </span>
-        </div>
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <span className="flex items-center gap-1 text-[11px] text-primary/70 font-medium cursor-help">
-                <Ticket className="h-3 w-3" />
-                {MY_ENTRIES} entries
-              </span>
-            </TooltipTrigger>
-            <TooltipContent side="bottom" className="text-xs max-w-[180px]">
-              Buy {ENTRY_COST} tickets to earn 1 entry. You have {MY_ENTRIES} entries out of {ELIGIBLE_ENTRIES.toLocaleString()} total.
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+        <span className="text-2xl font-extrabold text-primary leading-none tracking-tight">
+          ${WEEKLY_POT.toLocaleString()}
+        </span>
+        <span className="text-[11px] text-muted-foreground">
+          {ENTRY_COST} tickets = 1 entry
+        </span>
       </div>
 
-      {/* Explainer */}
-      <p className="text-[11px] text-muted-foreground leading-relaxed -mt-1">
-        Every week, 2% of all ticket sales are pooled and distributed to 10 randomly selected participants.
-      </p>
+      {/* Explainer + ticket counter */}
+      <div className="flex items-center justify-between -mt-0.5">
+        <p className="text-[11px] text-muted-foreground">
+          Pooled weekly & sent to 10 random winners.
+        </p>
+        <span className="flex items-center gap-1 text-[11px] text-primary font-semibold">
+          <Ticket className="h-3 w-3" />
+          {MY_ENTRIES}
+        </span>
+      </div>
 
       {/* Distribution bar */}
       <div className="space-y-1">
