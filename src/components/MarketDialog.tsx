@@ -292,22 +292,19 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
                   </div>
                 </div>
 
-                {/* Community Sentiment - small, informational only */}
+                {/* Community Sentiment - inline under metadata */}
                 {isBinary && (
-                  <div className="space-y-1">
-                    <p className="text-[10px] text-muted-foreground font-medium">Community sentiment</p>
-                    <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-semibold text-success">{yesPct}% Yes</span>
-                      <div className="flex-1 h-1 rounded-full bg-muted overflow-hidden">
-                        <div className="h-full rounded-full bg-success/60" style={{ width: `${yesPct}%` }} />
-                      </div>
-                      <span className="text-[10px] font-semibold text-muted-foreground">{100 - yesPct}% No</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-semibold text-success">{yesPct}%</span>
+                    <div className="flex-1 h-1 rounded-full bg-muted overflow-hidden">
+                      <div className="h-full rounded-full bg-success/60" style={{ width: `${yesPct}%` }} />
                     </div>
+                    <span className="text-[10px] font-semibold text-muted-foreground">{100 - yesPct}%</span>
                   </div>
                 )}
 
                 {/* Price Chart - ticket price over time */}
-                <div className="h-28 rounded-lg overflow-hidden bg-muted/20 p-1.5">
+                <div className="h-20 rounded-lg overflow-hidden bg-muted/20 p-1.5">
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={priceHistory} margin={{ top: 4, right: 4, left: 0, bottom: 0 }}>
                       <defs>
@@ -316,13 +313,6 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
                           <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
                         </linearGradient>
                       </defs>
-                      <XAxis
-                        dataKey="date"
-                        axisLine={false}
-                        tickLine={false}
-                        tick={{ fontSize: 9, fill: 'hsl(var(--muted-foreground))' }}
-                        interval="preserveStartEnd"
-                      />
                       <Tooltip
                         contentStyle={{
                           backgroundColor: "hsl(var(--popover))",
@@ -454,15 +444,8 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
                   </div>
                 ) : (
                   <>
-                    {/* Step 1: Pick your side */}
+                    {/* Pick your side */}
                     <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <p className="text-xs font-semibold text-foreground">1. Pick your side</p>
-                        <span className="inline-flex items-center gap-1 text-[10px] text-muted-foreground bg-muted/50 px-2 py-0.5 rounded-full">
-                          <Timer className="h-2.5 w-2.5" />
-                          {market.endsIn}
-                        </span>
-                      </div>
 
                       {isBinary ? (
                         <div className="grid grid-cols-2 gap-2">
@@ -473,7 +456,7 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
                               <button
                                 key={index}
                                 onClick={() => setSelectedOutcome(outcome)}
-                                className={`rounded-xl py-3.5 text-center transition-all active:scale-[0.97] border-2 ${
+                                className={`rounded-xl py-5 text-center transition-all active:scale-[0.97] border-2 ${
                                   isSelected
                                     ? isYes
                                       ? 'border-success bg-success/15 text-success shadow-[0_0_12px_hsl(var(--success)/0.15)]'
@@ -483,7 +466,7 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
                                       : 'border-destructive/20 bg-destructive/5 text-destructive hover:bg-destructive/10 hover:border-destructive/40'
                                 }`}
                               >
-                                <span className="text-base font-bold uppercase">{outcome.label}</span>
+                                <span className="text-lg font-bold uppercase">{isYes ? '👍' : '👎'} {outcome.label}</span>
                               </button>
                             );
                           })}
@@ -516,17 +499,10 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
                       )}
                     </div>
 
-                    {/* Step 2: How many tickets */}
+                    {/* Tickets */}
                     <div className="space-y-2">
-                      <p className="text-xs font-semibold text-foreground">2. How many tickets?</p>
-                      
-                      {/* Ticket price badge */}
-                      <div className="flex items-center justify-between p-2.5 rounded-lg bg-muted/40">
-                        <div className="flex items-center gap-1.5">
-                          <Ticket className="h-3.5 w-3.5 text-primary" />
-                          <span className="text-xs text-muted-foreground">Price per ticket</span>
-                        </div>
-                        <span className="text-sm font-bold text-foreground">${currentTicketPrice.toFixed(2)}</span>
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] text-muted-foreground">${currentTicketPrice.toFixed(2)}/ticket <span className="opacity-60">(price increases over time)</span></span>
                       </div>
 
                       {/* Ticket counter */}
@@ -573,35 +549,19 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
                         ))}
                       </div>
 
-                      {/* Price increases note */}
-                      <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-primary/5 border border-primary/10">
-                        <TrendingUp className="h-3 w-3 text-primary flex-shrink-0" />
-                        <p className="text-[10px] text-muted-foreground leading-snug">
-                          Ticket price increases closer to the deadline
-                        </p>
-                      </div>
                     </div>
 
-                    {/* Winnings summary */}
-                    <div className="p-3 rounded-xl bg-muted/30 space-y-2">
-                      <div className="flex justify-between text-xs">
-                        <span className="text-muted-foreground">
-                          {ticketCount} ticket{ticketCount !== 1 ? 's' : ''} × ${currentTicketPrice.toFixed(2)}
-                        </span>
-                        <span className="font-semibold">${totalCost.toFixed(2)}</span>
+                    {/* Winnings hero */}
+                    <div className="bg-success/5 rounded-xl p-3 text-center space-y-1 border border-success/10">
+                      <div className="flex items-center justify-center gap-1.5">
+                        <Trophy className="h-3.5 w-3.5 text-success" />
+                        <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Est. Profit</span>
                       </div>
-                      <Separator className="bg-border/40" />
-                      <div className="flex justify-between items-center">
-                        <div className="flex items-center gap-1.5">
-                          <Trophy className="h-3.5 w-3.5 text-success" />
-                          <span className="text-xs font-medium">Est. winnings</span>
-                        </div>
-                        <span className={`text-xl font-bold ${estimatedProfit > 0 ? 'text-success' : 'text-foreground'}`}>
-                          ~${estimatedProfit > 0 ? estimatedProfit.toFixed(2) : '0.00'}
-                        </span>
-                      </div>
-                      <p className="text-[9px] text-muted-foreground leading-snug">
-                        ⚡ Winners split 90% of the pot — final payout depends on total entries.
+                      <span className={`text-2xl font-bold block ${estimatedProfit > 0 ? 'text-success' : 'text-foreground'}`}>
+                        ~${estimatedProfit > 0 ? estimatedProfit.toFixed(2) : '0.00'}
+                      </span>
+                      <p className="text-[9px] text-muted-foreground">
+                        {ticketCount} × ${currentTicketPrice.toFixed(2)} = ${totalCost.toFixed(2)} · 90% pot split
                       </p>
                     </div>
                   </>
