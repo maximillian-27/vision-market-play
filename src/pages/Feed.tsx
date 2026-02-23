@@ -533,40 +533,32 @@ function CompactFeaturedCard({ market }: { market: Market }) {
   ];
   const isBinary = !market.outcomes;
 
-  const lowestPrice = Math.min(...displayOutcomes.map(o => o.price).filter(p => p > 0));
-  const winUpTo = lowestPrice > 0 ? 10 / (lowestPrice / 100) : 0;
-  const winLabel = winUpTo >= 1000 ? `$${(winUpTo / 1000).toFixed(0)}K` : winUpTo > 0 ? `$${winUpTo.toFixed(0)}` : "";
-
   return (
     <div
       onClick={() => navigate(`/market/${market.id}`)}
       className="flex flex-col p-3 rounded-xl border border-border/60 bg-card hover:bg-accent/30 cursor-pointer transition-colors h-full"
     >
-      {/* Header: sponsored + creator */}
-      <div className="flex items-center justify-between mb-1.5">
-        <span className="text-[9px] uppercase tracking-wider font-bold text-pollgy-blue">Sponsored</span>
-        <div className="flex items-center gap-1">
-          <img src={market.creator.avatar} alt="" className="w-3.5 h-3.5 rounded-full" />
-          <span className="text-[9px] text-muted-foreground">{market.creator.name}</span>
-        </div>
-      </div>
-
-      {/* Image + Title */}
-      <div className="flex gap-2.5 mb-2">
-        <img src={market.image} alt={market.title} className="w-14 h-14 rounded-lg object-cover shrink-0" />
+      <div className="flex gap-3 mb-2">
+        <img
+          src={market.image}
+          alt={market.title}
+          className="w-16 h-16 rounded-lg object-cover shrink-0"
+        />
         <div className="flex flex-col justify-between flex-1 min-w-0">
-          <h4 className="text-xs font-semibold leading-tight line-clamp-2 text-foreground">
-            {market.title}
-          </h4>
+          <div>
+            <span className="text-[9px] uppercase tracking-wider font-bold text-pollgy-blue">Sponsored</span>
+            <h4 className="text-xs font-semibold leading-tight line-clamp-2 text-foreground mt-0.5">
+              {market.title}
+            </h4>
+          </div>
           <div className="flex items-center gap-2 mt-1">
-            <span className="text-primary text-[11px] font-extrabold">{formatPot(market.pot)} <span className="text-[9px] font-medium text-muted-foreground">pot</span></span>
+            <span className="text-primary text-[11px] font-extrabold">{formatPot(market.pot)}</span>
             <span className="text-[9px] text-muted-foreground flex items-center gap-0.5">
               <Users className="h-2.5 w-2.5" />{market.players.toLocaleString()}
             </span>
           </div>
         </div>
       </div>
-
       {/* Outcome buttons */}
       {isBinary ? (
         <div className="flex gap-1">
@@ -600,18 +592,6 @@ function CompactFeaturedCard({ market }: { market: Market }) {
           )}
         </div>
       )}
-
-      {/* Footer: timer + win potential */}
-      <div className="flex items-center justify-between mt-1.5 text-[9px]">
-        <span className="text-muted-foreground flex items-center gap-0.5">
-          <Timer className="h-2.5 w-2.5" />{market.endsIn}
-        </span>
-        {winLabel && (
-          <span className="text-pollgy-green font-bold flex items-center gap-0.5">
-            Win up to {winLabel} / <Ticket className="h-2.5 w-2.5" />
-          </span>
-        )}
-      </div>
     </div>
   );
 }
