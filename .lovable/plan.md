@@ -1,84 +1,84 @@
 
 
-# Simplified Search: Markets First, Users Optional
+# Mobile Optimization: Every Page Tailored for 390px
 
-## Current State
-The search bar in the header navigates to a full `/search` page showing markets, users, posts, and news in collapsible sections. It's overbuilt -- users primarily want to find markets quickly.
+## Issues Found
 
-## New Approach: Inline Dropdown Search
+After reviewing all 8 main pages on a 390px viewport, these are the consistent problems:
 
-Replace the navigate-to-page pattern with a **live dropdown** that appears as you type, right below the search bar in the header. No page navigation needed for quick searches.
+1. **PageHeader wastes 50-60px** on Leaderboards, News, Settings, and Portfolio -- the tab structure or page context already tells users where they are
+2. **Leaderboard filters wrap to 2 rows** instead of fitting in a single scrollable strip
+3. **Leaderboard list items truncate names** and have oversized avatars/gaps for mobile
+4. **News page** has generous padding that wastes vertical space
+5. **Profile page** has oversized balance text ($18,450 at text-3xl) and tall cover gradient
+6. **Settings page** shows only icons for tabs (no labels) which is confusing
+7. **Community Feed** composer takes significant space above fold
+8. **Market Detail** has a double header (main header + sticky "Market" bar) eating 112px of vertical space
 
-### How it works
+## Changes by Page
 
-1. User clicks the search bar (header on desktop, search button on mobile)
-2. A dropdown appears immediately with **two tabs**: "Markets" (default, selected) and "Players"
-3. As the user types, results filter live in the dropdown
-4. Clicking a result navigates directly to that market or player profile
-5. Pressing Enter navigates to the full `/search` page for deeper results
+### 1. Feed (`/`) -- Already good, minor tweaks
+- No major changes needed -- the hero, filters, and flat list are well-tuned
 
-### Dropdown Layout
+### 2. Leaderboards (`/community`) 
+- **Hide PageHeader on mobile** (title + subtitle) -- the "Players | Creators" tabs provide enough context
+- **Merge time period + sort pills into one scrollable row** with a divider between them, preventing the 2-row wrap
+- **Shrink avatars** from h-9 to h-7 on mobile
+- **Remove "Top Players" / "Top Creators" card headers** on mobile -- redundant with tab
+- **Compact list row padding** from py-3 to py-2.5
+- **Abbreviate secondary stats** on mobile (e.g., "87% . 342 mkts" instead of "87% win rate . 342 entered")
+- **Highlights section**: make cards more compact by reducing card header/content padding
 
-```text
-+------------------------------------+
-| [search icon] Search...            |
-+------------------------------------+
-| [Markets]  [Players]               |  <-- tab pills
-|                                    |
-| Bitcoin $100K by 2025?        68%  |  <-- market rows
-| NBA Championship winner?      32%  |     title + top odds
-| Apple foldable iPhone?        23%  |
-| Fed interest rate decision?   45%  |
-|                                    |
-| Press Enter for all results        |  <-- footer hint
-+------------------------------------+
-```
+### 3. News (`/news`)
+- **Hide PageHeader on mobile** -- the "News" tab in the bottom nav already indicates context
+- **Reduce article padding** from py-5 to py-3.5 and tighten spacing
+- **Tighten the NewsFilters** top spacing
 
-When "Players" tab is selected:
+### 4. Community Feed (`/community-feed`)
+- **Compact the composer** on mobile: reduce avatar from h-10 to h-8, shrink textarea min-height
+- Already looks solid otherwise
 
-```text
-+------------------------------------+
-| [search icon] bitcoin              |
-+------------------------------------+
-| [Markets]  [Players]               |
-|                                    |
-| [avatar] Sarah Chen  @sarahchen   |  <-- user rows
-|          Creator - 12.3K followers |
-| [avatar] Alex Thompson            |
-|          Player - 234 followers    |
-+------------------------------------+
-```
+### 5. Profile (`/profile`)
+- **Reduce cover gradient height** from h-24 to h-16 on mobile
+- **Shrink avatar** from h-24 to h-20 on mobile
+- **Reduce balance card text** from text-3xl to text-2xl on mobile
+- **Reduce action button spacing** -- tighter gap
 
-### What changes
+### 6. Portfolio (`/portfolio`)
+- **Hide PageHeader on mobile** -- the Portfolio context is clear from the balance cards
+- Already well-optimized otherwise
 
-**File: `src/components/Header.tsx`**
-- Replace the plain `<form>` search with a new `<SearchDropdown />` component
-- Remove the `onSubmit` navigate logic (moved into the new component)
+### 7. Settings (`/settings`)
+- **Hide PageHeader on mobile**
+- **Show short labels alongside tab icons** on mobile (Account, Alerts, etc.) -- currently only icons show which is confusing
+- **Reduce card padding** slightly for mobile density
 
-**File: `src/components/SearchDropdown.tsx`** (new)
-- Self-contained component with input, tab pills, and results list
-- Uses `Popover` (already available) anchored to the input
-- State: `query`, `activeTab` ("markets" | "players"), `isOpen`
-- Filters mock data from the existing `allMarkets` and `allUsers` arrays (moved to a shared location or duplicated for now)
-- Shows top 5 results per tab
-- Market rows: title (truncated) + lead odds percentage
-- Player rows: avatar + name + username + follower count + Creator/Player badge
-- Footer: "Press Enter for all results" that navigates to `/search?q=...`
-- Keyboard: Enter navigates to full search page, Escape closes
+### 8. Market Detail (`/market/:id`)
+- **Remove the sticky sub-header** ("Market" title bar) on mobile since the back arrow can be placed directly on the hero image overlay -- saves 48px
+- **Reduce hero image aspect ratio** on mobile for less scroll
+- **Tighten metric strip spacing**
 
-**File: `src/components/MobileNav.tsx`**
-- Update the mobile search dialog to use the same `SearchDropdown` component (or replicate the tab pattern inside the existing dialog)
+## Technical Details
 
-**File: `src/pages/Search.tsx`**
-- Keep as-is for the full results page (accessed via Enter key)
-- Remove posts and news sections to simplify (they add clutter) -- or keep them collapsed as they are now
+### Files to modify:
 
-### Technical Details
+| File | Changes |
+|------|---------|
+| `src/pages/Community.tsx` | Hide PageHeader on mobile, merge filter rows, compact list items, shrink avatars, abbreviate stats, compact highlights |
+| `src/pages/News.tsx` | Hide PageHeader on mobile, tighten article padding |
+| `src/pages/CommunityFeed.tsx` | Compact composer avatar and textarea on mobile |
+| `src/pages/Profile.tsx` | Reduce cover height, avatar size, balance text on mobile |
+| `src/pages/Portfolio.tsx` | Hide PageHeader on mobile |
+| `src/pages/Settings.tsx` | Hide PageHeader on mobile, show tab labels on mobile |
+| `src/pages/MarketDetail.tsx` | Remove sticky sub-header on mobile, reduce hero aspect ratio |
+| `src/components/PageHeader.tsx` | Add optional `hideOnMobile` prop or use responsive classes at call sites |
 
-- The dropdown uses `Popover` from Radix (already installed) for positioning
-- Mock data arrays for markets and users are defined inside the component (same pattern as Search.tsx)
-- No new dependencies needed
-- The dropdown closes on outside click (Popover default behavior) and on result click
-- On mobile, the existing search dialog gets the same two-tab pattern added inside it
-- Desktop: dropdown width matches input width (`w-full` on the popover relative to the form container)
+### Pattern used:
+All changes use Tailwind responsive prefixes (`sm:` for desktop, plain for mobile) and the existing `useIsMobile()` hook where conditional logic is needed. No new dependencies.
+
+### Approach:
+- Use `hidden sm:block` on PageHeaders to hide them on mobile
+- Use `sm:h-9 h-7` patterns for avatar sizing
+- Use `isMobile` hook for conditional text abbreviation in leaderboard stats
+- All changes are additive responsive overrides -- desktop remains untouched
 
