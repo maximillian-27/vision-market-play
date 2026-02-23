@@ -687,8 +687,26 @@ export default function Feed() {
         {/* 1. Filters */}
         <FeedFilters filters={filters} onFiltersChange={setFilters} />
 
-        {/* 2a. Mobile Hero Slide */}
-        <div className="sm:hidden">
+        {/* 2a. Mobile: Weekly Draw + Hero + Banner + Sponsored */}
+        <div className="sm:hidden space-y-1.5">
+          {/* Weekly Draw compact strip */}
+          <div className="flex items-center justify-between rounded-xl border border-primary/20 bg-card px-3 py-2">
+            <div className="flex items-center gap-2">
+              <Trophy className="h-4 w-4 text-primary" />
+              <span className="text-sm font-bold text-primary">$48,600</span>
+              <span className="text-[10px] text-muted-foreground">prize pool</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] text-muted-foreground flex items-center gap-0.5">
+                <Ticket className="h-3 w-3" />3
+              </span>
+              <span className="text-[10px] text-muted-foreground flex items-center gap-0.5">
+                <Timer className="h-3 w-3" />3d 14h
+              </span>
+            </div>
+          </div>
+
+          {/* Hero Slideshow */}
           <div
             className="relative rounded-xl overflow-hidden cursor-pointer h-[220px]"
             onClick={() => navigate(`/market/${heroMarket.id}`)}
@@ -705,7 +723,6 @@ export default function Feed() {
                   <Users className="h-2.5 w-2.5" />{heroMarket.players.toLocaleString()}
                 </span>
               </div>
-              {/* Mobile hero outcomes */}
               {heroIsBinary ? (
                 <div className="flex gap-1.5">
                   <button className="flex-1 rounded py-1.5 text-center bg-yes/20 border border-yes/40 text-yes text-[11px] font-bold" onClick={(e) => { e.stopPropagation(); navigate(`/market/${heroMarket.id}`); }}>
@@ -728,7 +745,6 @@ export default function Feed() {
                 </div>
               )}
             </div>
-            {/* Dot indicators */}
             <div className="absolute bottom-1.5 right-3 flex gap-1">
               {heroMarkets.map((_, i) => (
                 <button
@@ -739,6 +755,12 @@ export default function Feed() {
               ))}
             </div>
           </div>
+
+          {/* Gradient Banner */}
+          <GradientDivider />
+
+          {/* Sponsored Market */}
+          <CompactFeaturedCard market={sponsoredMarkets[0]} />
         </div>
 
         {/* 2b. Desktop Split Hero */}
@@ -807,8 +829,10 @@ export default function Feed() {
           </div>
         </div>
 
-        {/* 3. Gradient Banner Divider */}
-        <GradientDivider />
+        {/* 3. Gradient Banner Divider (desktop only — mobile has it above) */}
+        <div className="hidden sm:block">
+          <GradientDivider />
+        </div>
 
         {/* 4. Market Grid/List */}
         {filteredMarkets.length === 0 ? (
