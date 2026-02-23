@@ -150,31 +150,23 @@ export function MarketGridCard({
                 <div className="flex-1 rounded-lg py-1 text-center bg-no/10 text-no/60 border border-no/20"><span className="text-[11px] font-bold">No {noPercent}%</span></div>
               </div>
             ) : isBinary ? (
-              /* Binary: outcome rows with percentage + Yes/No buttons — like reference */
-              <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-muted-foreground flex-1">Yes</span>
-                  <span className="text-xs font-bold w-10 text-right">{yesPercent} %</span>
-                  <button onClick={handleOutcomeClick} className="px-3 py-1 rounded-md text-[10px] font-bold bg-yes/10 text-yes hover:bg-yes hover:text-yes-foreground border border-yes/20 hover:border-yes transition-all">Yes</button>
-                  <button onClick={handleOutcomeClick} className="px-3 py-1 rounded-md text-[10px] font-bold bg-no/10 text-no hover:bg-no hover:text-no-foreground border border-no/20 hover:border-no transition-all">No</button>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-muted-foreground flex-1">No</span>
-                  <span className="text-xs font-bold w-10 text-right">{noPercent} %</span>
-                  <button onClick={handleOutcomeClick} className="px-3 py-1 rounded-md text-[10px] font-bold bg-yes/10 text-yes hover:bg-yes hover:text-yes-foreground border border-yes/20 hover:border-yes transition-all">Yes</button>
-                  <button onClick={handleOutcomeClick} className="px-3 py-1 rounded-md text-[10px] font-bold bg-no/10 text-no hover:bg-no hover:text-no-foreground border border-no/20 hover:border-no transition-all">No</button>
-                </div>
+              /* Binary: Yes/No as outcome buttons with percentage */
+              <div className="flex gap-2">
+                <button onClick={handleOutcomeClick} className="flex-1 py-2 rounded-lg text-center bg-yes/10 hover:bg-yes text-yes hover:text-yes-foreground border border-yes/20 hover:border-yes transition-all">
+                  <span className="text-xs font-bold">Yes {yesPercent}%</span>
+                </button>
+                <button onClick={handleOutcomeClick} className="flex-1 py-2 rounded-lg text-center bg-no/10 hover:bg-no text-no hover:text-no-foreground border border-no/20 hover:border-no transition-all">
+                  <span className="text-xs font-bold">No {noPercent}%</span>
+                </button>
               </div>
             ) : (
-              /* Multi-outcome: rows with label + % + Yes/No */
+              /* Multi-outcome: each outcome IS the button */
               <div className="space-y-1">
                 {displayOutcomes.slice(0, 3).map((outcome, index) => (
-                  <div key={index} className="flex items-center gap-2">
-                    <span className="text-xs text-muted-foreground flex-1 truncate">{outcome.label}</span>
-                    <span className="text-xs font-bold w-10 text-right">{outcome.price} %</span>
-                    <button onClick={handleOutcomeClick} className="px-3 py-1 rounded-md text-[10px] font-bold bg-yes/10 text-yes hover:bg-yes hover:text-yes-foreground border border-yes/20 hover:border-yes transition-all">Yes</button>
-                    <button onClick={handleOutcomeClick} className="px-3 py-1 rounded-md text-[10px] font-bold bg-no/10 text-no hover:bg-no hover:text-no-foreground border border-no/20 hover:border-no transition-all">No</button>
-                  </div>
+                  <button key={index} onClick={handleOutcomeClick} className="w-full flex items-center justify-between text-xs py-1.5 px-2.5 rounded-lg bg-secondary/50 hover:bg-primary/5 hover:border-primary/20 border border-transparent transition-all">
+                    <span className="font-medium truncate">{outcome.label}</span>
+                    <span className="font-bold text-primary">{outcome.price}%</span>
+                  </button>
                 ))}
                 {displayOutcomes.length > 3 && (
                   <p className="text-[9px] text-muted-foreground">+{displayOutcomes.length - 3} more</p>
@@ -183,10 +175,11 @@ export function MarketGridCard({
             )}
           </div>
           
-          {/* Footer: pot + players + time + icons */}
+          {/* Footer: pot + time + icons */}
           <div className="flex items-center justify-between text-[9px] text-muted-foreground mt-2 pt-1.5 border-t border-border/50">
-            <div className="flex items-center gap-2">
-              <span className="font-semibold text-foreground">Vol. {potDisplay}</span>
+            <div className="flex items-center gap-1.5">
+              <span className="inline-flex items-center px-1.5 py-0.5 rounded-md bg-primary/10 text-primary text-[10px] font-extrabold">{potDisplay}</span>
+              <span className="flex items-center gap-0.5"><Users className="h-2.5 w-2.5" />{players > 0 ? players.toLocaleString() : '0'}</span>
             </div>
             <div className="flex items-center gap-2">
               {getStatusBadge() || (
