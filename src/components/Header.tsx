@@ -2,8 +2,8 @@ import { useState } from "react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Globe, LogOut, Settings, Search, Home, Newspaper, Users, MessageSquare, Briefcase, Sparkles, Shield, Plus, Moon, Sun, HelpCircle, FileText, Twitter, Instagram, Linkedin, Gift } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import { Globe, LogOut, Settings, Home, Newspaper, Users, MessageSquare, Briefcase, Sparkles, Shield, Plus, Moon, Sun, HelpCircle, FileText, Twitter, Instagram, Linkedin, Gift } from "lucide-react";
+import { SearchDropdown } from "@/components/SearchDropdown";
 import pollgyLogo from "@/assets/pollgy-logo-new.png";
 import { useNavigate } from "react-router-dom";
 import { NavLink } from "@/components/NavLink";
@@ -97,24 +97,9 @@ export function Header() {
           )}
 
           {/* Search - Desktop */}
-          <form 
-            className="hidden md:flex relative flex-1 max-w-sm ml-auto"
-            onSubmit={(e) => {
-              e.preventDefault();
-              const formData = new FormData(e.currentTarget);
-              const query = formData.get("search") as string;
-              if (query.trim()) {
-                navigate(`/search?q=${encodeURIComponent(query.trim())}`);
-              }
-            }}
-          >
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input 
-              name="search"
-              placeholder="Search markets or profiles" 
-              className="pl-9 h-9 bg-secondary border-transparent hover:bg-secondary-hover focus-visible:bg-background focus-visible:border-border text-sm rounded-lg"
-            />
-          </form>
+          <div className="hidden md:flex flex-1 max-w-sm ml-auto">
+            <SearchDropdown />
+          </div>
 
           {/* Right Actions */}
           <div className="flex items-center gap-2 ml-auto md:ml-0">
