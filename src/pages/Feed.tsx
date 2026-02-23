@@ -1,7 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
 import { FeedFilters, FilterState } from "@/components/FeedFilters";
 import { MarketGridCard } from "@/components/MarketGridCard";
-import { MarketDialog } from "@/components/MarketDialog";
 import { Button } from "@/components/ui/button";
 import { Timer, Users, ArrowRight, Trophy, Ticket, Zap } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -528,8 +527,6 @@ function GradientDivider() {
 /* ── Compact Sponsored Card (right side) ── */
 function CompactFeaturedCard({ market }: { market: Market }) {
   const navigate = useNavigate();
-  const isMobile = useIsMobile();
-  const [showDialog, setShowDialog] = useState(false);
   const displayOutcomes = market.outcomes || [
     { label: "Yes", price: market.yesPrice || 0, color: "success" },
     { label: "No", price: market.noPrice || 0, color: "destructive" }
@@ -540,96 +537,82 @@ function CompactFeaturedCard({ market }: { market: Market }) {
   const winUpTo = lowestPrice > 0 ? 10 / (lowestPrice / 100) : 0;
   const winLabel = winUpTo >= 1000 ? `$${(winUpTo / 1000).toFixed(0)}K` : winUpTo > 0 ? `$${winUpTo.toFixed(0)}` : "";
 
-  const handleClick = () => {
-    if (isMobile) navigate(`/market/${market.id}`);
-    else setShowDialog(true);
-  };
-
-  const dialogData = {
-    id: market.id, title: market.title, image: market.image, creator: market.creator,
-    outcomes: displayOutcomes, volume: market.volume || "", pot: market.pot, players: market.players,
-    endsIn: market.endsIn, status: market.status,
-  };
-
   return (
-    <>
-      <MarketDialog open={showDialog} onOpenChange={setShowDialog} market={dialogData} />
-      <div
-        onClick={handleClick}
-        className="flex flex-col p-3 rounded-xl border border-border/60 bg-card hover:bg-accent/30 cursor-pointer transition-colors h-full"
-      >
-        {/* Header: sponsored + creator */}
-        <div className="flex items-center justify-between mb-1.5">
-          <span className="text-[9px] uppercase tracking-wider font-bold text-pollgy-blue">Sponsored</span>
-          <div className="flex items-center gap-1">
-            <img src={market.creator.avatar} alt="" className="w-3.5 h-3.5 rounded-full" />
-            <span className="text-[9px] text-muted-foreground">{market.creator.name}</span>
-          </div>
-        </div>
-
-        {/* Image + Title */}
-        <div className="flex gap-2.5 mb-2">
-          <img src={market.image} alt={market.title} className="w-14 h-14 rounded-lg object-cover shrink-0" />
-          <div className="flex flex-col justify-between flex-1 min-w-0">
-            <h4 className="text-xs font-semibold leading-tight line-clamp-2 text-foreground">
-              {market.title}
-            </h4>
-            <div className="flex items-center gap-2 mt-1">
-              <span className="text-primary text-[11px] font-extrabold">{formatPot(market.pot)} <span className="text-[9px] font-medium text-muted-foreground">pot</span></span>
-              <span className="text-[9px] text-muted-foreground flex items-center gap-0.5">
-                <Users className="h-2.5 w-2.5" />{market.players.toLocaleString()}
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* Outcome buttons */}
-        {isBinary ? (
-          <div className="flex gap-1">
-            <button
-              className="flex-1 rounded py-1 text-center bg-yes/15 hover:bg-yes text-yes hover:text-yes-foreground border border-yes/30 hover:border-yes transition-all active:scale-[0.98] text-[10px] font-bold"
-              onClick={(e) => { e.stopPropagation(); handleClick(); }}
-            >
-              Yes {displayOutcomes[0].price}%
-            </button>
-            <button
-              className="flex-1 rounded py-1 text-center bg-no/15 hover:bg-no text-no hover:text-no-foreground border border-no/30 hover:border-no transition-all active:scale-[0.98] text-[10px] font-bold"
-              onClick={(e) => { e.stopPropagation(); handleClick(); }}
-            >
-              No {displayOutcomes[1].price}%
-            </button>
-          </div>
-        ) : (
-          <div className="space-y-0.5">
-            {displayOutcomes.slice(0, 2).map((o, i) => (
-              <button
-                key={i}
-                className="w-full flex items-center justify-between px-2 py-1 rounded bg-secondary/50 hover:bg-primary/10 border border-border/40 hover:border-primary/30 transition-all active:scale-[0.98]"
-                onClick={(e) => { e.stopPropagation(); handleClick(); }}
-              >
-                <span className="text-[10px] font-medium truncate">{o.label}</span>
-                <span className="text-[10px] font-bold text-primary">{o.price}%</span>
-              </button>
-            ))}
-            {displayOutcomes.length > 2 && (
-              <span className="block text-center text-[9px] text-muted-foreground">+{displayOutcomes.length - 2} more</span>
-            )}
-          </div>
-        )}
-
-        {/* Footer: timer + win potential */}
-        <div className="flex items-center justify-between mt-1.5 text-[9px]">
-          <span className="text-muted-foreground flex items-center gap-0.5">
-            <Timer className="h-2.5 w-2.5" />{market.endsIn}
-          </span>
-          {winLabel && (
-            <span className="text-pollgy-green font-bold flex items-center gap-0.5">
-              Win up to {winLabel} / <Ticket className="h-2.5 w-2.5" />
-            </span>
-          )}
+    <div
+      onClick={() => navigate(`/market/${market.id}`)}
+      className="flex flex-col p-3 rounded-xl border border-border/60 bg-card hover:bg-accent/30 cursor-pointer transition-colors h-full"
+    >
+      {/* Header: sponsored + creator */}
+      <div className="flex items-center justify-between mb-1.5">
+        <span className="text-[9px] uppercase tracking-wider font-bold text-pollgy-blue">Sponsored</span>
+        <div className="flex items-center gap-1">
+          <img src={market.creator.avatar} alt="" className="w-3.5 h-3.5 rounded-full" />
+          <span className="text-[9px] text-muted-foreground">{market.creator.name}</span>
         </div>
       </div>
-    </>
+
+      {/* Image + Title */}
+      <div className="flex gap-2.5 mb-2">
+        <img src={market.image} alt={market.title} className="w-14 h-14 rounded-lg object-cover shrink-0" />
+        <div className="flex flex-col justify-between flex-1 min-w-0">
+          <h4 className="text-xs font-semibold leading-tight line-clamp-2 text-foreground">
+            {market.title}
+          </h4>
+          <div className="flex items-center gap-2 mt-1">
+            <span className="text-primary text-[11px] font-extrabold">{formatPot(market.pot)} <span className="text-[9px] font-medium text-muted-foreground">pot</span></span>
+            <span className="text-[9px] text-muted-foreground flex items-center gap-0.5">
+              <Users className="h-2.5 w-2.5" />{market.players.toLocaleString()}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Outcome buttons */}
+      {isBinary ? (
+        <div className="flex gap-1">
+          <button
+            className="flex-1 rounded py-1 text-center bg-yes/15 hover:bg-yes text-yes hover:text-yes-foreground border border-yes/30 hover:border-yes transition-all active:scale-[0.98] text-[10px] font-bold"
+            onClick={(e) => { e.stopPropagation(); navigate(`/market/${market.id}`); }}
+          >
+            Yes {displayOutcomes[0].price}%
+          </button>
+          <button
+            className="flex-1 rounded py-1 text-center bg-no/15 hover:bg-no text-no hover:text-no-foreground border border-no/30 hover:border-no transition-all active:scale-[0.98] text-[10px] font-bold"
+            onClick={(e) => { e.stopPropagation(); navigate(`/market/${market.id}`); }}
+          >
+            No {displayOutcomes[1].price}%
+          </button>
+        </div>
+      ) : (
+        <div className="space-y-0.5">
+          {displayOutcomes.slice(0, 2).map((o, i) => (
+            <button
+              key={i}
+              className="w-full flex items-center justify-between px-2 py-1 rounded bg-secondary/50 hover:bg-primary/10 border border-border/40 hover:border-primary/30 transition-all active:scale-[0.98]"
+              onClick={(e) => { e.stopPropagation(); navigate(`/market/${market.id}`); }}
+            >
+              <span className="text-[10px] font-medium truncate">{o.label}</span>
+              <span className="text-[10px] font-bold text-primary">{o.price}%</span>
+            </button>
+          ))}
+          {displayOutcomes.length > 2 && (
+            <span className="block text-center text-[9px] text-muted-foreground">+{displayOutcomes.length - 2} more</span>
+          )}
+        </div>
+      )}
+
+      {/* Footer: timer + win potential */}
+      <div className="flex items-center justify-between mt-1.5 text-[9px]">
+        <span className="text-muted-foreground flex items-center gap-0.5">
+          <Timer className="h-2.5 w-2.5" />{market.endsIn}
+        </span>
+        {winLabel && (
+          <span className="text-pollgy-green font-bold flex items-center gap-0.5">
+            Win up to {winLabel} / <Ticket className="h-2.5 w-2.5" />
+          </span>
+        )}
+      </div>
+    </div>
   );
 }
 
@@ -637,8 +620,6 @@ export default function Feed() {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const [activeSlide, setActiveSlide] = useState(0);
-  const [heroDialogOpen, setHeroDialogOpen] = useState(false);
-  const [heroDialogMarket, setHeroDialogMarket] = useState<Market | null>(null);
   const [filters, setFilters] = useState<FilterState>({
     category: "All",
     sortBy: "trending",
@@ -654,15 +635,6 @@ export default function Feed() {
     }, 5000);
     return () => clearInterval(interval);
   }, []);
-
-  const openHeroMarket = (market: Market) => {
-    if (isMobile) {
-      navigate(`/market/${market.id}`);
-    } else {
-      setHeroDialogMarket(market);
-      setHeroDialogOpen(true);
-    }
-  };
 
   const filteredMarkets = useMemo(() => {
     let result = [...mockMarkets];
@@ -713,22 +685,8 @@ export default function Feed() {
   ];
   const heroIsBinary = !heroMarket.outcomes;
 
-  const heroDialogData = heroDialogMarket ? {
-    id: heroDialogMarket.id, title: heroDialogMarket.title, image: heroDialogMarket.image,
-    creator: heroDialogMarket.creator,
-    outcomes: heroDialogMarket.outcomes || [
-      { label: "Yes", price: heroDialogMarket.yesPrice || 0, color: "success" },
-      { label: "No", price: heroDialogMarket.noPrice || 0, color: "destructive" }
-    ],
-    volume: heroDialogMarket.volume || "", pot: heroDialogMarket.pot, players: heroDialogMarket.players,
-    endsIn: heroDialogMarket.endsIn, status: heroDialogMarket.status,
-  } : null;
-
   return (
     <div className="w-full max-w-[1600px] mx-auto px-4 md:px-6 lg:px-8 pb-24 sm:pb-0">
-      {heroDialogData && (
-        <MarketDialog open={heroDialogOpen} onOpenChange={setHeroDialogOpen} market={heroDialogData} />
-      )}
       <div className="space-y-3">
         {/* 1. Filters */}
         <FeedFilters filters={filters} onFiltersChange={setFilters} />
@@ -737,7 +695,7 @@ export default function Feed() {
         <div className="sm:hidden">
           <div
             className="relative rounded-xl overflow-hidden cursor-pointer h-[220px]"
-            onClick={() => openHeroMarket(heroMarket)}
+            onClick={() => navigate(`/market/${heroMarket.id}`)}
           >
             <img src={heroMarket.image} alt={heroMarket.title} className="w-full h-full object-cover" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
@@ -754,17 +712,17 @@ export default function Feed() {
               {/* Mobile hero outcomes */}
               {heroIsBinary ? (
                 <div className="flex gap-1.5">
-                  <button className="flex-1 rounded py-1.5 text-center bg-yes/20 border border-yes/40 text-yes text-[11px] font-bold" onClick={(e) => { e.stopPropagation(); openHeroMarket(heroMarket); }}>
+                  <button className="flex-1 rounded py-1.5 text-center bg-yes/20 border border-yes/40 text-yes text-[11px] font-bold" onClick={(e) => { e.stopPropagation(); navigate(`/market/${heroMarket.id}`); }}>
                     Yes {heroDisplayOutcomes[0].price}%
                   </button>
-                  <button className="flex-1 rounded py-1.5 text-center bg-no/20 border border-no/40 text-no text-[11px] font-bold" onClick={(e) => { e.stopPropagation(); openHeroMarket(heroMarket); }}>
+                  <button className="flex-1 rounded py-1.5 text-center bg-no/20 border border-no/40 text-no text-[11px] font-bold" onClick={(e) => { e.stopPropagation(); navigate(`/market/${heroMarket.id}`); }}>
                     No {heroDisplayOutcomes[1].price}%
                   </button>
                 </div>
               ) : (
                 <div className="flex gap-1.5 overflow-x-auto">
                   {heroDisplayOutcomes.slice(0, 3).map((o, i) => (
-                    <button key={i} className="shrink-0 px-3 py-1 rounded bg-white/10 border border-white/20 text-white text-[10px] font-bold" onClick={(e) => { e.stopPropagation(); openHeroMarket(heroMarket); }}>
+                    <button key={i} className="shrink-0 px-3 py-1 rounded bg-white/10 border border-white/20 text-white text-[10px] font-bold" onClick={(e) => { e.stopPropagation(); navigate(`/market/${heroMarket.id}`); }}>
                       {o.label} {o.price}%
                     </button>
                   ))}
@@ -792,7 +750,7 @@ export default function Feed() {
           {/* Left — Slideshow hero */}
           <div
             className="lg:col-span-3 relative rounded-2xl overflow-hidden cursor-pointer group"
-            onClick={() => openHeroMarket(heroMarket)}
+            onClick={() => navigate(`/market/${heroMarket.id}`)}
           >
             <div className="relative h-[260px] lg:h-[340px]">
               <img src={heroMarket.image} alt={heroMarket.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
@@ -809,17 +767,17 @@ export default function Feed() {
                 {/* Hero outcome buttons */}
                 {heroIsBinary ? (
                   <div className="flex gap-2 max-w-sm">
-                    <button className="flex-1 rounded-lg py-2 text-center bg-yes/20 border border-yes/40 hover:bg-yes text-yes hover:text-yes-foreground text-sm font-bold transition-all active:scale-[0.98]" onClick={(e) => { e.stopPropagation(); openHeroMarket(heroMarket); }}>
+                    <button className="flex-1 rounded-lg py-2 text-center bg-yes/20 border border-yes/40 hover:bg-yes text-yes hover:text-yes-foreground text-sm font-bold transition-all active:scale-[0.98]" onClick={(e) => { e.stopPropagation(); navigate(`/market/${heroMarket.id}`); }}>
                       Yes {heroDisplayOutcomes[0].price}%
                     </button>
-                    <button className="flex-1 rounded-lg py-2 text-center bg-no/20 border border-no/40 hover:bg-no text-no hover:text-no-foreground text-sm font-bold transition-all active:scale-[0.98]" onClick={(e) => { e.stopPropagation(); openHeroMarket(heroMarket); }}>
+                    <button className="flex-1 rounded-lg py-2 text-center bg-no/20 border border-no/40 hover:bg-no text-no hover:text-no-foreground text-sm font-bold transition-all active:scale-[0.98]" onClick={(e) => { e.stopPropagation(); navigate(`/market/${heroMarket.id}`); }}>
                       No {heroDisplayOutcomes[1].price}%
                     </button>
                   </div>
                 ) : (
                   <div className="flex gap-2 flex-wrap">
                     {heroDisplayOutcomes.slice(0, 4).map((o, i) => (
-                      <button key={i} className="px-4 py-1.5 rounded-lg bg-white/10 border border-white/20 hover:bg-white/20 text-white text-xs font-bold transition-all active:scale-[0.98]" onClick={(e) => { e.stopPropagation(); openHeroMarket(heroMarket); }}>
+                      <button key={i} className="px-4 py-1.5 rounded-lg bg-white/10 border border-white/20 hover:bg-white/20 text-white text-xs font-bold transition-all active:scale-[0.98]" onClick={(e) => { e.stopPropagation(); navigate(`/market/${heroMarket.id}`); }}>
                         {o.label} <span className="text-primary ml-1">{o.price}%</span>
                       </button>
                     ))}
