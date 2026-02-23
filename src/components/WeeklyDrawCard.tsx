@@ -1,4 +1,4 @@
-import { Trophy, Timer, Ticket, Info, History } from "lucide-react";
+import { Trophy, Timer, Users, Ticket, Info, ChevronRight, History } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -70,7 +70,7 @@ export function WeeklyDrawCard() {
             />
           ))}
         </div>
-        <div className="flex items-center justify-between text-[8px] text-muted-foreground">
+        <div className="flex items-center justify-between text-[7px] text-muted-foreground">
           {distribution.map((d) => (
             <span key={d.place}>
               <span className="font-semibold text-foreground">{d.place}</span> {d.pct}%
@@ -79,17 +79,24 @@ export function WeeklyDrawCard() {
         </div>
       </div>
 
-      {/* Row 4: Entry info - two lines */}
-      <div className="border-t border-border/40 pt-1.5 mb-2 space-y-0.5">
-        <div className="flex items-center gap-0.5 text-[9px]">
-          <Ticket className="h-2.5 w-2.5 text-primary" />
-          <span className="font-bold text-primary">{ENTRY_COST} tickets = 1 entry</span>
-        </div>
-        <div className="flex items-center gap-1 text-[9px]">
-          <span className="font-semibold text-foreground">You: {MY_ENTRIES} entries</span>
-          <span className="text-muted-foreground">·</span>
-          <span className="text-muted-foreground">{ELIGIBLE_ENTRIES.toLocaleString()} total</span>
-        </div>
+      {/* Row 4: Entry info strip */}
+      <div className="flex items-center gap-1.5 text-[9px] mb-2">
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <span className="flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-primary/10 text-primary font-bold cursor-help">
+                <Ticket className="h-2.5 w-2.5" />
+                {ENTRY_COST} tickets = 1 entry
+              </span>
+            </TooltipTrigger>
+            <TooltipContent side="bottom" className="text-xs max-w-[180px]">
+              Purchase {ENTRY_COST} tickets in a week to earn one draw entry. More tickets = more entries.
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+        <span className="text-muted-foreground">·</span>
+        <span className="font-semibold text-foreground">{MY_ENTRIES} entries</span>
+        <span className="text-muted-foreground">/ {ELIGIBLE_ENTRIES.toLocaleString()} total</span>
       </div>
 
       {/* Row 5: Actions */}
@@ -170,6 +177,13 @@ export function WeeklyDrawCard() {
             </div>
           </DialogContent>
         </Dialog>
+
+        {/* All entries link */}
+        <button className="ml-auto flex items-center gap-0.5 text-[8px] text-primary font-semibold hover:underline">
+          <Users className="h-2.5 w-2.5" />
+          {ELIGIBLE_ENTRIES.toLocaleString()} entries
+          <ChevronRight className="h-2.5 w-2.5" />
+        </button>
       </div>
     </div>
   );
