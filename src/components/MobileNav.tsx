@@ -1,9 +1,9 @@
 import { Home, Newspaper, Users, MessageSquare, Search } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { useState } from "react";
-import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { SearchDropdown } from "@/components/SearchDropdown";
 
 const items = [
   { title: "Markets", url: "/", icon: Home },
@@ -14,37 +14,16 @@ const items = [
 
 export function MobileNav() {
   const location = useLocation();
-  const navigate = useNavigate();
   const [showSearch, setShowSearch] = useState(false);
-
-  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const query = formData.get("search") as string;
-    if (query.trim()) {
-      navigate(`/search?q=${encodeURIComponent(query.trim())}`);
-      setShowSearch(false);
-    }
-  };
 
   return (
     <>
       <Dialog open={showSearch} onOpenChange={setShowSearch}>
-        <DialogContent className="top-4 translate-y-0 rounded-lg border-border/60">
+        <DialogContent className="top-4 translate-y-0 rounded-lg border-border/60 max-h-[80vh] overflow-hidden">
           <DialogHeader>
-            <DialogTitle>Search Markets</DialogTitle>
+            <DialogTitle>Search</DialogTitle>
           </DialogHeader>
-          <form onSubmit={handleSearch}>
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/50" />
-              <Input 
-                name="search"
-                placeholder="Search markets..." 
-                className="pl-10 h-11 text-base"
-                autoFocus
-              />
-            </div>
-          </form>
+          <SearchDropdown embedded onResultClick={() => setShowSearch(false)} />
         </DialogContent>
       </Dialog>
 
