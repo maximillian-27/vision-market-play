@@ -26,6 +26,10 @@ import {
   TrendingUp,
   Users,
   Timer,
+  Ticket,
+  Minus,
+  Plus,
+  Trophy,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -69,6 +73,7 @@ interface MarketDialogProps {
     comments?: Comment[];
     status?: string;
     resolutionDate?: string;
+    ticketPrice?: number;
   };
 }
 
@@ -108,10 +113,10 @@ const getMockMarketDetails = (marketId: string) => ({
   ],
 });
 
-const buySchema = z.object({
-  amount: z.number()
-    .min(1, { message: "Minimum entry is $1" })
-    .max(10000, { message: "Maximum entry is $10,000" })
+const ticketSchema = z.object({
+  tickets: z.number()
+    .min(1, { message: "Buy at least 1 ticket" })
+    .max(1000, { message: "Maximum 1,000 tickets" })
 });
 
 const POT_SPLIT = [
@@ -125,7 +130,7 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
   const navigate = useNavigate();
   const { toast } = useToast();
   const [selectedOutcome, setSelectedOutcome] = useState<Outcome | null>(null);
-  const [amount, setAmount] = useState("10");
+  const [ticketCount, setTicketCount] = useState(5);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showResolution, setShowResolution] = useState(false);
   const [commentText, setCommentText] = useState("");
@@ -143,43 +148,58 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
 
   const isAwaitingResolution = market.status === "awaiting_resolution";
 
-  // Auto-select first outcome so payout is never empty
+  // Auto-select first outcome
   useEffect(() => {
     if (open && !selectedOutcome && market.outcomes.length > 0) {
       setSelectedOutcome(market.outcomes[0]);
     }
   }, [open, market.outcomes]);
 
-  const amountNum = parseFloat(amount) || 0;
-  const selectedPrice = selectedOutcome?.price || market.outcomes[0]?.price || 50;
-  const ticketPrice = selectedPrice / 100;
-  const payout = ticketPrice > 0 ? amountNum / ticketPrice : 0;
-  const winnings = payout - amountNum;
-  const potDisplay = market.pot ? formatPot(market.pot) : market.volume;
+  // Ticket price is uniform for all outcomes (pari-mutuel). Mock: based on time progression
+  const currentTicketPrice = market.ticketPrice || 0.50;
+  const totalCost = ticketCount * currentTicketPrice;
+  
+  // Approximate profit: based on pot size and number of winners
+  // In pari-mutuel, winnings = (your tickets / total winning tickets) * 90% of pot
+  const potValue = market.pot || 240000;
+  const estimatedWinningPool = potValue * 0.9;
+  // Rough estimate: assume ~60% of tickets are on winning side
+  const estimatedWinningTickets = Math.round(potValue / currentTicketPrice * 0.6);
+  const estimatedPayout = estimatedWinningTickets > 0 
+    ? (ticketCount / estimatedWinningTickets) * estimatedWinningPool 
+    : 0;
+  const estimatedProfit = estimatedPayout - totalCost;
+  
+  const potDisplay = formatPot(potValue);
   const playerCount = market.players || market.traders || 1247;
   const lastPrice = priceHistory[priceHistory.length - 1];
+
+  // Community sentiment from outcome prices
+  const yesOutcome = market.outcomes.find(o => o.label.toLowerCase() === "yes");
+  const noOutcome = market.outcomes.find(o => o.label.toLowerCase() === "no");
+  const yesPct = yesOutcome?.price || 50;
 
   const handleBuy = () => {
     if (!selectedOutcome) {
       toast({
-        title: "Select an outcome",
-        description: "Please select an outcome before placing an entry",
+        title: "Pick your side",
+        description: "Select an outcome before buying tickets",
         variant: "destructive"
       });
       return;
     }
 
     try {
-      buySchema.parse({ amount: amountNum });
+      ticketSchema.parse({ tickets: ticketCount });
       setIsSubmitting(true);
       setTimeout(() => {
         toast({
-          title: "Entry placed!",
-          description: `You entered $${amountNum.toFixed(2)} on "${selectedOutcome.label}"`,
+          title: "🎟️ Tickets purchased!",
+          description: `${ticketCount} ticket${ticketCount > 1 ? 's' : ''} on "${selectedOutcome.label}" for $${totalCost.toFixed(2)}`,
         });
         onOpenChange(false);
         setIsSubmitting(false);
-        setAmount("10");
+        setTicketCount(5);
         setSelectedOutcome(null);
       }, 500);
     } catch (error) {
@@ -204,12 +224,12 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
     setCommentText("");
   };
 
-  const quickAmounts = [5, 10, 25, 50];
+  const quickTickets = [1, 5, 10, 25];
 
   const handleClose = (isOpen: boolean) => {
     if (!isOpen) {
       setSelectedOutcome(null);
-      setAmount("10");
+      setTicketCount(5);
       setShowResolution(false);
     }
     onOpenChange(isOpen);
@@ -218,7 +238,7 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
   return (
     <>
       <Dialog open={open} onOpenChange={handleClose}>
-        <DialogContent className="sm:max-w-[840px] p-0 gap-0 overflow-hidden max-h-[90vh] flex flex-col">
+        <DialogContent className="sm:max-w-[820px] p-0 gap-0 overflow-hidden max-h-[90vh] flex flex-col">
           {/* Header */}
           <div className="flex items-center justify-between px-5 py-2.5 border-b border-border/30 flex-shrink-0">
             <div className="flex items-center gap-2">
@@ -246,18 +266,18 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
             {/* LEFT COLUMN */}
             <ScrollArea className="flex-1 sm:border-r border-border/30">
               <div className="p-5 space-y-4">
-                {/* Title with thumbnail + Pot */}
-                <div className="space-y-2">
+                {/* Title + Pot + Meta */}
+                <div className="space-y-2.5">
                   <div className="flex items-start gap-2.5">
                     <img
                       src={market.image}
                       alt=""
-                      className="h-7 w-7 rounded-md object-cover flex-shrink-0 mt-0.5"
+                      className="h-8 w-8 rounded-lg object-cover flex-shrink-0 mt-0.5"
                     />
                     <h2 className="text-lg font-bold leading-snug">{market.title}</h2>
                   </div>
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold">
+                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold">
                       <Zap className="h-3 w-3" />
                       {potDisplay} Pot
                     </span>
@@ -272,7 +292,21 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
                   </div>
                 </div>
 
-                {/* Mini Price Chart - taller with current price dot */}
+                {/* Community Sentiment - small, informational only */}
+                {isBinary && (
+                  <div className="space-y-1">
+                    <p className="text-[10px] text-muted-foreground font-medium">Community sentiment</p>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] font-semibold text-success">{yesPct}% Yes</span>
+                      <div className="flex-1 h-1 rounded-full bg-muted overflow-hidden">
+                        <div className="h-full rounded-full bg-success/60" style={{ width: `${yesPct}%` }} />
+                      </div>
+                      <span className="text-[10px] font-semibold text-muted-foreground">{100 - yesPct}% No</span>
+                    </div>
+                  </div>
+                )}
+
+                {/* Price Chart - ticket price over time */}
                 <div className="h-28 rounded-lg overflow-hidden bg-muted/20 p-1.5">
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={priceHistory} margin={{ top: 4, right: 4, left: 0, bottom: 0 }}>
@@ -297,7 +331,7 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
                           fontSize: "11px",
                           padding: "4px 8px"
                         }}
-                        formatter={(value: any) => [`${value}%`, "Probability"]}
+                        formatter={(value: any) => [`${value}%`, "Sentiment"]}
                       />
                       <Area
                         type="monotone"
@@ -306,7 +340,6 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
                         fill="url(#dialogChartGrad)"
                         strokeWidth={1.5}
                       />
-                      {/* Current price dot */}
                       {lastPrice && (
                         <ReferenceDot
                           x={lastPrice.date}
@@ -340,7 +373,7 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
 
                 <Separator />
 
-                {/* Comments - always visible */}
+                {/* Comments */}
                 <div className="space-y-3">
                   <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
                     <MessageCircle className="h-3 w-3" />
@@ -383,7 +416,6 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
                   </div>
                 </div>
 
-                {/* Full page link */}
                 <button
                   onClick={() => { onOpenChange(false); navigate(`/market/${market.id}`); }}
                   className="text-[10px] text-muted-foreground hover:text-foreground transition-colors underline underline-offset-2"
@@ -393,12 +425,12 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
               </div>
             </ScrollArea>
 
-            {/* RIGHT COLUMN */}
-            <div className="w-full sm:w-[280px] flex-shrink-0 flex flex-col">
-              <div className="p-4 space-y-3 flex-1 overflow-y-auto">
+            {/* RIGHT COLUMN - Ticket Purchase */}
+            <div className="w-full sm:w-[290px] flex-shrink-0 flex flex-col">
+              <div className="p-4 space-y-4 flex-1 overflow-y-auto">
                 {isAwaitingResolution ? (
                   <div className="space-y-4">
-                    <div className="p-3 rounded-lg bg-[hsl(var(--pollgy-blue))]/10 border border-[hsl(var(--pollgy-blue))]/20 text-center">
+                    <div className="p-4 rounded-xl bg-[hsl(var(--pollgy-blue))]/10 border border-[hsl(var(--pollgy-blue))]/20 text-center">
                       <Clock className="h-5 w-5 text-[hsl(var(--pollgy-blue))] mx-auto mb-1.5" />
                       <p className="text-sm font-semibold text-[hsl(var(--pollgy-blue))]">Entries Closed</p>
                       <p className="text-xs text-muted-foreground mt-0.5">Awaiting resolution</p>
@@ -407,158 +439,169 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
                       )}
                     </div>
                     {isBinary && (
-                      <div className="space-y-2">
-                        <p className="text-xs text-muted-foreground text-center">Final Probability</p>
-                        <div className="grid grid-cols-2 gap-2 opacity-75">
-                          {market.outcomes.map((outcome, index) => {
-                            const isYes = outcome.label.toLowerCase() === "yes";
-                            return (
-                              <div key={index} className={`rounded-lg py-2.5 text-center border ${isYes ? 'border-success/30 bg-success/10 text-success' : 'border-destructive/30 bg-destructive/10 text-destructive'}`}>
-                                <span className="text-sm font-bold uppercase">{outcome.label}</span>
-                                <p className="text-xs opacity-75">{outcome.price}%</p>
-                              </div>
-                            );
-                          })}
-                        </div>
+                      <div className="grid grid-cols-2 gap-2 opacity-75">
+                        {market.outcomes.map((outcome, index) => {
+                          const isYes = outcome.label.toLowerCase() === "yes";
+                          return (
+                            <div key={index} className={`rounded-xl py-3 text-center border ${isYes ? 'border-success/30 bg-success/10 text-success' : 'border-destructive/30 bg-destructive/10 text-destructive'}`}>
+                              <span className="text-sm font-bold uppercase">{outcome.label}</span>
+                              <p className="text-xs opacity-75 mt-0.5">{outcome.price}%</p>
+                            </div>
+                          );
+                        })}
                       </div>
                     )}
                   </div>
                 ) : (
                   <>
-                    {/* Ends in badge */}
-                    <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest">Outcomes</span>
-                      <span className="inline-flex items-center gap-1 text-[10px] text-muted-foreground bg-muted/50 px-2 py-0.5 rounded-full">
-                        <Timer className="h-2.5 w-2.5" />
-                        {market.endsIn}
-                      </span>
-                    </div>
-
-                    {/* Outcomes with ticket price */}
+                    {/* Step 1: Pick your side */}
                     <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <p className="text-xs font-semibold text-foreground">1. Pick your side</p>
+                        <span className="inline-flex items-center gap-1 text-[10px] text-muted-foreground bg-muted/50 px-2 py-0.5 rounded-full">
+                          <Timer className="h-2.5 w-2.5" />
+                          {market.endsIn}
+                        </span>
+                      </div>
+
                       {isBinary ? (
-                        <>
-                          <div className="flex items-center gap-2 text-xs font-bold">
-                            <span className="text-success w-8">{market.outcomes.find(o => o.label.toLowerCase() === "yes")?.price || 50}%</span>
-                            <div className="flex-1 h-1.5 rounded-full bg-muted overflow-hidden">
-                              <div className="h-full rounded-full bg-success" style={{ width: `${market.outcomes.find(o => o.label.toLowerCase() === "yes")?.price || 50}%` }} />
-                            </div>
-                            <span className="text-muted-foreground w-8 text-right">{market.outcomes.find(o => o.label.toLowerCase() === "no")?.price || 50}%</span>
-                          </div>
-                          <div className="grid grid-cols-2 gap-1.5">
-                            {market.outcomes.map((outcome, index) => {
-                              const isYes = outcome.label.toLowerCase() === "yes";
-                              const isSelected = selectedOutcome?.label === outcome.label;
-                              const ticketCost = (outcome.price / 100).toFixed(2);
-                              return (
-                                <button
-                                  key={index}
-                                  onClick={() => setSelectedOutcome(outcome)}
-                                  className={`rounded-lg py-2.5 text-center transition-all active:scale-[0.98] border ${
-                                    isSelected
-                                      ? isYes ? 'border-success bg-success/20 text-success ring-1 ring-success/30' : 'border-destructive bg-destructive/20 text-destructive ring-1 ring-destructive/30'
-                                      : isYes ? 'border-success/20 bg-success/5 text-success hover:bg-success/10' : 'border-destructive/20 bg-destructive/5 text-destructive hover:bg-destructive/10'
-                                  }`}
-                                >
-                                  <span className="text-xs font-bold uppercase">{outcome.label} {outcome.price}%</span>
-                                  <p className="text-[10px] font-semibold opacity-70 mt-0.5">${ticketCost}</p>
-                                </button>
-                              );
-                            })}
-                          </div>
-                        </>
-                      ) : (
-                        <div className="space-y-1 max-h-[140px] overflow-y-auto">
+                        <div className="grid grid-cols-2 gap-2">
                           {market.outcomes.map((outcome, index) => {
+                            const isYes = outcome.label.toLowerCase() === "yes";
                             const isSelected = selectedOutcome?.label === outcome.label;
-                            const ticketCost = (outcome.price / 100).toFixed(2);
                             return (
                               <button
                                 key={index}
                                 onClick={() => setSelectedOutcome(outcome)}
-                                className={`w-full flex items-center gap-2 rounded-lg px-2.5 py-2 transition-all active:scale-[0.98] border text-left ${
-                                  isSelected ? 'border-primary bg-primary/10 ring-1 ring-primary/30' : 'border-border/30 hover:border-border/60'
+                                className={`rounded-xl py-3.5 text-center transition-all active:scale-[0.97] border-2 ${
+                                  isSelected
+                                    ? isYes
+                                      ? 'border-success bg-success/15 text-success shadow-[0_0_12px_hsl(var(--success)/0.15)]'
+                                      : 'border-destructive bg-destructive/15 text-destructive shadow-[0_0_12px_hsl(var(--destructive)/0.15)]'
+                                    : isYes
+                                      ? 'border-success/20 bg-success/5 text-success hover:bg-success/10 hover:border-success/40'
+                                      : 'border-destructive/20 bg-destructive/5 text-destructive hover:bg-destructive/10 hover:border-destructive/40'
+                                }`}
+                              >
+                                <span className="text-base font-bold uppercase">{outcome.label}</span>
+                              </button>
+                            );
+                          })}
+                        </div>
+                      ) : (
+                        <div className="space-y-1.5 max-h-[160px] overflow-y-auto">
+                          {market.outcomes.map((outcome, index) => {
+                            const isSelected = selectedOutcome?.label === outcome.label;
+                            return (
+                              <button
+                                key={index}
+                                onClick={() => setSelectedOutcome(outcome)}
+                                className={`w-full flex items-center gap-2.5 rounded-xl px-3 py-2.5 transition-all active:scale-[0.98] border-2 text-left ${
+                                  isSelected ? 'border-primary bg-primary/10 shadow-[0_0_12px_hsl(var(--primary)/0.1)]' : 'border-border/30 hover:border-border/60 hover:bg-muted/30'
                                 }`}
                               >
                                 {outcome.logo ? (
-                                  <img src={outcome.logo} alt={outcome.label} className="h-4 w-4 object-contain rounded-sm" />
+                                  <img src={outcome.logo} alt={outcome.label} className="h-5 w-5 object-contain rounded-sm" />
                                 ) : (
-                                  <div className="h-4 w-4 rounded-sm bg-primary/10 flex items-center justify-center text-[9px] font-bold text-primary">{outcome.label.charAt(0)}</div>
+                                  <div className="h-5 w-5 rounded-md bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary">{outcome.label.charAt(0)}</div>
                                 )}
-                                <span className="flex-1 text-xs font-medium truncate">{outcome.label}</span>
-                                <span className="text-[10px] text-muted-foreground mr-1">${ticketCost}</span>
-                                <span className="text-xs font-bold text-primary">{outcome.price}%</span>
+                                <span className="flex-1 text-sm font-medium truncate">{outcome.label}</span>
+                                {isSelected && (
+                                  <span className="text-[10px] font-semibold text-primary">Selected</span>
+                                )}
                               </button>
                             );
                           })}
                         </div>
                       )}
+                    </div>
 
-                      {/* Dynamic pricing note */}
-                      <div className="flex items-center gap-1.5 px-2 py-1.5 rounded-md bg-muted/30">
-                        <TrendingUp className="h-3 w-3 text-muted-foreground flex-shrink-0" />
+                    {/* Step 2: How many tickets */}
+                    <div className="space-y-2">
+                      <p className="text-xs font-semibold text-foreground">2. How many tickets?</p>
+                      
+                      {/* Ticket price badge */}
+                      <div className="flex items-center justify-between p-2.5 rounded-lg bg-muted/40">
+                        <div className="flex items-center gap-1.5">
+                          <Ticket className="h-3.5 w-3.5 text-primary" />
+                          <span className="text-xs text-muted-foreground">Price per ticket</span>
+                        </div>
+                        <span className="text-sm font-bold text-foreground">${currentTicketPrice.toFixed(2)}</span>
+                      </div>
+
+                      {/* Ticket counter */}
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => setTicketCount(Math.max(1, ticketCount - 1))}
+                          className="h-9 w-9 rounded-lg border border-border/50 bg-muted/30 hover:bg-muted/60 flex items-center justify-center transition-colors active:scale-95"
+                        >
+                          <Minus className="h-3.5 w-3.5 text-muted-foreground" />
+                        </button>
+                        <Input
+                          type="number"
+                          value={ticketCount}
+                          onChange={(e) => {
+                            const v = parseInt(e.target.value);
+                            if (!isNaN(v) && v >= 0) setTicketCount(Math.min(1000, v));
+                          }}
+                          className="h-9 text-center text-lg font-bold bg-background flex-1 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                          min="1"
+                          max="1000"
+                        />
+                        <button
+                          onClick={() => setTicketCount(Math.min(1000, ticketCount + 1))}
+                          className="h-9 w-9 rounded-lg border border-border/50 bg-muted/30 hover:bg-muted/60 flex items-center justify-center transition-colors active:scale-95"
+                        >
+                          <Plus className="h-3.5 w-3.5 text-muted-foreground" />
+                        </button>
+                      </div>
+
+                      {/* Quick select */}
+                      <div className="grid grid-cols-4 gap-1.5">
+                        {quickTickets.map((qt) => (
+                          <button
+                            key={qt}
+                            onClick={() => setTicketCount(qt)}
+                            className={`h-7 rounded-lg text-[11px] font-semibold transition-all active:scale-95 ${
+                              ticketCount === qt
+                                ? 'bg-primary/10 text-primary border border-primary/30'
+                                : 'bg-muted/40 text-muted-foreground hover:bg-muted/60 border border-transparent'
+                            }`}
+                          >
+                            {qt} {qt === 1 ? 'ticket' : 'tickets'}
+                          </button>
+                        ))}
+                      </div>
+
+                      {/* Price increases note */}
+                      <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-primary/5 border border-primary/10">
+                        <TrendingUp className="h-3 w-3 text-primary flex-shrink-0" />
                         <p className="text-[10px] text-muted-foreground leading-snug">
-                          Ticket prices rise closer to conclusion
+                          Ticket price increases closer to the deadline
                         </p>
                       </div>
                     </div>
 
-                    {/* Entry Amount */}
-                    <div className="space-y-1.5">
-                      <div className="flex items-center justify-between text-[10px]">
-                        <span className="text-muted-foreground font-medium uppercase tracking-widest">Amount</span>
-                        <div className="flex items-center gap-1 text-muted-foreground">
-                          <Wallet className="h-2.5 w-2.5" />
-                          <span>$5,230</span>
-                        </div>
-                      </div>
-                      <div className="relative">
-                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">$</span>
-                        <Input
-                          type="number"
-                          value={amount}
-                          onChange={(e) => setAmount(e.target.value)}
-                          className="pl-6 h-9 text-sm font-semibold bg-background"
-                          min="1"
-                          max="10000"
-                          step="1"
-                        />
-                      </div>
-                      <div className="grid grid-cols-4 gap-1">
-                        {quickAmounts.map((qa) => (
-                          <Button
-                            key={qa}
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setAmount(qa.toString())}
-                            className={`h-6 text-[10px] px-0 rounded-md ${amount === qa.toString() ? 'border-primary bg-primary/5 text-primary' : ''}`}
-                          >
-                            ${qa}
-                          </Button>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* If You Win - enhanced */}
-                    <div className="p-2.5 rounded-lg bg-muted/30 space-y-1.5">
-                      <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest">If you win</p>
+                    {/* Winnings summary */}
+                    <div className="p-3 rounded-xl bg-muted/30 space-y-2">
                       <div className="flex justify-between text-xs">
-                        <span className="text-muted-foreground">Entry</span>
-                        <span className="font-medium">${amountNum.toFixed(2)}</span>
+                        <span className="text-muted-foreground">
+                          {ticketCount} ticket{ticketCount !== 1 ? 's' : ''} × ${currentTicketPrice.toFixed(2)}
+                        </span>
+                        <span className="font-semibold">${totalCost.toFixed(2)}</span>
                       </div>
-                      <div className="flex justify-between text-xs">
-                        <span className="text-muted-foreground">Payout</span>
-                        <span className="font-bold">${payout.toFixed(2)}</span>
-                      </div>
-                      <Separator className="!my-1 bg-border/40" />
+                      <Separator className="bg-border/40" />
                       <div className="flex justify-between items-center">
-                        <span className="text-sm font-medium">Winnings</span>
-                        <span className={`text-lg font-bold ${winnings > 0 ? 'text-success' : 'text-foreground'}`}>
-                          +${winnings.toFixed(2)}
+                        <div className="flex items-center gap-1.5">
+                          <Trophy className="h-3.5 w-3.5 text-success" />
+                          <span className="text-xs font-medium">Est. winnings</span>
+                        </div>
+                        <span className={`text-xl font-bold ${estimatedProfit > 0 ? 'text-success' : 'text-foreground'}`}>
+                          ~${estimatedProfit > 0 ? estimatedProfit.toFixed(2) : '0.00'}
                         </span>
                       </div>
                       <p className="text-[9px] text-muted-foreground leading-snug">
-                        ⚡ Winners split the pot — winnings may fluctuate.
+                        ⚡ Winners split 90% of the pot — final payout depends on total entries.
                       </p>
                     </div>
                   </>
@@ -569,15 +612,15 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
               {!isAwaitingResolution && (
                 <div className="p-4 pt-0 space-y-2.5">
                   <Button
-                    className="w-full h-10 font-semibold text-sm [background:var(--gradient-primary)] hover:opacity-90 transition-opacity"
+                    className="w-full h-11 font-bold text-sm rounded-xl [background:var(--gradient-primary)] hover:opacity-90 transition-all active:scale-[0.98] shadow-md"
                     onClick={handleBuy}
-                    disabled={!selectedOutcome || isSubmitting || amountNum < 1 || amountNum > 10000}
+                    disabled={!selectedOutcome || isSubmitting || ticketCount < 1}
                   >
                     {isSubmitting
-                      ? "Placing entry..."
+                      ? "Buying tickets..."
                       : selectedOutcome
-                        ? `Enter ${selectedOutcome.label} $${amountNum.toFixed(2)} → Win $${payout.toFixed(2)}`
-                        : "Select outcome"
+                        ? `🎟️ Buy ${ticketCount} ticket${ticketCount !== 1 ? 's' : ''} · $${totalCost.toFixed(2)}`
+                        : "Pick your side first"
                     }
                   </Button>
 
