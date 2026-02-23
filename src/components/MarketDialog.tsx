@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,7 +9,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
 import { QuoteRepostDialog } from "@/components/QuoteRepostDialog";
-import { ResponsiveContainer, AreaChart, Area, XAxis, Tooltip } from "recharts";
+import { ResponsiveContainer, AreaChart, Area, XAxis, Tooltip, ReferenceDot } from "recharts";
 import {
   BadgeCheck,
   Share2,
@@ -23,6 +23,9 @@ import {
   Clock,
   Wallet,
   Zap,
+  TrendingUp,
+  Users,
+  Timer,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -140,12 +143,21 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
 
   const isAwaitingResolution = market.status === "awaiting_resolution";
 
+  // Auto-select first outcome so payout is never empty
+  useEffect(() => {
+    if (open && !selectedOutcome && market.outcomes.length > 0) {
+      setSelectedOutcome(market.outcomes[0]);
+    }
+  }, [open, market.outcomes]);
+
   const amountNum = parseFloat(amount) || 0;
-  const selectedPrice = selectedOutcome?.price || 0;
+  const selectedPrice = selectedOutcome?.price || market.outcomes[0]?.price || 50;
   const ticketPrice = selectedPrice / 100;
-  const payout = selectedPrice > 0 ? amountNum / ticketPrice : 0;
+  const payout = ticketPrice > 0 ? amountNum / ticketPrice : 0;
   const winnings = payout - amountNum;
   const potDisplay = market.pot ? formatPot(market.pot) : market.volume;
+  const playerCount = market.players || market.traders || 1247;
+  const lastPrice = priceHistory[priceHistory.length - 1];
 
   const handleBuy = () => {
     if (!selectedOutcome) {
@@ -234,17 +246,34 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
             {/* LEFT COLUMN */}
             <ScrollArea className="flex-1 sm:border-r border-border/30">
               <div className="p-5 space-y-4">
-                {/* Title + Pot */}
+                {/* Title with thumbnail + Pot */}
                 <div className="space-y-2">
-                  <h2 className="text-lg font-bold leading-snug">{market.title}</h2>
-                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold">
-                    <Zap className="h-3 w-3" />
-                    {potDisplay} Pot
-                  </span>
+                  <div className="flex items-start gap-2.5">
+                    <img
+                      src={market.image}
+                      alt=""
+                      className="h-7 w-7 rounded-md object-cover flex-shrink-0 mt-0.5"
+                    />
+                    <h2 className="text-lg font-bold leading-snug">{market.title}</h2>
+                  </div>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold">
+                      <Zap className="h-3 w-3" />
+                      {potDisplay} Pot
+                    </span>
+                    <span className="inline-flex items-center gap-1 text-[10px] text-muted-foreground">
+                      <Users className="h-3 w-3" />
+                      {playerCount.toLocaleString()} players
+                    </span>
+                    <span className="inline-flex items-center gap-1 text-[10px] text-muted-foreground">
+                      <Timer className="h-3 w-3" />
+                      {market.endsIn}
+                    </span>
+                  </div>
                 </div>
 
-                {/* Mini Price Chart */}
-                <div className="h-24 rounded-lg overflow-hidden bg-muted/20 p-1.5">
+                {/* Mini Price Chart - taller with current price dot */}
+                <div className="h-28 rounded-lg overflow-hidden bg-muted/20 p-1.5">
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={priceHistory} margin={{ top: 4, right: 4, left: 0, bottom: 0 }}>
                       <defs>
@@ -277,6 +306,17 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
                         fill="url(#dialogChartGrad)"
                         strokeWidth={1.5}
                       />
+                      {/* Current price dot */}
+                      {lastPrice && (
+                        <ReferenceDot
+                          x={lastPrice.date}
+                          y={lastPrice.price}
+                          r={4}
+                          fill="hsl(var(--primary))"
+                          stroke="hsl(var(--background))"
+                          strokeWidth={2}
+                        />
+                      )}
                     </AreaChart>
                   </ResponsiveContainer>
                 </div>
@@ -354,7 +394,7 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
             </ScrollArea>
 
             {/* RIGHT COLUMN */}
-            <div className="w-full sm:w-[270px] flex-shrink-0 flex flex-col">
+            <div className="w-full sm:w-[280px] flex-shrink-0 flex flex-col">
               <div className="p-4 space-y-3 flex-1 overflow-y-auto">
                 {isAwaitingResolution ? (
                   <div className="space-y-4">
@@ -385,10 +425,17 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
                   </div>
                 ) : (
                   <>
-                    {/* Outcomes */}
-                    <div className="space-y-2">
+                    {/* Ends in badge */}
+                    <div className="flex items-center justify-between">
                       <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest">Outcomes</span>
+                      <span className="inline-flex items-center gap-1 text-[10px] text-muted-foreground bg-muted/50 px-2 py-0.5 rounded-full">
+                        <Timer className="h-2.5 w-2.5" />
+                        {market.endsIn}
+                      </span>
+                    </div>
 
+                    {/* Outcomes with ticket price */}
+                    <div className="space-y-2">
                       {isBinary ? (
                         <>
                           <div className="flex items-center gap-2 text-xs font-bold">
@@ -402,17 +449,19 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
                             {market.outcomes.map((outcome, index) => {
                               const isYes = outcome.label.toLowerCase() === "yes";
                               const isSelected = selectedOutcome?.label === outcome.label;
+                              const ticketCost = (outcome.price / 100).toFixed(2);
                               return (
                                 <button
                                   key={index}
                                   onClick={() => setSelectedOutcome(outcome)}
-                                  className={`rounded-lg py-2 text-center transition-all active:scale-[0.98] border ${
+                                  className={`rounded-lg py-2.5 text-center transition-all active:scale-[0.98] border ${
                                     isSelected
                                       ? isYes ? 'border-success bg-success/20 text-success ring-1 ring-success/30' : 'border-destructive bg-destructive/20 text-destructive ring-1 ring-destructive/30'
                                       : isYes ? 'border-success/20 bg-success/5 text-success hover:bg-success/10' : 'border-destructive/20 bg-destructive/5 text-destructive hover:bg-destructive/10'
                                   }`}
                                 >
-                                  <span className="text-xs font-bold uppercase">{outcome.label}</span>
+                                  <span className="text-xs font-bold uppercase">{outcome.label} {outcome.price}%</span>
+                                  <p className="text-[10px] font-semibold opacity-70 mt-0.5">${ticketCost}</p>
                                 </button>
                               );
                             })}
@@ -422,6 +471,7 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
                         <div className="space-y-1 max-h-[140px] overflow-y-auto">
                           {market.outcomes.map((outcome, index) => {
                             const isSelected = selectedOutcome?.label === outcome.label;
+                            const ticketCost = (outcome.price / 100).toFixed(2);
                             return (
                               <button
                                 key={index}
@@ -436,6 +486,7 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
                                   <div className="h-4 w-4 rounded-sm bg-primary/10 flex items-center justify-center text-[9px] font-bold text-primary">{outcome.label.charAt(0)}</div>
                                 )}
                                 <span className="flex-1 text-xs font-medium truncate">{outcome.label}</span>
+                                <span className="text-[10px] text-muted-foreground mr-1">${ticketCost}</span>
                                 <span className="text-xs font-bold text-primary">{outcome.price}%</span>
                               </button>
                             );
@@ -443,11 +494,13 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
                         </div>
                       )}
 
-                      {selectedOutcome && (
-                        <p className="text-[10px] text-muted-foreground text-center">
-                          Ticket: <span className="font-semibold text-foreground">${(selectedOutcome.price / 100).toFixed(2)}</span>
+                      {/* Dynamic pricing note */}
+                      <div className="flex items-center gap-1.5 px-2 py-1.5 rounded-md bg-muted/30">
+                        <TrendingUp className="h-3 w-3 text-muted-foreground flex-shrink-0" />
+                        <p className="text-[10px] text-muted-foreground leading-snug">
+                          Ticket prices rise closer to conclusion
                         </p>
-                      )}
+                      </div>
                     </div>
 
                     {/* Entry Amount */}
@@ -486,7 +539,7 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
                       </div>
                     </div>
 
-                    {/* If You Win */}
+                    {/* If You Win - enhanced */}
                     <div className="p-2.5 rounded-lg bg-muted/30 space-y-1.5">
                       <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest">If you win</p>
                       <div className="flex justify-between text-xs">
@@ -495,13 +548,13 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
                       </div>
                       <div className="flex justify-between text-xs">
                         <span className="text-muted-foreground">Payout</span>
-                        <span className="font-bold">{selectedOutcome ? `$${payout.toFixed(2)}` : "—"}</span>
+                        <span className="font-bold">${payout.toFixed(2)}</span>
                       </div>
                       <Separator className="!my-1 bg-border/40" />
-                      <div className="flex justify-between text-sm">
-                        <span className="font-medium">Winnings</span>
-                        <span className={`font-bold ${selectedOutcome && winnings > 0 ? 'text-success' : ''}`}>
-                          {selectedOutcome ? `+$${winnings.toFixed(2)}` : "—"}
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm font-medium">Winnings</span>
+                        <span className={`text-lg font-bold ${winnings > 0 ? 'text-success' : 'text-foreground'}`}>
+                          +${winnings.toFixed(2)}
                         </span>
                       </div>
                       <p className="text-[9px] text-muted-foreground leading-snug">
@@ -516,20 +569,20 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
               {!isAwaitingResolution && (
                 <div className="p-4 pt-0 space-y-2.5">
                   <Button
-                    className="w-full h-10 font-semibold text-sm"
+                    className="w-full h-10 font-semibold text-sm [background:var(--gradient-primary)] hover:opacity-90 transition-opacity"
                     onClick={handleBuy}
                     disabled={!selectedOutcome || isSubmitting || amountNum < 1 || amountNum > 10000}
                   >
                     {isSubmitting
                       ? "Placing entry..."
                       : selectedOutcome
-                        ? `Enter ${selectedOutcome.label} • $${amountNum.toFixed(2)}`
+                        ? `Enter ${selectedOutcome.label} $${amountNum.toFixed(2)} → Win $${payout.toFixed(2)}`
                         : "Select outcome"
                     }
                   </Button>
 
                   <div className="space-y-1">
-                    <div className="flex h-1 rounded-full overflow-hidden">
+                    <div className="flex h-1.5 rounded-full overflow-hidden">
                       {POT_SPLIT.map((s) => (
                         <div key={s.label} className={s.color} style={{ width: `${s.pct}%` }} />
                       ))}
