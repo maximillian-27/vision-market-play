@@ -294,8 +294,8 @@ export default function MarketDetail() {
 
   return (
     <div className="min-h-screen bg-background pb-56">
-      {/* Sticky Header */}
-      <div className="sticky top-14 z-20 bg-background/95 backdrop-blur-sm border-b border-border/40">
+      {/* Sticky Header — hidden on mobile, back arrow overlays hero instead */}
+      <div className="hidden sm:block sticky top-14 z-20 bg-background/95 backdrop-blur-sm border-b border-border/40">
         <div className="max-w-2xl mx-auto flex items-center justify-between px-4 h-12">
           <Button variant="ghost" size="icon" onClick={() => navigate(-1)} className="h-8 w-8 -ml-2">
             <ArrowLeft className="h-5 w-5" />
@@ -328,9 +328,36 @@ export default function MarketDetail() {
       <div className="max-w-2xl mx-auto">
         {/* Hero Image */}
         {market.image && (
-          <div className="relative w-full aspect-[16/7] overflow-hidden">
+          <div className="relative w-full aspect-[16/9] sm:aspect-[16/7] overflow-hidden">
             <img src={market.image} alt={market.title} className="w-full h-full object-cover" />
             <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
+            {/* Mobile: overlay back + actions */}
+            <div className="absolute top-2 left-2 right-2 flex items-center justify-between sm:hidden">
+              <Button variant="ghost" size="icon" onClick={() => navigate(-1)} className="h-8 w-8 bg-background/60 backdrop-blur-sm rounded-full">
+                <ArrowLeft className="h-5 w-5" />
+              </Button>
+              <div className="flex items-center gap-1">
+                <Button 
+                  variant="ghost" size="icon" className="h-8 w-8 bg-background/60 backdrop-blur-sm rounded-full"
+                  onClick={() => {
+                    navigator.clipboard.writeText(window.location.href);
+                    toast({ title: "Link copied!" });
+                  }}
+                >
+                  <Share2 className="h-4 w-4" />
+                </Button>
+                <Button 
+                  variant="ghost" size="icon" 
+                  className={`h-8 w-8 bg-background/60 backdrop-blur-sm rounded-full ${isBookmarked ? 'text-primary' : ''}`}
+                  onClick={() => {
+                    setIsBookmarked(!isBookmarked);
+                    toast({ title: isBookmarked ? "Removed from watchlist" : "Added to watchlist" });
+                  }}
+                >
+                  <Bookmark className={`h-4 w-4 ${isBookmarked ? 'fill-primary' : ''}`} />
+                </Button>
+              </div>
+            </div>
             {/* Status badge on image */}
             <div className="absolute top-3 right-3">
               <Badge className={`text-[10px] px-2.5 py-0.5 font-bold ${

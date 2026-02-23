@@ -66,11 +66,13 @@ export default function News() {
       <div className="flex gap-6 justify-center">
         <ActivitySidebar />
         
-        <div className="w-full max-w-2xl space-y-4 px-4 lg:px-0">
-          <PageHeader 
-            title="News"
-            subtitle="Stay informed with the latest market-moving stories"
-          />
+        <div className="w-full max-w-2xl space-y-3 sm:space-y-4 px-4 lg:px-0">
+          <div className="hidden sm:block">
+            <PageHeader 
+              title="News"
+              subtitle="Stay informed with the latest market-moving stories"
+            />
+          </div>
           
           <NewsFilters />
           
@@ -78,7 +80,7 @@ export default function News() {
             {newsItems.map((item, index) => (
               <article
                 key={item.id}
-                className="group cursor-pointer py-5 transition-colors hover:bg-muted/30 -mx-4 px-4 rounded-lg"
+                className="group cursor-pointer py-3.5 sm:py-5 transition-colors hover:bg-muted/30 -mx-4 px-4 rounded-lg"
                 onClick={() => setSelectedNews(item)}
               >
                 <div className="flex items-start gap-4">
@@ -115,7 +117,7 @@ export default function News() {
                 </div>
                 
                 {index < newsItems.length - 1 && (
-                  <Separator className="mt-5 opacity-50" />
+                  <Separator className="mt-3.5 sm:mt-5 opacity-50" />
                 )}
               </article>
             ))}

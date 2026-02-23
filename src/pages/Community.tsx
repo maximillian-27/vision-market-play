@@ -8,6 +8,7 @@ import { Trophy, Award, ChevronRight, Flame, ArrowUp, ArrowDown, Star, TrendingU
 import { MarketsSidebar } from "@/components/MarketsSidebar";
 import { ActivitySidebar } from "@/components/ActivitySidebar";
 import { PageHeader } from "@/components/PageHeader";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 // --- Mock Data ---
 
@@ -90,34 +91,19 @@ function StreakBadge({ streak }: { streak: number }) {
   );
 }
 
-function TimePeriodPills({ value, onChange }: { value: TimePeriod; onChange: (v: TimePeriod) => void }) {
-  const options: { label: string; value: TimePeriod }[] = [
-    { label: "THIS WEEK", value: "week" },
-    { label: "THIS MONTH", value: "month" },
-    { label: "ALL TIME", value: "all" },
-  ];
-  return (
-    <div className="flex gap-1.5">
-      {options.map((o) => (
-        <Badge
-          key={o.value}
-          variant={value === o.value ? "default" : "outline"}
-          className="cursor-pointer text-[10px] uppercase tracking-wider"
-          onClick={() => onChange(o.value)}
-        >
-          {o.label}
-        </Badge>
-      ))}
-    </div>
-  );
-}
-
 // --- Main Component ---
 
 export default function Community() {
   const [timePeriod, setTimePeriod] = useState<TimePeriod>("week");
   const [playerSort, setPlayerSort] = useState<PlayerSort>("winnings");
   const [creatorSort, setCreatorSort] = useState<CreatorSort>("pot");
+  const isMobile = useIsMobile();
+
+  const timePeriodOptions: { label: string; shortLabel: string; value: TimePeriod }[] = [
+    { label: "THIS WEEK", shortLabel: "WEEK", value: "week" },
+    { label: "THIS MONTH", shortLabel: "MONTH", value: "month" },
+    { label: "ALL TIME", shortLabel: "ALL", value: "all" },
+  ];
 
   const sortedPlayers = [...players].sort((a, b) => {
     if (playerSort === "winnings") return b.winnings - a.winnings;
@@ -139,21 +125,21 @@ export default function Community() {
 
   function getPlayerSecondary(p: typeof players[0]) {
     const parts: string[] = [];
-    if (playerSort !== "winRate") parts.push(`${p.winRate}% win rate`);
+    if (playerSort !== "winRate") parts.push(isMobile ? `${p.winRate}%` : `${p.winRate}% win rate`);
     if (playerSort !== "winnings") parts.push(formatMoney(p.winnings));
-    parts.push(`${p.marketsEntered} entered`);
+    parts.push(isMobile ? `${p.marketsEntered} mkts` : `${p.marketsEntered} entered`);
     return parts.slice(0, 2).join(" · ");
   }
 
   function getCreatorPrimary(c: typeof creators[0]) {
     if (creatorSort === "pot") return <span className="text-success font-semibold">{formatMoney(c.potGenerated)}</span>;
-    if (creatorSort === "markets") return <span className="font-semibold">{c.marketsCreated} markets</span>;
+    if (creatorSort === "markets") return <span className="font-semibold">{c.marketsCreated} mkts</span>;
     return <span className="font-semibold">{formatMoney(c.avgPot)} avg</span>;
   }
 
   function getCreatorSecondary(c: typeof creators[0]) {
     const parts: string[] = [];
-    if (creatorSort !== "markets") parts.push(`${c.marketsCreated} markets`);
+    if (creatorSort !== "markets") parts.push(isMobile ? `${c.marketsCreated} mkts` : `${c.marketsCreated} markets`);
     if (creatorSort !== "pot") parts.push(formatMoney(c.potGenerated) + " pot");
     parts.push(`${(c.totalPlayers / 1000).toFixed(1)}K players`);
     return parts.slice(0, 2).join(" · ");
@@ -164,11 +150,14 @@ export default function Community() {
       <div className="flex gap-6 justify-center">
         <ActivitySidebar />
 
-        <div className="w-full max-w-2xl space-y-4 px-4">
-          <PageHeader
-            title="Leaderboards"
-            subtitle="See who's dominating the predictions"
-          />
+        <div className="w-full max-w-2xl space-y-3 sm:space-y-4 px-4">
+          {/* Hide PageHeader on mobile */}
+          <div className="hidden sm:block">
+            <PageHeader
+              title="Leaderboards"
+              subtitle="See who's dominating the predictions"
+            />
+          </div>
 
           {/* Leaderboard Tabs */}
           <Tabs defaultValue="players" className="w-full">
@@ -178,10 +167,38 @@ export default function Community() {
             </TabsList>
 
             {/* Players Tab */}
-            <TabsContent value="players" className="space-y-3 mt-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                <TimePeriodPills value={timePeriod} onChange={setTimePeriod} />
-                <div className="flex gap-1.5">
+            <TabsContent value="players" className="space-y-3 mt-3 sm:mt-4">
+              {/* Single scrollable row on mobile, two rows on desktop */}
+              <div className="sm:flex sm:flex-row sm:items-center sm:justify-between sm:gap-2">
+                <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide pb-1 sm:pb-0 -mx-4 px-4 sm:mx-0 sm:px-0">
+                  <div className="flex gap-1 shrink-0">
+                    {timePeriodOptions.map((o) => (
+                      <Badge
+                        key={o.value}
+                        variant={timePeriod === o.value ? "default" : "outline"}
+                        className="cursor-pointer text-[10px] uppercase tracking-wider whitespace-nowrap"
+                        onClick={() => setTimePeriod(o.value)}
+                      >
+                        {isMobile ? o.shortLabel : o.label}
+                      </Badge>
+                    ))}
+                  </div>
+                  <div className="w-px h-4 bg-border shrink-0 sm:hidden" />
+                  <div className="flex gap-1 shrink-0 sm:hidden">
+                    {([["winnings", "Winnings"], ["winRate", "Win Rate"], ["streak", "Streak"]] as const).map(([val, label]) => (
+                      <Badge
+                        key={val}
+                        variant={playerSort === val ? "default" : "outline"}
+                        className="cursor-pointer text-[10px] whitespace-nowrap"
+                        onClick={() => setPlayerSort(val)}
+                      >
+                        {label}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+                {/* Desktop sort pills */}
+                <div className="hidden sm:flex gap-1.5">
                   {([["winnings", "Winnings"], ["winRate", "Win Rate"], ["streak", "Streak"]] as const).map(([val, label]) => (
                     <Badge
                       key={val}
@@ -195,28 +212,29 @@ export default function Community() {
                 </div>
               </div>
 
-              <Card className="border-border/50">
-                <CardHeader className="pb-2">
+              {/* Card — hide header on mobile */}
+              <Card className="border-border/50 sm:border-border/50">
+                <CardHeader className="pb-2 hidden sm:block">
                   <CardTitle className="text-base flex items-center gap-2">
                     <Trophy className="h-4 w-4 text-primary" />
                     Top Players
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="pt-2">
+                <CardContent className="pt-2 sm:pt-2 px-2 sm:px-6">
                   <div className="divide-y divide-border/50">
                     {sortedPlayers.map((player, i) => (
                       <Link
                         key={player.name}
                         to={`/profile/${player.name.toLowerCase().replace(' ', '-')}`}
-                        className="flex items-center gap-3 py-3 hover:bg-muted/30 -mx-2 px-2 rounded-lg transition-colors group"
+                        className="flex items-center gap-2 sm:gap-3 py-2 sm:py-3 hover:bg-muted/30 -mx-1 sm:-mx-2 px-1 sm:px-2 rounded-lg transition-colors group"
                       >
-                        <div className="flex items-center gap-1.5 w-10 shrink-0">
-                          <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold border ${getRankBadge(i + 1)}`}>
+                        <div className="flex items-center gap-1 sm:gap-1.5 w-9 sm:w-10 shrink-0">
+                          <div className={`w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center text-[10px] sm:text-xs font-bold border ${getRankBadge(i + 1)}`}>
                             {i + 1}
                           </div>
                           <RankChange change={player.rankChange} />
                         </div>
-                        <Avatar className="h-9 w-9">
+                        <Avatar className="h-7 w-7 sm:h-9 sm:w-9">
                           <AvatarImage src={player.avatar} alt={player.name} />
                           <AvatarFallback>{player.name.slice(0, 2)}</AvatarFallback>
                         </Avatar>
@@ -225,33 +243,37 @@ export default function Community() {
                             <p className="font-medium text-sm truncate">{player.name}</p>
                             <StreakBadge streak={player.streak} />
                           </div>
-                          <p className="text-xs text-muted-foreground">{getPlayerSecondary(player)}</p>
+                          <p className="text-xs text-muted-foreground truncate">{getPlayerSecondary(player)}</p>
                         </div>
                         <div className="text-right text-sm shrink-0">
                           {getPlayerPrimary(player)}
                         </div>
-                        <ChevronRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
+                        <ChevronRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity shrink-0 hidden sm:block" />
                       </Link>
                     ))}
                     {/* Your Rank */}
                     <div className="border-t-2 border-dashed border-primary/20 mt-1 pt-1">
-                      <div className="flex items-center gap-3 py-3 -mx-2 px-2 rounded-lg bg-primary/[0.04]">
-                        <div className="flex items-center gap-1.5 w-10 shrink-0">
-                          <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold border border-primary/30 bg-primary/10 text-primary">
+                      <div className="flex items-center gap-2 sm:gap-3 py-2 sm:py-3 -mx-1 sm:-mx-2 px-1 sm:px-2 rounded-lg bg-primary/[0.04]">
+                        <div className="flex items-center gap-1 sm:gap-1.5 w-9 sm:w-10 shrink-0">
+                          <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center text-[10px] sm:text-xs font-bold border border-primary/30 bg-primary/10 text-primary">
                             {playerSort === "winnings" ? 24 : playerSort === "winRate" ? 31 : 58}
                           </div>
                           <span className="flex items-center text-[11px] font-semibold text-success"><ArrowUp className="h-3 w-3" />3</span>
                         </div>
-                        <Avatar className="h-9 w-9 ring-2 ring-primary/20">
-                          <AvatarFallback className="bg-primary/10 text-primary font-bold">YOU</AvatarFallback>
+                        <Avatar className="h-7 w-7 sm:h-9 sm:w-9 ring-2 ring-primary/20">
+                          <AvatarFallback className="bg-primary/10 text-primary font-bold text-[10px] sm:text-sm">YOU</AvatarFallback>
                         </Avatar>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-1.5">
                             <p className="font-medium text-sm text-primary">You</p>
                             <StreakBadge streak={2} />
                           </div>
-                          <p className="text-xs text-muted-foreground">
-                            {playerSort === "winnings" ? "72% win rate · 38 entered" : playerSort === "winRate" ? "$4.2K · 38 entered" : "$4.2K · 72% win rate"}
+                          <p className="text-xs text-muted-foreground truncate">
+                            {playerSort === "winnings"
+                              ? (isMobile ? "72% · 38 mkts" : "72% win rate · 38 entered")
+                              : playerSort === "winRate"
+                              ? (isMobile ? "$4.2K · 38 mkts" : "$4.2K · 38 entered")
+                              : (isMobile ? "$4.2K · 72%" : "$4.2K · 72% win rate")}
                           </p>
                         </div>
                         <div className="text-right text-sm shrink-0">
@@ -265,10 +287,36 @@ export default function Community() {
             </TabsContent>
 
             {/* Creators Tab */}
-            <TabsContent value="creators" className="space-y-3 mt-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                <TimePeriodPills value={timePeriod} onChange={setTimePeriod} />
-                <div className="flex gap-1.5">
+            <TabsContent value="creators" className="space-y-3 mt-3 sm:mt-4">
+              <div className="sm:flex sm:flex-row sm:items-center sm:justify-between sm:gap-2">
+                <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide pb-1 sm:pb-0 -mx-4 px-4 sm:mx-0 sm:px-0">
+                  <div className="flex gap-1 shrink-0">
+                    {timePeriodOptions.map((o) => (
+                      <Badge
+                        key={o.value}
+                        variant={timePeriod === o.value ? "default" : "outline"}
+                        className="cursor-pointer text-[10px] uppercase tracking-wider whitespace-nowrap"
+                        onClick={() => setTimePeriod(o.value)}
+                      >
+                        {isMobile ? o.shortLabel : o.label}
+                      </Badge>
+                    ))}
+                  </div>
+                  <div className="w-px h-4 bg-border shrink-0 sm:hidden" />
+                  <div className="flex gap-1 shrink-0 sm:hidden">
+                    {([["pot", "Pot"], ["markets", "Markets"], ["avgPot", "Avg Pot"]] as const).map(([val, label]) => (
+                      <Badge
+                        key={val}
+                        variant={creatorSort === val ? "default" : "outline"}
+                        className="cursor-pointer text-[10px] whitespace-nowrap"
+                        onClick={() => setCreatorSort(val)}
+                      >
+                        {label}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+                <div className="hidden sm:flex gap-1.5">
                   {([["pot", "Pot Generated"], ["markets", "Markets"], ["avgPot", "Avg Pot"]] as const).map(([val, label]) => (
                     <Badge
                       key={val}
@@ -283,59 +331,63 @@ export default function Community() {
               </div>
 
               <Card className="border-border/50">
-                <CardHeader className="pb-2">
+                <CardHeader className="pb-2 hidden sm:block">
                   <CardTitle className="text-base flex items-center gap-2">
                     <Award className="h-4 w-4 text-primary" />
                     Top Creators
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="pt-2">
+                <CardContent className="pt-2 sm:pt-2 px-2 sm:px-6">
                   <div className="divide-y divide-border/50">
                     {sortedCreators.map((creator, i) => (
                       <Link
                         key={creator.name}
                         to={`/creator/${creator.name.toLowerCase().replace(' ', '-')}`}
-                        className="flex items-center gap-3 py-3 hover:bg-muted/30 -mx-2 px-2 rounded-lg transition-colors group"
+                        className="flex items-center gap-2 sm:gap-3 py-2 sm:py-3 hover:bg-muted/30 -mx-1 sm:-mx-2 px-1 sm:px-2 rounded-lg transition-colors group"
                       >
-                        <div className="flex items-center gap-1.5 w-10 shrink-0">
-                          <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold border ${getRankBadge(i + 1)}`}>
+                        <div className="flex items-center gap-1 sm:gap-1.5 w-9 sm:w-10 shrink-0">
+                          <div className={`w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center text-[10px] sm:text-xs font-bold border ${getRankBadge(i + 1)}`}>
                             {i + 1}
                           </div>
                           <RankChange change={creator.rankChange} />
                         </div>
-                        <Avatar className="h-9 w-9">
+                        <Avatar className="h-7 w-7 sm:h-9 sm:w-9">
                           <AvatarImage src={creator.avatar} alt={creator.name} />
                           <AvatarFallback>{creator.name.slice(0, 2)}</AvatarFallback>
                         </Avatar>
                         <div className="flex-1 min-w-0">
                           <p className="font-medium text-sm truncate">{creator.name}</p>
-                          <p className="text-xs text-muted-foreground">{getCreatorSecondary(creator)}</p>
+                          <p className="text-xs text-muted-foreground truncate">{getCreatorSecondary(creator)}</p>
                         </div>
                         <div className="text-right text-sm shrink-0">
                           {getCreatorPrimary(creator)}
                         </div>
-                        <ChevronRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
+                        <ChevronRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity shrink-0 hidden sm:block" />
                       </Link>
                     ))}
                     {/* Your Rank */}
                     <div className="border-t-2 border-dashed border-primary/20 mt-1 pt-1">
-                      <div className="flex items-center gap-3 py-3 -mx-2 px-2 rounded-lg bg-primary/[0.04]">
-                        <div className="flex items-center gap-1.5 w-10 shrink-0">
-                          <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold border border-primary/30 bg-primary/10 text-primary">
+                      <div className="flex items-center gap-2 sm:gap-3 py-2 sm:py-3 -mx-1 sm:-mx-2 px-1 sm:px-2 rounded-lg bg-primary/[0.04]">
+                        <div className="flex items-center gap-1 sm:gap-1.5 w-9 sm:w-10 shrink-0">
+                          <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center text-[10px] sm:text-xs font-bold border border-primary/30 bg-primary/10 text-primary">
                             {creatorSort === "pot" ? 42 : creatorSort === "markets" ? 37 : 29}
                           </div>
                         </div>
-                        <Avatar className="h-9 w-9 ring-2 ring-primary/20">
-                          <AvatarFallback className="bg-primary/10 text-primary font-bold">YOU</AvatarFallback>
+                        <Avatar className="h-7 w-7 sm:h-9 sm:w-9 ring-2 ring-primary/20">
+                          <AvatarFallback className="bg-primary/10 text-primary font-bold text-[10px] sm:text-sm">YOU</AvatarFallback>
                         </Avatar>
                         <div className="flex-1 min-w-0">
                           <p className="font-medium text-sm text-primary">You</p>
-                          <p className="text-xs text-muted-foreground">
-                            {creatorSort === "pot" ? "3 markets · 1.2K players" : creatorSort === "markets" ? "$12.4K pot · 1.2K players" : "3 markets · $12.4K pot"}
+                          <p className="text-xs text-muted-foreground truncate">
+                            {creatorSort === "pot"
+                              ? (isMobile ? "3 mkts · 1.2K players" : "3 markets · 1.2K players")
+                              : creatorSort === "markets"
+                              ? (isMobile ? "$12.4K · 1.2K players" : "$12.4K pot · 1.2K players")
+                              : (isMobile ? "3 mkts · $12.4K" : "3 markets · $12.4K pot")}
                           </p>
                         </div>
                         <div className="text-right text-sm shrink-0">
-                          {creatorSort === "pot" ? <span className="text-success font-semibold">$12.4K</span> : creatorSort === "markets" ? <span className="font-semibold">3 markets</span> : <span className="font-semibold">$4.1K avg</span>}
+                          {creatorSort === "pot" ? <span className="text-success font-semibold">$12.4K</span> : creatorSort === "markets" ? <span className="font-semibold">3 mkts</span> : <span className="font-semibold">$4.1K avg</span>}
                         </div>
                       </div>
                     </div>
@@ -345,8 +397,8 @@ export default function Community() {
             </TabsContent>
           </Tabs>
 
-          {/* Highlights Section */}
-          <div className="space-y-3">
+          {/* Highlights Section — compact on mobile */}
+          <div className="space-y-2 sm:space-y-3">
             <h2 className="text-base font-semibold flex items-center gap-2 px-1">
               <Star className="h-4 w-4 text-primary" />
               Highlights
@@ -354,17 +406,17 @@ export default function Community() {
 
             {/* Hot Streaks */}
             <Card className="border-border/50">
-              <CardHeader className="pb-2 pt-4 px-4">
+              <CardHeader className="pb-1 sm:pb-2 pt-3 sm:pt-4 px-3 sm:px-4">
                 <CardTitle className="text-sm flex items-center gap-2">
                   <Flame className="h-4 w-4 text-orange-500" />
                   Hot Streaks
                 </CardTitle>
               </CardHeader>
-              <CardContent className="px-4 pb-4 pt-1">
-                <div className="space-y-2">
+              <CardContent className="px-3 sm:px-4 pb-3 sm:pb-4 pt-1">
+                <div className="space-y-1 sm:space-y-2">
                   {hotStreaks.map((s) => (
-                    <div key={s.name} className="flex items-center gap-3 py-1.5">
-                      <Avatar className="h-7 w-7">
+                    <div key={s.name} className="flex items-center gap-2 sm:gap-3 py-1 sm:py-1.5">
+                      <Avatar className="h-6 w-6 sm:h-7 sm:w-7">
                         <AvatarImage src={s.avatar} alt={s.name} />
                         <AvatarFallback>{s.name.slice(0, 2)}</AvatarFallback>
                       </Avatar>
@@ -383,17 +435,17 @@ export default function Community() {
 
             {/* Biggest Wins */}
             <Card className="border-border/50">
-              <CardHeader className="pb-2 pt-4 px-4">
+              <CardHeader className="pb-1 sm:pb-2 pt-3 sm:pt-4 px-3 sm:px-4">
                 <CardTitle className="text-sm flex items-center gap-2">
                   <TrendingUp className="h-4 w-4 text-success" />
                   Biggest Wins This Week
                 </CardTitle>
               </CardHeader>
-              <CardContent className="px-4 pb-4 pt-1">
-                <div className="space-y-2">
+              <CardContent className="px-3 sm:px-4 pb-3 sm:pb-4 pt-1">
+                <div className="space-y-1 sm:space-y-2">
                   {biggestWins.map((w) => (
-                    <div key={w.name} className="flex items-center gap-3 py-1.5">
-                      <Avatar className="h-7 w-7">
+                    <div key={w.name} className="flex items-center gap-2 sm:gap-3 py-1 sm:py-1.5">
+                      <Avatar className="h-6 w-6 sm:h-7 sm:w-7">
                         <AvatarImage src={w.avatar} alt={w.name} />
                         <AvatarFallback>{w.name.slice(0, 2)}</AvatarFallback>
                       </Avatar>
@@ -410,26 +462,26 @@ export default function Community() {
 
             {/* Rising Stars */}
             <Card className="border-border/50">
-              <CardHeader className="pb-2 pt-4 px-4">
+              <CardHeader className="pb-1 sm:pb-2 pt-3 sm:pt-4 px-3 sm:px-4">
                 <CardTitle className="text-sm flex items-center gap-2">
                   <ArrowUp className="h-4 w-4 text-primary" />
                   Rising Stars
                 </CardTitle>
               </CardHeader>
-              <CardContent className="px-4 pb-4 pt-1">
-                <div className="space-y-2">
+              <CardContent className="px-3 sm:px-4 pb-3 sm:pb-4 pt-1">
+                <div className="space-y-1 sm:space-y-2">
                   {risingStars.map((r) => (
-                    <div key={r.name} className="flex items-center gap-3 py-1.5">
-                      <Avatar className="h-7 w-7">
+                    <div key={r.name} className="flex items-center gap-2 sm:gap-3 py-1 sm:py-1.5">
+                      <Avatar className="h-6 w-6 sm:h-7 sm:w-7">
                         <AvatarImage src={r.avatar} alt={r.name} />
                         <AvatarFallback>{r.name.slice(0, 2)}</AvatarFallback>
                       </Avatar>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium">{r.name}</p>
-                        <p className="text-xs text-muted-foreground">Now ranked #{r.currentRank}</p>
+                        <p className="text-xs text-muted-foreground">Now #{r.currentRank}</p>
                       </div>
                       <span className="flex items-center gap-0.5 text-xs font-bold text-success">
-                        <ArrowUp className="h-3 w-3" />+{r.rankChange} spots
+                        <ArrowUp className="h-3 w-3" />+{r.rankChange}
                       </span>
                     </div>
                   ))}

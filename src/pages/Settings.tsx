@@ -103,35 +103,37 @@ const Settings = () => {
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-4xl mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-6">
-        <PageHeader 
-          title="Settings" 
-          subtitle="Manage your account preferences and privacy"
-        />
+        <div className="hidden sm:block">
+          <PageHeader 
+            title="Settings" 
+            subtitle="Manage your account preferences and privacy"
+          />
+        </div>
 
         <Tabs defaultValue="account" className="space-y-4 sm:space-y-6">
           {/* Horizontal scrolling tabs for mobile */}
           <div className="overflow-x-auto -mx-3 px-3 sm:mx-0 sm:px-0 scrollbar-hide">
             <TabsList className="bg-muted/50 p-1 w-max sm:w-auto">
-              <TabsTrigger value="account" className="data-[state=active]:bg-background gap-1.5 text-xs sm:text-sm px-2.5 sm:px-3">
+              <TabsTrigger value="account" className="data-[state=active]:bg-background gap-1 sm:gap-1.5 text-[11px] sm:text-sm px-2 sm:px-3">
                 <User className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                <span className="hidden xs:inline sm:inline">Account</span>
+                <span>Account</span>
               </TabsTrigger>
-              <TabsTrigger value="notifications" className="data-[state=active]:bg-background gap-1.5 text-xs sm:text-sm px-2.5 sm:px-3">
+              <TabsTrigger value="notifications" className="data-[state=active]:bg-background gap-1 sm:gap-1.5 text-[11px] sm:text-sm px-2 sm:px-3">
                 <Bell className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                <span className="hidden xs:inline sm:inline">Alerts</span>
+                <span>Alerts</span>
               </TabsTrigger>
-              <TabsTrigger value="privacy" className="data-[state=active]:bg-background gap-1.5 text-xs sm:text-sm px-2.5 sm:px-3">
+              <TabsTrigger value="privacy" className="data-[state=active]:bg-background gap-1 sm:gap-1.5 text-[11px] sm:text-sm px-2 sm:px-3">
                 <Shield className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                <span className="hidden xs:inline sm:inline">Privacy</span>
+                <span>Privacy</span>
               </TabsTrigger>
-              <TabsTrigger value="payment" className="data-[state=active]:bg-background gap-1.5 text-xs sm:text-sm px-2.5 sm:px-3">
+              <TabsTrigger value="payment" className="data-[state=active]:bg-background gap-1 sm:gap-1.5 text-[11px] sm:text-sm px-2 sm:px-3">
                 <CreditCard className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                <span className="hidden xs:inline sm:inline">Payment</span>
+                <span>Payment</span>
               </TabsTrigger>
               {isCreator && (
-                <TabsTrigger value="creator" className="data-[state=active]:bg-background gap-1.5 text-xs sm:text-sm px-2.5 sm:px-3">
+                <TabsTrigger value="creator" className="data-[state=active]:bg-background gap-1 sm:gap-1.5 text-[11px] sm:text-sm px-2 sm:px-3">
                   <Globe className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                  <span className="hidden xs:inline sm:inline">Creator</span>
+                  <span>Creator</span>
                 </TabsTrigger>
               )}
             </TabsList>

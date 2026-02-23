@@ -84,7 +84,9 @@ const Portfolio = () => {
   return (
     <div className="min-h-screen bg-background pb-20 sm:pb-6">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
-        <PageHeader title="Portfolio" subtitle="Your balance, entries & winnings" />
+        <div className="hidden sm:block">
+          <PageHeader title="Portfolio" subtitle="Your balance, entries & winnings" />
+        </div>
 
         {/* Balance + Winnings + Net Profit */}
         <div className="grid grid-cols-2 gap-2 sm:gap-3 mb-2 sm:mb-3">
