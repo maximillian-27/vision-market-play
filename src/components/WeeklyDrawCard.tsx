@@ -35,34 +35,37 @@ const COUNTDOWN = "3d 14h";
 export function WeeklyDrawCard() {
   return (
     <div className="flex flex-col p-3 rounded-xl border border-primary/20 bg-card h-full relative overflow-hidden">
-      {/* Glow */}
-      <div className="absolute -top-10 -right-10 w-28 h-28 rounded-full bg-primary/5 blur-2xl pointer-events-none" />
+      {/* Glow accents */}
+      <div className="absolute -top-8 -right-8 w-24 h-24 rounded-full bg-primary/8 blur-2xl pointer-events-none" />
+      <div className="absolute -bottom-6 -left-6 w-16 h-16 rounded-full bg-primary/4 blur-xl pointer-events-none" />
 
       {/* Row 1: Title + Timer */}
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-1.5">
-          <Trophy className="h-3.5 w-3.5 text-primary" />
-          <span className="text-[10px] uppercase tracking-wider font-bold text-primary">Weekly Draw</span>
+          <div className="flex items-center justify-center w-5 h-5 rounded-md bg-primary/10">
+            <Trophy className="h-3 w-3 text-primary" />
+          </div>
+          <span className="text-[10px] uppercase tracking-widest font-bold text-primary">Weekly Draw</span>
         </div>
-        <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-muted/60 text-[9px] text-muted-foreground font-medium">
+        <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-muted text-[9px] text-muted-foreground font-medium tabular-nums">
           <Timer className="h-2.5 w-2.5" />
           <span>{COUNTDOWN}</span>
         </div>
       </div>
 
       {/* Row 2: Pot */}
-      <div className="text-lg font-extrabold text-primary leading-none">
-        ${WEEKLY_POT.toLocaleString()}
+      <div className="text-lg font-extrabold text-foreground leading-none tracking-tight">
+        <span className="text-primary">$</span>{WEEKLY_POT.toLocaleString()}
       </div>
-      <div className="text-[9px] text-muted-foreground mt-0.5 mb-2">Prize pool this week</div>
+      <div className="text-[9px] text-muted-foreground mt-0.5 mb-2.5">Prize pool this week</div>
 
       {/* Row 3: Distribution bar + legend */}
-      <div className="space-y-0.5 mb-2">
-        <div className="flex rounded-full overflow-hidden h-[5px]">
+      <div className="space-y-1 mb-2.5">
+        <div className="flex rounded-full overflow-hidden h-[5px] bg-muted">
           {distribution.map((d, i) => (
             <div
               key={d.place}
-              className="h-full"
+              className="h-full first:rounded-l-full last:rounded-r-full"
               style={{
                 width: `${d.pct}%`,
                 backgroundColor: `hsl(var(--primary) / ${1 - i * 0.2})`,
@@ -70,10 +73,11 @@ export function WeeklyDrawCard() {
             />
           ))}
         </div>
-        <div className="flex items-center justify-between text-[7px] text-muted-foreground">
+        <div className="flex items-center justify-between text-[7.5px] text-muted-foreground">
           {distribution.map((d) => (
-            <span key={d.place}>
-              <span className="font-semibold text-foreground">{d.place}</span> {d.pct}%
+            <span key={d.place} className="flex items-center gap-0.5">
+              <span className="font-bold text-foreground">{d.place}</span>
+              <span className="opacity-70">{d.pct}%</span>
             </span>
           ))}
         </div>
@@ -84,7 +88,7 @@ export function WeeklyDrawCard() {
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <span className="flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-primary/10 text-primary font-bold cursor-help">
+              <span className="flex items-center gap-0.5 px-1.5 py-0.5 rounded-md bg-primary/10 text-primary font-bold cursor-help border border-primary/10">
                 <Ticket className="h-2.5 w-2.5" />
                 {ENTRY_COST} tickets = 1 entry
               </span>
@@ -94,13 +98,13 @@ export function WeeklyDrawCard() {
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
-        <span className="text-muted-foreground">·</span>
-        <span className="font-semibold text-foreground">{MY_ENTRIES} entries</span>
-        <span className="text-muted-foreground">/ {ELIGIBLE_ENTRIES.toLocaleString()} total</span>
+        <span className="text-border">·</span>
+        <span className="font-bold text-foreground tabular-nums">{MY_ENTRIES} entries</span>
+        <span className="text-muted-foreground/70">/ {ELIGIBLE_ENTRIES.toLocaleString()}</span>
       </div>
 
       {/* Row 5: Actions */}
-      <div className="flex items-center gap-2 mt-auto pt-1 border-t border-border/40">
+      <div className="flex items-center gap-2.5 mt-auto pt-1.5 border-t border-border/30">
         {/* Previous winners */}
         <Dialog>
           <DialogTrigger asChild>
@@ -133,7 +137,7 @@ export function WeeklyDrawCard() {
           </DialogContent>
         </Dialog>
 
-        <span className="text-border">·</span>
+        <span className="text-border/50">·</span>
 
         {/* How it works */}
         <Dialog>
