@@ -9,7 +9,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
 import { QuoteRepostDialog } from "@/components/QuoteRepostDialog";
-import { ResponsiveContainer, AreaChart, Area, XAxis, Tooltip, ReferenceDot } from "recharts";
+import { ResponsiveContainer, AreaChart, Area, Tooltip, Legend } from "recharts";
 import {
   BadgeCheck,
   Share2,
@@ -86,15 +86,7 @@ function formatPot(pot: number): string {
 const getMockMarketDetails = (marketId: string) => ({
   description: "This market tracks the prediction outcome based on official announcements and verified data sources. The resolution will be determined by the primary outcome at the specified end date.",
   resolutionCriteria: "This market resolves to YES if the specified outcome occurs before the end date. Resolution is based on official announcements from primary sources.",
-  priceHistory: [
-    { date: "Jan", price: 42 },
-    { date: "Feb", price: 52 },
-    { date: "Mar", price: 55 },
-    { date: "Apr", price: 62 },
-    { date: "May", price: 68 },
-    { date: "Jun", price: 70 },
-    { date: "Now", price: 68 },
-  ],
+  priceHistory: [] as { date: string; [key: string]: number | string }[],
   comments: [
     {
       id: "1",
@@ -139,8 +131,27 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
   const mockDetails = getMockMarketDetails(market.id);
   const description = market.description || mockDetails.description;
   const resolutionCriteria = market.resolutionCriteria || mockDetails.resolutionCriteria;
-  const priceHistory = market.priceHistory || mockDetails.priceHistory;
   const comments = market.comments || mockDetails.comments;
+
+  // Generate probability history for each outcome
+  const generateProbabilityHistory = () => {
+    const points = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Now"];
+    const outcomes = market.outcomes;
+    return points.map((date, i) => {
+      const row: Record<string, number | string> = { date };
+      outcomes.forEach((o, oi) => {
+        // Create a smooth random walk toward the current price
+        const target = o.price;
+        const start = 100 / outcomes.length; // equal start
+        const progress = i / (points.length - 1);
+        const noise = (Math.sin((i + 1) * (oi + 2) * 1.7) * 8);
+        row[o.label] = Math.max(1, Math.min(99, Math.round(start + (target - start) * progress + noise * (1 - progress))));
+      });
+      return row;
+    });
+  };
+
+  const probabilityHistory = market.priceHistory?.length ? market.priceHistory : generateProbabilityHistory();
 
   const isBinary = market.outcomes.length === 2 &&
     market.outcomes.some(o => o.label.toLowerCase() === "yes") &&
@@ -172,7 +183,7 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
   
   const potDisplay = formatPot(potValue);
   const playerCount = market.players || market.traders || 1247;
-  const lastPrice = priceHistory[priceHistory.length - 1];
+  
 
   // Community sentiment from outcome prices
   const yesOutcome = market.outcomes.find(o => o.label.toLowerCase() === "yes");
@@ -303,45 +314,91 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
                   </div>
                 )}
 
-                {/* Price Chart - ticket price over time */}
-                <div className="h-20 rounded-lg overflow-hidden bg-muted/20 p-1.5">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={priceHistory} margin={{ top: 4, right: 4, left: 0, bottom: 0 }}>
-                      <defs>
-                        <linearGradient id="dialogChartGrad" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.25} />
-                          <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
-                        </linearGradient>
-                      </defs>
-                      <Tooltip
-                        contentStyle={{
-                          backgroundColor: "hsl(var(--popover))",
-                          border: "1px solid hsl(var(--border))",
-                          borderRadius: "6px",
-                          fontSize: "11px",
-                          padding: "4px 8px"
-                        }}
-                        formatter={(value: any) => [`${value}%`, "Sentiment"]}
-                      />
-                      <Area
-                        type="monotone"
-                        dataKey="price"
-                        stroke="hsl(var(--primary))"
-                        fill="url(#dialogChartGrad)"
-                        strokeWidth={1.5}
-                      />
-                      {lastPrice && (
-                        <ReferenceDot
-                          x={lastPrice.date}
-                          y={lastPrice.price}
-                          r={4}
-                          fill="hsl(var(--primary))"
-                          stroke="hsl(var(--background))"
-                          strokeWidth={2}
+                {/* Probability Chart - all outcomes */}
+                <div className="space-y-1.5">
+                  <div className="flex items-center gap-1.5 text-[10px] font-medium text-muted-foreground">
+                    <TrendingUp className="h-3 w-3" />
+                    <span>Probability</span>
+                  </div>
+                  <div className="h-28 rounded-lg overflow-hidden bg-muted/20 p-1.5">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <AreaChart data={probabilityHistory} margin={{ top: 4, right: 4, left: 0, bottom: 0 }}>
+                        <defs>
+                          {market.outcomes.map((o, i) => {
+                            const colors = [
+                              "hsl(var(--success))",
+                              "hsl(var(--destructive))",
+                              "hsl(var(--primary))",
+                              "hsl(var(--accent-foreground))",
+                              "hsl(var(--pollgy-blue))",
+                            ];
+                            const color = isBinary
+                              ? (o.label.toLowerCase() === "yes" ? "hsl(var(--success))" : "hsl(var(--destructive))")
+                              : colors[i % colors.length];
+                            return (
+                              <linearGradient key={o.label} id={`probGrad-${i}`} x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="5%" stopColor={color} stopOpacity={0.2} />
+                                <stop offset="95%" stopColor={color} stopOpacity={0} />
+                              </linearGradient>
+                            );
+                          })}
+                        </defs>
+                        <Tooltip
+                          contentStyle={{
+                            backgroundColor: "hsl(var(--popover))",
+                            border: "1px solid hsl(var(--border))",
+                            borderRadius: "6px",
+                            fontSize: "11px",
+                            padding: "4px 8px"
+                          }}
+                          formatter={(value: any, name: string) => [`${value}%`, name]}
                         />
-                      )}
-                    </AreaChart>
-                  </ResponsiveContainer>
+                        {market.outcomes.map((o, i) => {
+                          const colors = [
+                            "hsl(var(--success))",
+                            "hsl(var(--destructive))",
+                            "hsl(var(--primary))",
+                            "hsl(var(--accent-foreground))",
+                            "hsl(var(--pollgy-blue))",
+                          ];
+                          const color = isBinary
+                            ? (o.label.toLowerCase() === "yes" ? "hsl(var(--success))" : "hsl(var(--destructive))")
+                            : colors[i % colors.length];
+                          return (
+                            <Area
+                              key={o.label}
+                              type="monotone"
+                              dataKey={o.label}
+                              stroke={color}
+                              fill={`url(#probGrad-${i})`}
+                              strokeWidth={1.5}
+                            />
+                          );
+                        })}
+                      </AreaChart>
+                    </ResponsiveContainer>
+                  </div>
+                  {/* Legend */}
+                  <div className="flex items-center justify-center gap-3 flex-wrap">
+                    {market.outcomes.map((o, i) => {
+                      const colors = [
+                        "bg-success",
+                        "bg-destructive",
+                        "bg-primary",
+                        "bg-accent-foreground",
+                        "bg-[hsl(var(--pollgy-blue))]",
+                      ];
+                      const colorClass = isBinary
+                        ? (o.label.toLowerCase() === "yes" ? "bg-success" : "bg-destructive")
+                        : colors[i % colors.length];
+                      return (
+                        <span key={o.label} className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                          <span className={`inline-block h-1.5 w-1.5 rounded-full ${colorClass}`} />
+                          {o.label} {o.price}%
+                        </span>
+                      );
+                    })}
+                  </div>
                 </div>
 
                 {/* Description */}
