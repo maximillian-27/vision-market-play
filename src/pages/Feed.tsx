@@ -1,9 +1,10 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { FeedFilters, FilterState } from "@/components/FeedFilters";
 import { MarketGridCard } from "@/components/MarketGridCard";
 import { Button } from "@/components/ui/button";
 import { Timer, Users, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useIsMobile } from "@/hooks/use-mobile";
 import bitcoinImage from "@/assets/bitcoin-market.jpg";
 import nbaImage from "@/assets/nba-championship.jpg";
 import iphoneImage from "@/assets/foldable-iphone.jpg";
@@ -279,10 +280,11 @@ function formatPot(pot: number): string {
 /* ── Gradient Banner Divider ── */
 function GradientDivider() {
   return (
-    <div className="w-full rounded-xl bg-gradient-to-r from-primary via-primary/90 to-primary/80 px-4 sm:px-6 py-3 sm:py-3.5 flex items-center justify-between gap-4 overflow-hidden">
+    <div className="w-full rounded-xl bg-gradient-to-r from-primary via-primary/90 to-primary/80 px-3 sm:px-6 py-2 sm:py-3.5 flex items-center justify-between gap-4 overflow-hidden">
       <p className="text-primary-foreground text-[10px] sm:text-xs lg:text-base font-medium whitespace-nowrap">
         <span className="font-bold">Pollgy.</span>{" "}
-        First creator led, community owned prediction market platform
+        <span className="hidden sm:inline">First creator led, community owned prediction market platform</span>
+        <span className="sm:hidden">Community owned prediction markets</span>
       </p>
       <div className="flex items-center gap-3 sm:gap-4 shrink-0">
         <span className="hidden sm:flex items-center gap-2 text-primary-foreground/90 text-[10px] sm:text-xs lg:text-base font-medium whitespace-nowrap">
@@ -341,6 +343,8 @@ function CompactFeaturedCard({ market }: { market: Market }) {
 
 export default function Feed() {
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
+  const [activeSlide, setActiveSlide] = useState(0);
   const [filters, setFilters] = useState<FilterState>({
     category: "All",
     sortBy: "trending",
@@ -348,6 +352,15 @@ export default function Feed() {
     status: "all",
     timeframe: "all",
   });
+
+  // Auto-cycle mobile hero
+  useEffect(() => {
+    if (!isMobile) return;
+    const interval = setInterval(() => {
+      setActiveSlide(prev => (prev + 1) % featuredMarkets.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [isMobile]);
 
   const filteredMarkets = useMemo(() => {
     let result = [...mockMarkets];
@@ -393,28 +406,73 @@ export default function Feed() {
 
   const mainFeatured = featuredMarkets[0];
   const sideFeatured = featuredMarkets.slice(1, 3);
+  const mobileHeroMarket = featuredMarkets[activeSlide];
 
   return (
-    <div className="w-full max-w-[1600px] mx-auto px-4 md:px-6 lg:px-8">
+    <div className="w-full max-w-[1600px] mx-auto px-4 md:px-6 lg:px-8 pb-24 sm:pb-0">
       <div className="space-y-3">
-        {/* 1. Filters — sticky, right below header */}
+        {/* 1. Filters */}
         <FeedFilters filters={filters} onFiltersChange={setFilters} />
 
-        {/* 2. Split Hero Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-3 max-h-none lg:max-h-[340px]">
+        {/* 2a. Mobile Hero Slide */}
+        <div className="sm:hidden">
+          <div
+            className="relative rounded-xl overflow-hidden cursor-pointer h-[180px]"
+            onClick={() => navigate(`/market/${mobileHeroMarket.id}`)}
+          >
+            <img
+              src={mobileHeroMarket.image}
+              alt={mobileHeroMarket.title}
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+            <div className="absolute bottom-0 left-0 right-0 p-3">
+              <div className="flex items-center gap-1.5 mb-1">
+                <img src={mobileHeroMarket.creator.avatar} alt="" className="w-4 h-4 rounded-full" />
+                <span className="text-[11px] text-white/70">{mobileHeroMarket.creator.name}</span>
+              </div>
+              <h3 className="text-white text-sm font-bold leading-snug line-clamp-2 mb-1.5">
+                {mobileHeroMarket.title}
+              </h3>
+              <div className="flex items-center gap-3">
+                <span className="px-2 py-0.5 rounded-full bg-primary/20 border border-primary/30 text-primary text-[11px] font-bold">
+                  {formatPot(mobileHeroMarket.pot)} Pot
+                </span>
+                <span className="text-white/60 text-[10px] flex items-center gap-1">
+                  <Users className="h-3 w-3" />
+                  {mobileHeroMarket.players.toLocaleString()}
+                </span>
+              </div>
+            </div>
+            {/* Dot indicators */}
+            <div className="absolute bottom-1.5 right-3 flex gap-1">
+              {featuredMarkets.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={(e) => { e.stopPropagation(); setActiveSlide(i); }}
+                  className={`h-1.5 rounded-full transition-all ${
+                    i === activeSlide ? 'w-4 bg-white' : 'w-1.5 bg-white/40'
+                  }`}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* 2b. Desktop Split Hero */}
+        <div className="hidden sm:grid grid-cols-1 lg:grid-cols-5 gap-3 lg:max-h-[340px]">
           {/* Left — Large featured card */}
           <div
             className="lg:col-span-3 relative rounded-2xl overflow-hidden cursor-pointer group"
             onClick={() => navigate(`/market/${mainFeatured.id}`)}
           >
-            <div className="relative h-[220px] sm:h-[260px] lg:h-[340px]">
+            <div className="relative h-[260px] lg:h-[340px]">
               <img
                 src={mainFeatured.image}
                 alt={mainFeatured.title}
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-
               <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-5">
                 <div className="flex items-center gap-2 mb-2">
                   {mainFeatured.status === "closing" && (
@@ -456,7 +514,7 @@ export default function Feed() {
         {/* 3. Gradient Banner Divider */}
         <GradientDivider />
 
-        {/* 4. Market Grid */}
+        {/* 4. Market Grid/List */}
         {filteredMarkets.length === 0 ? (
           <div className="text-center py-16">
             <p className="text-muted-foreground">No markets found matching your filters</p>
@@ -468,28 +526,55 @@ export default function Feed() {
             </Button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-3">
-            {filteredMarkets.map((market) => (
-              <MarketGridCard
-                key={market.id}
-                id={market.id}
-                creator={market.creator}
-                title={market.title}
-                image={market.image}
-                outcomes={market.outcomes}
-                yesPrice={market.yesPrice}
-                noPrice={market.noPrice}
-                volume={market.volume}
-                pot={market.pot}
-                players={market.players}
-                endsIn={market.endsIn}
-                status={market.status}
-                resolution={market.resolution}
-                disputeEndsIn={market.disputeEndsIn}
-                resolvedAt={market.resolvedAt}
-              />
-            ))}
-          </div>
+          <>
+            {/* Mobile: flat list */}
+            <div className="sm:hidden flex flex-col divide-y divide-border">
+              {filteredMarkets.map((market) => (
+                <MarketGridCard
+                  key={market.id}
+                  id={market.id}
+                  creator={market.creator}
+                  title={market.title}
+                  image={market.image}
+                  outcomes={market.outcomes}
+                  yesPrice={market.yesPrice}
+                  noPrice={market.noPrice}
+                  volume={market.volume}
+                  pot={market.pot}
+                  players={market.players}
+                  endsIn={market.endsIn}
+                  status={market.status}
+                  resolution={market.resolution}
+                  disputeEndsIn={market.disputeEndsIn}
+                  resolvedAt={market.resolvedAt}
+                />
+              ))}
+            </div>
+
+            {/* Desktop: grid */}
+            <div className="hidden sm:grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-3">
+              {filteredMarkets.map((market) => (
+                <MarketGridCard
+                  key={market.id}
+                  id={market.id}
+                  creator={market.creator}
+                  title={market.title}
+                  image={market.image}
+                  outcomes={market.outcomes}
+                  yesPrice={market.yesPrice}
+                  noPrice={market.noPrice}
+                  volume={market.volume}
+                  pot={market.pot}
+                  players={market.players}
+                  endsIn={market.endsIn}
+                  status={market.status}
+                  resolution={market.resolution}
+                  disputeEndsIn={market.disputeEndsIn}
+                  resolvedAt={market.resolvedAt}
+                />
+              ))}
+            </div>
+          </>
         )}
       </div>
     </div>

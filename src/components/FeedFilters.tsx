@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { SlidersHorizontal, X } from "lucide-react";
+import { SlidersHorizontal, X, Search, Bookmark } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 
 const categories = ["All", "My Markets", "Hot", "Closing Soon", "Politics", "Sports", "Crypto", "Tech", "Entertainment", "Finance"];
 
@@ -29,10 +30,51 @@ export function FeedFilters({ filters, onFiltersChange }: FeedFiltersProps) {
   const hasActiveFilters = filters.sortBy !== "trending" || filters.status !== "all" || filters.timeframe !== "all";
 
   return (
-    <div className="space-y-3 sticky top-14 z-10 bg-background/95 backdrop-blur-xl border-b border-border py-3 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
-      {/* Category Tabs + Filter */}
-      <div className="flex gap-3 items-center">
-        {/* Filter Button */}
+    <div className="space-y-2 sm:space-y-3 sticky top-14 z-10 bg-background/95 backdrop-blur-xl border-b border-border py-2 sm:py-3 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+      {/* Mobile: Search bar + icons */}
+      <div className="flex sm:hidden items-center gap-2">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input 
+            placeholder="Search markets..."
+            className="h-9 pl-9 pr-3 text-sm rounded-full bg-secondary/50 border-border"
+          />
+        </div>
+        <Button 
+          variant={showFilters ? "default" : "outline"} 
+          size="icon"
+          className="h-9 w-9 flex-shrink-0 rounded-full"
+          onClick={() => setShowFilters(!showFilters)}
+        >
+          <SlidersHorizontal className="h-4 w-4" />
+          {hasActiveFilters && (
+            <span className="absolute top-1 right-1 h-1.5 w-1.5 rounded-full bg-primary" />
+          )}
+        </Button>
+        <Button variant="outline" size="icon" className="h-9 w-9 flex-shrink-0 rounded-full">
+          <Bookmark className="h-4 w-4" />
+        </Button>
+      </div>
+
+      {/* Mobile: Category pills row */}
+      <div className="flex sm:hidden gap-1.5 overflow-x-auto pb-0.5 scrollbar-hide -mx-4 px-4">
+        {categories.map((category) => (
+          <button
+            key={category}
+            onClick={() => updateFilter('category', category)}
+            className={`whitespace-nowrap font-medium px-3.5 py-1.5 text-[13px] rounded-full transition-all ${
+              category === filters.category 
+                ? "bg-primary text-primary-foreground" 
+                : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+            }`}
+          >
+            {category}
+          </button>
+        ))}
+      </div>
+
+      {/* Desktop: Original layout */}
+      <div className="hidden sm:flex gap-3 items-center">
         <Button 
           variant={showFilters ? "default" : "outline"} 
           size="sm"
@@ -40,13 +82,12 @@ export function FeedFilters({ filters, onFiltersChange }: FeedFiltersProps) {
           onClick={() => setShowFilters(!showFilters)}
         >
           <SlidersHorizontal className="h-3.5 w-3.5" />
-          <span className="hidden sm:inline">Filters</span>
+          <span>Filters</span>
           {hasActiveFilters && (
             <span className="h-1.5 w-1.5 rounded-full bg-primary-foreground ml-0.5" />
           )}
         </Button>
 
-        {/* Category pills */}
         <div className="flex gap-1 overflow-x-auto pb-0.5 scrollbar-hide">
           {categories.map((category) => (
             <button
