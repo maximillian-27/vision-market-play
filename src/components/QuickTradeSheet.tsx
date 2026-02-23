@@ -238,7 +238,7 @@ export function QuickTradeSheet({ open, onOpenChange, market }: QuickTradeSheetP
               <span className="font-semibold">${amountNum.toFixed(2)}</span>
             </div>
             <div className="flex items-center justify-between text-sm">
-              <span className="text-muted-foreground">If you win</span>
+              <span className="text-muted-foreground">Potential winning</span>
               <span className="font-bold">{selectedOutcome ? `$${payout.toFixed(2)}` : '-'}</span>
             </div>
             <div className="h-px bg-border" />
