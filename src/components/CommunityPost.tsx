@@ -151,14 +151,6 @@ export function CommunityPost({ post }: CommunityPostProps) {
       fill: liked,
     },
     {
-      icon: Bookmark,
-      count: post.bookmarks,
-      active: bookmarked,
-      activeColor: "text-primary",
-      hoverBg: "hover:bg-primary/10 hover:text-primary",
-      onClick: () => setBookmarked(!bookmarked),
-    },
-    {
       icon: Share,
       count: 0,
       active: false,

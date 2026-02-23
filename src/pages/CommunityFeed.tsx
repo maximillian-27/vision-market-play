@@ -172,9 +172,6 @@ export default function CommunityFeed() {
                 )}
                 <div className="flex items-center justify-between mt-2 pt-2 border-t border-border/30">
                   <div className="flex items-center gap-1">
-                    <Button variant="ghost" size="icon" className="h-8 w-8 text-primary/70 hover:text-primary hover:bg-primary/10">
-                      <Image className="h-[18px] w-[18px]" />
-                    </Button>
                     <Select value={selectedMarket || "none"} onValueChange={(v) => setSelectedMarket(v === "none" ? null : v)}>
                       <SelectTrigger className="h-8 w-8 p-0 border-0 bg-transparent hover:bg-primary/10 [&>svg]:hidden text-primary/70 hover:text-primary">
                         <ChartBar className="h-[18px] w-[18px]" />
