@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Timer, Users, ArrowRight, Trophy, Ticket, Zap } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { WeeklyDrawBanner } from "@/components/WeeklyDrawBanner";
+import { WeeklyDrawCard } from "@/components/WeeklyDrawCard";
 import bitcoinImage from "@/assets/bitcoin-market.jpg";
 import nbaImage from "@/assets/nba-championship.jpg";
 import iphoneImage from "@/assets/foldable-iphone.jpg";
@@ -801,22 +801,16 @@ export default function Feed() {
             </div>
           </div>
 
-          {/* Right — Two stacked sponsored cards */}
+          {/* Right — Sponsored + Weekly Draw */}
           <div className="lg:col-span-2 flex flex-row lg:flex-col gap-3">
-            {sponsoredMarkets.map(market => (
-              <div key={market.id} className="flex-1">
-                <CompactFeaturedCard market={market} />
-              </div>
-            ))}
+            <div className="flex-1">
+              <CompactFeaturedCard market={sponsoredMarkets[0]} />
+            </div>
+            <div className="flex-1">
+              <WeeklyDrawCard />
+            </div>
           </div>
         </div>
-
-        {/* Weekly Prize Draw Banner */}
-        <WeeklyDrawBanner
-          prizePool={mockMarkets
-            .filter(m => m.status === "open" || m.status === "closing")
-            .reduce((sum, m) => sum + m.pot, 0) * 0.02}
-        />
 
         {/* 3. Gradient Banner Divider */}
         <GradientDivider />
