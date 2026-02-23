@@ -141,23 +141,29 @@ export function Header() {
                 {/* Ticket Counter */}
                 <Popover>
                   <PopoverTrigger asChild>
-                    <button className="flex items-center gap-1 px-2 py-1 rounded-full bg-secondary hover:bg-secondary/80 transition-colors text-xs">
-                      <Ticket className="h-3 w-3 text-primary" />
-                      <span className="font-semibold text-foreground">14/20</span>
-                      <span className="text-[9px] text-muted-foreground">(3)</span>
+                    <button className="flex items-center gap-1.5 h-8 px-2.5 rounded-lg border border-border/50 hover:border-border transition-colors text-xs">
+                      <Ticket className="h-3.5 w-3.5 text-primary" />
+                      <span className="font-medium text-muted-foreground">14<span className="text-muted-foreground/50">/20</span></span>
+                      <span className="w-px h-3 bg-border" />
+                      <span className="font-semibold text-foreground">3</span>
                     </button>
                   </PopoverTrigger>
-                  <PopoverContent align="end" className="w-52 p-3 space-y-2.5">
-                    <div className="text-xs font-semibold">Weekly Draw Tickets</div>
-                    <div className="space-y-1.5">
-                      <div className="flex justify-between text-xs">
-                        <span className="text-muted-foreground">Tickets this week</span>
-                        <span className="font-semibold">14 / 20</span>
-                      </div>
-                      <Progress value={70} className="h-1.5" />
-                      <p className="text-[10px] text-muted-foreground">Buy 6 more for another entry</p>
+                  <PopoverContent align="end" className="w-56 p-0 overflow-hidden">
+                    <div className="px-3.5 pt-3 pb-2">
+                      <p className="text-xs font-semibold text-foreground">Weekly Draw</p>
+                      <p className="text-[10px] text-muted-foreground mt-0.5">Buy tickets to earn draw entries</p>
                     </div>
-                    <div className="flex justify-between text-xs pt-1 border-t border-border">
+                    <div className="px-3.5 pb-3 space-y-2">
+                      <div>
+                        <div className="flex justify-between text-[11px] mb-1">
+                          <span className="text-muted-foreground">Next entry</span>
+                          <span className="font-medium">14 / 20 tickets</span>
+                        </div>
+                        <Progress value={70} className="h-1" />
+                        <p className="text-[10px] text-muted-foreground mt-1">6 more tickets for another entry</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between px-3.5 py-2.5 bg-muted/50 border-t border-border/50 text-[11px]">
                       <span className="text-muted-foreground">Entries earned</span>
                       <span className="font-bold text-primary">3</span>
                     </div>
