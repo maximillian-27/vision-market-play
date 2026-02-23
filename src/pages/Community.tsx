@@ -4,69 +4,62 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Trophy, TrendingUp, Target, Zap, Award, ChevronRight } from "lucide-react";
+import { Trophy, Award, ChevronRight, Flame, ArrowUp, ArrowDown, Star, TrendingUp, Minus } from "lucide-react";
 import { MarketsSidebar } from "@/components/MarketsSidebar";
 import { ActivitySidebar } from "@/components/ActivitySidebar";
 import { PageHeader } from "@/components/PageHeader";
 
-const topEarners = [
-  { name: "Alex Chen", profit: "+$45,230", accuracy: "87%", trades: 342, rank: 1, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Alex" },
-  { name: "Jordan Smith", profit: "+$38,450", accuracy: "84%", trades: 298, rank: 2, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Jordan" },
-  { name: "Taylor Brown", profit: "+$32,100", accuracy: "82%", trades: 267, rank: 3, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Taylor" },
-  { name: "Morgan Lee", profit: "+$28,900", accuracy: "79%", trades: 234, rank: 4, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Morgan" },
-  { name: "Casey Wilson", profit: "+$25,670", accuracy: "76%", trades: 211, rank: 5, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Casey" },
+// --- Mock Data ---
+
+const players = [
+  { name: "Alex Chen", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Alex", rank: 1, winnings: 45230, winRate: 87, marketsEntered: 342, streak: 7, rankChange: 0 },
+  { name: "Jordan Smith", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Jordan", rank: 2, winnings: 38450, winRate: 84, marketsEntered: 298, streak: 4, rankChange: 2 },
+  { name: "Taylor Brown", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Taylor", rank: 3, winnings: 32100, winRate: 82, marketsEntered: 267, streak: 0, rankChange: -1 },
+  { name: "Morgan Lee", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Morgan", rank: 4, winnings: 28900, winRate: 79, marketsEntered: 234, streak: 3, rankChange: 1 },
+  { name: "Casey Wilson", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Casey", rank: 5, winnings: 25670, winRate: 76, marketsEntered: 211, streak: 0, rankChange: -2 },
+  { name: "Sam Rivera", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sam", rank: 6, winnings: 22340, winRate: 94, marketsEntered: 127, streak: 9, rankChange: 3 },
+  { name: "Chris Park", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Chris", rank: 7, winnings: 19100, winRate: 91, marketsEntered: 156, streak: 0, rankChange: 0 },
+  { name: "Jamie Nguyen", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Jamie", rank: 8, winnings: 17800, winRate: 73, marketsEntered: 189, streak: 2, rankChange: "new" as const },
+  { name: "Riley Torres", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Riley", rank: 9, winnings: 15200, winRate: 71, marketsEntered: 164, streak: 0, rankChange: -3 },
+  { name: "Dakota Patel", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Dakota", rank: 10, winnings: 13900, winRate: 68, marketsEntered: 143, streak: 0, rankChange: 1 },
 ];
 
-const mostAccurate = [
-  { name: "Sam Rivera", profit: "+$18,340", accuracy: "94%", trades: 127, rank: 1, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sam" },
-  { name: "Chris Park", profit: "+$22,100", accuracy: "91%", trades: 156, rank: 2, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Chris" },
-  { name: "Alex Chen", profit: "+$45,230", accuracy: "87%", trades: 342, rank: 3, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Alex" },
-  { name: "Jordan Smith", profit: "+$38,450", accuracy: "84%", trades: 298, rank: 4, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Jordan" },
-  { name: "Taylor Brown", profit: "+$32,100", accuracy: "82%", trades: 267, rank: 5, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Taylor" },
+const creators = [
+  { name: "MarketMaven", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Maven", rank: 1, potGenerated: 2800000, marketsCreated: 47, totalPlayers: 12300, avgPot: 59574, rankChange: 0 },
+  { name: "PredictPro", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Pro", rank: 2, potGenerated: 2100000, marketsCreated: 38, totalPlayers: 9800, avgPot: 55263, rankChange: 1 },
+  { name: "TrendSetter", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Trend", rank: 3, potGenerated: 1700000, marketsCreated: 31, totalPlayers: 8200, avgPot: 54839, rankChange: -1 },
+  { name: "InsightHub", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Insight", rank: 4, potGenerated: 1500000, marketsCreated: 29, totalPlayers: 7100, avgPot: 51724, rankChange: 2 },
+  { name: "DataDriven", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Data", rank: 5, potGenerated: 1200000, marketsCreated: 24, totalPlayers: 6400, avgPot: 50000, rankChange: 0 },
+  { name: "OddsOracle", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Oracle", rank: 6, potGenerated: 980000, marketsCreated: 21, totalPlayers: 5100, avgPot: 46667, rankChange: "new" as const },
+  { name: "BetBuilder", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Bet", rank: 7, potGenerated: 870000, marketsCreated: 19, totalPlayers: 4800, avgPot: 45789, rankChange: -2 },
+  { name: "PollCraft", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Poll", rank: 8, potGenerated: 740000, marketsCreated: 16, totalPlayers: 3900, avgPot: 46250, rankChange: 1 },
+  { name: "FutureSight", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Future", rank: 9, potGenerated: 650000, marketsCreated: 14, totalPlayers: 3200, avgPot: 46429, rankChange: 0 },
+  { name: "CrowdCall", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Crowd", rank: 10, potGenerated: 520000, marketsCreated: 11, totalPlayers: 2700, avgPot: 47273, rankChange: -1 },
 ];
 
-const topCreators = [
-  { name: "MarketMaven", markets: 47, volume: "$2.8M", followers: "12.3K", rank: 1, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Maven" },
-  { name: "PredictPro", markets: 38, volume: "$2.1M", followers: "9.8K", rank: 2, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Pro" },
-  { name: "TrendSetter", markets: 31, volume: "$1.7M", followers: "8.2K", rank: 3, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Trend" },
-  { name: "InsightHub", markets: 29, volume: "$1.5M", followers: "7.1K", rank: 4, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Insight" },
-  { name: "DataDriven", markets: 24, volume: "$1.2M", followers: "6.4K", rank: 5, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Data" },
+const hotStreaks = [
+  { name: "Sam Rivera", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sam", streak: 9, lastWin: "Will Bitcoin hit $100K by March?" },
+  { name: "Alex Chen", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Alex", streak: 7, lastWin: "Fed rate cut in February?" },
+  { name: "Jordan Smith", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Jordan", streak: 4, lastWin: "Super Bowl LVIII Winner" },
 ];
 
-const challenges = [
-  { 
-    title: "Weekly Prediction Master", 
-    description: "Make 10 correct predictions this week",
-    progress: "5/10",
-    reward: "500 points",
-    icon: Target,
-    difficulty: "Medium"
-  },
-  { 
-    title: "High Stakes Player", 
-    description: "Trade over $1000 in volume this month",
-    progress: "$780/$1000",
-    reward: "1000 points",
-    icon: TrendingUp,
-    difficulty: "Hard"
-  },
-  { 
-    title: "Perfect Streak", 
-    description: "Win 5 predictions in a row",
-    progress: "3/5",
-    reward: "750 points",
-    icon: Zap,
-    difficulty: "Hard"
-  },
-  { 
-    title: "Community Helper", 
-    description: "Create 3 quality markets",
-    progress: "1/3",
-    reward: "300 points",
-    icon: Award,
-    difficulty: "Easy"
-  },
+const biggestWins = [
+  { name: "Taylor Brown", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Taylor", market: "NBA Championship 2026", amount: 8420 },
+  { name: "Morgan Lee", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Morgan", market: "Will AI replace 50% of jobs by 2030?", amount: 6150 },
+  { name: "Casey Wilson", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Casey", market: "Tesla stock above $400?", amount: 4890 },
 ];
+
+const risingStars = [
+  { name: "Jamie Nguyen", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Jamie", rankChange: 47, currentRank: 8 },
+  { name: "InsightHub", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Insight", rankChange: 31, currentRank: 4 },
+  { name: "Sam Rivera", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sam", rankChange: 22, currentRank: 6 },
+];
+
+// --- Helpers ---
+
+type TimePeriod = "week" | "month" | "all";
+type PlayerSort = "winnings" | "winRate" | "streak";
+type CreatorSort = "pot" | "markets" | "avgPot";
 
 function getRankBadge(rank: number) {
   if (rank === 1) return "bg-yellow-500/10 text-yellow-600 border-yellow-500/20";
@@ -75,78 +68,203 @@ function getRankBadge(rank: number) {
   return "bg-muted text-muted-foreground border-border";
 }
 
+function formatMoney(n: number) {
+  if (n >= 1_000_000) return `$${(n / 1_000_000).toFixed(1)}M`;
+  if (n >= 1_000) return `$${(n / 1_000).toFixed(1)}K`;
+  return `$${n.toLocaleString()}`;
+}
+
+function RankChange({ change }: { change: number | "new" }) {
+  if (change === "new") return <Badge variant="default" className="text-[9px] px-1.5 py-0">NEW</Badge>;
+  if (change === 0) return <Minus className="h-3 w-3 text-muted-foreground" />;
+  if (change > 0) return <span className="flex items-center text-[11px] font-semibold text-success"><ArrowUp className="h-3 w-3" />{change}</span>;
+  return <span className="flex items-center text-[11px] font-semibold text-destructive"><ArrowDown className="h-3 w-3" />{Math.abs(change)}</span>;
+}
+
+function StreakBadge({ streak }: { streak: number }) {
+  if (streak < 2) return null;
+  return (
+    <span className="inline-flex items-center gap-0.5 text-[10px] font-bold text-orange-500 bg-orange-500/10 rounded-full px-1.5 py-0.5">
+      <Flame className="h-3 w-3" />{streak}W
+    </span>
+  );
+}
+
+function TimePeriodPills({ value, onChange }: { value: TimePeriod; onChange: (v: TimePeriod) => void }) {
+  const options: { label: string; value: TimePeriod }[] = [
+    { label: "THIS WEEK", value: "week" },
+    { label: "THIS MONTH", value: "month" },
+    { label: "ALL TIME", value: "all" },
+  ];
+  return (
+    <div className="flex gap-1.5">
+      {options.map((o) => (
+        <Badge
+          key={o.value}
+          variant={value === o.value ? "default" : "outline"}
+          className="cursor-pointer text-[10px] uppercase tracking-wider"
+          onClick={() => onChange(o.value)}
+        >
+          {o.label}
+        </Badge>
+      ))}
+    </div>
+  );
+}
+
+// --- Main Component ---
+
 export default function Community() {
-  const [communityFilter, setCommunityFilter] = useState<"earners" | "accurate">("earners");
-  
-  const communityData = communityFilter === "earners" ? topEarners : mostAccurate;
+  const [timePeriod, setTimePeriod] = useState<TimePeriod>("week");
+  const [playerSort, setPlayerSort] = useState<PlayerSort>("winnings");
+  const [creatorSort, setCreatorSort] = useState<CreatorSort>("pot");
+
+  const sortedPlayers = [...players].sort((a, b) => {
+    if (playerSort === "winnings") return b.winnings - a.winnings;
+    if (playerSort === "winRate") return b.winRate - a.winRate;
+    return b.streak - a.streak;
+  });
+
+  const sortedCreators = [...creators].sort((a, b) => {
+    if (creatorSort === "pot") return b.potGenerated - a.potGenerated;
+    if (creatorSort === "markets") return b.marketsCreated - a.marketsCreated;
+    return b.avgPot - a.avgPot;
+  });
+
+  function getPlayerPrimary(p: typeof players[0]) {
+    if (playerSort === "winnings") return <span className="text-success font-semibold">{formatMoney(p.winnings)}</span>;
+    if (playerSort === "winRate") return <span className="font-semibold">{p.winRate}%</span>;
+    return <span className="font-semibold">{p.streak}W streak</span>;
+  }
+
+  function getPlayerSecondary(p: typeof players[0]) {
+    const parts: string[] = [];
+    if (playerSort !== "winRate") parts.push(`${p.winRate}% win rate`);
+    if (playerSort !== "winnings") parts.push(formatMoney(p.winnings));
+    parts.push(`${p.marketsEntered} entered`);
+    return parts.slice(0, 2).join(" · ");
+  }
+
+  function getCreatorPrimary(c: typeof creators[0]) {
+    if (creatorSort === "pot") return <span className="text-success font-semibold">{formatMoney(c.potGenerated)}</span>;
+    if (creatorSort === "markets") return <span className="font-semibold">{c.marketsCreated} markets</span>;
+    return <span className="font-semibold">{formatMoney(c.avgPot)} avg</span>;
+  }
+
+  function getCreatorSecondary(c: typeof creators[0]) {
+    const parts: string[] = [];
+    if (creatorSort !== "markets") parts.push(`${c.marketsCreated} markets`);
+    if (creatorSort !== "pot") parts.push(formatMoney(c.potGenerated) + " pot");
+    parts.push(`${(c.totalPlayers / 1000).toFixed(1)}K players`);
+    return parts.slice(0, 2).join(" · ");
+  }
 
   return (
     <div className="w-full max-w-7xl mx-auto py-4 lg:py-6">
       <div className="flex gap-6 justify-center">
         <ActivitySidebar />
-        
-        <div className="w-full max-w-2xl space-y-6 px-4">
-          <PageHeader 
+
+        <div className="w-full max-w-2xl space-y-4 px-4">
+          <PageHeader
             title="Leaderboards"
-            subtitle="See who's making the best predictions"
+            subtitle="See who's dominating the predictions"
           />
-          
-          <Tabs defaultValue="community" className="w-full">
+
+          {/* Your Rank Card */}
+          <Card className="border-primary/30 bg-primary/[0.03]">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-4">
+                <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 text-primary font-bold text-lg">
+                  #24
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <p className="font-semibold text-sm">Your Rank</p>
+                    <span className="flex items-center text-[11px] font-semibold text-success"><ArrowUp className="h-3 w-3" />3</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    You're in the <span className="text-primary font-semibold">top 8%</span> of players
+                  </p>
+                </div>
+                <div className="hidden sm:flex gap-4 text-center">
+                  <div>
+                    <p className="text-sm font-semibold text-success">$4,230</p>
+                    <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Winnings</p>
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold">72%</p>
+                    <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Win Rate</p>
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold">38</p>
+                    <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Entered</p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Leaderboard Tabs */}
+          <Tabs defaultValue="players" className="w-full">
             <TabsList className="grid w-full grid-cols-2 h-11">
-              <TabsTrigger value="community" className="text-sm">Traders</TabsTrigger>
+              <TabsTrigger value="players" className="text-sm">Players</TabsTrigger>
               <TabsTrigger value="creators" className="text-sm">Creators</TabsTrigger>
             </TabsList>
 
-            <TabsContent value="community" className="space-y-4 mt-4">
+            {/* Players Tab */}
+            <TabsContent value="players" className="space-y-3 mt-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <TimePeriodPills value={timePeriod} onChange={setTimePeriod} />
+                <div className="flex gap-1.5">
+                  {([["winnings", "Winnings"], ["winRate", "Win Rate"], ["streak", "Streak"]] as const).map(([val, label]) => (
+                    <Badge
+                      key={val}
+                      variant={playerSort === val ? "default" : "outline"}
+                      className="cursor-pointer text-[10px]"
+                      onClick={() => setPlayerSort(val)}
+                    >
+                      {label}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+
               <Card className="border-border/50">
                 <CardHeader className="pb-2">
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="text-base flex items-center gap-2">
-                      <Trophy className="h-4 w-4 text-primary" />
-                      Top Traders
-                    </CardTitle>
-                    <div className="flex gap-1.5">
-                      <Badge 
-                        variant={communityFilter === "earners" ? "default" : "outline"}
-                        className="cursor-pointer text-xs"
-                        onClick={() => setCommunityFilter("earners")}
-                      >
-                        Earnings
-                      </Badge>
-                      <Badge 
-                        variant={communityFilter === "accurate" ? "default" : "outline"}
-                        className="cursor-pointer text-xs"
-                        onClick={() => setCommunityFilter("accurate")}
-                      >
-                        Accuracy
-                      </Badge>
-                    </div>
-                  </div>
+                  <CardTitle className="text-base flex items-center gap-2">
+                    <Trophy className="h-4 w-4 text-primary" />
+                    Top Players
+                  </CardTitle>
                 </CardHeader>
                 <CardContent className="pt-2">
                   <div className="divide-y divide-border/50">
-                    {communityData.map((trader) => (
-                      <Link 
-                        key={trader.rank} 
-                        to={`/profile/${trader.name.toLowerCase().replace(' ', '-')}`}
+                    {sortedPlayers.map((player, i) => (
+                      <Link
+                        key={player.name}
+                        to={`/profile/${player.name.toLowerCase().replace(' ', '-')}`}
                         className="flex items-center gap-3 py-3 hover:bg-muted/30 -mx-2 px-2 rounded-lg transition-colors group"
                       >
-                        <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold border ${getRankBadge(trader.rank)}`}>
-                          {trader.rank}
+                        <div className="flex items-center gap-1.5 w-10 shrink-0">
+                          <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold border ${getRankBadge(i + 1)}`}>
+                            {i + 1}
+                          </div>
+                          <RankChange change={player.rankChange} />
                         </div>
-                        <Avatar className="h-10 w-10">
-                          <AvatarImage src={trader.avatar} alt={trader.name} />
-                          <AvatarFallback>{trader.name.slice(0, 2)}</AvatarFallback>
+                        <Avatar className="h-9 w-9">
+                          <AvatarImage src={player.avatar} alt={player.name} />
+                          <AvatarFallback>{player.name.slice(0, 2)}</AvatarFallback>
                         </Avatar>
                         <div className="flex-1 min-w-0">
-                          <p className="font-medium text-sm">{trader.name}</p>
-                          <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                            <span className="text-success font-medium">{trader.profit}</span>
-                            <span className="text-muted-foreground/50">•</span>
-                            <span>{trader.accuracy} accuracy</span>
+                          <div className="flex items-center gap-1.5">
+                            <p className="font-medium text-sm truncate">{player.name}</p>
+                            <StreakBadge streak={player.streak} />
                           </div>
+                          <p className="text-xs text-muted-foreground">{getPlayerSecondary(player)}</p>
                         </div>
-                        <ChevronRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                        <div className="text-right text-sm shrink-0">
+                          {getPlayerPrimary(player)}
+                        </div>
+                        <ChevronRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
                       </Link>
                     ))}
                   </div>
@@ -154,7 +272,24 @@ export default function Community() {
               </Card>
             </TabsContent>
 
-            <TabsContent value="creators" className="space-y-4 mt-4">
+            {/* Creators Tab */}
+            <TabsContent value="creators" className="space-y-3 mt-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <TimePeriodPills value={timePeriod} onChange={setTimePeriod} />
+                <div className="flex gap-1.5">
+                  {([["pot", "Pot Generated"], ["markets", "Markets"], ["avgPot", "Avg Pot"]] as const).map(([val, label]) => (
+                    <Badge
+                      key={val}
+                      variant={creatorSort === val ? "default" : "outline"}
+                      className="cursor-pointer text-[10px]"
+                      onClick={() => setCreatorSort(val)}
+                    >
+                      {label}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+
               <Card className="border-border/50">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-base flex items-center gap-2">
@@ -164,28 +299,30 @@ export default function Community() {
                 </CardHeader>
                 <CardContent className="pt-2">
                   <div className="divide-y divide-border/50">
-                    {topCreators.map((creator) => (
-                      <Link 
-                        key={creator.rank} 
+                    {sortedCreators.map((creator, i) => (
+                      <Link
+                        key={creator.name}
                         to={`/creator/${creator.name.toLowerCase().replace(' ', '-')}`}
                         className="flex items-center gap-3 py-3 hover:bg-muted/30 -mx-2 px-2 rounded-lg transition-colors group"
                       >
-                        <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold border ${getRankBadge(creator.rank)}`}>
-                          {creator.rank}
+                        <div className="flex items-center gap-1.5 w-10 shrink-0">
+                          <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold border ${getRankBadge(i + 1)}`}>
+                            {i + 1}
+                          </div>
+                          <RankChange change={creator.rankChange} />
                         </div>
-                        <Avatar className="h-10 w-10">
+                        <Avatar className="h-9 w-9">
                           <AvatarImage src={creator.avatar} alt={creator.name} />
                           <AvatarFallback>{creator.name.slice(0, 2)}</AvatarFallback>
                         </Avatar>
                         <div className="flex-1 min-w-0">
-                          <p className="font-medium text-sm">{creator.name}</p>
-                          <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                            <span className="font-medium">{creator.volume}</span>
-                            <span className="text-muted-foreground/50">•</span>
-                            <span>{creator.markets} markets</span>
-                          </div>
+                          <p className="font-medium text-sm truncate">{creator.name}</p>
+                          <p className="text-xs text-muted-foreground">{getCreatorSecondary(creator)}</p>
                         </div>
-                        <ChevronRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                        <div className="text-right text-sm shrink-0">
+                          {getCreatorPrimary(creator)}
+                        </div>
+                        <ChevronRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
                       </Link>
                     ))}
                   </div>
@@ -194,45 +331,100 @@ export default function Community() {
             </TabsContent>
           </Tabs>
 
-          <Card className="border-border/50">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-base flex items-center gap-2">
-                <Target className="h-4 w-4 text-primary" />
-                Active Challenges
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-2">
-              <div className="space-y-3">
-                {challenges.map((challenge, index) => {
-                  const Icon = challenge.icon;
-                  return (
-                    <div key={index} className="flex items-start gap-3 p-3 rounded-lg border border-border/50 hover:border-primary/20 hover:bg-muted/20 transition-all cursor-pointer">
-                      <div className="p-2 rounded-lg bg-primary/10 flex-shrink-0">
-                        <Icon className="h-4 w-4 text-primary" />
+          {/* Highlights Section */}
+          <div className="space-y-3">
+            <h2 className="text-base font-semibold flex items-center gap-2 px-1">
+              <Star className="h-4 w-4 text-primary" />
+              Highlights
+            </h2>
+
+            {/* Hot Streaks */}
+            <Card className="border-border/50">
+              <CardHeader className="pb-2 pt-4 px-4">
+                <CardTitle className="text-sm flex items-center gap-2">
+                  <Flame className="h-4 w-4 text-orange-500" />
+                  Hot Streaks
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="px-4 pb-4 pt-1">
+                <div className="space-y-2">
+                  {hotStreaks.map((s) => (
+                    <div key={s.name} className="flex items-center gap-3 py-1.5">
+                      <Avatar className="h-7 w-7">
+                        <AvatarImage src={s.avatar} alt={s.name} />
+                        <AvatarFallback>{s.name.slice(0, 2)}</AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium">{s.name}</p>
+                        <p className="text-xs text-muted-foreground truncate">{s.lastWin}</p>
                       </div>
-                      <div className="flex-1 min-w-0 space-y-1.5">
-                        <div className="flex items-center justify-between gap-2">
-                          <h3 className="font-medium text-sm">{challenge.title}</h3>
-                          <Badge variant="outline" className="text-[10px] flex-shrink-0">
-                            {challenge.difficulty}
-                          </Badge>
-                        </div>
-                        <p className="text-xs text-muted-foreground">{challenge.description}</p>
-                        <div className="flex items-center justify-between text-xs">
-                          <span className="text-muted-foreground">
-                            Progress: <span className="font-medium text-foreground">{challenge.progress}</span>
-                          </span>
-                          <span className="text-primary font-medium">{challenge.reward}</span>
-                        </div>
-                      </div>
+                      <span className="inline-flex items-center gap-0.5 text-xs font-bold text-orange-500 bg-orange-500/10 rounded-full px-2 py-0.5">
+                        <Flame className="h-3 w-3" />{s.streak}W
+                      </span>
                     </div>
-                  );
-                })}
-              </div>
-            </CardContent>
-          </Card>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Biggest Wins */}
+            <Card className="border-border/50">
+              <CardHeader className="pb-2 pt-4 px-4">
+                <CardTitle className="text-sm flex items-center gap-2">
+                  <TrendingUp className="h-4 w-4 text-success" />
+                  Biggest Wins This Week
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="px-4 pb-4 pt-1">
+                <div className="space-y-2">
+                  {biggestWins.map((w) => (
+                    <div key={w.name} className="flex items-center gap-3 py-1.5">
+                      <Avatar className="h-7 w-7">
+                        <AvatarImage src={w.avatar} alt={w.name} />
+                        <AvatarFallback>{w.name.slice(0, 2)}</AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium">{w.name}</p>
+                        <p className="text-xs text-muted-foreground truncate">{w.market}</p>
+                      </div>
+                      <span className="text-sm font-semibold text-success">{formatMoney(w.amount)}</span>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Rising Stars */}
+            <Card className="border-border/50">
+              <CardHeader className="pb-2 pt-4 px-4">
+                <CardTitle className="text-sm flex items-center gap-2">
+                  <ArrowUp className="h-4 w-4 text-primary" />
+                  Rising Stars
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="px-4 pb-4 pt-1">
+                <div className="space-y-2">
+                  {risingStars.map((r) => (
+                    <div key={r.name} className="flex items-center gap-3 py-1.5">
+                      <Avatar className="h-7 w-7">
+                        <AvatarImage src={r.avatar} alt={r.name} />
+                        <AvatarFallback>{r.name.slice(0, 2)}</AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium">{r.name}</p>
+                        <p className="text-xs text-muted-foreground">Now ranked #{r.currentRank}</p>
+                      </div>
+                      <span className="flex items-center gap-0.5 text-xs font-bold text-success">
+                        <ArrowUp className="h-3 w-3" />+{r.rankChange} spots
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
-        
+
         <MarketsSidebar />
       </div>
     </div>
