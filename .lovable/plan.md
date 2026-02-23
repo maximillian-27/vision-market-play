@@ -1,46 +1,77 @@
 
 
-## Redesign the Filter Panel
+## Weekly Prize Draw Feature
 
-The current expanded filter panel uses bulky dropdown selects with labels, borders, and a card container that feels heavy. We'll replace it with a clean, inline pill/chip-based filter system -- minimalistic, modern, and intuitive.
+Add a weekly prize draw system where 2% of every trade feeds a community prize pool, distributed weekly to 10 random winners. The feature integrates minimally into the existing UI.
 
-### Design Approach
+### What Gets Added
 
-Instead of select dropdowns in a bordered card, the filters will appear as **horizontal rows of toggleable pills** directly below the category bar. Each filter group (Sort, Status, Timeframe, Volume) sits on its own compact row with a subtle label. This is similar to how modern trading/betting platforms handle filters.
+**1. Ticket Counter in Header** (logged-in users only)
+- A small, inline element next to the Deposit button showing: a ticket icon + "14/20" (tickets this week) and entry count
+- Compact pill style, clickable to open a small popover with details
+- Shows tickets purchased this week, progress toward next entry, and total entries
 
-### What Changes
+**2. Weekly Draw "Market Card"** in the Feed
+- Displayed as a special card right after the hero section (before GradientDivider)
+- Styled like a market card but with a distinct accent (subtle gradient border or trophy icon)
+- Shows: "Weekly Prize Draw", the current prize pool amount (2% of weekly volume), countdown timer to next draw, number of eligible players
+- Distribution breakdown shown as a minimal horizontal bar or small list inside the card
 
-**File: `src/components/FeedFilters.tsx`**
+**3. Prize Distribution Display**
+- Inside the Weekly Draw card, a compact breakdown:
+  - 1st: 50% | 2nd: 20% | 3rd: 10% | 4-10th: ~2.9% each
+- Shown as tiny pills or a single-line summary
+- A small "Transparency" or "How it works" link/tooltip explaining the 2% mechanism
 
-Replace the current expanded filter panel (the bordered card with Select dropdowns) with:
+### File Changes
 
-1. **No card/border container** -- filters appear inline with just a subtle top separator line
-2. **Pill-based selection** for each filter group, laid out horizontally:
-   - **Sort**: Trending, Biggest Pots, Newest, Closing Soon, Most Active
-   - **Status**: All, Open, Closing Soon, Resolved
-   - **Timeframe**: 24h, 7d, 30d, All Time
-3. **Each row** has a small muted label on the left ("Sort", "Status", "Time") followed by horizontally scrollable pills
-4. **Active pill** gets a subtle filled background (like the category pills), inactive ones are ghost-style
-5. **Clear filters** becomes a small "Reset" text link at the end, only visible when filters are active
-6. Remove the "Filter Markets" header and X close button -- instead, clicking the Filters button again toggles it closed
-7. Smooth animation on open/close
+**`src/components/Header.tsx`**
+- Add a ticket counter pill next to the Deposit button (only when logged in)
+- Shows ticket icon + "14/20" progress + entry count badge
+- Clicking opens a Popover with:
+  - "Tickets this week: 14/20"
+  - "Entries earned: 3"
+  - Small progress bar toward next entry
+  - "Buy 6 more tickets for another entry"
+- Mock state: `ticketsThisWeek = 14`, `entries = 3`
 
-### Filter Groups (what makes sense for a prediction market)
+**`src/components/WeeklyDrawCard.tsx`** (new file)
+- A special card component styled to look like a market card
+- Contains:
+  - Trophy icon + "Weekly Prize Draw" title
+  - Prize pool amount (calculated as 2% of total mock volume)
+  - Countdown timer (mock: "3d 14h left")
+  - Number of eligible players (mock)
+  - Distribution breakdown as compact horizontal segments or pill row
+  - "20 tickets = 1 entry" note
+- Matches existing card styling (rounded-xl, border, bg-card)
 
-- **Sort By**: Trending, Biggest Pots, Newest, Closing Soon, Most Active
-- **Status**: All, Open, Closing Soon, Resolved
-- **Timeframe**: 24h, 7 Days, 30 Days, All Time
-
-These three groups cover what users actually need: how to order results, which markets to see, and how far back to look.
+**`src/pages/Feed.tsx`**
+- Import and render `WeeklyDrawCard` between the hero section and the GradientDivider
+- On desktop: full-width card spanning the grid
+- On mobile: compact version
 
 ### Technical Details
 
-- Remove `Select`, `SelectContent`, `SelectItem`, `SelectTrigger`, `SelectValue` imports (no longer needed)
-- Remove `Label` import
-- Remove `X` icon import
-- Keep the same `FilterState` interface and `updateFilter` logic
-- Each filter group renders as a `<div>` row with a tiny label span and a set of `<button>` pills
-- Pills use the same styling pattern as the existing category pills for consistency
-- The entire filter area uses `space-y-1` for tight vertical rhythm
-- Compact padding: pills get `px-2.5 py-0.5 text-xs`
+- All data is mock/hardcoded (no backend changes)
+- Ticket counter uses local state in Header (ticketsThisWeek, entries)
+- Prize pool calculated from `mockMarkets` total volume * 0.02
+- Distribution constants: `[50, 20, 10, 2.86, 2.86, 2.86, 2.86, 2.86, 2.86, 2.86]`
+- WeeklyDrawCard uses existing Card, Progress, Badge components
+- Popover from radix for ticket counter detail view
+- Timer icon + countdown for draw deadline
+- No new dependencies needed
+
+### Visual Summary
+
+```text
+Header: [Logo] [Nav] [Search] [Globe] [Bell] [Ticket 14/20 (3)] [+Deposit] [Avatar]
+
+Feed:
+  [Filters]
+  [Hero Slideshow] [Sponsored Cards]
+  [Weekly Prize Draw Card — pool: $X, countdown, distribution bar]
+  [Gradient Divider]
+  [Market Grid...]
+```
 
