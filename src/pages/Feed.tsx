@@ -607,11 +607,6 @@ function CompactFeaturedCard({ market }: { market: Market }) {
         <span className="text-muted-foreground flex items-center gap-0.5">
           <Timer className="h-2.5 w-2.5" />{market.endsIn}
         </span>
-        {winLabel && (
-          <span className="text-pollgy-green font-bold flex items-center gap-0.5">
-            Win up to {winLabel} / <Ticket className="h-2.5 w-2.5" />
-          </span>
-        )}
       </div>
     </div>
   );
