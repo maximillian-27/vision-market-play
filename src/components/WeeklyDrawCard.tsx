@@ -15,15 +15,15 @@ import {
 
 const distribution = [
   { place: "1st", pct: 50 },
-  { place: "2nd", pct: 20 },
-  { place: "3rd", pct: 10 },
-  { place: "4–10th", pct: 20 },
+  { place: "2nd", pct: 25 },
+  { place: "3rd", pct: 15 },
+  { place: "4–10th", pct: 10 },
 ];
 
 const previousWinners = [
   { place: "1st", name: "Alex K.", amount: 24300 },
-  { place: "2nd", name: "Maria T.", amount: 9720 },
-  { place: "3rd", name: "Jake P.", amount: 4860 },
+  { place: "2nd", name: "Maria T.", amount: 12150 },
+  { place: "3rd", name: "Jake P.", amount: 7290 },
 ];
 
 const WEEKLY_POT = 48600;
@@ -127,7 +127,7 @@ export function WeeklyDrawCard() {
                 </div>
               ))}
               <p className="text-[10px] text-muted-foreground pt-2 border-t border-border">
-                + 7 more winners shared ${(WEEKLY_POT * 0.2).toLocaleString()} equally
+                + 7 more winners shared ${(WEEKLY_POT * 0.1).toLocaleString()} equally
               </p>
             </div>
           </DialogContent>
