@@ -244,39 +244,15 @@ export function Header() {
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56 z-50 bg-popover rounded-lg border-border p-1.5">
-                  {/* Balance Section */}
-                  <div className="px-2 py-2.5 space-y-2 bg-secondary rounded-lg mb-1.5">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">Portfolio</span>
-                      <span className="font-semibold text-primary">${portfolioValue.toLocaleString()}</span>
-                    </div>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">Cash</span>
-                      <span className="font-semibold">${cashBalance.toLocaleString()}</span>
-                    </div>
-                  </div>
-                  
                   <DropdownMenuItem onClick={() => navigate("/portfolio")} className="gap-2.5 py-2 cursor-pointer rounded-md">
                     <Briefcase className="h-4 w-4 text-muted-foreground" />
                     Portfolio
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate("/settings")} className="gap-2.5 py-2 cursor-pointer rounded-md">
-                    <Settings className="h-4 w-4 text-muted-foreground" />
-                    Settings
-                  </DropdownMenuItem>
-                  
-                  <DropdownMenuItem onClick={() => setShowAffiliateDialog(true)} className="gap-2.5 py-2 cursor-pointer rounded-md">
-                    <Gift className="h-4 w-4 text-muted-foreground" />
-                    <div className="flex items-center justify-between flex-1">
-                      <span>Affiliate</span>
-                      <span className="text-xs text-primary font-medium">${affiliateEarnings.toLocaleString()}</span>
-                    </div>
-                  </DropdownMenuItem>
-                  
+
                   {isCreator ? (
                     <DropdownMenuItem onClick={() => navigate("/creator-dashboard")} className="gap-2.5 py-2 cursor-pointer rounded-md">
-                      <Sparkles className="h-4 w-4 text-primary" />
-                      <span className="text-primary font-medium">Creator Dashboard</span>
+                      <Sparkles className="h-4 w-4 text-muted-foreground" />
+                      Creator
                     </DropdownMenuItem>
                   ) : (
                     <DropdownMenuItem onClick={() => setShowCreatorDialog(true)} className="gap-2.5 py-2 cursor-pointer rounded-md">
@@ -284,6 +260,16 @@ export function Header() {
                       Become a Creator
                     </DropdownMenuItem>
                   )}
+
+                  <DropdownMenuItem onClick={() => setShowAffiliateDialog(true)} className="gap-2.5 py-2 cursor-pointer rounded-md">
+                    <Gift className="h-4 w-4 text-muted-foreground" />
+                    Affiliate
+                  </DropdownMenuItem>
+                  
+                  <DropdownMenuItem onClick={() => navigate("/settings")} className="gap-2.5 py-2 cursor-pointer rounded-md">
+                    <Settings className="h-4 w-4 text-muted-foreground" />
+                    Settings
+                  </DropdownMenuItem>
                   
                   {isAdmin && (
                     <DropdownMenuItem onClick={() => navigate("/admin")} className="gap-2.5 py-2 cursor-pointer rounded-md">
@@ -291,6 +277,8 @@ export function Header() {
                       Admin
                     </DropdownMenuItem>
                   )}
+
+                  <DropdownMenuSeparator className="my-1" />
                   
                   <DropdownMenuItem onClick={toggleTheme} className="gap-2.5 py-2 cursor-pointer rounded-md">
                     {theme === "dark" ? (
@@ -303,35 +291,8 @@ export function Header() {
                   
                   <DropdownMenuItem onClick={() => setShowHowItWorks(true)} className="gap-2.5 py-2 cursor-pointer rounded-md">
                     <HelpCircle className="h-4 w-4 text-muted-foreground" />
-                    How it works?
+                    How it works
                   </DropdownMenuItem>
-                  
-                  {isMobile && (
-                    <>
-                      <DropdownMenuSeparator className="my-1" />
-                      <div className="px-2 py-1.5">
-                        <p className="text-[10px] text-muted-foreground mb-1.5">Legal & Info</p>
-                        <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs">
-                          <a href="/privacy" className="text-muted-foreground hover:text-foreground">Privacy</a>
-                          <a href="/terms" className="text-muted-foreground hover:text-foreground">Terms</a>
-                          <a href="/careers" className="text-muted-foreground hover:text-foreground">Careers</a>
-                          <a href="/press" className="text-muted-foreground hover:text-foreground">Press</a>
-                        </div>
-                        <div className="flex items-center gap-3 mt-2">
-                          <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground">
-                            <Twitter className="h-3.5 w-3.5" />
-                          </a>
-                          <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground">
-                            <Instagram className="h-3.5 w-3.5" />
-                          </a>
-                          <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground">
-                            <Linkedin className="h-3.5 w-3.5" />
-                          </a>
-                        </div>
-                        <p className="text-[10px] text-muted-foreground/60 mt-2">© {new Date().getFullYear()} Pollgy LLC</p>
-                      </div>
-                    </>
-                  )}
                   
                   <DropdownMenuSeparator className="my-1" />
                   <DropdownMenuItem onClick={handleLogout} className="gap-2.5 py-2 cursor-pointer text-destructive focus:text-destructive rounded-md">
