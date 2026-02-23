@@ -1,12 +1,13 @@
-import { Users, Megaphone } from "lucide-react";
+import { Users, Trophy, Timer, Ticket, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { WeeklyDrawCard } from "@/components/WeeklyDrawCard";
 import bitcoinImage from "@/assets/bitcoin-market.jpg";
 import nbaImage from "@/assets/nba-championship.jpg";
 import fedImage from "@/assets/federal-reserve.jpg";
 import aiImage from "@/assets/ai-customer-service.jpg";
+
+const WEEKLY_POT = 48600;
+const COUNTDOWN = "3d 14h";
+const MY_ENTRIES = 3;
 
 const biggestMarkets = [
   {
@@ -49,90 +50,106 @@ export function MarketsSidebar() {
 
   return (
     <div className="hidden lg:block sticky top-20 w-72 self-start space-y-3">
-      {/* Weekly Draw */}
-      <WeeklyDrawCard />
+      {/* Weekly Draw — minimal strip */}
+      <div className="flex items-center justify-between rounded-xl border border-primary/20 bg-card px-3.5 py-2.5">
+        <div className="flex items-center gap-2">
+          <Trophy className="h-4 w-4 text-primary" />
+          <div>
+            <span className="text-sm font-bold text-primary">${WEEKLY_POT.toLocaleString()}</span>
+            <span className="text-[10px] text-muted-foreground ml-1.5">prize pool</span>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-[10px] text-muted-foreground flex items-center gap-0.5">
+            <Ticket className="h-3 w-3" />
+            {MY_ENTRIES}
+          </span>
+          <span className="text-[10px] text-muted-foreground flex items-center gap-0.5">
+            <Timer className="h-3 w-3" />
+            {COUNTDOWN}
+          </span>
+        </div>
+      </div>
 
       {/* Biggest Markets */}
-      <Card className="border-border/40 overflow-hidden">
-        <CardHeader className="pb-2 pt-4 px-4">
-          <CardTitle className="text-sm font-semibold">Biggest Pots</CardTitle>
-        </CardHeader>
-        <CardContent className="p-2 pt-0">
-          <div className="space-y-1">
-            {biggestMarkets.map((market) => (
-              <div
-                key={market.id}
-                onClick={() => navigate(`/market/${market.id}`)}
-                className="group cursor-pointer flex gap-3 p-2.5 rounded-lg hover:bg-muted/50 transition-colors"
-              >
-                <img
-                  src={market.image}
-                  alt={market.title}
-                  className="w-12 h-12 rounded-lg object-cover flex-shrink-0 ring-1 ring-border/30"
-                />
-                <div className="flex-1 min-w-0 space-y-1">
-                  <h4 className="text-sm font-medium leading-tight line-clamp-2 group-hover:text-primary transition-colors">
-                    {market.title}
-                  </h4>
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                    <span className="font-extrabold text-primary">{market.pot}</span>
-                    <span className="text-muted-foreground/40">•</span>
-                    <span className="flex items-center gap-0.5">
-                      <Users className="h-3 w-3" />
-                      {market.players.toLocaleString()}
-                    </span>
-                  </div>
+      <div className="rounded-xl border border-border/40 bg-card overflow-hidden">
+        <div className="px-4 pt-3.5 pb-2">
+          <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Biggest Pots</h3>
+        </div>
+        <div className="px-2 pb-2">
+          {biggestMarkets.map((market) => (
+            <div
+              key={market.id}
+              onClick={() => navigate(`/market/${market.id}`)}
+              className="group cursor-pointer flex gap-3 p-2 rounded-lg hover:bg-muted/50 transition-colors"
+            >
+              <img
+                src={market.image}
+                alt={market.title}
+                className="w-11 h-11 rounded-lg object-cover flex-shrink-0"
+              />
+              <div className="flex-1 min-w-0 flex flex-col justify-center gap-0.5">
+                <h4 className="text-[13px] font-medium leading-snug line-clamp-2 group-hover:text-primary transition-colors">
+                  {market.title}
+                </h4>
+                <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
+                  <span className="font-bold text-primary">{market.pot}</span>
+                  <span className="text-muted-foreground/30">·</span>
+                  <span className="flex items-center gap-0.5">
+                    <Users className="h-3 w-3" />
+                    {market.players.toLocaleString()}
+                  </span>
                 </div>
               </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+            </div>
+          ))}
+        </div>
+      </div>
 
       {/* Sponsored Market */}
-      <Card
-        className="border-border/40 overflow-hidden cursor-pointer group"
+      <div
+        className="rounded-xl border border-border/40 bg-card overflow-hidden cursor-pointer group"
         onClick={() => navigate(`/market/${sponsoredMarket.id}`)}
       >
         <div className="relative">
           <img
             src={sponsoredMarket.image}
             alt={sponsoredMarket.title}
-            className="w-full h-28 object-cover"
+            className="w-full h-32 object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/40 to-transparent" />
-          <Badge className="absolute top-2 left-2 text-[9px] px-1.5 py-0 bg-muted/80 text-muted-foreground border-0 backdrop-blur-sm">
-            <Megaphone className="h-2.5 w-2.5 mr-0.5" />
+          <div className="absolute inset-0 bg-gradient-to-t from-card via-card/50 to-transparent" />
+          <span className="absolute top-2.5 left-2.5 text-[9px] font-medium text-muted-foreground/70 uppercase tracking-wider">
             Sponsored
-          </Badge>
+          </span>
         </div>
-        <div className="px-3 pb-3 -mt-6 relative z-10 space-y-2">
-          <h4 className="text-sm font-semibold leading-tight line-clamp-2 group-hover:text-primary transition-colors">
+        <div className="px-3.5 pb-3.5 -mt-8 relative z-10 space-y-2.5">
+          <h4 className="text-[13px] font-semibold leading-snug line-clamp-2 group-hover:text-primary transition-colors">
             {sponsoredMarket.title}
           </h4>
-          <div className="flex gap-2">
+          <div className="flex gap-1.5">
             {sponsoredMarket.outcomes.map((outcome) => (
-              <div
+              <button
                 key={outcome.label}
-                className={`flex-1 text-center py-1.5 rounded-lg text-xs font-bold ${
+                className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-colors ${
                   outcome.label === "Yes"
-                    ? "bg-emerald-500/10 text-emerald-500"
-                    : "bg-red-500/10 text-red-500"
+                    ? "bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20"
+                    : "bg-red-500/10 text-red-500 hover:bg-red-500/20"
                 }`}
               >
                 {outcome.label} {outcome.price}¢
-              </div>
+              </button>
             ))}
           </div>
           <div className="flex items-center justify-between text-[11px] text-muted-foreground">
-            <span className="font-extrabold text-primary">{sponsoredMarket.pot}</span>
-            <span className="flex items-center gap-0.5">
+            <span className="font-bold text-primary">{sponsoredMarket.pot} pot</span>
+            <span className="flex items-center gap-1">
               <Users className="h-3 w-3" />
               {sponsoredMarket.players.toLocaleString()}
+              <ChevronRight className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
             </span>
           </div>
         </div>
-      </Card>
+      </div>
     </div>
   );
 }
