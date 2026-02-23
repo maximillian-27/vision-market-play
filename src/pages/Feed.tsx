@@ -683,7 +683,7 @@ export default function Feed() {
   const heroIsBinary = !heroMarket.outcomes;
 
   return (
-    <div className="w-full max-w-[1600px] mx-auto px-4 md:px-6 lg:px-8 pb-24 sm:pb-0">
+    <div className="w-full max-w-[1600px] mx-auto px-4 md:px-6 lg:px-8 pb-24 sm:pb-0 -mt-14 pt-14 sm:mt-0 sm:pt-0">
       <div className="space-y-1.5">
         {/* 1. Filters */}
         <FeedFilters filters={filters} onFiltersChange={setFilters} />
