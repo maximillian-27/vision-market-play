@@ -30,7 +30,7 @@ export function FeedFilters({ filters, onFiltersChange }: FeedFiltersProps) {
   const hasActiveFilters = filters.sortBy !== "trending" || filters.status !== "all" || filters.timeframe !== "all";
 
   return (
-    <div className="space-y-2 sm:space-y-3 sticky top-14 z-10 bg-background/95 backdrop-blur-xl border-b border-border py-2 sm:py-3 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+    <div className="space-y-2 sm:space-y-0 sticky top-14 z-10 bg-background/95 backdrop-blur-xl border-b border-border py-2 sm:py-2.5 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
       {/* Mobile: Search bar + icons */}
       <div className="flex sm:hidden items-center gap-2">
         <div className="relative flex-1">
@@ -73,21 +73,8 @@ export function FeedFilters({ filters, onFiltersChange }: FeedFiltersProps) {
         ))}
       </div>
 
-      {/* Desktop: Original layout */}
-      <div className="hidden sm:flex gap-3 items-center">
-        <Button 
-          variant={showFilters ? "default" : "outline"} 
-          size="sm"
-          className="h-8 px-3 flex-shrink-0 gap-1.5 font-medium"
-          onClick={() => setShowFilters(!showFilters)}
-        >
-          <SlidersHorizontal className="h-3.5 w-3.5" />
-          <span>Filters</span>
-          {hasActiveFilters && (
-            <span className="h-1.5 w-1.5 rounded-full bg-primary-foreground ml-0.5" />
-          )}
-        </Button>
-
+      {/* Desktop: Pills left, Filters+Saved right — matches reference */}
+      <div className="hidden sm:flex items-center justify-between gap-3">
         <div className="flex gap-1 overflow-x-auto pb-0.5 scrollbar-hide">
           {categories.map((category) => (
             <button
@@ -103,11 +90,30 @@ export function FeedFilters({ filters, onFiltersChange }: FeedFiltersProps) {
             </button>
           ))}
         </div>
+
+        <div className="flex items-center gap-2 shrink-0">
+          <Button 
+            variant={showFilters ? "default" : "outline"} 
+            size="sm"
+            className="h-8 px-3 gap-1.5 font-medium rounded-full"
+            onClick={() => setShowFilters(!showFilters)}
+          >
+            <SlidersHorizontal className="h-3.5 w-3.5" />
+            <span>Filters</span>
+            {hasActiveFilters && (
+              <span className="h-1.5 w-1.5 rounded-full bg-primary-foreground ml-0.5" />
+            )}
+          </Button>
+          <Button variant="outline" size="sm" className="h-8 px-3 gap-1.5 font-medium rounded-full">
+            <Bookmark className="h-3.5 w-3.5" />
+            <span>Saved</span>
+          </Button>
+        </div>
       </div>
 
       {/* Expanded Filter Panel */}
       {showFilters && (
-        <div className="rounded-xl border border-border bg-card p-4 animate-in fade-in-0 slide-in-from-top-2 duration-200 shadow-sm">
+        <div className="rounded-xl border border-border bg-card p-4 animate-in fade-in-0 slide-in-from-top-2 duration-200 shadow-sm mt-2">
           <div className="flex items-center justify-between mb-4">
             <span className="text-sm font-semibold">Filter Markets</span>
             <Button variant="ghost" size="icon" className="h-7 w-7 -mr-1" onClick={() => setShowFilters(false)}>
