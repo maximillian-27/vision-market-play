@@ -1,4 +1,4 @@
-import { Trophy, Timer, Users, Ticket, Info, ChevronRight, History } from "lucide-react";
+import { Trophy, Timer, Users, Ticket, Info, ChevronRight, History, Sparkles } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -53,11 +53,14 @@ export function WeeklyDrawCard() {
         </div>
       </div>
 
-      {/* Row 2: Pot */}
+      {/* Row 2: Pot + description */}
       <div className="text-lg font-extrabold text-foreground leading-none tracking-tight">
         <span className="text-primary">$</span>{WEEKLY_POT.toLocaleString()}
       </div>
-      <div className="text-[9px] text-muted-foreground mt-0.5 mb-2.5">Prize pool this week</div>
+      <div className="flex items-center gap-1 text-[9px] text-muted-foreground mt-0.5 mb-2.5">
+        <Sparkles className="h-2.5 w-2.5 text-primary/60 flex-shrink-0" />
+        <span>Redistributed weekly to random participants</span>
+      </div>
 
       {/* Row 3: Distribution bar + legend */}
       <div className="space-y-1 mb-2.5">
