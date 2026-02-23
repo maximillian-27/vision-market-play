@@ -54,7 +54,9 @@ export function WeeklyDrawCard() {
       <div className="text-lg font-extrabold text-primary leading-none">
         ${WEEKLY_POT.toLocaleString()}
       </div>
-      <div className="text-[9px] text-muted-foreground mt-0.5 mb-2">Prize pool this week</div>
+      <div className="text-[9px] text-muted-foreground mt-0.5 mb-2">
+        Redistributed every week to random participants
+      </div>
 
       {/* Row 3: Distribution bar + legend */}
       <div className="space-y-0.5 mb-2">
