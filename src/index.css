@@ -50,15 +50,15 @@
     --success-muted: 152 50% 96%;
 
     /* Yes/No specific colors for trading UI */
-    --yes: 152 68% 42%;
+    --yes: 158 64% 40%;
     --yes-foreground: 0 0% 100%;
-    --yes-muted: 152 50% 96%;
-    --yes-hover: 152 68% 36%;
+    --yes-muted: 158 45% 95%;
+    --yes-hover: 158 64% 34%;
     
-    --no: 0 84% 60%;
+    --no: 4 78% 56%;
     --no-foreground: 0 0% 100%;
-    --no-muted: 0 70% 96%;
-    --no-hover: 0 84% 54%;
+    --no-muted: 4 60% 96%;
+    --no-hover: 4 78% 48%;
 
     /* Brand colors */
     --pollgy-blue: 217 85% 55%;
@@ -135,15 +135,15 @@
     --success-foreground: 220 16% 6%;
     --success-muted: 152 30% 12%;
 
-    --yes: 152 60% 48%;
+    --yes: 158 58% 44%;
     --yes-foreground: 220 16% 6%;
-    --yes-muted: 152 30% 12%;
-    --yes-hover: 152 60% 42%;
+    --yes-muted: 158 30% 14%;
+    --yes-hover: 158 58% 38%;
     
-    --no: 0 72% 55%;
+    --no: 4 72% 58%;
     --no-foreground: 0 0% 100%;
-    --no-muted: 0 50% 15%;
-    --no-hover: 0 72% 48%;
+    --no-muted: 4 45% 16%;
+    --no-hover: 4 72% 50%;
 
     --pollgy-blue: 217 85% 60%;
     --pollgy-blue-foreground: 0 0% 100%;

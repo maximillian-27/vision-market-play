@@ -354,7 +354,7 @@ export default function Feed() {
               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
             />
             {/* Gradient overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/10" />
             
             {/* Content overlay */}
             <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6">
@@ -365,7 +365,7 @@ export default function Feed() {
                     Closing Soon
                   </span>
                 )}
-                <span className="px-2.5 py-0.5 rounded-full bg-primary/20 border border-primary/30 text-primary text-xs font-bold">
+                <span className="px-3 py-1 rounded-md bg-primary/25 backdrop-blur-sm border border-primary/40 text-white text-xs font-extrabold tracking-tight">
                   {formatPot(currentFeatured.pot)} Pot
                 </span>
               </div>
