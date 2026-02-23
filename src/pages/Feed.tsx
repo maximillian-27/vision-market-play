@@ -684,12 +684,12 @@ export default function Feed() {
 
   return (
     <div className="w-full max-w-[1600px] mx-auto px-4 md:px-6 lg:px-8 pb-24 sm:pb-0 -mt-14 pt-14 sm:mt-0 sm:pt-0">
-      <div className="space-y-1.5">
+      <div className="sm:space-y-1.5">
         {/* 1. Filters */}
         <FeedFilters filters={filters} onFiltersChange={setFilters} />
 
         {/* 2a. Mobile: Weekly Draw + Hero + Banner + Sponsored */}
-        <div className="sm:hidden space-y-1.5">
+        <div className="sm:hidden space-y-1.5 mt-1.5">
           {/* Weekly Draw — expandable strip */}
           <div className="rounded-xl border border-primary/20 bg-card overflow-hidden">
             <button
