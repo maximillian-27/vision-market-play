@@ -1,10 +1,10 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { PageHeader } from "@/components/PageHeader";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
 import { 
   Trophy, 
   Ticket, 
@@ -16,26 +16,31 @@ import {
   ArrowUpRight,
   ArrowDownRight,
   ChevronRight,
-  Clock,
-  Flame
+  Flame,
+  Zap,
+  TrendingUp,
+  Search
 } from "lucide-react";
 
 // Mock data - ticket/gambling model
 const balance = 5230;
 const totalWinnings = 3847;
+const totalSpent = 2190;
+const netProfit = totalWinnings - totalSpent;
 
 const quickStats = {
   activeEntries: 4,
   marketsWon: 12,
   winRate: 67,
   biggestWin: 1240,
+  streak: 3, // current win streak
 };
 
 const entries = [
-  { id: 1, market: "Will Bitcoin reach $100k by 2025?", outcome: "Yes", tickets: 15, ticketPrice: 3, potentialPayout: 82, endsIn: "2d 14h", image: "🪙" },
-  { id: 2, market: "Fed rate cut in March 2025?", outcome: "No", tickets: 20, ticketPrice: 2.5, potentialPayout: 114, endsIn: "5d 8h", image: "🏛️" },
-  { id: 3, market: "Lakers win NBA Championship?", outcome: "Yes", tickets: 10, ticketPrice: 4, potentialPayout: 156, endsIn: "3w 2d", image: "🏀" },
-  { id: 4, market: "AI replaces 50% of customer service by 2026?", outcome: "Yes", tickets: 8, ticketPrice: 5, potentialPayout: 67, endsIn: "1d 6h", image: "🤖" },
+  { id: 1, market: "Will Bitcoin reach $100k by 2025?", outcome: "Yes", tickets: 15, ticketPrice: 3, potentialPayout: 82, endsIn: "2d 14h", timePercent: 65, image: "🪙" },
+  { id: 2, market: "Fed rate cut in March 2025?", outcome: "No", tickets: 20, ticketPrice: 2.5, potentialPayout: 114, endsIn: "5d 8h", timePercent: 40, image: "🏛️" },
+  { id: 3, market: "Lakers win NBA Championship?", outcome: "Yes", tickets: 10, ticketPrice: 4, potentialPayout: 156, endsIn: "3w 2d", timePercent: 12, image: "🏀" },
+  { id: 4, market: "AI replaces 50% of customer service by 2026?", outcome: "Yes", tickets: 8, ticketPrice: 5, potentialPayout: 67, endsIn: "1d 6h", timePercent: 82, image: "🤖" },
 ];
 
 const pastEntries = [
@@ -53,23 +58,31 @@ const transactions = [
   { id: 4, date: "Dec 28, 2024", type: "Deposit", method: "Crypto", amount: 1000, status: "Completed" },
 ];
 
+// Computed stats for past entries
+const pastTotalSpent = pastEntries.reduce((sum, e) => sum + e.spent, 0);
+const pastTotalWon = pastEntries.reduce((sum, e) => sum + e.payout, 0);
+const pastNet = pastTotalWon - pastTotalSpent;
+
 const Portfolio = () => {
   const navigate = useNavigate();
 
+  const totalAtStake = entries.reduce((sum, e) => sum + e.tickets * e.ticketPrice, 0);
+  const totalPotentialPayout = entries.reduce((sum, e) => sum + e.potentialPayout, 0);
+
   return (
     <div className="min-h-screen bg-background pb-20 sm:pb-6">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
         <PageHeader title="Portfolio" subtitle="Your balance, entries & winnings" />
 
-        {/* Balance + Winnings */}
-        <div className="grid grid-cols-2 gap-2 sm:gap-4 mb-3 sm:mb-5">
+        {/* Balance + Winnings + Net Profit */}
+        <div className="grid grid-cols-2 gap-2 sm:gap-3 mb-2 sm:mb-3">
           <Card className="border-border/40">
-            <CardContent className="p-3 sm:p-5">
+            <CardContent className="p-3 sm:p-4">
               <div className="flex items-center gap-1.5 text-muted-foreground text-[11px] sm:text-xs mb-1">
                 <Wallet className="h-3.5 w-3.5" />
                 Balance
               </div>
-              <p className="text-xl sm:text-2xl font-bold">${balance.toLocaleString()}</p>
+              <p className="text-xl sm:text-2xl font-bold tracking-tight">${balance.toLocaleString()}</p>
               <div className="flex gap-1.5 mt-2.5">
                 <Button size="sm" className="h-7 text-[10px] sm:text-xs px-2.5 gap-1">
                   <Upload className="h-3 w-3" />
@@ -84,46 +97,50 @@ const Portfolio = () => {
           </Card>
 
           <Card className="border-border/40">
-            <CardContent className="p-3 sm:p-5">
+            <CardContent className="p-3 sm:p-4">
               <div className="flex items-center gap-1.5 text-muted-foreground text-[11px] sm:text-xs mb-1">
                 <Trophy className="h-3.5 w-3.5" />
                 Total Winnings
               </div>
-              <p className="text-xl sm:text-2xl font-bold text-success">${totalWinnings.toLocaleString()}</p>
-              <p className="text-[10px] sm:text-xs text-success/70 mt-1 flex items-center gap-1">
-                <Flame className="h-3 w-3" />
-                Lifetime earnings
-              </p>
+              <p className="text-xl sm:text-2xl font-bold text-success tracking-tight">${totalWinnings.toLocaleString()}</p>
+              <div className="flex items-center gap-2 mt-1.5">
+                <span className={`text-[10px] sm:text-xs font-medium flex items-center gap-0.5 ${netProfit >= 0 ? 'text-success' : 'text-destructive'}`}>
+                  <TrendingUp className="h-3 w-3" />
+                  {netProfit >= 0 ? '+' : ''}${netProfit.toLocaleString()} net
+                </span>
+              </div>
             </CardContent>
           </Card>
         </div>
 
         {/* Quick Stats Strip */}
-        <div className="grid grid-cols-4 gap-1.5 sm:gap-3 mb-4 sm:mb-6">
+        <div className="grid grid-cols-4 gap-1.5 sm:gap-2 mb-4 sm:mb-5">
           {[
-            { label: "Active", value: quickStats.activeEntries, icon: <Ticket className="h-3 w-3 sm:h-3.5 sm:w-3.5" /> },
-            { label: "Won", value: quickStats.marketsWon, icon: <Trophy className="h-3 w-3 sm:h-3.5 sm:w-3.5" /> },
-            { label: "Win Rate", value: `${quickStats.winRate}%`, icon: <Target className="h-3 w-3 sm:h-3.5 sm:w-3.5" /> },
-            { label: "Best Win", value: `$${quickStats.biggestWin}`, icon: <Flame className="h-3 w-3 sm:h-3.5 sm:w-3.5" /> },
+            { label: "Active", value: quickStats.activeEntries, icon: <Ticket className="h-3 w-3" /> },
+            { label: "Won", value: quickStats.marketsWon, icon: <Trophy className="h-3 w-3" /> },
+            { label: "Win Rate", value: `${quickStats.winRate}%`, icon: <Target className="h-3 w-3" /> },
+            { label: "Streak", value: `🔥 ${quickStats.streak}`, icon: null },
           ].map((stat) => (
-            <div key={stat.label} className="rounded-xl border border-border/40 bg-card p-2.5 sm:p-3 text-center">
-              <div className="flex items-center justify-center gap-1 text-muted-foreground mb-1">
+            <div key={stat.label} className="rounded-lg border border-border/30 bg-muted/30 py-2 px-1.5 sm:px-2 text-center">
+              <p className="text-xs sm:text-base font-bold leading-tight">{stat.value}</p>
+              <div className="flex items-center justify-center gap-0.5 text-muted-foreground mt-0.5">
                 {stat.icon}
-                <span className="text-[9px] sm:text-[11px]">{stat.label}</span>
+                <span className="text-[9px] sm:text-[10px]">{stat.label}</span>
               </div>
-              <p className="text-sm sm:text-lg font-bold">{stat.value}</p>
             </div>
           ))}
         </div>
 
         {/* Tabs */}
-        <Tabs defaultValue="entries" className="space-y-4">
+        <Tabs defaultValue="entries" className="space-y-3 sm:space-y-4">
           <TabsList className="bg-muted/50 p-1 w-full grid grid-cols-3">
-            <TabsTrigger value="entries" className="data-[state=active]:bg-background text-xs sm:text-sm">
+            <TabsTrigger value="entries" className="data-[state=active]:bg-background text-xs sm:text-sm gap-1.5">
               My Entries
+              <span className="bg-primary/10 text-primary text-[9px] font-semibold px-1.5 py-0.5 rounded-full">{entries.length}</span>
             </TabsTrigger>
-            <TabsTrigger value="past" className="data-[state=active]:bg-background text-xs sm:text-sm">
-              Past Entries
+            <TabsTrigger value="past" className="data-[state=active]:bg-background text-xs sm:text-sm gap-1.5">
+              Past
+              <span className="bg-muted-foreground/10 text-muted-foreground text-[9px] font-semibold px-1.5 py-0.5 rounded-full">{pastEntries.length}</span>
             </TabsTrigger>
             <TabsTrigger value="wallet" className="data-[state=active]:bg-background text-xs sm:text-sm">
               Wallet
@@ -131,57 +148,83 @@ const Portfolio = () => {
           </TabsList>
 
           {/* My Entries */}
-          <TabsContent value="entries" className="space-y-2 sm:space-y-3">
+          <TabsContent value="entries" className="space-y-2 sm:space-y-2.5">
+            {/* Summary bar */}
+            <div className="flex items-center justify-between px-1 text-[11px] text-muted-foreground mb-1">
+              <span>${totalAtStake} at stake across {entries.length} markets</span>
+              <span className="text-success font-medium">Potential: ${totalPotentialPayout}</span>
+            </div>
+
             {entries.map((entry) => (
               <Card
                 key={entry.id}
-                className="border-border/40 hover:border-border/60 transition-colors cursor-pointer active:scale-[0.99]"
+                className="border-border/40 hover:border-border/60 transition-colors cursor-pointer active:scale-[0.995]"
                 onClick={() => navigate(`/market/${entry.id}`)}
               >
                 <CardContent className="p-3 sm:p-4">
                   <div className="flex items-start gap-3">
-                    <span className="text-2xl flex-shrink-0 mt-0.5">{entry.image}</span>
+                    <span className="text-xl sm:text-2xl flex-shrink-0 mt-0.5">{entry.image}</span>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-2">
-                        <p className="font-medium text-sm leading-tight line-clamp-2">{entry.market}</p>
-                        <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0 mt-0.5" />
+                        <p className="font-medium text-[13px] sm:text-sm leading-tight line-clamp-2">{entry.market}</p>
+                        <ChevronRight className="h-4 w-4 text-muted-foreground/50 flex-shrink-0 mt-0.5" />
                       </div>
-                      <div className="flex flex-wrap items-center gap-2 mt-2">
+                      <div className="flex flex-wrap items-center gap-2 mt-1.5">
                         <Badge
                           variant={entry.outcome === "Yes" ? "default" : "destructive"}
                           className={`text-[10px] px-1.5 ${entry.outcome === "Yes" ? "bg-success/15 text-success border-success/30" : ""}`}
                         >
                           {entry.outcome}
                         </Badge>
-                        <span className="text-[11px] text-muted-foreground">
-                          {entry.tickets} tickets · ${(entry.tickets * entry.ticketPrice).toFixed(0)} spent
+                        <span className="text-[10px] sm:text-[11px] text-muted-foreground">
+                          {entry.tickets} tickets · ${(entry.tickets * entry.ticketPrice).toFixed(0)}
                         </span>
                       </div>
                       <div className="flex items-center justify-between mt-2">
-                        <span className="text-xs font-semibold text-success">
-                          If you win: ${entry.potentialPayout}
+                        <span className="text-[11px] sm:text-xs font-semibold text-success">
+                          Win: ${entry.potentialPayout}
                         </span>
                         <span className="text-[10px] text-muted-foreground flex items-center gap-1">
-                          <Timer className="h-3 w-3" />
+                          <Timer className="h-2.5 w-2.5" />
                           {entry.endsIn}
                         </span>
+                      </div>
+                      {/* Time remaining bar */}
+                      <div className="mt-1.5">
+                        <Progress value={entry.timePercent} className="h-[3px] bg-muted/60" />
                       </div>
                     </div>
                   </div>
                 </CardContent>
               </Card>
             ))}
+
+            {/* Browse more CTA */}
+            <button
+              onClick={() => navigate('/')}
+              className="w-full py-3 rounded-xl border border-dashed border-border/50 text-muted-foreground hover:text-foreground hover:border-border transition-colors flex items-center justify-center gap-2 text-xs"
+            >
+              <Search className="h-3.5 w-3.5" />
+              Browse more markets
+            </button>
           </TabsContent>
 
           {/* Past Entries */}
-          <TabsContent value="past" className="space-y-2 sm:space-y-3">
+          <TabsContent value="past" className="space-y-2 sm:space-y-2.5">
+            {/* Summary */}
+            <div className="flex items-center justify-between rounded-lg bg-muted/40 px-3 py-2 mb-1">
+              <div className="text-[11px] text-muted-foreground">
+                <span className="font-medium text-foreground">{pastEntries.filter(e => e.result === 'won').length}</span> won · <span className="font-medium text-foreground">{pastEntries.filter(e => e.result === 'lost').length}</span> lost
+              </div>
+              <span className={`text-[11px] font-semibold ${pastNet >= 0 ? 'text-success' : 'text-destructive'}`}>
+                {pastNet >= 0 ? '+' : ''}${pastNet} net
+              </span>
+            </div>
+
             {pastEntries.map((entry) => (
-              <div key={entry.id} className="p-3 sm:p-4 rounded-xl border border-border/40 bg-card">
-                <div className="flex items-start justify-between gap-2 mb-2">
-                  <div className="flex-1 min-w-0">
-                    <p className="font-medium text-sm truncate">{entry.market}</p>
-                    <p className="text-[10px] text-muted-foreground mt-0.5">{entry.date}</p>
-                  </div>
+              <div key={entry.id} className="p-3 rounded-xl border border-border/40 bg-card">
+                <div className="flex items-center justify-between gap-2 mb-1.5">
+                  <p className="font-medium text-[13px] sm:text-sm truncate flex-1">{entry.market}</p>
                   <Badge
                     variant={entry.result === "won" ? "success" : "destructive"}
                     className="text-[10px] px-2 flex-shrink-0"
@@ -192,9 +235,11 @@ const Portfolio = () => {
                 <div className="flex items-center justify-between text-xs">
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <Badge variant="outline" className="text-[9px] px-1.5 h-4">{entry.outcome}</Badge>
-                    <span>Spent ${entry.spent}</span>
+                    <span>${entry.spent} spent</span>
+                    <span className="text-muted-foreground/40">·</span>
+                    <span className="text-muted-foreground/70">{entry.date}</span>
                   </div>
-                  <span className={`font-bold ${entry.result === "won" ? "text-success" : "text-muted-foreground"}`}>
+                  <span className={`font-bold ${entry.result === "won" ? "text-success" : "text-muted-foreground/50"}`}>
                     {entry.result === "won" ? `+$${entry.payout}` : "$0"}
                   </span>
                 </div>
@@ -205,15 +250,15 @@ const Portfolio = () => {
           {/* Wallet */}
           <TabsContent value="wallet" className="space-y-3 sm:space-y-4">
             <div className="flex items-center justify-between gap-2">
-              <h3 className="text-sm sm:text-lg font-semibold">Deposits & Withdrawals</h3>
+              <h3 className="text-sm sm:text-base font-semibold">Deposits & Withdrawals</h3>
               <div className="flex gap-1.5">
                 <Button size="sm" className="gap-1 h-7 sm:h-8 text-[10px] sm:text-xs px-2 sm:px-3">
-                  <Upload className="h-3 w-3 sm:h-4 sm:w-4" />
+                  <Upload className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
                   <span className="hidden sm:inline">Deposit</span>
                   <span className="sm:hidden">+</span>
                 </Button>
                 <Button variant="outline" size="sm" className="gap-1 h-7 sm:h-8 text-[10px] sm:text-xs px-2 sm:px-3">
-                  <Download className="h-3 w-3 sm:h-4 sm:w-4" />
+                  <Download className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
                   <span className="hidden sm:inline">Withdraw</span>
                   <span className="sm:hidden">-</span>
                 </Button>
