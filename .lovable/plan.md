@@ -1,77 +1,133 @@
 
 
-## Weekly Prize Draw Feature
+## Community Feed Overhaul -- X-Style Redesign
 
-Add a weekly prize draw system where 2% of every trade feeds a community prize pool, distributed weekly to 10 random winners. The feature integrates minimally into the existing UI.
+Transform the Community Feed into a true social timeline that feels like X (Twitter), optimized for interaction around prediction markets.
 
-### What Gets Added
+### Current Problems
+- Every post forces a full MarketGridCard embed -- too heavy and repetitive
+- PageHeader wastes vertical space (conflicts with density memory)
+- No "For You" / "Following" tab navigation like X
+- Missing core social actions: repost, bookmark
+- No mixed content types -- every post looks identical
+- No text-only posts or varied post formats
+- Engagement bar missing repost action
+- Right sidebar (HottestMarkets) doesn't add social value -- should be "Trending" or "Who to follow"
 
-**1. Ticket Counter in Header** (logged-in users only)
-- A small, inline element next to the Deposit button showing: a ticket icon + "14/20" (tickets this week) and entry count
-- Compact pill style, clickable to open a small popover with details
-- Shows tickets purchased this week, progress toward next entry, and total entries
+### What Changes
 
-**2. Weekly Draw "Market Card"** in the Feed
-- Displayed as a special card right after the hero section (before GradientDivider)
-- Styled like a market card but with a distinct accent (subtle gradient border or trophy icon)
-- Shows: "Weekly Prize Draw", the current prize pool amount (2% of weekly volume), countdown timer to next draw, number of eligible players
-- Distribution breakdown shown as a minimal horizontal bar or small list inside the card
+**1. Replace PageHeader with X-style tab bar**
+- Remove the "Community" title + subtitle
+- Add sticky tabs at top: "For You" | "Following"
+- Clean, borderless tabs matching X's aesthetic
+- Sticky below header on scroll
 
-**3. Prize Distribution Display**
-- Inside the Weekly Draw card, a compact breakdown:
-  - 1st: 50% | 2nd: 20% | 3rd: 10% | 4-10th: ~2.9% each
-- Shown as tiny pills or a single-line summary
-- A small "Transparency" or "How it works" link/tooltip explaining the 2% mechanism
+**2. Diversify post types in the feed**
+- **Text-only posts**: Opinions without a market attached
+- **Market share posts**: Text + compact inline market preview (not a full MarketGridCard)
+- **Repost posts**: Shows "username reposted" with original post nested
+- **Position posts**: "I just bought YES on [market]" auto-generated posts
+- Each post type has a slightly different visual treatment but same base layout
+
+**3. Compact inline market embed (replace full MarketGridCard)**
+- Instead of the heavy MarketGridCard, create a lightweight `InlineMarketPreview`:
+  - Single row: market image (24px) + title (truncated) + Yes/No prices as small pills
+  - Wrapped in a rounded border, clickable to open market
+  - Takes ~40px height instead of ~180px
+  - Much more X-like (similar to how X shows link previews)
+
+**4. Upgrade engagement bar to match X**
+- Actions in order: Comment, Repost, Like, Bookmark, Share
+- Each with icon + count
+- Like turns red on click, repost turns green
+- Hover states with colored backgrounds (red for like, green for repost)
+- All inline, evenly spaced
+
+**5. Replace right sidebar with "Trending" + "Who to follow"**
+- Top section: "Trending Markets" -- 3-4 market titles with category + volume (no images, text-only like X trending)
+- Bottom section: "Who to follow" -- 3 suggested users with follow button
+- Matches X's right sidebar pattern exactly
+
+**6. Improve post composer**
+- Remove the card border -- make it borderless like X
+- Avatar + textarea inline, no card wrapper
+- Bottom toolbar: image, market attach, character count, Post button
+- Thin bottom border separator only
+
+**7. Polish comment threads**
+- Show 2-3 recent comments inline (collapsed) without clicking
+- "Show more replies" link
+- Threaded reply lines (vertical connector like X)
 
 ### File Changes
 
-**`src/components/Header.tsx`**
-- Add a ticket counter pill next to the Deposit button (only when logged in)
-- Shows ticket icon + "14/20" progress + entry count badge
-- Clicking opens a Popover with:
-  - "Tickets this week: 14/20"
-  - "Entries earned: 3"
-  - Small progress bar toward next entry
-  - "Buy 6 more tickets for another entry"
-- Mock state: `ticketsThisWeek = 14`, `entries = 3`
+**`src/pages/CommunityFeed.tsx`** (major rewrite)
+- Remove PageHeader
+- Add "For You" / "Following" sticky tabs
+- Diversify mock posts with different types (text-only, market-share, repost, position)
+- Replace MarketGridCard usage with new InlineMarketPreview
+- Borderless composer
+- Updated engagement bar with all 5 actions + active states
 
-**`src/components/WeeklyDrawCard.tsx`** (new file)
-- A special card component styled to look like a market card
-- Contains:
-  - Trophy icon + "Weekly Prize Draw" title
-  - Prize pool amount (calculated as 2% of total mock volume)
-  - Countdown timer (mock: "3d 14h left")
-  - Number of eligible players (mock)
-  - Distribution breakdown as compact horizontal segments or pill row
-  - "20 tickets = 1 entry" note
-- Matches existing card styling (rounded-xl, border, bg-card)
+**`src/components/InlineMarketPreview.tsx`** (new)
+- Lightweight market preview component
+- Shows: 24px image, truncated title, Yes/No price pills
+- Single clickable row in a subtle bordered container
+- Opens MarketDialog on click
 
-**`src/pages/Feed.tsx`**
-- Import and render `WeeklyDrawCard` between the hero section and the GradientDivider
-- On desktop: full-width card spanning the grid
-- On mobile: compact version
+**`src/components/CommunityPost.tsx`** (new)
+- Extracted post component for cleaner code
+- Handles all post types: text-only, market-share, repost, position
+- Contains engagement bar with like/repost/bookmark state
+- Shows inline comments preview
 
-### Technical Details
+**`src/components/TrendingSidebar.tsx`** (new, replaces HottestMarkets on community page)
+- "Trending Markets" section: category label + market title + volume (text-only, no images)
+- "Who to follow" section: 3 users with avatar, name, username, Follow button
+- Matches X right sidebar pattern
 
-- All data is mock/hardcoded (no backend changes)
-- Ticket counter uses local state in Header (ticketsThisWeek, entries)
-- Prize pool calculated from `mockMarkets` total volume * 0.02
-- Distribution constants: `[50, 20, 10, 2.86, 2.86, 2.86, 2.86, 2.86, 2.86, 2.86]`
-- WeeklyDrawCard uses existing Card, Progress, Badge components
-- Popover from radix for ticket counter detail view
-- Timer icon + countdown for draw deadline
-- No new dependencies needed
+### Mock Data Additions
 
-### Visual Summary
+New post types added to mock data:
+```text
+- Text-only: "Hot take: AI markets are overpriced right now. The hype cycle is peaking."
+- Position: "Sarah Chen bought YES on 'Will Bitcoin reach $100K'"  
+- Repost: James reposted Maria's Apple foldable take
+- Market share: existing format but with InlineMarketPreview instead of full card
+```
+
+### Visual Reference
 
 ```text
-Header: [Logo] [Nav] [Search] [Globe] [Bell] [Ticket 14/20 (3)] [+Deposit] [Avatar]
-
-Feed:
-  [Filters]
-  [Hero Slideshow] [Sponsored Cards]
-  [Weekly Prize Draw Card — pool: $X, countdown, distribution bar]
-  [Gradient Divider]
-  [Market Grid...]
++------------------+-------------------------+------------------+
+| Following        | [For You] [Following]   | Trending Markets |
+| Sidebar          |                         |                  |
+| (unchanged)      | [Avatar] What's on your | 1. Crypto        |
+|                  |  mind?  [img][mkt][Post] |   Bitcoin $100K  |
+|                  | ________________________|   $2.4M volume   |
+|                  |                         |                  |
+|                  | @alexthompson . 2h      | 2. Politics      |
+|                  | This is actually more   |   Fed Rate...    |
+|                  | likely than people...   |   $3.1M volume   |
+|                  | +---------------------+ |                  |
+|                  | | BTC img | Bitcoin.. | | Who to follow    |
+|                  | |     Yes 68% No 32%  | | [avatar] Name    |
+|                  | +---------------------+ |   @user [Follow] |
+|                  | Reply  Repost  Like  BM | [avatar] Name    |
+|                  | ________________________|   @user [Follow] |
+|                  |                         |                  |
+|                  | @davidkim . 6h          |                  |
+|                  | Hot take: AI markets    |                  |
+|                  | are way overpriced...   |                  |
+|                  | (no market attached)    |                  |
+|                  | Reply  Repost  Like  BM |                  |
++------------------+-------------------------+------------------+
 ```
+
+### Technical Notes
+- All state (likes, reposts, bookmarks) managed locally with useState
+- InlineMarketPreview reuses MarketDialog for click-through
+- Post types distinguished by a `type` field on CommunityPost interface
+- No new dependencies needed
+- Existing FollowingSidebar remains unchanged (left side)
 
