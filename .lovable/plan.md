@@ -1,38 +1,69 @@
 
 
-## Add Unified Right Sidebar to Non-Market Pages
+# Portfolio Page Redesign for Ticket-Based Gambling Model
 
-Replace the different right-side sidebars on Community, CommunityFeed, and News pages with a single consistent sidebar containing three sections: Weekly Draw, 3 Biggest Markets, and a Sponsored Market.
+## Problem
+The current portfolio uses trading jargon (P&L, shares, positions, trades, win rate, avg return) that doesn't match the pari-mutuel gambling model. It needs to feel like a fun, engaging dashboard where users see their balance, active entries, winnings, and ticket activity.
 
-### New Component: `MarketsSidebar`
+## New Structure
 
-Create `src/components/MarketsSidebar.tsx` -- a single reusable right sidebar that stacks:
+### 1. Top Section: Balance Overview (2 cards)
+- **Balance** (replaces "Total Value"): Total funds available to play with, with Deposit/Withdraw buttons inline
+- **Total Winnings** (replaces "Cash"): Lifetime winnings amount with a fun upward trend indicator
 
-1. **Weekly Draw card** -- reuses the existing `WeeklyDrawCard` component as-is
-2. **Biggest Markets** -- 3 top markets listed with image thumbnail, title, pot, and player count (same style as existing `HottestMarkets` but embedded inline)
-3. **Sponsored Market** -- a compact card similar to the `CompactFeaturedCard` from the Feed hero section, showing a "Sponsored" label, market title, outcomes with percentages, and pot
+### 2. Quick Stats Strip (horizontal row of 4 small metrics)
+- **Active Entries** - number of markets currently entered
+- **Markets Won** - total wins count
+- **Win Rate** - percentage
+- **Biggest Win** - single largest payout
+- No collapsible complexity, just a clean single row
 
-The sidebar wrapper uses `w-72 hidden lg:block sticky top-20 self-start space-y-3` to match existing sidebar patterns.
+### 3. Tabs: My Entries | Past Entries | Wallet
 
-### Page Changes
+**My Entries** (replaces "Positions")
+- Each row shows: Market name, outcome picked (Yes/No badge), tickets bought, potential payout ("If you win: $X"), and time remaining
+- No P&L percentages or current price -- just what they picked, what they spent, and what they could win
+- Clean card rows with market thumbnail
 
-| Page | Current Right Sidebar | New Right Sidebar |
-|------|----------------------|-------------------|
-| News (`src/pages/News.tsx`) | `HottestMarkets` | `MarketsSidebar` |
-| Leaderboards (`src/pages/Community.tsx`) | `HottestMarkets` | `MarketsSidebar` |
-| Community Feed (`src/pages/CommunityFeed.tsx`) | `TrendingSidebar` | `MarketsSidebar` |
+**Past Entries** (replaces "History")  
+- Each row: Market name, outcome picked, result (Won/Lost badge in green/red), amount spent, amount won (or $0)
+- Simple and clear -- did you win or lose, and how much
 
-### Technical Details
+**Wallet** (replaces "Deposits")
+- Deposit/Withdrawal history unchanged in structure, just cleaner labels
 
-**New file:** `src/components/MarketsSidebar.tsx`
-- Imports and renders `WeeklyDrawCard`
-- Contains a "Biggest Markets" section with 3 items (reuses data from `HottestMarkets`)
-- Contains a "Sponsored" compact card with market title, outcomes, and pot
-- All sections use `rounded-2xl border border-border/40` card styling for consistency
+### 4. Data Model Changes
+- `positions` becomes `entries` with fields: market, outcome, tickets, ticketPrice, potentialPayout, endsIn
+- `tradeHistory` becomes `pastEntries` with fields: market, outcome, result (won/lost), spent, payout
+- Remove all P&L calculations, share counts, avg/current price logic
+- Remove the performance collapsible section entirely
 
-**Modified files:**
-- `src/pages/News.tsx` -- replace `<HottestMarkets />` with `<MarketsSidebar />`
-- `src/pages/Community.tsx` -- replace `<HottestMarkets />` with `<MarketsSidebar />`
-- `src/pages/CommunityFeed.tsx` -- replace `<TrendingSidebar />` with `<MarketsSidebar />`
+---
 
-No changes to the `WeeklyDrawCard` itself -- it's rendered as a child component.
+## Technical Details
+
+### File: `src/pages/Portfolio.tsx` (full rewrite)
+
+**Mock data replacements:**
+- `portfolioStats` -> `{ balance: 5230, totalWinnings: 3847 }`
+- `positions` -> `entries` array with `{ market, outcome, tickets, ticketPrice, potentialPayout, endsIn, image }`
+- `tradeHistory` -> `pastEntries` array with `{ market, outcome, result: "won"|"lost", spent, payout, date }`
+- `transactions` stays similar
+- Remove `statsByTimeline`, `StatsTimeframe`, collapsible state, timeframe selectors
+
+**Removed components/imports:**
+- `Collapsible`, `CollapsibleContent`, `CollapsibleTrigger`
+- `PieChart`, `BarChart3`, `TrendingUp`, `TrendingDown`, `Filter`
+- P&L timeframe buttons and performance card
+
+**New layout:**
+- Balance card with inline Deposit/Withdraw CTAs
+- Total Winnings card with trophy icon
+- Horizontal stats strip (4 items in a grid)
+- 3-tab interface: My Entries, Past Entries, Wallet
+- Entry cards show ticket count, potential payout, and countdown
+- Past entry cards show Won/Lost result with green/red badge and actual payout
+
+**New imports needed:**
+- `Trophy`, `Ticket`, `Target`, `Timer` from lucide-react
+
