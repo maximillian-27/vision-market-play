@@ -372,7 +372,7 @@ export default function Profile() {
                           </p>
                         </div>
                         <div className="text-right shrink-0">
-                          <div className="text-sm font-semibold text-success">If you win: $312</div>
+                          <div className="text-sm font-semibold text-success">Potential winning: $312</div>
                         </div>
                       </div>
                       <div 
@@ -387,7 +387,7 @@ export default function Profile() {
                           </p>
                         </div>
                         <div className="text-right shrink-0">
-                          <div className="text-sm font-semibold text-success">If you win: $185</div>
+                          <div className="text-sm font-semibold text-success">Potential winning: $185</div>
                         </div>
                       </div>
                     </>
@@ -405,7 +405,7 @@ export default function Profile() {
                           </p>
                         </div>
                         <div className="text-right shrink-0">
-                          <div className="text-sm font-semibold text-success">If you win: $520</div>
+                          <div className="text-sm font-semibold text-success">Potential winning: $520</div>
                         </div>
                       </div>
                       <div 
@@ -420,7 +420,7 @@ export default function Profile() {
                           </p>
                         </div>
                         <div className="text-right shrink-0">
-                          <div className="text-sm font-semibold text-success">If you win: $245</div>
+                          <div className="text-sm font-semibold text-success">Potential winning: $245</div>
                         </div>
                       </div>
                       <div 
@@ -435,7 +435,7 @@ export default function Profile() {
                           </p>
                         </div>
                         <div className="text-right shrink-0">
-                          <div className="text-sm font-semibold text-success">If you win: $410</div>
+                          <div className="text-sm font-semibold text-success">Potential winning: $410</div>
                         </div>
                       </div>
                     </>

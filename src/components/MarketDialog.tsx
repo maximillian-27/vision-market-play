@@ -615,7 +615,7 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
                         <span className="text-sm font-semibold">${totalCost.toFixed(2)}</span>
                       </div>
                       <div className="flex justify-between items-center px-3 py-2">
-                        <span className="text-xs text-muted-foreground">If you win</span>
+                        <span className="text-xs text-muted-foreground">Potential winning</span>
                         <span className="text-sm font-semibold">${estimatedPayout > 0 ? estimatedPayout.toFixed(2) : '0.00'}</span>
                       </div>
                       <div className="flex justify-between items-center px-3 py-2 bg-success/5">

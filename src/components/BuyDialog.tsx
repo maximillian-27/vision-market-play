@@ -136,7 +136,7 @@ export function BuyDialog({ open, onOpenChange, outcome, marketTitle, marketId, 
           <span className="font-semibold">${amountNum.toFixed(2)}</span>
         </div>
         <div className="flex justify-between text-sm">
-          <span className="text-muted-foreground">If you win</span>
+          <span className="text-muted-foreground">Potential winning</span>
           <span className="font-bold">${payout.toFixed(2)}</span>
         </div>
         <Separator className="my-2" />

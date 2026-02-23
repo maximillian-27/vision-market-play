@@ -726,7 +726,7 @@ export default function MarketDetail() {
                   </div>
                   <div className="w-px h-3 bg-border" />
                   <div className="flex items-center gap-1">
-                    <span className="text-muted-foreground">If you win</span>
+                    <span className="text-muted-foreground">Potential winning</span>
                     <span className="font-bold">{selectedOutcome ? `$${payout.toFixed(2)}` : '-'}</span>
                   </div>
                 </div>
