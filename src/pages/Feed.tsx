@@ -280,23 +280,20 @@ function formatPot(pot: number): string {
 /* ── Gradient Banner Divider ── */
 function GradientDivider() {
   return (
-    <div className="w-full rounded-xl bg-gradient-to-r from-primary via-primary/90 to-primary/80 px-3 sm:px-6 py-2 sm:py-3.5 flex items-center justify-between gap-4 overflow-hidden">
+    <div className="w-full rounded-xl bg-gradient-to-r from-pollgy-green to-pollgy-blue px-3 sm:px-6 py-2 sm:py-3.5 flex items-center justify-between gap-4 overflow-hidden">
       <p className="text-primary-foreground text-[10px] sm:text-xs lg:text-base font-medium whitespace-nowrap">
         <span className="font-bold">Pollgy.</span>{" "}
         <span className="hidden sm:inline">First creator led, community owned prediction market platform</span>
         <span className="sm:hidden">Community owned prediction markets</span>
       </p>
-      <div className="flex items-center gap-3 sm:gap-4 shrink-0">
-        <span className="hidden sm:flex items-center gap-2 text-primary-foreground/90 text-[10px] sm:text-xs lg:text-base font-medium whitespace-nowrap">
+      <div className="hidden sm:flex items-center gap-3 sm:gap-4 shrink-0">
+        <span className="flex items-center gap-2 text-primary-foreground/90 text-[10px] sm:text-xs lg:text-base font-medium whitespace-nowrap">
           <span className="font-bold">Safe</span>
           <span className="text-primary-foreground/50">|</span>
           <span className="font-bold">Relevant</span>
           <span className="text-primary-foreground/50">|</span>
           <span className="font-bold">The best.</span>
         </span>
-        <button className="text-primary-foreground/80 hover:text-primary-foreground text-[10px] sm:text-xs lg:text-base font-medium whitespace-nowrap underline underline-offset-2 transition-colors">
-          How it works?
-        </button>
       </div>
     </div>
   );
