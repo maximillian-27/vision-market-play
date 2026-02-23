@@ -211,34 +211,32 @@ export function MarketGridCard({
       >
         {/* Desktop Layout */}
         <div className="sm:flex hidden flex-col p-3 h-full">
-          {/* Header with image + title */}
-          <div className="flex items-start gap-2.5 mb-2">
+          {/* Header with image, title, pot */}
+          <div className="flex items-start gap-3 mb-2.5">
             <div className="relative w-10 h-10 rounded-lg overflow-hidden bg-secondary flex-shrink-0">
               <img src={image} alt={title} className="h-full w-full object-cover" />
             </div>
+            
             <div className="flex-1 min-w-0">
-              <h3 className="text-[13px] font-semibold leading-snug line-clamp-2 group-hover:text-primary transition-colors">
-                {title}
-              </h3>
+              <div className="flex items-start justify-between gap-2">
+                <h3 className="text-sm font-semibold leading-snug line-clamp-2 group-hover:text-primary transition-colors flex-1">
+                  {title}
+                </h3>
+              </div>
             </div>
           </div>
 
-          {/* Pot + Win hook row */}
-          <div className="flex items-center gap-2 mb-2">
-            <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[11px] font-extrabold">
-              🏆 {potDisplay}
+          {/* Pot size pill */}
+          <div className="mb-2">
+            <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-extrabold">
+              {potDisplay} Pot
             </span>
-            {winUpTo && !isBettingDisabled && (
-              <span className="text-[10px] font-bold text-amber-500 dark:text-amber-400 animate-pulse">
-                Win up to {winUpTo}
-              </span>
-            )}
           </div>
 
-          {/* Outcomes area */}
+          {/* Content area */}
           <div className="flex-1 flex flex-col justify-center">
             {isClosedOrResolved ? (
-              <div className="space-y-1.5">
+              <div className="space-y-2">
                 <div className="flex items-center justify-between py-1.5 px-2 rounded-lg bg-secondary/50">
                   <span className="text-xs text-muted-foreground">Outcome</span>
                   <span className={`text-sm font-bold ${
@@ -248,12 +246,16 @@ export function MarketGridCard({
                     {resolution}
                   </span>
                 </div>
+                
                 {status === "closed" && (
                   <Button
                     variant="outline"
                     size="sm"
                     className="w-full text-orange-600 border-orange-500/30 hover:bg-orange-500/10 hover:border-orange-500/50 text-xs h-7"
-                    onClick={(e) => { e.stopPropagation(); setShowResolvedDialog(true); }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setShowResolvedDialog(true);
+                    }}
                   >
                     <AlertTriangle className="h-3 w-3 mr-1" />
                     Dispute
@@ -261,7 +263,7 @@ export function MarketGridCard({
                 )}
               </div>
             ) : isAwaitingResolution ? (
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-2">
                 <div className="flex-1 rounded-md py-1.5 text-center bg-yes/10 text-yes/70 border border-yes/20 cursor-default">
                   <span className="text-xs font-bold">Yes {yesPercent}%</span>
                 </div>
@@ -270,15 +272,15 @@ export function MarketGridCard({
                 </div>
               </div>
             ) : isBinary ? (
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-2">
                 <button 
-                  className="flex-1 rounded-md py-2 text-center bg-yes/15 dark:bg-yes/25 hover:bg-yes text-yes hover:text-yes-foreground border border-yes/30 dark:border-yes/40 hover:border-yes transition-all active:scale-[0.98]"
+                  className="flex-1 rounded-md py-1.5 text-center bg-yes/15 dark:bg-yes/25 hover:bg-yes text-yes hover:text-yes-foreground border border-yes/30 dark:border-yes/40 hover:border-yes transition-all active:scale-[0.98]"
                   onClick={handleOutcomeClick}
                 >
                   <span className="text-xs font-bold">Yes {yesPercent}%</span>
                 </button>
                 <button 
-                  className="flex-1 rounded-md py-2 text-center bg-no/15 dark:bg-no/25 hover:bg-no text-no hover:text-no-foreground border border-no/30 dark:border-no/40 hover:border-no transition-all active:scale-[0.98]"
+                  className="flex-1 rounded-md py-1.5 text-center bg-no/15 dark:bg-no/25 hover:bg-no text-no hover:text-no-foreground border border-no/30 dark:border-no/40 hover:border-no transition-all active:scale-[0.98]"
                   onClick={handleOutcomeClick}
                 >
                   <span className="text-xs font-bold">No {noPercent}%</span>
@@ -286,25 +288,35 @@ export function MarketGridCard({
               </div>
             ) : (
               <div className="space-y-1">
-                {displayOutcomes.map((outcome, index) => (
+                {displayOutcomes.slice(0, 2).map((outcome, index) => (
                   <button 
                     key={index}
-                    className="w-full flex items-center justify-between text-xs py-1.5 px-2 rounded-md bg-secondary/50 hover:bg-secondary border border-transparent hover:border-primary/20 transition-all"
+                    className="w-full flex items-center justify-between text-xs py-1.5 px-2 rounded-lg bg-secondary/50 hover:bg-secondary transition-all"
                     onClick={handleOutcomeClick}
                   >
                     <span className="font-medium truncate flex-1 text-left">{outcome.label}</span>
                     <span className="font-bold text-primary">{outcome.price}%</span>
                   </button>
                 ))}
+                {displayOutcomes.length > 2 && (
+                  <p className="text-[10px] text-muted-foreground">+{displayOutcomes.length - 2} more</p>
+                )}
               </div>
             )}
           </div>
+
+          {/* "Win up to" teaser */}
+          {winUpTo && !isBettingDisabled && (
+            <p className="text-[10px] text-primary/80 font-semibold mt-1.5">
+              Win up to {winUpTo}
+            </p>
+          )}
           
           {/* Stats footer */}
-          <div className="flex items-center gap-2 text-[9px] text-muted-foreground mt-2 pt-2 border-t border-border">
+          <div className="flex items-center gap-3 text-[10px] text-muted-foreground mt-2 pt-2 border-t border-border">
             <span className="flex items-center gap-1">
               <Users className="h-2.5 w-2.5" />
-              {players > 0 ? players.toLocaleString() : '0'}
+              {players > 0 ? players.toLocaleString() : '0'} players
             </span>
             {getStatusBadge() ? (
               getStatusBadge()
@@ -314,20 +326,30 @@ export function MarketGridCard({
                 {endsIn}
               </span>
             )}
-            <div className="ml-auto flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-              <button 
-                className="p-1 rounded hover:bg-secondary transition-colors"
-                onClick={(e) => { e.stopPropagation(); navigator.clipboard.writeText(`${window.location.origin}/market/${id}`); toast({ title: "Link copied!" }); }}
-              >
-                <Share2 className="h-3 w-3" />
-              </button>
-              <button 
-                className="p-1 rounded hover:bg-secondary transition-colors"
-                onClick={(e) => { e.stopPropagation(); toast({ title: "Saved to watchlist" }); }}
-              >
-                <Bookmark className="h-3 w-3" />
-              </button>
-            </div>
+            {/* Action buttons */}
+            {!isClosedOrResolved && (
+              <div className="ml-auto flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                <button 
+                  className="p-1 rounded hover:bg-secondary transition-colors"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigator.clipboard.writeText(`${window.location.origin}/market/${id}`);
+                    toast({ title: "Link copied!" });
+                  }}
+                >
+                  <Share2 className="h-3 w-3" />
+                </button>
+                <button 
+                  className="p-1 rounded hover:bg-secondary transition-colors"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toast({ title: "Saved to watchlist" });
+                  }}
+                >
+                  <Bookmark className="h-3 w-3" />
+                </button>
+              </div>
+            )}
           </div>
         </div>
 
