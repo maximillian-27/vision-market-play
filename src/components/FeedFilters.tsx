@@ -57,12 +57,12 @@ export function FeedFilters({ filters, onFiltersChange }: FeedFiltersProps) {
       </div>
 
       {/* Mobile: Category pills row */}
-      <div className="flex sm:hidden gap-1.5 overflow-x-auto pb-0.5 scrollbar-hide -mx-4 px-4">
+      <div className="flex sm:hidden gap-1 overflow-x-auto pb-0.5 scrollbar-hide -mx-4 px-4">
         {categories.map((category) => (
           <button
             key={category}
             onClick={() => updateFilter('category', category)}
-            className={`whitespace-nowrap font-medium px-3.5 py-1.5 text-[13px] rounded-full transition-all ${
+            className={`whitespace-nowrap font-medium px-3 py-1 text-xs rounded-full transition-all ${
               category === filters.category 
                 ? "bg-primary text-primary-foreground" 
                 : "text-muted-foreground hover:text-foreground hover:bg-secondary"
@@ -74,14 +74,14 @@ export function FeedFilters({ filters, onFiltersChange }: FeedFiltersProps) {
       </div>
 
       {/* Desktop: Original layout */}
-      <div className="hidden sm:flex gap-3 items-center">
+      <div className="hidden sm:flex gap-2 items-center">
         <Button 
           variant={showFilters ? "default" : "outline"} 
           size="sm"
-          className="h-8 px-3 flex-shrink-0 gap-1.5 font-medium"
+          className="h-7 px-2.5 flex-shrink-0 gap-1 font-medium text-xs"
           onClick={() => setShowFilters(!showFilters)}
         >
-          <SlidersHorizontal className="h-3.5 w-3.5" />
+          <SlidersHorizontal className="h-3 w-3" />
           <span>Filters</span>
           {hasActiveFilters && (
             <span className="h-1.5 w-1.5 rounded-full bg-primary-foreground ml-0.5" />
@@ -93,7 +93,7 @@ export function FeedFilters({ filters, onFiltersChange }: FeedFiltersProps) {
             <button
               key={category}
               onClick={() => updateFilter('category', category)}
-              className={`whitespace-nowrap font-medium px-3 py-1.5 text-sm rounded-full transition-all ${
+              className={`whitespace-nowrap font-medium px-2.5 py-1 text-xs rounded-full transition-all ${
                 category === filters.category 
                   ? "bg-primary text-primary-foreground" 
                   : "text-muted-foreground hover:text-foreground hover:bg-secondary"
