@@ -138,28 +138,41 @@ export function Header() {
                 {/* Notifications */}
                 <NotificationsDropdown />
 
-                {/* Ticket Counter */}
+                {/* Ticket Counter - Weekly Draw */}
                 <Popover>
                   <PopoverTrigger asChild>
-                    <button className="flex items-center gap-1 px-2 py-1 rounded-full bg-secondary hover:bg-secondary/80 transition-colors text-xs">
-                      <Ticket className="h-3 w-3 text-primary" />
-                      <span className="font-semibold text-foreground">14/20</span>
-                      <span className="text-[9px] text-muted-foreground">(3)</span>
+                    <button className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-primary/10 hover:bg-primary/15 border border-primary/20 transition-all text-xs group">
+                      <div className="relative">
+                        <Ticket className="h-3.5 w-3.5 text-primary" />
+                      </div>
+                      <span className="font-bold text-foreground">{14}/{20}</span>
+                      <span className="text-[10px] font-semibold text-primary bg-primary/10 px-1.5 py-0.5 rounded-full">3 🎟️</span>
                     </button>
                   </PopoverTrigger>
-                  <PopoverContent align="end" className="w-52 p-3 space-y-2.5">
-                    <div className="text-xs font-semibold">Weekly Draw Tickets</div>
+                  <PopoverContent align="end" className="w-60 p-3 space-y-3">
+                    <div className="flex items-center gap-2">
+                      <div className="flex items-center justify-center h-6 w-6 rounded-lg bg-primary/10">
+                        <Ticket className="h-3.5 w-3.5 text-primary" />
+                      </div>
+                      <div>
+                        <div className="text-xs font-semibold">Weekly Draw</div>
+                        <div className="text-[10px] text-muted-foreground">Prize pool: $48,600</div>
+                      </div>
+                    </div>
                     <div className="space-y-1.5">
                       <div className="flex justify-between text-xs">
                         <span className="text-muted-foreground">Tickets this week</span>
                         <span className="font-semibold">14 / 20</span>
                       </div>
-                      <Progress value={70} className="h-1.5" />
-                      <p className="text-[10px] text-muted-foreground">Buy 6 more for another entry</p>
+                      <Progress value={70} className="h-2" />
+                      <p className="text-[10px] text-primary font-medium">6 more tickets for your next entry!</p>
                     </div>
-                    <div className="flex justify-between text-xs pt-1 border-t border-border">
-                      <span className="text-muted-foreground">Entries earned</span>
-                      <span className="font-bold text-primary">3</span>
+                    <div className="flex justify-between text-xs pt-2 border-t border-border">
+                      <span className="text-muted-foreground">Your entries</span>
+                      <span className="font-bold text-primary">3 entries</span>
+                    </div>
+                    <div className="text-[10px] text-muted-foreground text-center">
+                      Draw every Sunday at 8pm
                     </div>
                   </PopoverContent>
                 </Popover>
