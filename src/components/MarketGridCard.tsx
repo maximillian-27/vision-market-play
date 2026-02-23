@@ -260,10 +260,13 @@ export function MarketGridCard({
       >
         {/* ── Desktop/Tablet ── */}
         <div className="sm:flex hidden flex-col p-2.5 h-full gap-1.5">
-          {/* Title */}
-          <h3 className="text-xs font-semibold leading-snug line-clamp-2 group-hover:text-primary transition-colors">
-            {title}
-          </h3>
+          {/* Image + Title */}
+          <div className="flex items-start gap-2">
+            <img src={image} alt={title} className="w-8 h-8 rounded object-cover flex-shrink-0" />
+            <h3 className="text-xs font-semibold leading-snug line-clamp-2 group-hover:text-primary transition-colors">
+              {title}
+            </h3>
+          </div>
 
           {/* Pot + Players */}
           <div className="flex items-center justify-between">
