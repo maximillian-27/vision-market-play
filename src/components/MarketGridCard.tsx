@@ -119,79 +119,77 @@ export function MarketGridCard({
         onClick={handleCardClick}
       >
         {/* ── Desktop Layout ── compact, reference-matching */}
-        <div className="sm:flex hidden flex-col p-2.5 h-full">
+        <div className="sm:flex hidden flex-col p-2 h-full">
           {/* Header: thumbnail + title + creator */}
-          <div className="flex items-start gap-2.5 mb-2">
-            <img src={image} alt={title} className="w-10 h-10 rounded-lg object-cover shrink-0" />
+          <div className="flex items-start gap-2 mb-1.5">
+            <img src={image} alt={title} className="w-8 h-8 rounded-md object-cover shrink-0" />
             <div className="flex-1 min-w-0">
-              <h3 className="text-xs font-semibold leading-snug line-clamp-2 group-hover:text-primary transition-colors">{title}</h3>
-              <span className="text-[10px] text-muted-foreground">by {creator.name}</span>
+              <h3 className="text-[11px] font-semibold leading-snug line-clamp-2 group-hover:text-primary transition-colors">{title}</h3>
+              <span className="text-[9px] text-muted-foreground">by {creator.name}</span>
             </div>
           </div>
 
           {/* Outcomes area */}
           <div className="flex-1 flex flex-col justify-center">
             {isClosedOrResolved ? (
-              <div className="space-y-1.5">
-                <div className="flex items-center justify-between py-1 px-2 rounded-lg bg-secondary/50">
-                  <span className="text-[10px] text-muted-foreground">Outcome</span>
-                  <span className={`text-xs font-bold ${resolution?.toLowerCase() === "yes" ? 'text-yes' : resolution?.toLowerCase() === "no" ? 'text-no' : 'text-primary'}`}>{resolution}</span>
+              <div className="space-y-1">
+                <div className="flex items-center justify-between py-0.5 px-1.5 rounded bg-secondary/50">
+                  <span className="text-[9px] text-muted-foreground">Outcome</span>
+                  <span className={`text-[11px] font-bold ${resolution?.toLowerCase() === "yes" ? 'text-yes' : resolution?.toLowerCase() === "no" ? 'text-no' : 'text-primary'}`}>{resolution}</span>
                 </div>
                 {status === "closed" && (
-                  <Button variant="outline" size="sm" className="w-full text-amber-600 border-amber-500/30 hover:bg-amber-500/10 text-[10px] h-6"
+                  <Button variant="outline" size="sm" className="w-full text-amber-600 border-amber-500/30 hover:bg-amber-500/10 text-[9px] h-5"
                     onClick={(e) => { e.stopPropagation(); setShowResolvedDialog(true); }}>
-                    <AlertTriangle className="h-2.5 w-2.5 mr-1" />Dispute
+                    <AlertTriangle className="h-2 w-2 mr-0.5" />Dispute
                   </Button>
                 )}
               </div>
             ) : isAwaitingResolution ? (
-              <div className="flex gap-1.5">
-                <div className="flex-1 rounded-lg py-1 text-center bg-yes/10 text-yes/60 border border-yes/20"><span className="text-[11px] font-bold">Yes {yesPercent}%</span></div>
-                <div className="flex-1 rounded-lg py-1 text-center bg-no/10 text-no/60 border border-no/20"><span className="text-[11px] font-bold">No {noPercent}%</span></div>
+              <div className="flex gap-1">
+                <div className="flex-1 rounded py-0.5 text-center bg-yes/10 text-yes/60 border border-yes/20"><span className="text-[10px] font-bold">Yes {yesPercent}%</span></div>
+                <div className="flex-1 rounded py-0.5 text-center bg-no/10 text-no/60 border border-no/20"><span className="text-[10px] font-bold">No {noPercent}%</span></div>
               </div>
             ) : isBinary ? (
-              /* Binary: Yes/No as outcome buttons with percentage */
-              <div className="flex gap-2">
-                <button onClick={handleOutcomeClick} className="flex-1 py-2 rounded-lg text-center bg-yes/10 hover:bg-yes text-yes hover:text-yes-foreground border border-yes/20 hover:border-yes transition-all">
-                  <span className="text-xs font-bold">Yes {yesPercent}%</span>
+              <div className="flex gap-1.5">
+                <button onClick={handleOutcomeClick} className="flex-1 py-1.5 rounded text-center bg-yes/10 hover:bg-yes text-yes hover:text-yes-foreground border border-yes/20 hover:border-yes transition-all">
+                  <span className="text-[11px] font-bold">Yes {yesPercent}%</span>
                 </button>
-                <button onClick={handleOutcomeClick} className="flex-1 py-2 rounded-lg text-center bg-no/10 hover:bg-no text-no hover:text-no-foreground border border-no/20 hover:border-no transition-all">
-                  <span className="text-xs font-bold">No {noPercent}%</span>
+                <button onClick={handleOutcomeClick} className="flex-1 py-1.5 rounded text-center bg-no/10 hover:bg-no text-no hover:text-no-foreground border border-no/20 hover:border-no transition-all">
+                  <span className="text-[11px] font-bold">No {noPercent}%</span>
                 </button>
               </div>
             ) : (
-              /* Multi-outcome: each outcome IS the button */
-              <div className="space-y-1">
-                {displayOutcomes.slice(0, 3).map((outcome, index) => (
-                  <button key={index} onClick={handleOutcomeClick} className="w-full flex items-center justify-between text-xs py-1.5 px-2.5 rounded-lg bg-secondary/50 hover:bg-primary/5 hover:border-primary/20 border border-transparent transition-all">
+              <div className="space-y-0.5">
+                {displayOutcomes.slice(0, 2).map((outcome, index) => (
+                  <button key={index} onClick={handleOutcomeClick} className="w-full flex items-center justify-between text-[11px] py-1 px-2 rounded bg-secondary/50 hover:bg-primary/5 border border-transparent hover:border-primary/20 transition-all">
                     <span className="font-medium truncate">{outcome.label}</span>
                     <span className="font-bold text-primary">{outcome.price}%</span>
                   </button>
                 ))}
-                {displayOutcomes.length > 3 && (
-                  <p className="text-[9px] text-muted-foreground">+{displayOutcomes.length - 3} more</p>
+                {displayOutcomes.length > 2 && (
+                  <p className="text-[9px] text-muted-foreground pl-1">+{displayOutcomes.length - 2} more</p>
                 )}
               </div>
             )}
           </div>
           
           {/* Footer: pot + time + icons */}
-          <div className="flex items-center justify-between text-[9px] text-muted-foreground mt-2 pt-1.5 border-t border-border/50">
-            <div className="flex items-center gap-1.5">
-              <span className="inline-flex items-center px-1.5 py-0.5 rounded-md bg-primary/10 text-primary text-[10px] font-extrabold">{potDisplay}</span>
-              <span className="flex items-center gap-0.5"><Users className="h-2.5 w-2.5" />{players > 0 ? players.toLocaleString() : '0'}</span>
+          <div className="flex items-center justify-between text-[8px] text-muted-foreground mt-1.5 pt-1 border-t border-border/50">
+            <div className="flex items-center gap-1">
+              <span className="inline-flex items-center px-1 py-0.5 rounded bg-primary/10 text-primary text-[9px] font-extrabold">{potDisplay}</span>
+              <span className="flex items-center gap-0.5"><Users className="h-2 w-2" />{players > 0 ? players.toLocaleString() : '0'}</span>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5">
               {getStatusBadge() || (
-                <span className="flex items-center gap-0.5"><Clock className="h-2.5 w-2.5" />{endsIn}</span>
+                <span className="flex items-center gap-0.5"><Clock className="h-2 w-2" />{endsIn}</span>
               )}
               {!isClosedOrResolved && (
                 <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
                   <button className="p-0.5 rounded hover:bg-secondary" onClick={(e) => { e.stopPropagation(); navigator.clipboard.writeText(`${window.location.origin}/market/${id}`); toast({ title: "Link copied!" }); }}>
-                    <Share2 className="h-2.5 w-2.5" />
+                    <Share2 className="h-2 w-2" />
                   </button>
                   <button className="p-0.5 rounded hover:bg-secondary" onClick={(e) => { e.stopPropagation(); toast({ title: "Saved to watchlist" }); }}>
-                    <Bookmark className="h-2.5 w-2.5" />
+                    <Bookmark className="h-2 w-2" />
                   </button>
                 </div>
               )}
