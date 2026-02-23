@@ -248,10 +248,13 @@ export function MarketGridCard({
       >
         {/* ── Desktop/Tablet ── */}
         <div className="sm:flex hidden flex-col p-3 h-full gap-2">
-          {/* Title */}
-          <h3 className="text-xs font-semibold leading-snug line-clamp-2 group-hover:text-primary transition-colors">
-            {title}
-          </h3>
+          {/* Image + Title */}
+          <div className="flex items-start gap-2">
+            <img src={image} alt={title} className="w-9 h-9 rounded-lg object-cover flex-shrink-0" />
+            <h3 className="text-xs font-semibold leading-snug line-clamp-2 group-hover:text-primary transition-colors">
+              {title}
+            </h3>
+          </div>
 
           {/* Pot + Players */}
           <div className="flex items-center gap-2">
@@ -273,7 +276,10 @@ export function MarketGridCard({
 
         {/* ── Mobile ── */}
         <div className="sm:hidden py-3 px-4">
-          <h3 className="text-[13px] font-semibold leading-snug line-clamp-2 mb-1.5">{title}</h3>
+          <div className="flex items-start gap-2.5 mb-1.5">
+            <img src={image} alt={title} className="w-10 h-10 rounded-lg object-cover flex-shrink-0" />
+            <h3 className="text-[13px] font-semibold leading-snug line-clamp-2">{title}</h3>
+          </div>
           <div className="flex items-center gap-2 mb-2">
             <span className="text-primary text-xs font-extrabold">{potDisplay}</span>
             <span className="text-[10px] text-muted-foreground">·</span>
