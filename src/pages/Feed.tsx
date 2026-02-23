@@ -796,12 +796,12 @@ export default function Feed() {
             </div>
           </div>
 
-          {/* Right — Sponsored + Weekly Draw */}
-          <div className="lg:col-span-2 flex flex-row lg:flex-col gap-3">
-            <div className="flex-1">
+          {/* Right — Weekly Draw (compact) + Sponsored (fills remaining) */}
+          <div className="lg:col-span-2 flex flex-row lg:flex-col gap-3 lg:h-[340px]">
+            <div className="shrink-0">
               <WeeklyDrawCard />
             </div>
-            <div className="flex-1">
+            <div className="flex-1 min-h-0">
               <CompactFeaturedCard market={sponsoredMarkets[0]} />
             </div>
           </div>
