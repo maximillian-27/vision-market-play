@@ -551,19 +551,29 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
 
                     </div>
 
-                    {/* Winnings hero */}
-                    <div className="bg-success/5 rounded-xl p-3 text-center space-y-1 border border-success/10">
-                      <div className="flex items-center justify-center gap-1.5">
-                        <Trophy className="h-3.5 w-3.5 text-success" />
-                        <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Est. Profit</span>
+                    {/* Summary breakdown */}
+                    <div className="rounded-xl border border-border/40 divide-y divide-border/30">
+                      <div className="flex justify-between items-center px-3 py-2">
+                        <span className="text-xs text-muted-foreground">Cost</span>
+                        <span className="text-sm font-semibold">${totalCost.toFixed(2)}</span>
                       </div>
-                      <span className={`text-2xl font-bold block ${estimatedProfit > 0 ? 'text-success' : 'text-foreground'}`}>
-                        ~${estimatedProfit > 0 ? estimatedProfit.toFixed(2) : '0.00'}
-                      </span>
-                      <p className="text-[9px] text-muted-foreground">
-                        {ticketCount} × ${currentTicketPrice.toFixed(2)} = ${totalCost.toFixed(2)} · 90% pot split
-                      </p>
+                      <div className="flex justify-between items-center px-3 py-2">
+                        <span className="text-xs text-muted-foreground">If you win</span>
+                        <span className="text-sm font-semibold">${estimatedPayout > 0 ? estimatedPayout.toFixed(2) : '0.00'}</span>
+                      </div>
+                      <div className="flex justify-between items-center px-3 py-2 bg-success/5">
+                        <div className="flex items-center gap-1.5">
+                          <Trophy className="h-3.5 w-3.5 text-success" />
+                          <span className="text-xs font-medium text-success">Potential profit</span>
+                        </div>
+                        <span className={`text-lg font-bold ${estimatedProfit > 0 ? 'text-success' : 'text-foreground'}`}>
+                          +${estimatedProfit > 0 ? estimatedProfit.toFixed(2) : '0.00'}
+                        </span>
+                      </div>
                     </div>
+                    <p className="text-[9px] text-muted-foreground text-center">
+                      Winners split 90% of the pot · final payout depends on total entries
+                    </p>
                   </>
                 )}
               </div>
