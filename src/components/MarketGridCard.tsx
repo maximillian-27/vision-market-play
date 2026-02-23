@@ -283,7 +283,7 @@ export function MarketGridCard({
             <div className="flex items-center gap-2">
               {winUpTo && (
                 <span className="text-pollgy-green font-bold flex items-center gap-0.5">
-                  🎯 Win up to {winUpTo}
+                  Win up to {winUpTo} / <Ticket className="h-2.5 w-2.5" />
                 </span>
               )}
               {statusLine()}
@@ -327,8 +327,8 @@ export function MarketGridCard({
           </div>
           <OutcomeButtons />
           {winUpTo && (
-            <p className="text-[10px] text-pollgy-green font-bold mt-1.5">
-              🎯 Win up to {winUpTo} per ticket
+            <p className="text-[10px] text-pollgy-green font-bold mt-1.5 flex items-center gap-0.5">
+              Win up to {winUpTo} / <Ticket className="h-2.5 w-2.5" />
             </p>
           )}
         </div>
