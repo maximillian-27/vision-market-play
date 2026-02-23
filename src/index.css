@@ -317,4 +317,32 @@
   .text-balance {
     text-wrap: balance;
   }
+  
+  /* Pot shimmer animation for jackpot-tier pots */
+  .pot-shimmer {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .pot-shimmer::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.25) 50%,
+      transparent 100%
+    );
+    animation: shimmer 3s ease-in-out infinite;
+  }
+  
+  @keyframes shimmer {
+    0% { left: -100%; }
+    50% { left: 150%; }
+    100% { left: 150%; }
+  }
 }
