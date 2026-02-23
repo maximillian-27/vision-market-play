@@ -73,21 +73,8 @@ export function FeedFilters({ filters, onFiltersChange }: FeedFiltersProps) {
         ))}
       </div>
 
-      {/* Desktop: Original layout */}
-      <div className="hidden sm:flex gap-3 items-center">
-        <Button 
-          variant={showFilters ? "default" : "outline"} 
-          size="sm"
-          className="h-8 px-3 flex-shrink-0 gap-1.5 font-medium"
-          onClick={() => setShowFilters(!showFilters)}
-        >
-          <SlidersHorizontal className="h-3.5 w-3.5" />
-          <span>Filters</span>
-          {hasActiveFilters && (
-            <span className="h-1.5 w-1.5 rounded-full bg-primary-foreground ml-0.5" />
-          )}
-        </Button>
-
+      {/* Desktop: Pills left, Filters+Saved right */}
+      <div className="hidden sm:flex items-center justify-between gap-3">
         <div className="flex gap-1 overflow-x-auto pb-0.5 scrollbar-hide">
           {categories.map((category) => (
             <button
@@ -102,6 +89,24 @@ export function FeedFilters({ filters, onFiltersChange }: FeedFiltersProps) {
               {category}
             </button>
           ))}
+        </div>
+
+        <div className="flex items-center gap-1.5 flex-shrink-0">
+          <Button 
+            variant={showFilters ? "default" : "outline"} 
+            size="sm"
+            className="h-8 px-3 gap-1.5 font-medium"
+            onClick={() => setShowFilters(!showFilters)}
+          >
+            <SlidersHorizontal className="h-3.5 w-3.5" />
+            <span>Filters</span>
+            {hasActiveFilters && (
+              <span className="h-1.5 w-1.5 rounded-full bg-primary-foreground ml-0.5" />
+            )}
+          </Button>
+          <Button variant="outline" size="icon" className="h-8 w-8">
+            <Bookmark className="h-3.5 w-3.5" />
+          </Button>
         </div>
       </div>
 
