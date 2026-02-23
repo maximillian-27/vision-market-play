@@ -73,7 +73,7 @@ export function FeedFilters({ filters, onFiltersChange }: FeedFiltersProps) {
   const hasActiveFilters = filters.sortBy !== "trending" || filters.status !== "all" || filters.timeframe !== "all";
 
   return (
-    <div className="space-y-1 sm:space-y-1.5 sticky top-14 z-10 bg-background/95 backdrop-blur-xl py-1 sm:py-1.5 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+    <div className="space-y-1 sm:space-y-1.5 sticky top-14 z-10 bg-background py-1 sm:py-1.5 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
       {/* Mobile: Search bar + icons */}
       <div className="flex sm:hidden items-center gap-2">
         <div className="relative flex-1">
