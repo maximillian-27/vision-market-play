@@ -57,7 +57,7 @@ function formatWinUpTo(pot: number, outcomes: Outcome[]): string {
   return `$${payout.toFixed(0)}`;
 }
 
-const MAX_VISIBLE_OUTCOMES = 3;
+const MAX_VISIBLE_OUTCOMES = 2;
 
 export function MarketGridCard({ 
   id, creator, title, image, outcomes, yesPrice, noPrice, 
