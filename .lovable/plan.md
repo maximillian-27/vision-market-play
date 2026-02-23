@@ -1,107 +1,46 @@
 
 
-# Mobile Markets Feed Redesign
+## Redesign the Filter Panel
 
-Redesigning the mobile view to match the reference layout: a clean, list-based feed with a compact hero slide, prominent search/filters at top, and maximum market density below.
+The current expanded filter panel uses bulky dropdown selects with labels, borders, and a card container that feels heavy. We'll replace it with a clean, inline pill/chip-based filter system -- minimalistic, modern, and intuitive.
 
----
+### Design Approach
 
-## Layout Structure (Mobile Only, top to bottom)
+Instead of select dropdowns in a bordered card, the filters will appear as **horizontal rows of toggleable pills** directly below the category bar. Each filter group (Sort, Status, Timeframe, Volume) sits on its own compact row with a subtle label. This is similar to how modern trading/betting platforms handle filters.
 
-1. **Search bar** (full width, prominent)
-2. **Category filter pills** (horizontally scrollable)
-3. **Featured hero card** (single market slide with dot indicators)
-4. **Market list** (flat, borderless cards separated by dividers -- no grid, maximum density)
+### What Changes
 
----
+**File: `src/components/FeedFilters.tsx`**
 
-## 1. FeedFilters.tsx - Mobile-Specific Layout
+Replace the current expanded filter panel (the bordered card with Select dropdowns) with:
 
-**Current**: Filter button + category pills in one row on both mobile and desktop.
+1. **No card/border container** -- filters appear inline with just a subtle top separator line
+2. **Pill-based selection** for each filter group, laid out horizontally:
+   - **Sort**: Trending, Biggest Pots, Newest, Closing Soon, Most Active
+   - **Status**: All, Open, Closing Soon, Resolved
+   - **Timeframe**: 24h, 7d, 30d, All Time
+3. **Each row** has a small muted label on the left ("Sort", "Status", "Time") followed by horizontally scrollable pills
+4. **Active pill** gets a subtle filled background (like the category pills), inactive ones are ghost-style
+5. **Clear filters** becomes a small "Reset" text link at the end, only visible when filters are active
+6. Remove the "Filter Markets" header and X close button -- instead, clicking the Filters button again toggles it closed
+7. Smooth animation on open/close
 
-**New mobile layout** (below `sm` breakpoint):
-- Top row: full-width search input with filter icon button and bookmark icon on the right
-- Second row: horizontally scrollable category pills (All, My Markets, Hot, Politics, Sports, Crypto, Tech, Entertainment, Finance) -- larger touch targets, more spacing
-- Remove the "Filters" button label on mobile; just show the icon
-- Keep the expanded filter panel as-is (already works well on mobile)
+### Filter Groups (what makes sense for a prediction market)
 
----
+- **Sort By**: Trending, Biggest Pots, Newest, Closing Soon, Most Active
+- **Status**: All, Open, Closing Soon, Resolved
+- **Timeframe**: 24h, 7 Days, 30 Days, All Time
 
-## 2. Feed.tsx - Mobile Hero Slide
+These three groups cover what users actually need: how to order results, which markets to see, and how far back to look.
 
-**Current**: The split hero (1 large + 2 compact) shows on mobile as stacked cards, taking too much vertical space.
+### Technical Details
 
-**New mobile layout** (below `md` breakpoint):
-- Hide the desktop split hero section entirely on mobile
-- Show a single swipeable hero card instead:
-  - Featured market image as background with gradient overlay
-  - Title, pot size, creator name overlaid
-  - Dot indicators at bottom (3 dots for 3 featured markets)
-  - Swipeable via state toggle (tap dots or auto-cycle)
-  - Compact height: ~180px max
-- Below hero: the GradientDivider (keep, but make it more compact on mobile -- reduce padding)
-- Below divider: market list (not grid)
-
----
-
-## 3. Feed.tsx - Mobile Market Grid becomes List
-
-**Current**: `grid-cols-1` on mobile means each MarketGridCard renders as a full-width card with borders and padding.
-
-**Change on mobile**:
-- Switch from grid to a flat list layout: `flex flex-col divide-y divide-border` on mobile
-- Each card renders in a compact list-item style (no card border, no shadow, no rounded corners on mobile)
-- This maximizes density -- more markets visible per scroll
-
----
-
-## 4. MarketGridCard.tsx - Redesigned Mobile Layout
-
-**Current mobile layout**: Thumbnail left + title/creator/pot right, then outcomes bar, then stats footer -- all wrapped in a Card with borders.
-
-**New mobile layout** (matching reference image):
-- Remove Card wrapper border/shadow on mobile (flat, separated by dividers only)
-- Row 1: Small square thumbnail (40x40) + Title + Probability badge (e.g., "68%" in green pill, top-right)
-- Row 2: Creator name below title (small, muted text: "by CreatorName")
-- Row 3: Full-width Yes/No buttons side by side (green background for Yes, red/pink for No) -- larger touch targets
-- For multi-outcome: show outcome rows with label + percentage + Yes/No buttons
-- Row 4: Pot size ("Pot $231k") left-aligned + share icon + bookmark icon right-aligned
-- Dot pagination indicator if the card has multiple outcome views (like the reference)
-- Clean spacing: `py-3 px-4` with no card borders
-
-**Key visual changes**:
-- Yes/No buttons: full-width, side-by-side, with soft colored backgrounds (bg-yes/10 and bg-no/10) and bold colored text
-- Probability percentage displayed as a prominent badge next to the title (green pill with "68%" and small "chance" label below)
-- Remove the probability bar on mobile (the reference doesn't use it)
-- Pot displayed as "Pot $231k" in the footer, not as a pill
-
----
-
-## 5. Sizing and Density
-
-- Hero section: max 180px height on mobile
-- Each market list item: approximately 140-160px height
-- This means 2-3 full market items visible below the hero on a standard 844px mobile viewport
-- Bottom nav clearance: add `pb-24` to the feed container for the floating nav bar
-
----
-
-## Files Modified
-
-| File | Changes |
-|------|---------|
-| Feed.tsx | Add mobile hero slide with dot indicators, hide desktop hero on mobile, switch grid to list on mobile, add search bar |
-| FeedFilters.tsx | Mobile-specific layout with full-width search bar above category pills |
-| MarketGridCard.tsx | Flat list-item mobile layout: remove card borders, larger Yes/No buttons, probability badge, simplified footer |
-
-**Total: 3 files modified**
-
----
-
-## Technical Notes
-
-- Use `useIsMobile()` hook (already available) or Tailwind responsive classes (`sm:hidden` / `md:hidden`) to differentiate layouts
-- Hero slide state: simple `useState` for `activeSlide` index with dot indicators
-- The desktop layout remains completely unchanged -- all changes are scoped to mobile breakpoints
-- Category pills: use `scrollbar-hide` utility class (already in use) for clean horizontal scroll
+- Remove `Select`, `SelectContent`, `SelectItem`, `SelectTrigger`, `SelectValue` imports (no longer needed)
+- Remove `Label` import
+- Remove `X` icon import
+- Keep the same `FilterState` interface and `updateFilter` logic
+- Each filter group renders as a `<div>` row with a tiny label span and a set of `<button>` pills
+- Pills use the same styling pattern as the existing category pills for consistency
+- The entire filter area uses `space-y-1` for tight vertical rhythm
+- Compact padding: pills get `px-2.5 py-0.5 text-xs`
 
