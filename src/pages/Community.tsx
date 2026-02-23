@@ -170,40 +170,6 @@ export default function Community() {
             subtitle="See who's dominating the predictions"
           />
 
-          {/* Your Rank Card */}
-          <Card className="border-primary/30 bg-primary/[0.03]">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-4">
-                <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 text-primary font-bold text-lg">
-                  #24
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <p className="font-semibold text-sm">Your Rank</p>
-                    <span className="flex items-center text-[11px] font-semibold text-success"><ArrowUp className="h-3 w-3" />3</span>
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-0.5">
-                    You're in the <span className="text-primary font-semibold">top 8%</span> of players
-                  </p>
-                </div>
-                <div className="hidden sm:flex gap-4 text-center">
-                  <div>
-                    <p className="text-sm font-semibold text-success">$4,230</p>
-                    <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Winnings</p>
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold">72%</p>
-                    <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Win Rate</p>
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold">38</p>
-                    <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Entered</p>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
           {/* Leaderboard Tabs */}
           <Tabs defaultValue="players" className="w-full">
             <TabsList className="grid w-full grid-cols-2 h-11">
@@ -267,6 +233,32 @@ export default function Community() {
                         <ChevronRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
                       </Link>
                     ))}
+                    {/* Your Rank */}
+                    <div className="border-t-2 border-dashed border-primary/20 mt-1 pt-1">
+                      <div className="flex items-center gap-3 py-3 -mx-2 px-2 rounded-lg bg-primary/[0.04]">
+                        <div className="flex items-center gap-1.5 w-10 shrink-0">
+                          <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold border border-primary/30 bg-primary/10 text-primary">
+                            {playerSort === "winnings" ? 24 : playerSort === "winRate" ? 31 : 58}
+                          </div>
+                          <span className="flex items-center text-[11px] font-semibold text-success"><ArrowUp className="h-3 w-3" />3</span>
+                        </div>
+                        <Avatar className="h-9 w-9 ring-2 ring-primary/20">
+                          <AvatarFallback className="bg-primary/10 text-primary font-bold">YOU</AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-1.5">
+                            <p className="font-medium text-sm text-primary">You</p>
+                            <StreakBadge streak={2} />
+                          </div>
+                          <p className="text-xs text-muted-foreground">
+                            {playerSort === "winnings" ? "72% win rate · 38 entered" : playerSort === "winRate" ? "$4.2K · 38 entered" : "$4.2K · 72% win rate"}
+                          </p>
+                        </div>
+                        <div className="text-right text-sm shrink-0">
+                          {playerSort === "winnings" ? <span className="text-success font-semibold">$4.2K</span> : playerSort === "winRate" ? <span className="font-semibold">72%</span> : <span className="font-semibold">2W streak</span>}
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -325,6 +317,28 @@ export default function Community() {
                         <ChevronRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
                       </Link>
                     ))}
+                    {/* Your Rank */}
+                    <div className="border-t-2 border-dashed border-primary/20 mt-1 pt-1">
+                      <div className="flex items-center gap-3 py-3 -mx-2 px-2 rounded-lg bg-primary/[0.04]">
+                        <div className="flex items-center gap-1.5 w-10 shrink-0">
+                          <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold border border-primary/30 bg-primary/10 text-primary">
+                            {creatorSort === "pot" ? 42 : creatorSort === "markets" ? 37 : 29}
+                          </div>
+                        </div>
+                        <Avatar className="h-9 w-9 ring-2 ring-primary/20">
+                          <AvatarFallback className="bg-primary/10 text-primary font-bold">YOU</AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium text-sm text-primary">You</p>
+                          <p className="text-xs text-muted-foreground">
+                            {creatorSort === "pot" ? "3 markets · 1.2K players" : creatorSort === "markets" ? "$12.4K pot · 1.2K players" : "3 markets · $12.4K pot"}
+                          </p>
+                        </div>
+                        <div className="text-right text-sm shrink-0">
+                          {creatorSort === "pot" ? <span className="text-success font-semibold">$12.4K</span> : creatorSort === "markets" ? <span className="font-semibold">3 markets</span> : <span className="font-semibold">$4.1K avg</span>}
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
