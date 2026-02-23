@@ -1,8 +1,8 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { FeedFilters, FilterState } from "@/components/FeedFilters";
 import { MarketGridCard } from "@/components/MarketGridCard";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, Timer } from "lucide-react";
+import { Timer, Users, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import bitcoinImage from "@/assets/bitcoin-market.jpg";
 import nbaImage from "@/assets/nba-championship.jpg";
@@ -27,7 +27,7 @@ interface Market {
   yesPrice?: number;
   noPrice?: number;
   volume: string;
-  pot: number; // raw pot number for sorting
+  pot: number;
   endsIn: string;
   likes: number;
   comments: number;
@@ -276,6 +276,69 @@ function formatPot(pot: number): string {
   return `$${pot}`;
 }
 
+/* ── Gradient Banner Divider ── */
+function GradientDivider() {
+  return (
+    <div className="w-full rounded-xl bg-gradient-to-r from-primary via-primary/90 to-primary/80 px-4 sm:px-6 py-3 sm:py-3.5 flex items-center justify-between gap-4 overflow-hidden">
+      <p className="text-primary-foreground text-[10px] sm:text-xs lg:text-base font-medium whitespace-nowrap">
+        <span className="font-bold">Pollgy.</span>{" "}
+        First creator led, community owned prediction market platform
+      </p>
+      <div className="flex items-center gap-3 sm:gap-4 shrink-0">
+        <span className="hidden sm:flex items-center gap-2 text-primary-foreground/90 text-[10px] sm:text-xs lg:text-base font-medium whitespace-nowrap">
+          <span className="font-bold">Safe</span>
+          <span className="text-primary-foreground/50">|</span>
+          <span className="font-bold">Relevant</span>
+          <span className="text-primary-foreground/50">|</span>
+          <span className="font-bold">The best.</span>
+        </span>
+        <button className="text-primary-foreground/80 hover:text-primary-foreground text-[10px] sm:text-xs lg:text-base font-medium whitespace-nowrap underline underline-offset-2 transition-colors">
+          How it works?
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* ── Compact Featured Card (right side) ── */
+function CompactFeaturedCard({ market }: { market: Market }) {
+  const navigate = useNavigate();
+
+  return (
+    <div
+      onClick={() => navigate(`/market/${market.id}`)}
+      className="flex gap-3 p-3 rounded-xl border border-border/60 bg-card hover:bg-accent/30 cursor-pointer transition-colors h-full"
+    >
+      <img
+        src={market.image}
+        alt={market.title}
+        className="w-20 h-full min-h-[72px] rounded-lg object-cover shrink-0"
+      />
+      <div className="flex flex-col justify-between flex-1 min-w-0 py-0.5">
+        <div>
+          <div className="flex items-center gap-1.5 mb-1">
+            <img src={market.creator.avatar} alt="" className="w-4 h-4 rounded-full" />
+            <span className="text-[10px] text-muted-foreground truncate">{market.creator.name}</span>
+          </div>
+          <h4 className="text-xs font-semibold leading-tight line-clamp-2 text-foreground">
+            {market.title}
+          </h4>
+        </div>
+        <div className="flex items-center justify-between mt-1.5">
+          <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-bold">
+            {formatPot(market.pot)} Pot
+          </span>
+          <div className="flex items-center gap-1.5 text-[9px] text-muted-foreground">
+            <Users className="h-3 w-3" />
+            <span>{market.players.toLocaleString()}</span>
+            <span className="ml-1">{market.endsIn}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function Feed() {
   const navigate = useNavigate();
   const [filters, setFilters] = useState<FilterState>({
@@ -285,17 +348,6 @@ export default function Feed() {
     status: "all",
     timeframe: "all",
   });
-  const [featuredIndex, setFeaturedIndex] = useState(0);
-
-  // Auto-cycle featured market
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setFeaturedIndex(prev => (prev + 1) % featuredMarkets.length);
-    }, 6000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const currentFeatured = featuredMarkets[featuredIndex];
 
   const filteredMarkets = useMemo(() => {
     let result = [...mockMarkets];
@@ -339,79 +391,77 @@ export default function Feed() {
     return result;
   }, [filters]);
 
+  const mainFeatured = featuredMarkets[0];
+  const sideFeatured = featuredMarkets.slice(1, 3);
+
   return (
     <div className="w-full max-w-[1600px] mx-auto px-4 md:px-6 lg:px-8">
-      <div className="space-y-4">
-        {/* Featured Market Hero Banner */}
-        <div 
-          className="relative rounded-2xl overflow-hidden cursor-pointer group"
-          onClick={() => navigate(`/market/${currentFeatured.id}`)}
-        >
-          <div className="aspect-[21/9] sm:aspect-[3/1] relative">
-            <img 
-              src={currentFeatured.image} 
-              alt={currentFeatured.title}
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-            />
-            {/* Gradient overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-            
-            {/* Content overlay */}
-            <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6">
-              <div className="flex items-center gap-2 mb-2">
-                {currentFeatured.status === "closing" && (
-                  <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-500/20 border border-amber-500/30 text-amber-400 text-xs font-semibold">
-                    <Timer className="h-3 w-3" />
-                    Closing Soon
-                  </span>
-                )}
-                <span className="px-2.5 py-0.5 rounded-full bg-primary/20 border border-primary/30 text-primary text-xs font-bold">
-                  {formatPot(currentFeatured.pot)} Pot
-                </span>
-              </div>
-              <h2 className="text-white text-lg sm:text-xl font-bold leading-snug line-clamp-2 max-w-2xl">
-                {currentFeatured.title}
-              </h2>
-              <div className="flex items-center gap-4 mt-2 text-white/70 text-xs">
-                <span>{currentFeatured.players.toLocaleString()} players</span>
-                <span>Ends {currentFeatured.endsIn}</span>
-              </div>
-            </div>
+      <div className="space-y-3">
+        {/* 1. Filters — sticky, right below header */}
+        <FeedFilters filters={filters} onFiltersChange={setFilters} />
 
-            {/* Navigation dots */}
-            <div className="absolute bottom-4 right-4 sm:bottom-6 sm:right-6 flex items-center gap-2">
-              <button 
-                onClick={(e) => { e.stopPropagation(); setFeaturedIndex(prev => (prev - 1 + featuredMarkets.length) % featuredMarkets.length); }}
-                className="h-7 w-7 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white/20 transition-colors"
-              >
-                <ChevronLeft className="h-4 w-4 text-white" />
-              </button>
-              <div className="flex gap-1.5">
-                {featuredMarkets.map((_, i) => (
-                  <button
-                    key={i}
-                    onClick={(e) => { e.stopPropagation(); setFeaturedIndex(i); }}
-                    className={`h-1.5 rounded-full transition-all ${i === featuredIndex ? 'w-6 bg-white' : 'w-1.5 bg-white/40'}`}
-                  />
-                ))}
+        {/* 2. Split Hero Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-3 max-h-none lg:max-h-[340px]">
+          {/* Left — Large featured card */}
+          <div
+            className="lg:col-span-3 relative rounded-2xl overflow-hidden cursor-pointer group"
+            onClick={() => navigate(`/market/${mainFeatured.id}`)}
+          >
+            <div className="relative h-[220px] sm:h-[260px] lg:h-[340px]">
+              <img
+                src={mainFeatured.image}
+                alt={mainFeatured.title}
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+
+              <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-5">
+                <div className="flex items-center gap-2 mb-2">
+                  {mainFeatured.status === "closing" && (
+                    <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-500/20 border border-amber-500/30 text-amber-400 text-xs font-semibold">
+                      <Timer className="h-3 w-3" />
+                      Closing Soon
+                    </span>
+                  )}
+                  <span className="px-2.5 py-0.5 rounded-full bg-primary/20 border border-primary/30 text-primary text-xs font-bold">
+                    {formatPot(mainFeatured.pot)} Pot
+                  </span>
+                </div>
+                <h2 className="text-white text-lg sm:text-xl font-bold leading-snug line-clamp-2 max-w-2xl">
+                  {mainFeatured.title}
+                </h2>
+                <div className="flex items-center justify-between mt-2">
+                  <div className="flex items-center gap-4 text-white/70 text-xs">
+                    <span className="flex items-center gap-1"><Users className="h-3 w-3" />{mainFeatured.players.toLocaleString()} players</span>
+                    <span>Ends {mainFeatured.endsIn}</span>
+                  </div>
+                  <span className="hidden sm:flex items-center gap-1 text-white/60 text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+                    Enter Now <ArrowRight className="h-3 w-3" />
+                  </span>
+                </div>
               </div>
-              <button 
-                onClick={(e) => { e.stopPropagation(); setFeaturedIndex(prev => (prev + 1) % featuredMarkets.length); }}
-                className="h-7 w-7 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white/20 transition-colors"
-              >
-                <ChevronRight className="h-4 w-4 text-white" />
-              </button>
             </div>
+          </div>
+
+          {/* Right — Two stacked compact cards */}
+          <div className="lg:col-span-2 flex flex-row lg:flex-col gap-3">
+            {sideFeatured.map(market => (
+              <div key={market.id} className="flex-1">
+                <CompactFeaturedCard market={market} />
+              </div>
+            ))}
           </div>
         </div>
 
-        <FeedFilters filters={filters} onFiltersChange={setFilters} />
-        
+        {/* 3. Gradient Banner Divider */}
+        <GradientDivider />
+
+        {/* 4. Market Grid */}
         {filteredMarkets.length === 0 ? (
           <div className="text-center py-16">
             <p className="text-muted-foreground">No markets found matching your filters</p>
-            <Button 
-              variant="link" 
+            <Button
+              variant="link"
               onClick={() => setFilters({ ...filters, status: "all", category: "All" })}
             >
               Clear filters
@@ -420,8 +470,8 @@ export default function Feed() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-3">
             {filteredMarkets.map((market) => (
-              <MarketGridCard 
-                key={market.id} 
+              <MarketGridCard
+                key={market.id}
                 id={market.id}
                 creator={market.creator}
                 title={market.title}
