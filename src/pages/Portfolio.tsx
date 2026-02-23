@@ -143,12 +143,15 @@ const Portfolio = () => {
         {/* Quick Stats Strip */}
         <div className="grid grid-cols-4 gap-1.5 sm:gap-2 mb-4 sm:mb-5">
           {[
-            { label: "Active", value: quickStats.activeEntries, icon: <Ticket className="h-3 w-3" /> },
-            { label: "Won", value: quickStats.marketsWon, icon: <Trophy className="h-3 w-3" /> },
-            { label: "Win Rate", value: `${quickStats.winRate}%`, icon: <Target className="h-3 w-3" /> },
-            { label: "Streak", value: `🔥 ${quickStats.streak}`, icon: null },
+            { label: "Active", value: quickStats.activeEntries, icon: <Ticket className="h-3 w-3" />, rank: null },
+            { label: "Won", value: quickStats.marketsWon, icon: <Trophy className="h-3 w-3" />, rank: 24 },
+            { label: "Win Rate", value: `${quickStats.winRate}%`, icon: <Target className="h-3 w-3" />, rank: 18 },
+            { label: "Streak", value: `🔥 ${quickStats.streak}`, icon: null, rank: null },
           ].map((stat) => (
-            <div key={stat.label} className="rounded-lg border border-border/30 bg-muted/30 py-2 px-1.5 sm:px-2 text-center">
+            <div key={stat.label} className="relative rounded-lg border border-border/30 bg-muted/30 py-2 px-1.5 sm:px-2 text-center">
+              {stat.rank && (
+                <span className="absolute top-1 right-1.5 text-[8px] text-muted-foreground/60 font-medium">#{stat.rank}</span>
+              )}
               <p className="text-xs sm:text-base font-bold leading-tight">{stat.value}</p>
               <div className="flex items-center justify-center gap-0.5 text-muted-foreground mt-0.5">
                 {stat.icon}
