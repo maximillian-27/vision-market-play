@@ -18,6 +18,16 @@ const suggestedUsers = [
 export function TrendingSidebar() {
   return (
     <div className="w-72 hidden xl:block sticky top-20 self-start space-y-4 max-h-[calc(100vh-6rem)] overflow-y-auto scrollbar-thin">
+      {/* Search */}
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <input
+          type="text"
+          placeholder="Search"
+          className="w-full h-10 pl-10 pr-4 rounded-full bg-muted/60 border-0 text-sm placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
+        />
+      </div>
+
       {/* Trending Markets */}
       <div className="rounded-2xl bg-muted/30 border border-border/40 overflow-hidden">
         <h3 className="font-bold text-base px-4 pt-3 pb-2">Trending Markets</h3>
@@ -41,6 +51,30 @@ export function TrendingSidebar() {
         </button>
       </div>
 
+      {/* Who to follow */}
+      <div className="rounded-2xl bg-muted/30 border border-border/40 overflow-hidden">
+        <h3 className="font-bold text-base px-4 pt-3 pb-2">Who to follow</h3>
+        <div className="divide-y divide-border/30">
+          {suggestedUsers.map((user) => (
+            <div key={user.username} className="flex items-center gap-3 px-4 py-3 hover:bg-muted/40 transition-colors cursor-pointer">
+              <Avatar className="h-10 w-10">
+                <AvatarImage src={user.avatar} alt={user.name} />
+                <AvatarFallback>{user.name.slice(0, 2)}</AvatarFallback>
+              </Avatar>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold truncate">{user.name}</p>
+                <p className="text-xs text-muted-foreground">{user.username}</p>
+              </div>
+              <Button size="sm" className="rounded-full h-8 px-4 text-xs font-bold">
+                Follow
+              </Button>
+            </div>
+          ))}
+        </div>
+        <button className="w-full text-left px-4 py-3 text-sm text-primary hover:bg-muted/40 transition-colors">
+          Show more
+        </button>
+      </div>
     </div>
   );
 }
