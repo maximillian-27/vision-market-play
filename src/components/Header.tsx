@@ -63,7 +63,7 @@ export function Header() {
 
   return (
     <>
-      <header className="border-b border-border bg-background/95 backdrop-blur-xl supports-[backdrop-filter]:bg-background/80 fixed top-0 z-50 w-full">
+      <header className="border-b border-border bg-background fixed top-0 z-50 w-full">
         <div className="flex h-14 items-center px-4 lg:px-6 gap-4 max-w-[1600px] mx-auto">
           {/* Logo */}
           <button 
