@@ -1,52 +1,24 @@
 
 
-# Mobile Hero Section Redesign
+# Fix: Move Categories Row Above Weekly Draw on Mobile
 
-## Current Problem
-On mobile, only the hero slideshow is visible. The **Weekly Draw**, **Sponsored market**, and **gradient banner** are all hidden inside the desktop-only `hidden sm:grid` block. Mobile users miss key features.
+## Problem
+The categories/filter row is overlapping the Weekly Draw strip due to the `sticky top-14` positioning and z-index. They visually collide instead of stacking cleanly.
 
-## Proposed Layout (top to bottom)
+## Solution
+Adjust the mobile layout in `src/pages/Feed.tsx` so the categories row sits flush below the header, with the weekly draw strip clearly below it. Two changes needed:
 
-```text
-+----------------------------------+
-| Weekly Draw (compact strip)      |
-+----------------------------------+
-| Hero Slideshow (biggest markets) |
-| [swipeable, 200px, dot indicators]|
-+----------------------------------+
-| Gradient Banner (Pollgy slogan)  |
-+----------------------------------+
-| Sponsored Market (first item)    |
-+----------------------------------+
-| Market 1                         |
-| Market 2                         |
-| Market 3 ...                     |
-+----------------------------------+
-```
+### 1. `src/components/FeedFilters.tsx`
+- Increase z-index from `z-10` to `z-20` on the sticky container so it always stays above scrolling content
+- Ensure the background fully covers any content scrolling behind it
 
-## Changes (single file: `src/pages/Feed.tsx`)
+### 2. `src/pages/Feed.tsx`
+- Add top margin/padding to the mobile hero block (`sm:hidden`) so the weekly draw strip doesn't sit underneath the sticky filter row
+- Alternatively, move `FeedFilters` rendering inside the mobile block structure and remove sticky on mobile, keeping it as a normal flow element that scrolls with content -- but this would lose the sticky filter behavior
 
-### 1. Mobile Weekly Draw strip (new, above hero)
-- A compact single-line strip showing: Trophy icon, pot amount, countdown timer, and entry count
-- Reuses the same data constants already in WeeklyDrawCard
-- Styled as a small bordered row (~36px tall) matching the sidebar strip style from MarketsSidebar
+The simplest fix: ensure the sticky filter bar has enough z-index and the content below it has proper spacing so nothing overlaps. Change `z-10` to `z-20` in FeedFilters, and add `mt-1` or `pt-1` to the mobile hero block to prevent visual collision.
 
-### 2. Hero slideshow -- keep as-is
-- Already working well at 220px with dot indicators and outcome buttons
-
-### 3. Gradient Banner -- already renders for mobile
-- The `GradientDivider` component already shows on mobile (no `hidden` class), but it currently sits after the desktop hero block. Move it into the mobile section flow, right after the hero.
-
-### 4. Sponsored market card before regular list
-- Insert the first `sponsoredMarkets[0]` as a distinguished card at the top of the mobile market list
-- Add a small "Sponsored" label, image, title, outcome buttons, and pot/players -- reusing the `CompactFeaturedCard` layout but rendered inline in the mobile flow
-- Visually separated with a subtle accent border (`border-primary/20`)
-
-### 5. Regular market list continues below
-- No changes to the existing flat list
-
-### Technical approach
-- All changes within the mobile-only `sm:hidden` blocks in `Feed.tsx`
-- No new components needed -- inline the compact weekly draw strip and sponsored card
-- Desktop layout remains completely untouched
+### Files to edit:
+- `src/components/FeedFilters.tsx` -- bump z-index to z-20
+- `src/pages/Feed.tsx` -- add small top spacing to the mobile hero section so the weekly draw clears the sticky filter bar
 
