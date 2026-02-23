@@ -1,121 +1,98 @@
 
 
-# Profile Pages -- Gambling Model Overhaul
+# Leaderboard Overhaul
 
-## Problems Found
+## Current Problems
 
-### Profile.tsx (Player + Creator hybrid page)
-1. **Trading jargon everywhere**: "Portfolio Value", "Cash Balance", "Available to trade", "Total P&L", "Accuracy", "Total Trades", "Positions" tab, prices shown as "68c" (cents)
-2. **Own-profile financial section** shows "Portfolio Value" and "Cash Balance" -- should be Balance and Total Winnings
-3. **Positions tab** shows entries with "+$124 / +15.2%" percentage gains -- in pari-mutuel there are no percentage gains, just "If you win: $X" payouts
-4. **Achievements** still reference "First Trade", "Sharp Shooter" with accuracy -- should use ticket/gambling language
-5. **Mock activity posts** say "great returns" and "prediction markets" -- minor but should reflect the model
+1. **Trading terminology**: "Traders", "trades", "accuracy" -- should be "Players", "markets entered", "win rate"
+2. **Creator stats show "volume"** -- should be "Pot Generated"
+3. **No time period selector** -- users can't see who's hot this week vs all-time
+4. **No "Your Rank" context** -- users have no idea where they stand
+5. **Only 5 entries per list** -- feels thin, no option to see more
+6. **Challenges section is disconnected** -- "points" reward system that leads nowhere and uses stale trading language ("Trade over $1000 in volume")
+7. **No "hot streak" or momentum indicators** -- in gambling, streaks matter and are exciting
+8. **Two sort options (Earnings/Accuracy) but no time filter** -- the most important filter for a leaderboard
 
-### CreatorProfile.tsx (Dedicated creator page)
-1. **Stats use "Volume"** -- should be "Pot Generated" (pari-mutuel term)
-2. **Market cards show `volume`** -- should say "Pot"
-3. **`yesPrice`/`noPrice`** labels imply trading prices -- these are odds percentages
-4. **Achievements** reference "Held positions through 5 major swings" (Diamond Hands) -- not relevant to pari-mutuel
-5. **"Avg Vol / Market"** -- should be "Avg Pot / Market"
+## New Structure
 
-### ProfileStats.tsx (Shared component)
-1. **Trader stats**: "Total P&L", "Accuracy", "Total Trades" -- should be "Total Winnings", "Win Rate", "Markets Entered"
-2. **Creator stats**: "Volume", "Avg Vol / Market" -- should be "Pot Generated", "Avg Pot / Market"
+### 1. Your Rank Card (top of page, always visible)
+A compact card showing the logged-in user's current standing:
+- Rank position with movement indicator (up/down arrow + how many spots moved)
+- Total winnings, win rate, markets entered
+- "You're in the top 8% of players" motivational line
 
----
+### 2. Players Tab (replaces "Traders")
 
-## Plan
+**Time period selector**: This Week / This Month / All Time (default: This Week -- keeps it dynamic and competitive)
 
-### 1. ProfileStats.tsx -- Rename labels to gambling model
+**Sort options**: Winnings / Win Rate / Streak (replaces "Earnings" / "Accuracy")
 
-**Trader stats (4 cards):**
-- "Total P&L" becomes **"Total Winnings"** (with TrendingUp icon)
-- "Accuracy" becomes **"Win Rate"** (with Target icon)  
-- "Total Trades" becomes **"Markets Entered"** (with Ticket icon)
-- "Rank" stays
+**Extended list**: 10 players instead of 5
 
-**Creator stats (4 cards):**
-- "Volume" becomes **"Pot Generated"** (with DollarSign icon)
-- "Rank" stays
-- "Markets Created" stays
-- "Avg Vol / Market" becomes **"Avg Pot / Market"**
+**Each player row shows**:
+- Rank badge (gold/silver/bronze for top 3)
+- Avatar + name
+- Primary stat based on sort (winnings amount, win rate %, or streak count)
+- Secondary stats: markets entered, win rate (when not primary)
+- Movement indicator: up/down/new arrow showing rank change from previous period
+- Hot streak badge: fire icon + "5W" if they have an active winning streak
 
-**Interface rename:**
-- `totalProfit` stays (used as winnings value)
-- `winRate` stays (was `accuracy` conceptually but field already exists)
-- `totalTrades` stays as field name but label changes
-- `totalVolume` stays as field name but label changes
-- `avgVolume` stays as field name but label changes
+### 3. Creators Tab
 
-### 2. Profile.tsx -- Full terminology migration
+**Time period selector**: same as Players
 
-**Own-profile financial card:**
-- "Portfolio Value" becomes **"Balance"** (total balance including active entries)
-- "Cash Balance" becomes **"Total Winnings"** with period context
-- "+$12,450 profit" becomes "+$12,450 total winnings"
-- "Available to trade" becomes "Available to play"
-- Remove percentage-based P&L from mock data
+**Sort options**: Pot Generated / Markets Created / Avg Pot
 
-**Trader stats passed to ProfileStats:**
-- `totalProfit` value stays "+$12,450" but label rendered as "Total Winnings"
-- `accuracy` renamed conceptually to win rate -- pass `winRate` instead of `accuracy`
-- `totalTrades` value 142 -- label becomes "Markets Entered"
+**Each creator row shows**:
+- Rank + avatar + name
+- Primary stat based on sort
+- Secondary: markets created, total players attracted
+- Movement indicator
 
-**Positions tab becomes "Entries" tab:**
-- Tab label: "Entries" (not "Positions")
-- Entry rows show: market title, outcome picked (YES/NO badge), tickets held, "If you win: $X"
-- Remove percentage gains -- replace with payout projection
-- "Yes at 68c" becomes "YES -- 25 tickets" with "If you win: $312"
+### 4. Highlights Section (replaces Challenges)
+Instead of a disconnected "challenges" system, show real-time exciting stats:
 
-**Achievements updated:**
-- "First Trade" becomes **"First Entry"** / "Placed your first ticket"
-- "Sharp Shooter" becomes **"Hot Streak"** / "5+ wins in a row"  
-- "Big Winner" stays / "$1,000+ in winnings"
+**Hot Streaks** -- Players currently on the longest winning streaks (fire icon, streak count, last win)
 
-**Activity posts:**
-- "great returns" becomes "great picks"
-- "prediction markets" becomes "prediction games"
+**Biggest Wins This Week** -- Individual winning payouts that were large (player name, market title, amount won)
 
-**Creator "About" tab:**
-- "Volume" becomes "Pot Generated"
-- "Success" label stays (success rate)
+**Rising Stars** -- Players who climbed the most ranks this period
 
-### 3. CreatorProfile.tsx -- Pot-based terminology
-
-**Creator data mock:**
-- `volume` field label in UI becomes "Pot Generated"
-- `avgVolume` label becomes "Avg Pot"
-
-**Market cards mock data:**
-- `volume: "$1.2M"` field renamed to `pot` in display (or just change the label in MarketGridCard -- but since MarketGridCard is shared, we update the mock field name and pass it through)
-- Keep `yesPrice`/`noPrice` as odds percentages (this is correct -- they represent probability)
-
-**Achievements updated:**
-- "Diamond Hands" / "Held positions through 5 major swings" becomes **"Loyal Creator"** / "Markets active for 6+ months"
-- Other achievements are fine (Top Creator, Market Maker, etc.)
-
----
+This is more engaging than static challenges because it's dynamic, real, and shows actual platform activity.
 
 ## Technical Details
 
-### File: `src/components/ProfileStats.tsx`
-- Change trader labels: "Total P&L" to "Total Winnings", "Accuracy" to "Win Rate", "Total Trades" to "Markets Entered"
-- Change creator labels: "Volume" to "Pot Generated", "Avg Vol / Market" to "Avg Pot / Market"
-- Import `Ticket` icon from lucide-react for "Markets Entered"
+### File: `src/pages/Community.tsx` (full rewrite)
 
-### File: `src/pages/Profile.tsx`
-- **Financial card**: Rename "Portfolio Value" to "Balance", "Cash Balance" to "Total Winnings", update subtexts
-- **Stats**: Pass `winRate` instead of `accuracy` (field already exists in ProfileStats interface)
-- **Tabs**: Rename "Positions" to "Entries", update tab content to show ticket count + payout instead of price/percentage
-- **Entry rows**: Replace "Yes at 68c" format with "YES -- 25 tickets" and replace "+$124 / +15.2%" with "If you win: $312"
-- **Achievements**: Update text to gambling model
-- **About tab**: "Volume" to "Pot Generated"
-- **Activity posts**: Minor wording tweaks
+**Removed**:
+- `topEarners` / `mostAccurate` arrays with trading terminology
+- `topCreators` with "volume" field
+- `challenges` array entirely
+- `communityFilter` state
 
-### File: `src/pages/CreatorProfile.tsx`
-- Update mock data labels: `volume` displayed as "Pot" in market cards
-- Update achievements: replace trading-specific ones with creator-relevant ones
-- Stats passed to ProfileStats already use correct field names, just labels change via ProfileStats update
+**New state**:
+- `timePeriod`: "week" | "month" | "all" (default "week")
+- `playerSort`: "winnings" | "winRate" | "streak" (default "winnings")
+- `creatorSort`: "pot" | "markets" | "avgPot" (default "pot")
 
-### No new files or dependencies needed.
+**New mock data**:
+- `players` array (10 entries) with fields: name, avatar, rank, winnings, winRate, marketsEntered, streak, rankChange (+2, -1, 0, "new"), period-aware
+- `creators` array (10 entries) with: name, avatar, rank, potGenerated, marketsCreated, totalPlayers, avgPot, rankChange
+- `hotStreaks` array (3 entries): player name, streak count, last market won
+- `biggestWins` array (3 entries): player name, market title, amount won
+- `risingStars` array (3 entries): player name, rank change (e.g., "+47 spots"), previous rank
+
+**New imports**:
+- `Flame, ArrowUp, ArrowDown, Star, Clock, Medal` from lucide-react
+- `Progress` from ui/progress (for streak visualization)
+
+**Key UI patterns**:
+- Time period as pill buttons (same pattern as earnings period selector on Creator Dashboard)
+- Sort options as Badge toggles (same existing pattern)
+- Rank change shown as small green/red arrow + number next to rank badge
+- Streak badge: small fire icon + count inline with player stats
+- "Your Rank" card uses a subtle primary border highlight
+- Highlights section uses compact horizontal cards instead of the tall challenge cards
+
+**Layout**: Keeps existing 3-column layout (ActivitySidebar | Content | MarketsSidebar)
 
