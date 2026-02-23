@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect } from "react";
 import { FeedFilters, FilterState } from "@/components/FeedFilters";
 import { MarketGridCard } from "@/components/MarketGridCard";
 import { Button } from "@/components/ui/button";
-import { Timer, Users, ArrowRight } from "lucide-react";
+import { Timer, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 import bitcoinImage from "@/assets/bitcoin-market.jpg";
@@ -302,38 +302,55 @@ function GradientDivider() {
 /* ── Compact Featured Card (right side) ── */
 function CompactFeaturedCard({ market }: { market: Market }) {
   const navigate = useNavigate();
+  const isBinary = !market.outcomes;
+  const displayOutcomes = market.outcomes || [
+    { label: "Yes", price: market.yesPrice || 0, color: "success" },
+    { label: "No", price: market.noPrice || 0, color: "destructive" },
+  ];
 
   return (
     <div
       onClick={() => navigate(`/market/${market.id}`)}
-      className="flex gap-3 p-3 rounded-xl border border-border/60 bg-card hover:bg-accent/30 cursor-pointer transition-colors h-full"
+      className="flex flex-col p-3 rounded-xl border border-border/60 bg-card hover:bg-accent/30 cursor-pointer transition-colors h-full group"
     >
-      <img
-        src={market.image}
-        alt={market.title}
-        className="w-20 h-full min-h-[72px] rounded-lg object-cover shrink-0"
-      />
-      <div className="flex flex-col justify-between flex-1 min-w-0 py-0.5">
-        <div>
-          <div className="flex items-center gap-1.5 mb-1">
-            <img src={market.creator.avatar} alt="" className="w-4 h-4 rounded-full" />
-            <span className="text-[10px] text-muted-foreground truncate">{market.creator.name}</span>
-          </div>
-          <h4 className="text-xs font-semibold leading-tight line-clamp-2 text-foreground">
+      <div className="flex gap-3 mb-2">
+        <img
+          src={market.image}
+          alt={market.title}
+          className="w-14 h-14 rounded-lg object-cover shrink-0"
+        />
+        <div className="flex-1 min-w-0">
+          <h4 className="text-xs font-semibold leading-tight line-clamp-2 text-foreground group-hover:text-primary transition-colors">
             {market.title}
           </h4>
-        </div>
-        <div className="flex items-center justify-between mt-1.5">
-          <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-bold">
-            {formatPot(market.pot)} Pot
-          </span>
-          <div className="flex items-center gap-1.5 text-[9px] text-muted-foreground">
-            <Users className="h-3 w-3" />
-            <span>{market.players.toLocaleString()}</span>
-            <span className="ml-1">{market.endsIn}</span>
+          <div className="flex items-center gap-2 mt-1">
+            <span className="text-xs font-extrabold text-primary">{formatPot(market.pot)}</span>
+            <span className="text-[9px] text-muted-foreground flex items-center gap-0.5">
+              <Users className="h-2.5 w-2.5" /> {market.players.toLocaleString()}
+            </span>
           </div>
         </div>
       </div>
+      {/* Inline outcomes */}
+      {isBinary ? (
+        <div className="flex gap-1.5">
+          <button className="flex-1 rounded-md py-1 text-center bg-yes/15 hover:bg-yes text-yes hover:text-yes-foreground border border-yes/30 hover:border-yes transition-all text-[11px] font-bold active:scale-[0.98]" onClick={(e) => e.stopPropagation()}>
+            Yes {market.yesPrice}%
+          </button>
+          <button className="flex-1 rounded-md py-1 text-center bg-no/15 hover:bg-no text-no hover:text-no-foreground border border-no/30 hover:border-no transition-all text-[11px] font-bold active:scale-[0.98]" onClick={(e) => e.stopPropagation()}>
+            No {market.noPrice}%
+          </button>
+        </div>
+      ) : (
+        <div className="flex gap-1.5 flex-wrap">
+          {displayOutcomes.slice(0, 3).map((o, i) => (
+            <button key={i} className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-secondary/60 hover:bg-secondary border border-border text-[10px] font-medium transition-all" onClick={(e) => e.stopPropagation()}>
+              {o.label} <span className="font-bold text-primary">{o.price}%</span>
+            </button>
+          ))}
+          {displayOutcomes.length > 3 && <span className="text-[9px] text-muted-foreground self-center">+{displayOutcomes.length - 3}</span>}
+        </div>
+      )}
     </div>
   );
 }
@@ -470,7 +487,7 @@ export default function Feed() {
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-              <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-5">
+          <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-5">
                 <div className="flex items-center gap-2 mb-2">
                   {mainFeatured.status === "closing" && (
                     <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-500/20 border border-amber-500/30 text-amber-400 text-xs font-semibold">
@@ -485,14 +502,37 @@ export default function Feed() {
                 <h2 className="text-white text-lg sm:text-xl font-bold leading-snug line-clamp-2 max-w-2xl">
                   {mainFeatured.title}
                 </h2>
-                <div className="flex items-center justify-between mt-2">
+                <div className="flex items-center justify-between mt-3">
                   <div className="flex items-center gap-4 text-white/70 text-xs">
                     <span className="flex items-center gap-1"><Users className="h-3 w-3" />{mainFeatured.players.toLocaleString()} players</span>
                     <span>Ends {mainFeatured.endsIn}</span>
                   </div>
-                  <span className="hidden sm:flex items-center gap-1 text-white/60 text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity">
-                    Enter Now <ArrowRight className="h-3 w-3" />
-                  </span>
+                  {/* Hero inline outcomes */}
+                  {(() => {
+                    const heroIsBinary = !mainFeatured.outcomes;
+                    const heroOutcomes = mainFeatured.outcomes || [
+                      { label: "Yes", price: mainFeatured.yesPrice || 0 },
+                      { label: "No", price: mainFeatured.noPrice || 0 },
+                    ];
+                    return heroIsBinary ? (
+                      <div className="flex gap-2">
+                        <button className="px-5 py-1.5 rounded-lg bg-yes/90 hover:bg-yes text-yes-foreground text-sm font-bold transition-all active:scale-[0.97] shadow-lg" onClick={(e) => { e.stopPropagation(); navigate(`/market/${mainFeatured.id}`); }}>
+                          Yes {mainFeatured.yesPrice}%
+                        </button>
+                        <button className="px-5 py-1.5 rounded-lg bg-no/90 hover:bg-no text-no-foreground text-sm font-bold transition-all active:scale-[0.97] shadow-lg" onClick={(e) => { e.stopPropagation(); navigate(`/market/${mainFeatured.id}`); }}>
+                          No {mainFeatured.noPrice}%
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="flex gap-1.5">
+                        {heroOutcomes.slice(0, 3).map((o, i) => (
+                          <button key={i} className="px-3 py-1 rounded-lg bg-white/15 hover:bg-white/25 backdrop-blur-sm text-white text-xs font-semibold transition-all border border-white/20" onClick={(e) => { e.stopPropagation(); navigate(`/market/${mainFeatured.id}`); }}>
+                            {o.label} <span className="font-bold">{o.price}%</span>
+                          </button>
+                        ))}
+                      </div>
+                    );
+                  })()}
                 </div>
               </div>
             </div>
