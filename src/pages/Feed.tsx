@@ -289,23 +289,26 @@ function GradientDivider() {
       <div className="flex items-center gap-2 sm:gap-3">
         <Zap className="h-4 w-4 text-primary-foreground flex-shrink-0" />
         <div className="text-primary-foreground">
+          <p className="text-[10px] sm:text-xs font-bold uppercase tracking-wider opacity-90">Pollgy</p>
+          <p className="text-xs sm:text-sm font-medium leading-tight opacity-80">First creator led, community owned prediction market</p>
+        </div>
+      </div>
+      <div className="hidden md:flex items-center gap-6">
+        <div className="text-primary-foreground text-right">
           <p className="text-[10px] sm:text-xs font-medium opacity-80">Live Pots</p>
           <p className="text-sm sm:text-lg font-extrabold leading-tight">{formatPot(totalPot)}+</p>
         </div>
-      </div>
-      <div className="hidden sm:flex items-center gap-6">
-        <div className="text-primary-foreground text-center">
+        <div className="text-primary-foreground text-right">
           <p className="text-[10px] sm:text-xs font-medium opacity-80">Active Players</p>
           <p className="text-sm sm:text-lg font-extrabold leading-tight">{totalPlayers.toLocaleString()}</p>
         </div>
-        <div className="text-primary-foreground text-center">
-          <p className="text-[10px] sm:text-xs font-medium opacity-80">Open Markets</p>
-          <p className="text-sm sm:text-lg font-extrabold leading-tight">{mockMarkets.filter(m => m.status === "open" || m.status === "closing").length}</p>
-        </div>
       </div>
-      <div className="flex items-center gap-1.5 text-primary-foreground/90 text-[10px] sm:text-xs font-semibold sm:hidden">
-        <Users className="h-3 w-3" />
-        {totalPlayers.toLocaleString()} playing
+      <div className="flex flex-col items-end gap-0.5 text-primary-foreground sm:hidden">
+        <span className="text-[10px] font-bold">{formatPot(totalPot)}+ Live</span>
+        <div className="flex items-center gap-1 opacity-80 text-[9px]">
+          <Users className="h-2.5 w-2.5" />
+          {totalPlayers.toLocaleString()}
+        </div>
       </div>
     </div>
   );
