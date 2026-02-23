@@ -126,22 +126,22 @@ export function MarketGridCard({
     if (isAwaitingResolution) {
       if (isBinary) {
         return (
-          <div className="flex gap-1.5">
-            <div className="flex-1 rounded-md py-1.5 text-center bg-yes/10 text-yes/60 border border-yes/20">
-              <span className="text-[11px] font-bold">Yes {displayOutcomes[0].price}%</span>
+          <div className="flex gap-1">
+            <div className="flex-1 rounded py-1 text-center bg-yes/10 text-yes/60 border border-yes/20">
+              <span className="text-[10px] font-bold">Yes {displayOutcomes[0].price}%</span>
             </div>
-            <div className="flex-1 rounded-md py-1.5 text-center bg-no/10 text-no/60 border border-no/20">
-              <span className="text-[11px] font-bold">No {displayOutcomes[1].price}%</span>
+            <div className="flex-1 rounded py-1 text-center bg-no/10 text-no/60 border border-no/20">
+              <span className="text-[10px] font-bold">No {displayOutcomes[1].price}%</span>
             </div>
           </div>
         );
       }
       return (
-        <div className="space-y-1">
+        <div className="space-y-0.5">
           {displayOutcomes.slice(0, MAX_VISIBLE_OUTCOMES).map((o, i) => (
-            <div key={i} className="flex items-center justify-between px-2 py-1 rounded-md bg-secondary/40 text-muted-foreground">
-              <span className="text-[11px] truncate">{o.label}</span>
-              <span className="text-[11px] font-semibold">{o.price}%</span>
+            <div key={i} className="flex items-center justify-between px-2 py-0.5 rounded bg-secondary/40 text-muted-foreground">
+              <span className="text-[10px] truncate">{o.label}</span>
+              <span className="text-[10px] font-semibold">{o.price}%</span>
             </div>
           ))}
         </div>
@@ -150,18 +150,18 @@ export function MarketGridCard({
 
     if (isBinary) {
       return (
-        <div className="flex gap-1.5">
+        <div className="flex gap-1">
           <button 
-            className="flex-1 rounded-md py-1.5 text-center bg-yes/15 dark:bg-yes/25 hover:bg-yes text-yes hover:text-yes-foreground border border-yes/30 dark:border-yes/40 hover:border-yes transition-all active:scale-[0.98]"
+            className="flex-1 rounded py-1 text-center bg-yes/15 dark:bg-yes/25 hover:bg-yes text-yes hover:text-yes-foreground border border-yes/30 dark:border-yes/40 hover:border-yes transition-all active:scale-[0.98]"
             onClick={handleOutcomeClick}
           >
-            <span className="text-[11px] font-bold">Yes {displayOutcomes[0].price}%</span>
+            <span className="text-[10px] font-bold">Yes {displayOutcomes[0].price}%</span>
           </button>
           <button 
-            className="flex-1 rounded-md py-1.5 text-center bg-no/15 dark:bg-no/25 hover:bg-no text-no hover:text-no-foreground border border-no/30 dark:border-no/40 hover:border-no transition-all active:scale-[0.98]"
+            className="flex-1 rounded py-1 text-center bg-no/15 dark:bg-no/25 hover:bg-no text-no hover:text-no-foreground border border-no/30 dark:border-no/40 hover:border-no transition-all active:scale-[0.98]"
             onClick={handleOutcomeClick}
           >
-            <span className="text-[11px] font-bold">No {displayOutcomes[1].price}%</span>
+            <span className="text-[10px] font-bold">No {displayOutcomes[1].price}%</span>
           </button>
         </div>
       );
@@ -172,29 +172,29 @@ export function MarketGridCard({
     const remaining = displayOutcomes.length - MAX_VISIBLE_OUTCOMES;
 
     return (
-      <div className="space-y-1">
+      <div className="space-y-0.5">
         {visible.map((outcome, index) => (
           <button
             key={index}
-            className="w-full flex items-center justify-between px-2.5 py-1.5 rounded-md bg-secondary/50 hover:bg-primary/10 border border-border/40 hover:border-primary/30 transition-all active:scale-[0.98]"
+            className="w-full flex items-center justify-between px-2 py-1 rounded bg-secondary/50 hover:bg-primary/10 border border-border/40 hover:border-primary/30 transition-all active:scale-[0.98]"
             onClick={handleOutcomeClick}
           >
-            <div className="flex items-center gap-1.5 min-w-0">
+            <div className="flex items-center gap-1 min-w-0">
               {outcome.logo ? (
-                <img src={outcome.logo} alt={outcome.label} className="h-3.5 w-3.5 object-contain rounded-sm flex-shrink-0" />
+                <img src={outcome.logo} alt={outcome.label} className="h-3 w-3 object-contain rounded-sm flex-shrink-0" />
               ) : (
-                <span className="h-3.5 w-3.5 rounded-full bg-primary/10 flex items-center justify-center text-[8px] font-bold text-primary flex-shrink-0">
+                <span className="h-3 w-3 rounded-full bg-primary/10 flex items-center justify-center text-[7px] font-bold text-primary flex-shrink-0">
                   {outcome.label.charAt(0)}
                 </span>
               )}
-              <span className="text-[11px] font-medium truncate">{outcome.label}</span>
+              <span className="text-[10px] font-medium truncate">{outcome.label}</span>
             </div>
-            <span className="text-[11px] font-bold text-primary flex-shrink-0">{outcome.price}%</span>
+            <span className="text-[10px] font-bold text-primary flex-shrink-0">{outcome.price}%</span>
           </button>
         ))}
         {remaining > 0 && (
           <button
-            className="w-full text-center text-[10px] font-medium text-muted-foreground hover:text-primary py-1 transition-colors"
+            className="w-full text-center text-[9px] font-medium text-muted-foreground hover:text-primary py-0.5 transition-colors"
             onClick={handleOutcomeClick}
           >
             +{remaining} more
@@ -259,16 +259,16 @@ export function MarketGridCard({
         onClick={handleCardClick}
       >
         {/* ── Desktop/Tablet ── */}
-        <div className="sm:flex hidden flex-col p-3 h-full gap-2">
+        <div className="sm:flex hidden flex-col p-2.5 h-full gap-1.5">
           {/* Title */}
-          <h3 className="text-[13px] font-semibold leading-snug line-clamp-2 group-hover:text-primary transition-colors">
+          <h3 className="text-xs font-semibold leading-snug line-clamp-2 group-hover:text-primary transition-colors">
             {title}
           </h3>
 
-          {/* Pot highlight */}
+          {/* Pot + Players */}
           <div className="flex items-center justify-between">
-            <span className="text-primary text-sm font-extrabold">{potDisplay} <span className="text-[10px] font-medium text-muted-foreground">pot</span></span>
-            <span className="text-[10px] text-muted-foreground flex items-center gap-1">
+            <span className="text-primary text-xs font-extrabold">{potDisplay} <span className="text-[9px] font-medium text-muted-foreground">pot</span></span>
+            <span className="text-[9px] text-muted-foreground flex items-center gap-0.5">
               <Users className="h-2.5 w-2.5" />{players.toLocaleString()}
             </span>
           </div>
@@ -278,12 +278,12 @@ export function MarketGridCard({
             <OutcomeButtons />
           </div>
 
-          {/* Footer: win up to + timer + actions */}
-          <div className="flex items-center justify-between pt-1.5 border-t border-border/50 text-[10px]">
-            <div className="flex items-center gap-2.5">
+          {/* Footer */}
+          <div className="flex items-center justify-between text-[9px]">
+            <div className="flex items-center gap-2">
               {winUpTo && (
                 <span className="text-primary font-semibold flex items-center gap-0.5">
-                  <Ticket className="h-2.5 w-2.5" />Win up to {winUpTo}
+                  <Ticket className="h-2.5 w-2.5" />{winUpTo}/ticket
                 </span>
               )}
               {statusLine()}
@@ -291,20 +291,20 @@ export function MarketGridCard({
             {!isClosedOrResolved && (
               <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
                 <button 
-                  className="p-1 rounded hover:bg-secondary transition-colors"
+                  className="p-0.5 rounded hover:bg-secondary transition-colors"
                   onClick={(e) => {
                     e.stopPropagation();
                     navigator.clipboard.writeText(`${window.location.origin}/market/${id}`);
                     toast({ title: "Link copied!" });
                   }}
                 >
-                  <Share2 className="h-3 w-3 text-muted-foreground" />
+                  <Share2 className="h-2.5 w-2.5 text-muted-foreground" />
                 </button>
                 <button 
-                  className="p-1 rounded hover:bg-secondary transition-colors"
+                  className="p-0.5 rounded hover:bg-secondary transition-colors"
                   onClick={(e) => { e.stopPropagation(); toast({ title: "Saved to watchlist" }); }}
                 >
-                  <Bookmark className="h-3 w-3 text-muted-foreground" />
+                  <Bookmark className="h-2.5 w-2.5 text-muted-foreground" />
                 </button>
               </div>
             )}
