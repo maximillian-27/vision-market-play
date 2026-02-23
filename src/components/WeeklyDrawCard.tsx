@@ -34,81 +34,74 @@ const COUNTDOWN = "3d 14h";
 
 export function WeeklyDrawCard() {
   return (
-    <div className="flex flex-col p-3 rounded-xl border border-primary/20 bg-card h-full relative overflow-hidden">
-      {/* Glow */}
-      <div className="absolute -top-10 -right-10 w-28 h-28 rounded-full bg-primary/5 blur-2xl pointer-events-none" />
-
-      {/* Row 1: Title + Timer */}
-      <div className="flex items-center justify-between mb-2">
+    <div className="flex flex-col p-3.5 rounded-xl border border-border/50 bg-card h-full">
+      {/* Header: Title + Timer */}
+      <div className="flex items-center justify-between mb-1.5">
         <div className="flex items-center gap-1.5">
           <Trophy className="h-3.5 w-3.5 text-primary" />
-          <span className="text-[10px] uppercase tracking-wider font-bold text-primary">Weekly Draw</span>
+          <span className="text-[10px] uppercase tracking-widest font-semibold text-muted-foreground">Weekly Draw</span>
         </div>
-        <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-muted/60 text-[9px] text-muted-foreground font-medium">
-          <Timer className="h-2.5 w-2.5" />
-          <span>{COUNTDOWN}</span>
+        <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
+          <Timer className="h-3 w-3" />
+          <span className="font-medium">{COUNTDOWN}</span>
         </div>
       </div>
 
-      {/* Row 2: Pot */}
-      <div className="text-lg font-extrabold text-primary leading-none">
+      {/* Pot + description */}
+      <div className="text-lg font-extrabold text-foreground leading-none tracking-tight">
         ${WEEKLY_POT.toLocaleString()}
       </div>
-      <div className="text-[9px] text-muted-foreground mt-0.5 mb-2">
-        Redistributed every week to random participants
-      </div>
+      <p className="text-[9px] text-muted-foreground mt-0.5 mb-2.5 leading-relaxed">
+        Prize pool redistributed weekly to random participants
+      </p>
 
-      {/* Row 3: Distribution bar + legend */}
-      <div className="space-y-0.5 mb-2">
-        <div className="flex rounded-full overflow-hidden h-[5px]">
+      {/* Distribution bar */}
+      <div className="mb-2.5">
+        <div className="flex rounded-full overflow-hidden h-1">
           {distribution.map((d, i) => (
             <div
               key={d.place}
-              className="h-full"
-              style={{
-                width: `${d.pct}%`,
-                backgroundColor: `hsl(var(--primary) / ${1 - i * 0.2})`,
-              }}
+              className="h-full bg-primary"
+              style={{ width: `${d.pct}%`, opacity: 1 - i * 0.2 }}
             />
           ))}
         </div>
-        <div className="flex items-center justify-between text-[7px] text-muted-foreground">
+        <div className="flex items-center justify-between mt-1 text-[8px] text-muted-foreground">
           {distribution.map((d) => (
             <span key={d.place}>
-              <span className="font-semibold text-foreground">{d.place}</span> {d.pct}%
+              <span className="font-medium text-foreground">{d.place}</span> {d.pct}%
             </span>
           ))}
         </div>
       </div>
 
-      {/* Row 4: Entry info strip */}
-      <div className="flex items-center gap-1.5 text-[9px] mb-2">
+      {/* Entry info */}
+      <div className="flex items-center justify-between text-[9px] mb-2.5">
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <span className="flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-primary/10 text-primary font-bold cursor-help">
-                <Ticket className="h-2.5 w-2.5" />
-                {ENTRY_COST} tickets = 1 entry
+              <span className="flex items-center gap-1 text-muted-foreground cursor-help">
+                <Ticket className="h-3 w-3 text-primary" />
+                <span><span className="font-semibold text-foreground">{ENTRY_COST}</span> tickets = 1 entry</span>
               </span>
             </TooltipTrigger>
             <TooltipContent side="bottom" className="text-xs max-w-[180px]">
-              Purchase {ENTRY_COST} tickets in a week to earn one draw entry. More tickets = more entries.
+              Buy {ENTRY_COST} tickets in a week to earn one draw entry. More tickets = more entries.
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
-        <span className="text-muted-foreground">·</span>
-        <span className="font-semibold text-foreground">{MY_ENTRIES} entries</span>
-        <span className="text-muted-foreground">/ {ELIGIBLE_ENTRIES.toLocaleString()} total</span>
+        <span className="text-muted-foreground">
+          <span className="font-semibold text-foreground">{MY_ENTRIES}</span> / {ELIGIBLE_ENTRIES.toLocaleString()} entries
+        </span>
       </div>
 
-      {/* Row 5: Actions */}
-      <div className="flex items-center gap-2 mt-auto pt-1 border-t border-border/40">
-        {/* Previous winners */}
+      {/* Footer links */}
+      <div className="flex items-center gap-3 pt-2 border-t border-border/30 mt-auto">
         <Dialog>
           <DialogTrigger asChild>
-            <button className="flex items-center gap-0.5 text-[8px] text-muted-foreground hover:text-foreground transition-colors">
-              <History className="h-2.5 w-2.5" />
-              <span>Previous</span>
+            <button className="flex items-center gap-1 text-[9px] text-muted-foreground hover:text-foreground transition-colors">
+              <History className="h-3 w-3" />
+              Previous winners
             </button>
           </DialogTrigger>
           <DialogContent className="max-w-xs">
@@ -135,14 +128,11 @@ export function WeeklyDrawCard() {
           </DialogContent>
         </Dialog>
 
-        <span className="text-border">·</span>
-
-        {/* How it works */}
         <Dialog>
           <DialogTrigger asChild>
-            <button className="flex items-center gap-0.5 text-[8px] text-muted-foreground hover:text-foreground transition-colors">
-              <Info className="h-2.5 w-2.5" />
-              <span>How it works</span>
+            <button className="flex items-center gap-1 text-[9px] text-muted-foreground hover:text-foreground transition-colors">
+              <Info className="h-3 w-3" />
+              How it works
             </button>
           </DialogTrigger>
           <DialogContent className="max-w-sm">
@@ -179,13 +169,6 @@ export function WeeklyDrawCard() {
             </div>
           </DialogContent>
         </Dialog>
-
-        {/* All entries link */}
-        <button className="ml-auto flex items-center gap-0.5 text-[8px] text-primary font-semibold hover:underline">
-          <Users className="h-2.5 w-2.5" />
-          {ELIGIBLE_ENTRIES.toLocaleString()} entries
-          <ChevronRight className="h-2.5 w-2.5" />
-        </button>
       </div>
     </div>
   );
