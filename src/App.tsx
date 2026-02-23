@@ -8,7 +8,6 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { MobileNav } from "@/components/MobileNav";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { TicketCounterFloat } from "@/components/TicketCounterFloat";
 import Feed from "./pages/Feed";
 import CommunityFeed from "./pages/CommunityFeed";
 import News from "./pages/News";
@@ -50,7 +49,6 @@ function AppContent() {
         </Routes>
       </main>
       {isMobile ? <MobileNav /> : <Footer />}
-      <TicketCounterFloat />
     </div>
   );
 }

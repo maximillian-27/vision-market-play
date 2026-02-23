@@ -138,6 +138,32 @@ export function Header() {
                 {/* Notifications */}
                 <NotificationsDropdown />
 
+                {/* Ticket Counter */}
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <button className="flex items-center gap-1 px-2 py-1 rounded-full bg-secondary hover:bg-secondary/80 transition-colors text-xs">
+                      <Ticket className="h-3 w-3 text-primary" />
+                      <span className="font-semibold text-foreground">14/20</span>
+                      <span className="text-[9px] text-muted-foreground">(3)</span>
+                    </button>
+                  </PopoverTrigger>
+                  <PopoverContent align="end" className="w-52 p-3 space-y-2.5">
+                    <div className="text-xs font-semibold">Weekly Draw Tickets</div>
+                    <div className="space-y-1.5">
+                      <div className="flex justify-between text-xs">
+                        <span className="text-muted-foreground">Tickets this week</span>
+                        <span className="font-semibold">14 / 20</span>
+                      </div>
+                      <Progress value={70} className="h-1.5" />
+                      <p className="text-[10px] text-muted-foreground">Buy 6 more for another entry</p>
+                    </div>
+                    <div className="flex justify-between text-xs pt-1 border-t border-border">
+                      <span className="text-muted-foreground">Entries earned</span>
+                      <span className="font-bold text-primary">3</span>
+                    </div>
+                  </PopoverContent>
+                </Popover>
+
                 {/* Deposit Button */}
                 <Button 
                   size="sm" 
