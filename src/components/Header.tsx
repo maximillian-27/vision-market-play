@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Globe, LogOut, Settings, Search, Home, Newspaper, Users, MessageSquare, Briefcase, Sparkles, Shield, Plus, Moon, Sun, HelpCircle, FileText, Twitter, Instagram, Linkedin, Gift } from "lucide-react";
+import { Globe, LogOut, Settings, Search, Home, Newspaper, Users, MessageSquare, Briefcase, Sparkles, Shield, Plus, Moon, Sun, HelpCircle, FileText, Twitter, Instagram, Linkedin, Gift, Ticket } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import pollgyLogo from "@/assets/pollgy-logo-new.png";
 import { useNavigate } from "react-router-dom";
@@ -21,6 +21,8 @@ import { HowItWorksDialog } from "@/components/HowItWorksDialog";
 import { DepositDialog } from "@/components/DepositDialog";
 import { NotificationsDropdown } from "@/components/NotificationsDropdown";
 import { AffiliateDialog } from "@/components/AffiliateDialog";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Progress } from "@/components/ui/progress";
 
 export function Header() {
   const isMobile = useIsMobile();
@@ -36,6 +38,11 @@ export function Header() {
   const [portfolioValue] = useState(12450);
   const [cashBalance] = useState(5230);
   const [affiliateEarnings] = useState(1847.50);
+  const [ticketsThisWeek] = useState(14);
+  const [entries] = useState(3);
+  const ticketsPerEntry = 20;
+  const ticketsTowardNext = ticketsThisWeek % ticketsPerEntry;
+  const ticketsNeeded = ticketsPerEntry - ticketsTowardNext;
   
   const toggleTheme = () => {
     setTheme(theme === "dark" ? "light" : "dark");
@@ -134,6 +141,37 @@ export function Header() {
               <>
                 {/* Notifications */}
                 <NotificationsDropdown />
+
+                {/* Ticket Counter */}
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <button className="h-8 px-2 flex items-center gap-1.5 rounded-lg bg-secondary hover:bg-secondary/80 border border-border/50 transition-colors text-xs">
+                      <Ticket className="h-3.5 w-3.5 text-primary" />
+                      <span className="font-semibold text-foreground">{ticketsThisWeek}/{ticketsPerEntry}</span>
+                      {entries > 0 && (
+                        <span className="h-4 min-w-[16px] px-1 rounded-full bg-primary text-primary-foreground text-[10px] font-bold flex items-center justify-center">
+                          {entries}
+                        </span>
+                      )}
+                    </button>
+                  </PopoverTrigger>
+                  <PopoverContent align="end" className="w-56 p-3 space-y-2.5">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-muted-foreground">Tickets this week</span>
+                      <span className="font-semibold">{ticketsThisWeek}</span>
+                    </div>
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-muted-foreground">Entries earned</span>
+                      <span className="font-bold text-primary">{entries}</span>
+                    </div>
+                    <div className="space-y-1">
+                      <Progress value={(ticketsTowardNext / ticketsPerEntry) * 100} className="h-1.5" />
+                      <p className="text-[10px] text-muted-foreground">
+                        Buy {ticketsNeeded} more ticket{ticketsNeeded !== 1 ? "s" : ""} for another entry
+                      </p>
+                    </div>
+                  </PopoverContent>
+                </Popover>
                 
                 {/* Deposit Button */}
                 <Button 
