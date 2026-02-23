@@ -1,4 +1,4 @@
-import { Trophy, Timer, Users, Ticket, Info, ChevronRight, History } from "lucide-react";
+import { Trophy, Timer, Users, Ticket, Info, History, Gift, Calendar, Zap } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -10,6 +10,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
   DialogTrigger,
 } from "@/components/ui/dialog";
 
@@ -104,26 +105,39 @@ export function WeeklyDrawCard() {
               Previous winners
             </button>
           </DialogTrigger>
-          <DialogContent className="max-w-xs">
+          <DialogContent className="max-w-sm">
             <DialogHeader>
-              <DialogTitle className="text-sm flex items-center gap-1.5">
-                <Trophy className="h-4 w-4 text-primary" />
+              <DialogTitle className="flex items-center gap-2">
+                <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10">
+                  <Trophy className="h-4 w-4 text-primary" />
+                </div>
                 Last Week's Winners
               </DialogTitle>
+              <DialogDescription>
+                Total prize pool: ${WEEKLY_POT.toLocaleString()}
+              </DialogDescription>
             </DialogHeader>
-            <div className="space-y-2 mt-2">
-              {previousWinners.map((w) => (
-                <div key={w.place} className="flex items-center justify-between text-sm">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-bold text-primary w-6">{w.place}</span>
-                    <span className="font-medium">{w.name}</span>
+            <div className="space-y-1 mt-1">
+              {previousWinners.map((w, i) => (
+                <div
+                  key={w.place}
+                  className="flex items-center justify-between p-2.5 rounded-lg bg-muted/40"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <div className={`flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold ${
+                      i === 0 ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground"
+                    }`}>
+                      {w.place}
+                    </div>
+                    <span className="text-sm font-medium">{w.name}</span>
                   </div>
-                  <span className="font-bold text-primary">${w.amount.toLocaleString()}</span>
+                  <span className="text-sm font-bold text-primary">${w.amount.toLocaleString()}</span>
                 </div>
               ))}
-              <p className="text-[10px] text-muted-foreground pt-2 border-t border-border">
-                + 7 more winners shared ${(WEEKLY_POT * 0.1).toLocaleString()} equally
-              </p>
+            </div>
+            <div className="flex items-center gap-2 p-2.5 rounded-lg border border-dashed border-border text-xs text-muted-foreground">
+              <Users className="h-3.5 w-3.5 flex-shrink-0" />
+              <span>+ 7 more winners shared <span className="font-semibold text-foreground">${(WEEKLY_POT * 0.1).toLocaleString()}</span> equally</span>
             </div>
           </DialogContent>
         </Dialog>
@@ -137,36 +151,69 @@ export function WeeklyDrawCard() {
           </DialogTrigger>
           <DialogContent className="max-w-sm">
             <DialogHeader>
-              <DialogTitle className="text-sm flex items-center gap-1.5">
-                <Info className="h-4 w-4 text-primary" />
+              <DialogTitle className="flex items-center gap-2">
+                <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10">
+                  <Info className="h-4 w-4 text-primary" />
+                </div>
                 How the Weekly Draw Works
               </DialogTitle>
+              <DialogDescription>
+                A portion of every ticket purchase funds the weekly prize pool.
+              </DialogDescription>
             </DialogHeader>
-            <div className="space-y-3 mt-2 text-sm text-muted-foreground">
-              <div className="space-y-1.5">
-                <p className="font-medium text-foreground">Funding</p>
-                <p>2% of every ticket purchase goes into the weekly prize pool automatically.</p>
-              </div>
-              <div className="space-y-1.5">
-                <p className="font-medium text-foreground">Entry</p>
-                <p>Every {ENTRY_COST} tickets you buy earns 1 draw entry. Buy more to increase your chances.</p>
-              </div>
-              <div className="space-y-1.5">
-                <p className="font-medium text-foreground">Draw</p>
-                <p>Every Sunday, 10 random winners are selected from all entries and the pool is distributed:</p>
-                <div className="grid grid-cols-2 gap-1 mt-1">
-                  {distribution.map((d) => (
-                    <div key={d.place} className="flex items-center gap-1.5 text-xs">
-                      <div className="w-2 h-2 rounded-full bg-primary" />
-                      <span className="font-semibold text-foreground">{d.place}:</span> {d.pct}%
-                    </div>
-                  ))}
+            <div className="space-y-1 mt-1">
+              <div className="flex gap-3 p-3 rounded-lg bg-muted/40">
+                <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10 flex-shrink-0">
+                  <Gift className="h-4 w-4 text-primary" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-foreground">Funding</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">2% of every ticket purchase goes into the weekly prize pool automatically.</p>
                 </div>
               </div>
-              <p className="text-[10px] text-muted-foreground/70 pt-2 border-t border-border">
-                All draws are verifiable and transparent. Winners are announced every Monday.
-              </p>
+              <div className="flex gap-3 p-3 rounded-lg bg-muted/40">
+                <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10 flex-shrink-0">
+                  <Ticket className="h-4 w-4 text-primary" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-foreground">Entry</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">Every {ENTRY_COST} tickets you buy earns 1 draw entry. More tickets = more chances.</p>
+                </div>
+              </div>
+              <div className="flex gap-3 p-3 rounded-lg bg-muted/40">
+                <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10 flex-shrink-0">
+                  <Calendar className="h-4 w-4 text-primary" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-foreground">Draw</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">Every Sunday, 10 random winners are selected and the pool is distributed.</p>
+                </div>
+              </div>
             </div>
+            <div className="rounded-lg border border-border/50 p-3">
+              <p className="text-xs font-medium text-foreground mb-2">Prize Distribution</p>
+              <div className="flex rounded-full overflow-hidden h-1.5 mb-2">
+                {distribution.map((d, i) => (
+                  <div
+                    key={d.place}
+                    className="h-full bg-primary"
+                    style={{ width: `${d.pct}%`, opacity: 1 - i * 0.2 }}
+                  />
+                ))}
+              </div>
+              <div className="grid grid-cols-2 gap-1">
+                {distribution.map((d) => (
+                  <div key={d.place} className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                    <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+                    <span className="font-medium text-foreground">{d.place}</span> {d.pct}%
+                  </div>
+                ))}
+              </div>
+            </div>
+            <p className="text-[10px] text-muted-foreground/70 flex items-center gap-1.5">
+              <Zap className="h-3 w-3" />
+              All draws are verifiable and transparent. Winners announced every Monday.
+            </p>
           </DialogContent>
         </Dialog>
       </div>
