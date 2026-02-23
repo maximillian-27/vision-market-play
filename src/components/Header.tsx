@@ -21,6 +21,7 @@ import { HowItWorksDialog } from "@/components/HowItWorksDialog";
 import { DepositDialog } from "@/components/DepositDialog";
 import { NotificationsDropdown } from "@/components/NotificationsDropdown";
 import { AffiliateDialog } from "@/components/AffiliateDialog";
+import { TicketCounter } from "@/components/TicketCounter";
 
 export function Header() {
   const isMobile = useIsMobile();
@@ -134,6 +135,9 @@ export function Header() {
               <>
                 {/* Notifications */}
                 <NotificationsDropdown />
+
+                {/* Ticket Counter */}
+                <TicketCounter ticketsThisWeek={14} entries={3} />
                 
                 {/* Deposit Button */}
                 <Button 
