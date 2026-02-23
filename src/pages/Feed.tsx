@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect } from "react";
 import { FeedFilters, FilterState } from "@/components/FeedFilters";
 import { MarketGridCard } from "@/components/MarketGridCard";
 import { Button } from "@/components/ui/button";
-import { Timer, Users, ArrowRight } from "lucide-react";
+import { Timer, Users, ArrowRight, Trophy, Ticket, Zap } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 import bitcoinImage from "@/assets/bitcoin-market.jpg";
@@ -279,21 +279,33 @@ function formatPot(pot: number): string {
 
 /* ── Gradient Banner Divider ── */
 function GradientDivider() {
+  const totalPot = mockMarkets
+    .filter(m => m.status === "open" || m.status === "closing")
+    .reduce((sum, m) => sum + m.pot, 0);
+  const totalPlayers = mockMarkets.reduce((sum, m) => sum + m.players, 0);
+
   return (
-    <div className="w-full rounded-xl bg-gradient-to-r from-pollgy-green to-pollgy-blue px-3 sm:px-6 py-2 sm:py-3.5 flex items-center justify-between gap-4 overflow-hidden">
-      <p className="text-primary-foreground text-[10px] sm:text-xs lg:text-base font-medium whitespace-nowrap">
-        <span className="font-bold">Pollgy.</span>{" "}
-        <span className="hidden sm:inline">First creator led, community owned prediction market platform</span>
-        <span className="sm:hidden">Community owned prediction markets</span>
-      </p>
-      <div className="hidden sm:flex items-center gap-3 sm:gap-4 shrink-0">
-        <span className="flex items-center gap-2 text-primary-foreground/90 text-[10px] sm:text-xs lg:text-base font-medium whitespace-nowrap">
-          <span className="font-bold">Safe</span>
-          <span className="text-primary-foreground/50">|</span>
-          <span className="font-bold">Relevant</span>
-          <span className="text-primary-foreground/50">|</span>
-          <span className="font-bold">The best.</span>
-        </span>
+    <div className="w-full rounded-xl bg-gradient-to-r from-pollgy-green to-pollgy-blue px-3 sm:px-6 py-2.5 sm:py-3.5 flex items-center justify-between gap-4 overflow-hidden">
+      <div className="flex items-center gap-2 sm:gap-3">
+        <Zap className="h-4 w-4 text-primary-foreground flex-shrink-0" />
+        <div className="text-primary-foreground">
+          <p className="text-[10px] sm:text-xs font-medium opacity-80">Live Pots</p>
+          <p className="text-sm sm:text-lg font-extrabold leading-tight">{formatPot(totalPot)}+</p>
+        </div>
+      </div>
+      <div className="hidden sm:flex items-center gap-6">
+        <div className="text-primary-foreground text-center">
+          <p className="text-[10px] sm:text-xs font-medium opacity-80">Active Players</p>
+          <p className="text-sm sm:text-lg font-extrabold leading-tight">{totalPlayers.toLocaleString()}</p>
+        </div>
+        <div className="text-primary-foreground text-center">
+          <p className="text-[10px] sm:text-xs font-medium opacity-80">Open Markets</p>
+          <p className="text-sm sm:text-lg font-extrabold leading-tight">{mockMarkets.filter(m => m.status === "open" || m.status === "closing").length}</p>
+        </div>
+      </div>
+      <div className="flex items-center gap-1.5 text-primary-foreground/90 text-[10px] sm:text-xs font-semibold sm:hidden">
+        <Users className="h-3 w-3" />
+        {totalPlayers.toLocaleString()} playing
       </div>
     </div>
   );
@@ -431,14 +443,21 @@ export default function Feed() {
               <h3 className="text-white text-sm font-bold leading-snug line-clamp-2 mb-1.5">
                 {mobileHeroMarket.title}
               </h3>
-              <div className="flex items-center gap-3">
-                <span className="px-2 py-0.5 rounded-full bg-primary/20 border border-primary/30 text-primary text-[11px] font-bold">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-primary/20 border border-primary/30 text-primary text-[12px] font-extrabold">
+                  <Trophy className="h-3 w-3" />
                   {formatPot(mobileHeroMarket.pot)} Pot
                 </span>
                 <span className="text-white/60 text-[10px] flex items-center gap-1">
                   <Users className="h-3 w-3" />
-                  {mobileHeroMarket.players.toLocaleString()}
+                  {mobileHeroMarket.players.toLocaleString()} playing
                 </span>
+                {mobileHeroMarket.status === "closing" && (
+                  <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400 text-[10px] font-semibold animate-pulse">
+                    <Timer className="h-2.5 w-2.5" />
+                    Closing Soon
+                  </span>
+                )}
               </div>
             </div>
             {/* Dot indicators */}
@@ -478,7 +497,8 @@ export default function Feed() {
                       Closing Soon
                     </span>
                   )}
-                  <span className="px-2.5 py-0.5 rounded-full bg-primary/20 border border-primary/30 text-primary text-xs font-bold">
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-primary/20 border border-primary/30 text-primary text-xs font-extrabold">
+                    <Trophy className="h-3 w-3" />
                     {formatPot(mainFeatured.pot)} Pot
                   </span>
                 </div>
