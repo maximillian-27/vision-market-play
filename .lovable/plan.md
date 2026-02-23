@@ -1,73 +1,49 @@
 
 
-## Redesign Market Dialog (Desktop Popup)
+## Improve Market Dialog -- Ticket Pricing, Clarity, and Engagement
 
-Restructure the MarketDialog into a clean two-column layout with clear information hierarchy, removing clutter and adding the pot revenue split. The goal: clean, engaging, casino-like feel with all necessary info visible.
+### What changes
 
-### Layout Overview
+**1. Add Ticket Cost Display + Dynamic Pricing Note**
+- Show the ticket price prominently next to each outcome button (e.g., "YES $0.68" instead of just "YES")
+- Add a small info line below outcomes: "Ticket prices increase as the event approaches"
+- This educates users about the dynamic pricing model
 
-```text
-+--------------------------------------------------+
-| [Avatar] Creator Name [Verified]   [Share] [Repost]|
-+--------------------------------------------------+
-|  LEFT COLUMN (scrollable)  |  RIGHT COLUMN (fixed) |
-|                            |                        |
-|  Title (bold, prominent)   |  OUTCOMES              |
-|  Pot: $2.4M               |  [Yes 68%] [No 32%]    |
-|                            |  Ticket: $0.68          |
-|  Description               |                        |
-|  ─────────────────────     |  ENTRY AMOUNT           |
-|  Resolution Criteria       |  [$] [5][10][25][50]    |
-|  (collapsible)             |                        |
-|                            |  IF YOU WIN             |
-|  ─────────────────────     |  Entry: $10.00          |
-|  Comments (collapsible)    |  Payout: $14.70         |
-|   - comment thread         |  Winnings: +$4.70       |
-|   - [Add comment...]       |  ⚡ Winners split pot   |
-|                            |                        |
-|                            |  [=== Enter Yes $10 ===]|
-|                            |                        |
-|                            |  POT SPLIT (mini)       |
-|                            |  90% Winners | 2% Draw  |
-|                            |  5% Comp | 3% Platform  |
-+--------------------------------------------------+
-```
+**2. Clean Up the Right Column**
+- Move the probability bar INTO the outcome buttons themselves (show percentage inside the button)
+- Show ticket price directly on each outcome button: "Yes 68% -- $0.68"
+- Remove the separate "Ticket: $0.XX" line that only appears after selection (redundant)
+- Add the "ends in" countdown to the right column header so users know urgency
 
-### What changes from the current dialog
+**3. Improve the "If You Win" Section**
+- Show Payout and Winnings immediately with default values (using first outcome as default selection hint) instead of showing dashes
+- Make the winnings number larger and green to feel more rewarding
+- Add a subtle highlight/glow effect to the winnings amount
 
-**Removed:**
-- Probability chart (hide in popup, available on full page)
-- Bookmark button (keep share only, add repost)
-- Players count / ends-in metadata from left column (keep it minimal)
-- "Full page" link button (less prominent, move to footer text)
+**4. Left Column Refinements**
+- Add the market image as a small thumbnail next to the title for visual recognition
+- Add player count and "ends in" as subtle metadata below the pot badge
+- Make the chart slightly taller for better readability
+- Add a current price indicator on the chart (dot at the latest point)
 
-**Added:**
-- Repost button next to share
-- Ticket price display (price as cents = probability)
-- Disclaimer text under "If you win" summary
-- Pot revenue split at the bottom of the right panel (minimalistic horizontal bar + legend)
+**5. Buy Button Enhancement**
+- Make the button more engaging with a gradient and slight animation on hover
+- Show the potential winnings on the button itself: "Enter Yes $10 -- Win $14.70"
 
-**Restructured:**
-- Left: Title, Pot badge, Description (always visible, not collapsible), Resolution Criteria (collapsible), Comments (collapsible)
-- Right: Outcomes with probability %, ticket price, amount entry, payout summary, disclaimer, buy button, pot split
-
-### Files changed
-
-**`src/components/MarketDialog.tsx`** (full rewrite of the component)
-
-- Header: Creator avatar + name + verified badge on left, Share + Repost icons on right
-- Left column: Title (larger), Pot badge with player count, Description (visible by default), Resolution Criteria (collapsible), Comments section (collapsible with inline reply)
-- Right column: Outcome selector with probability percentages, ticket price per outcome, amount input with quick-select buttons, "If you win" summary card, disclaimer line ("Winners split the pot -- potential winnings may fluctuate"), Buy button (sticky at bottom of right column), Pot revenue split (thin bar + 4-item legend)
-- Remove: chart section, bookmark button, "Full page" link
-- Add: QuoteRepostDialog integration for repost functionality
-- Keep: all existing logic for buy flow, validation, toast notifications, multi-outcome support, awaiting resolution state
+**6. Pot Split -- Move Below Buy Button (already there, just clean up)**
+- Keep as-is but ensure the bar has slightly more height for visibility
 
 ### Technical details
 
-- 1 file modified: `src/components/MarketDialog.tsx`
-- No new dependencies
-- Reuses existing QuoteRepostDialog for repost functionality
-- Revenue split data: 90% Winners, 2% Weekly Draw, 5% Competitions, 3% Platform Fee (matching existing MarketDetail page data)
-- Ticket price displayed as: `$0.XX` where XX = probability percentage (e.g., 68% = $0.68 per ticket)
-- Dialog max-width stays at ~820px for comfortable two-column layout
+**File modified:** `src/components/MarketDialog.tsx`
 
+Key changes:
+- Outcome buttons redesigned to show both probability percentage and dollar ticket price in one button (e.g., "Yes 68% | $0.68")
+- New info text: "Ticket prices rise closer to conclusion" with a TrendingUp icon, placed below outcomes
+- "Ends in" badge added to right column top area
+- Market image thumbnail (24x24) added next to title in left column
+- Player count shown as metadata line under pot badge
+- "If You Win" section: winnings text made larger (text-lg) with green color and a subtle bg highlight
+- Buy button text updated to include potential winnings preview
+- Default outcome auto-selected (first outcome) so payout summary is never empty on open
+- Chart height increased from h-24 to h-28 with a dot marker on the latest data point
