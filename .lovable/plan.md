@@ -1,133 +1,46 @@
 
 
-## Community Feed Overhaul -- X-Style Redesign
+## Simplify Community Feed
 
-Transform the Community Feed into a true social timeline that feels like X (Twitter), optimized for interaction around prediction markets.
+Clean up the community feed to keep only the essentials, making it feel more like a polished X/IG hybrid.
 
-### Current Problems
-- Every post forces a full MarketGridCard embed -- too heavy and repetitive
-- PageHeader wastes vertical space (conflicts with density memory)
-- No "For You" / "Following" tab navigation like X
-- Missing core social actions: repost, bookmark
-- No mixed content types -- every post looks identical
-- No text-only posts or varied post formats
-- Engagement bar missing repost action
-- Right sidebar (HottestMarkets) doesn't add social value -- should be "Trending" or "Who to follow"
+### What gets removed
 
-### What Changes
+**Engagement bar** -- Remove the Bookmark action. Keep only: Comment, Repost, Like, Share (4 actions, not 5).
 
-**1. Replace PageHeader with X-style tab bar**
-- Remove the "Community" title + subtitle
-- Add sticky tabs at top: "For You" | "Following"
-- Clean, borderless tabs matching X's aesthetic
-- Sticky below header on scroll
+**Right sidebar (TrendingSidebar)** -- Remove the Search box and the "Who to follow" section. Keep only "Trending Markets" in a cleaner format.
 
-**2. Diversify post types in the feed**
-- **Text-only posts**: Opinions without a market attached
-- **Market share posts**: Text + compact inline market preview (not a full MarketGridCard)
-- **Repost posts**: Shows "username reposted" with original post nested
-- **Position posts**: "I just bought YES on [market]" auto-generated posts
-- Each post type has a slightly different visual treatment but same base layout
+**Post composer** -- Remove the image upload button. Keep just the market-attach icon, character count, and Post button. Cleaner toolbar.
 
-**3. Compact inline market embed (replace full MarketGridCard)**
-- Instead of the heavy MarketGridCard, create a lightweight `InlineMarketPreview`:
-  - Single row: market image (24px) + title (truncated) + Yes/No prices as small pills
-  - Wrapped in a rounded border, clickable to open market
-  - Takes ~40px height instead of ~180px
-  - Much more X-like (similar to how X shows link previews)
+### What stays (unchanged)
 
-**4. Upgrade engagement bar to match X**
-- Actions in order: Comment, Repost, Like, Bookmark, Share
-- Each with icon + count
-- Like turns red on click, repost turns green
-- Hover states with colored backgrounds (red for like, green for repost)
-- All inline, evenly spaced
+- For You / Following sticky tabs
+- Post composer (textarea + market attach + Post)
+- All post types (text, market, repost, position)
+- Inline market previews
+- Comment, Repost, Like, Share engagement actions
+- Inline comments with reply input
+- Left sidebar: Following users + Top Creators
+- Right sidebar: Trending Markets only
 
-**5. Replace right sidebar with "Trending" + "Who to follow"**
-- Top section: "Trending Markets" -- 3-4 market titles with category + volume (no images, text-only like X trending)
-- Bottom section: "Who to follow" -- 3 suggested users with follow button
-- Matches X's right sidebar pattern exactly
+### Files changed
 
-**6. Improve post composer**
-- Remove the card border -- make it borderless like X
-- Avatar + textarea inline, no card wrapper
-- Bottom toolbar: image, market attach, character count, Post button
-- Thin bottom border separator only
+**`src/components/CommunityPost.tsx`**
+- Remove the Bookmark entry from the `engagementActions` array (line ~153-159)
+- 4 actions remain: Comment, Repost, Like, Share
 
-**7. Polish comment threads**
-- Show 2-3 recent comments inline (collapsed) without clicking
-- "Show more replies" link
-- Threaded reply lines (vertical connector like X)
+**`src/components/TrendingSidebar.tsx`**
+- Remove the Search input (lines 22-29)
+- Remove the entire "Who to follow" section (lines 54-77)
+- Keep only the "Trending Markets" card
 
-### File Changes
+**`src/pages/CommunityFeed.tsx`**
+- Remove the Image upload button from the composer toolbar (lines 175-177)
+- Keep market-attach select, character count, and Post button
 
-**`src/pages/CommunityFeed.tsx`** (major rewrite)
-- Remove PageHeader
-- Add "For You" / "Following" sticky tabs
-- Diversify mock posts with different types (text-only, market-share, repost, position)
-- Replace MarketGridCard usage with new InlineMarketPreview
-- Borderless composer
-- Updated engagement bar with all 5 actions + active states
+### Technical details
 
-**`src/components/InlineMarketPreview.tsx`** (new)
-- Lightweight market preview component
-- Shows: 24px image, truncated title, Yes/No price pills
-- Single clickable row in a subtle bordered container
-- Opens MarketDialog on click
-
-**`src/components/CommunityPost.tsx`** (new)
-- Extracted post component for cleaner code
-- Handles all post types: text-only, market-share, repost, position
-- Contains engagement bar with like/repost/bookmark state
-- Shows inline comments preview
-
-**`src/components/TrendingSidebar.tsx`** (new, replaces HottestMarkets on community page)
-- "Trending Markets" section: category label + market title + volume (text-only, no images)
-- "Who to follow" section: 3 users with avatar, name, username, Follow button
-- Matches X right sidebar pattern
-
-### Mock Data Additions
-
-New post types added to mock data:
-```text
-- Text-only: "Hot take: AI markets are overpriced right now. The hype cycle is peaking."
-- Position: "Sarah Chen bought YES on 'Will Bitcoin reach $100K'"  
-- Repost: James reposted Maria's Apple foldable take
-- Market share: existing format but with InlineMarketPreview instead of full card
-```
-
-### Visual Reference
-
-```text
-+------------------+-------------------------+------------------+
-| Following        | [For You] [Following]   | Trending Markets |
-| Sidebar          |                         |                  |
-| (unchanged)      | [Avatar] What's on your | 1. Crypto        |
-|                  |  mind?  [img][mkt][Post] |   Bitcoin $100K  |
-|                  | ________________________|   $2.4M volume   |
-|                  |                         |                  |
-|                  | @alexthompson . 2h      | 2. Politics      |
-|                  | This is actually more   |   Fed Rate...    |
-|                  | likely than people...   |   $3.1M volume   |
-|                  | +---------------------+ |                  |
-|                  | | BTC img | Bitcoin.. | | Who to follow    |
-|                  | |     Yes 68% No 32%  | | [avatar] Name    |
-|                  | +---------------------+ |   @user [Follow] |
-|                  | Reply  Repost  Like  BM | [avatar] Name    |
-|                  | ________________________|   @user [Follow] |
-|                  |                         |                  |
-|                  | @davidkim . 6h          |                  |
-|                  | Hot take: AI markets    |                  |
-|                  | are way overpriced...   |                  |
-|                  | (no market attached)    |                  |
-|                  | Reply  Repost  Like  BM |                  |
-+------------------+-------------------------+------------------+
-```
-
-### Technical Notes
-- All state (likes, reposts, bookmarks) managed locally with useState
-- InlineMarketPreview reuses MarketDialog for click-through
-- Post types distinguished by a `type` field on CommunityPost interface
-- No new dependencies needed
-- Existing FollowingSidebar remains unchanged (left side)
+- 3 files edited, no new files
+- No dependencies added or removed
+- All changes are deletions (removing UI elements), keeping the core social experience clean
 
