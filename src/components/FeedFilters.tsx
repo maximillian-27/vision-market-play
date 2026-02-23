@@ -1,11 +1,31 @@
 import { useState } from "react";
-import { SlidersHorizontal, X, Search, Bookmark } from "lucide-react";
+import { SlidersHorizontal, Search, Bookmark } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 
 const categories = ["All", "My Markets", "Hot", "Closing Soon", "Politics", "Sports", "Crypto", "Tech", "Entertainment", "Finance"];
+
+const sortOptions = [
+  { value: "trending", label: "Trending" },
+  { value: "volume", label: "Biggest Pots" },
+  { value: "newest", label: "Newest" },
+  { value: "ending", label: "Closing Soon" },
+  { value: "active", label: "Most Active" },
+];
+
+const statusOptions = [
+  { value: "all", label: "All" },
+  { value: "open", label: "Open" },
+  { value: "closing", label: "Closing Soon" },
+  { value: "resolved", label: "Resolved" },
+];
+
+const timeframeOptions = [
+  { value: "24h", label: "24h" },
+  { value: "7d", label: "7 Days" },
+  { value: "30d", label: "30 Days" },
+  { value: "all", label: "All Time" },
+];
 
 export interface FilterState {
   category: string;
@@ -18,6 +38,29 @@ export interface FilterState {
 interface FeedFiltersProps {
   filters: FilterState;
   onFiltersChange: (filters: FilterState) => void;
+}
+
+function FilterRow({ label, options, value, onChange }: { label: string; options: { value: string; label: string }[]; value: string; onChange: (v: string) => void }) {
+  return (
+    <div className="flex items-center gap-2">
+      <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider w-10 shrink-0">{label}</span>
+      <div className="flex gap-1 overflow-x-auto scrollbar-hide">
+        {options.map((opt) => (
+          <button
+            key={opt.value}
+            onClick={() => onChange(opt.value)}
+            className={`whitespace-nowrap px-2.5 py-0.5 text-xs rounded-full transition-all font-medium ${
+              value === opt.value
+                ? "bg-primary text-primary-foreground"
+                : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+            }`}
+          >
+            {opt.label}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
 }
 
 export function FeedFilters({ filters, onFiltersChange }: FeedFiltersProps) {
@@ -105,73 +148,19 @@ export function FeedFilters({ filters, onFiltersChange }: FeedFiltersProps) {
         </div>
       </div>
 
-      {/* Expanded Filter Panel */}
+      {/* Expanded Filter Panel — pill-based */}
       {showFilters && (
-        <div className="rounded-xl border border-border bg-card p-4 animate-in fade-in-0 slide-in-from-top-2 duration-200 shadow-sm">
-          <div className="flex items-center justify-between mb-4">
-            <span className="text-sm font-semibold">Filter Markets</span>
-            <Button variant="ghost" size="icon" className="h-7 w-7 -mr-1" onClick={() => setShowFilters(false)}>
-              <X className="h-4 w-4" />
-            </Button>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            <div className="space-y-1.5">
-              <Label className="text-xs text-muted-foreground font-medium">Sort By</Label>
-              <Select value={filters.sortBy} onValueChange={(v) => updateFilter('sortBy', v)}>
-                <SelectTrigger className="h-9 text-sm rounded-lg">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="trending">Trending</SelectItem>
-                  <SelectItem value="volume">Biggest Pots</SelectItem>
-                  <SelectItem value="newest">Newest</SelectItem>
-                  <SelectItem value="ending">Closing Soon</SelectItem>
-                  <SelectItem value="active">Most Active</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-1.5">
-              <Label className="text-xs text-muted-foreground font-medium">Status</Label>
-              <Select value={filters.status} onValueChange={(v) => updateFilter('status', v)}>
-                <SelectTrigger className="h-9 text-sm rounded-lg">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Markets</SelectItem>
-                  <SelectItem value="open">Open</SelectItem>
-                  <SelectItem value="closing">Closing Soon</SelectItem>
-                  <SelectItem value="closed">Dispute Period</SelectItem>
-                  <SelectItem value="resolved">Resolved</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-1.5">
-              <Label className="text-xs text-muted-foreground font-medium">Timeframe</Label>
-              <Select value={filters.timeframe} onValueChange={(v) => updateFilter('timeframe', v)}>
-                <SelectTrigger className="h-9 text-sm rounded-lg">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="24h">Last 24h</SelectItem>
-                  <SelectItem value="7d">Last 7 days</SelectItem>
-                  <SelectItem value="30d">Last 30 days</SelectItem>
-                  <SelectItem value="all">All time</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-          
+        <div className="space-y-1.5 pt-1.5 border-t border-border/50 animate-in fade-in-0 slide-in-from-top-1 duration-200">
+          <FilterRow label="Sort" options={sortOptions} value={filters.sortBy} onChange={(v) => updateFilter('sortBy', v)} />
+          <FilterRow label="Status" options={statusOptions} value={filters.status} onChange={(v) => updateFilter('status', v)} />
+          <FilterRow label="Time" options={timeframeOptions} value={filters.timeframe} onChange={(v) => updateFilter('timeframe', v)} />
           {hasActiveFilters && (
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              className="mt-4 text-xs text-muted-foreground hover:text-foreground"
+            <button
+              className="text-[10px] text-muted-foreground hover:text-foreground ml-12 transition-colors"
               onClick={() => onFiltersChange({ ...filters, sortBy: "trending", status: "all", timeframe: "all" })}
             >
-              Clear all filters
-            </Button>
+              Reset filters
+            </button>
           )}
         </div>
       )}
