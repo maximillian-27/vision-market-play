@@ -49,31 +49,17 @@ function formatPot(pot: number): string {
   return `$${pot}`;
 }
 
-function getPotTier(pot: number): "standard" | "hot" | "jackpot" {
-  if (pot >= 1000000) return "jackpot";
-  if (pot >= 100000) return "hot";
-  return "standard";
+function getWinUpTo(pot: number, outcomes: Outcome[]): string {
+  // Estimate: if you bet $10 on lowest-probability outcome
+  const lowestPrice = Math.min(...outcomes.map(o => o.price).filter(p => p > 0));
+  if (lowestPrice <= 0) return "";
+  const payout = (10 / (lowestPrice / 100)) * (pot > 0 ? 1 : 0);
+  if (payout >= 1000000) return `$${(payout / 1000000).toFixed(0)}M`;
+  if (payout >= 1000) return `$${(payout / 1000).toFixed(0)}K`;
+  return `$${payout.toFixed(0)}`;
 }
 
-function PotBadge({ pot, volume }: { pot: number; volume: string }) {
-  const display = pot > 0 ? formatPot(pot) : volume;
-  const tier = pot > 0 ? getPotTier(pot) : "standard";
-
-  const tierStyles = {
-    standard: "bg-primary/10 text-primary",
-    hot: "bg-gradient-to-r from-pollgy-green to-pollgy-blue text-white font-bold",
-    jackpot: "bg-gradient-to-r from-pollgy-green to-pollgy-blue text-white font-bold pot-shimmer",
-  };
-
-  return (
-    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold ${tierStyles[tier]} ${tier === "jackpot" ? "text-[11px]" : ""}`}>
-      <span className="uppercase tracking-wider text-[8px] opacity-80">Pot</span>
-      {display}
-    </span>
-  );
-}
-
-export function MarketGridCard({
+export function MarketGridCard({ 
   id, 
   creator,
   title, 
@@ -109,7 +95,8 @@ export function MarketGridCard({
   const isBinary = displayOutcomes.length === 2 && !outcomes;
   const isClosingSoon = status === "closing";
 
-  
+  const potDisplay = pot > 0 ? formatPot(pot) : volume;
+  const winUpTo = pot > 0 && !isBettingDisabled ? getWinUpTo(pot, displayOutcomes) : "";
 
   const handleCardClick = () => {
     if (isClosedOrResolved) {
@@ -239,6 +226,12 @@ export function MarketGridCard({
             </div>
           </div>
 
+          {/* Pot size pill */}
+          <div className="mb-2">
+            <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-extrabold">
+              {potDisplay} Pot
+            </span>
+          </div>
 
           {/* Content area */}
           <div className="flex-1 flex flex-col justify-center">
@@ -312,13 +305,18 @@ export function MarketGridCard({
             )}
           </div>
 
+          {/* "Win up to" teaser */}
+          {winUpTo && !isBettingDisabled && (
+            <p className="text-[10px] text-primary/80 font-semibold mt-1.5">
+              Win up to {winUpTo}
+            </p>
+          )}
+          
           {/* Stats footer */}
           <div className="flex items-center gap-3 text-[10px] text-muted-foreground mt-2 pt-2 border-t border-border">
-            <PotBadge pot={pot} volume={volume} />
-            <span className="text-muted-foreground/40">·</span>
             <span className="flex items-center gap-1">
               <Users className="h-2.5 w-2.5" />
-              {players > 0 ? players.toLocaleString() : '0'}
+              {players > 0 ? players.toLocaleString() : '0'} players
             </span>
             {getStatusBadge() ? (
               getStatusBadge()
@@ -453,7 +451,7 @@ export function MarketGridCard({
           {/* Row 3: Footer — Pot + icons */}
           <div className="flex items-center justify-between mt-2 text-[11px] text-muted-foreground">
             <div className="flex items-center gap-3">
-              <PotBadge pot={pot} volume={volume} />
+              <span className="font-semibold text-foreground">Pot {potDisplay}</span>
               <span className="flex items-center gap-1">
                 <Users className="h-3 w-3" />
                 {players > 0 ? players.toLocaleString() : '0'}

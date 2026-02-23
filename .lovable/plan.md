@@ -1,64 +1,107 @@
 
 
-# Pot Size Display Redesign — Casino-Inspired, Modern & Clean
+# Mobile Markets Feed Redesign
 
-Elevating the pot size presentation across market cards to feel like a prize pool / jackpot display while staying professional.
-
----
-
-## Design Concept
-
-Instead of plain text in the footer, the pot becomes a **branded gradient pill** that scales visually with pot size — bigger pots get more visual weight, creating excitement and drawing the eye.
-
-### Pot Size Tiers
-
-| Tier | Threshold | Style |
-|------|-----------|-------|
-| Standard | Under $100K | Solid muted pill, subtle styling |
-| Hot | $100K - $999K | Brand gradient pill (green-to-blue), bold |
-| Jackpot | $1M+ | Brand gradient pill + subtle shimmer animation, larger text |
+Redesigning the mobile view to match the reference layout: a clean, list-based feed with a compact hero slide, prominent search/filters at top, and maximum market density below.
 
 ---
 
-## Visual Treatment
+## Layout Structure (Mobile Only, top to bottom)
 
-### Desktop Footer
-- Replace plain text pot with a **gradient pill**: `bg-gradient-to-r from-pollgy-green to-pollgy-blue` with white text
-- Small "POT" label in uppercase tracking-wide before the dollar amount
-- For jackpot-tier ($1M+): add a CSS shimmer/glint animation that sweeps across the pill every few seconds
-- Standard tier uses a softer version: `bg-primary/10 text-primary` pill
-
-### Mobile Footer
-- Same tiered pill treatment, slightly larger for touch-friendliness
-- "POT" label + amount in the gradient pill
-
-### Example rendering:
-```text
-Standard:  [ POT $45K ]        (muted pill, primary color text)
-Hot:       [ POT $890K ]       (gradient pill, white text, bold)  
-Jackpot:   [ POT $2.4M ]       (gradient pill, white text, shimmer animation)
-```
+1. **Search bar** (full width, prominent)
+2. **Category filter pills** (horizontally scrollable)
+3. **Featured hero card** (single market slide with dot indicators)
+4. **Market list** (flat, borderless cards separated by dividers -- no grid, maximum density)
 
 ---
 
-## Technical Details
+## 1. FeedFilters.tsx - Mobile-Specific Layout
 
-### New CSS Animation (index.css)
-Add a `shimmer` keyframe animation — a diagonal light sweep effect using a pseudo-element or gradient overlay. Subtle, runs every 3 seconds.
+**Current**: Filter button + category pills in one row on both mobile and desktop.
 
-### MarketGridCard.tsx Changes
-- Create a helper function `getPotTier(pot)` returning "standard" | "hot" | "jackpot"
-- Create a `PotBadge` inline component that renders the appropriate styled pill
-- Replace the plain `{potDisplay}` text in both desktop and mobile footers with the new `PotBadge`
-- Desktop: rendered in the stats footer row
-- Mobile: rendered in the footer row, replacing "Pot {potDisplay}" text
+**New mobile layout** (below `sm` breakpoint):
+- Top row: full-width search input with filter icon button and bookmark icon on the right
+- Second row: horizontally scrollable category pills (All, My Markets, Hot, Politics, Sports, Crypto, Tech, Entertainment, Finance) -- larger touch targets, more spacing
+- Remove the "Filters" button label on mobile; just show the icon
+- Keep the expanded filter panel as-is (already works well on mobile)
 
-### Files Modified
+---
+
+## 2. Feed.tsx - Mobile Hero Slide
+
+**Current**: The split hero (1 large + 2 compact) shows on mobile as stacked cards, taking too much vertical space.
+
+**New mobile layout** (below `md` breakpoint):
+- Hide the desktop split hero section entirely on mobile
+- Show a single swipeable hero card instead:
+  - Featured market image as background with gradient overlay
+  - Title, pot size, creator name overlaid
+  - Dot indicators at bottom (3 dots for 3 featured markets)
+  - Swipeable via state toggle (tap dots or auto-cycle)
+  - Compact height: ~180px max
+- Below hero: the GradientDivider (keep, but make it more compact on mobile -- reduce padding)
+- Below divider: market list (not grid)
+
+---
+
+## 3. Feed.tsx - Mobile Market Grid becomes List
+
+**Current**: `grid-cols-1` on mobile means each MarketGridCard renders as a full-width card with borders and padding.
+
+**Change on mobile**:
+- Switch from grid to a flat list layout: `flex flex-col divide-y divide-border` on mobile
+- Each card renders in a compact list-item style (no card border, no shadow, no rounded corners on mobile)
+- This maximizes density -- more markets visible per scroll
+
+---
+
+## 4. MarketGridCard.tsx - Redesigned Mobile Layout
+
+**Current mobile layout**: Thumbnail left + title/creator/pot right, then outcomes bar, then stats footer -- all wrapped in a Card with borders.
+
+**New mobile layout** (matching reference image):
+- Remove Card wrapper border/shadow on mobile (flat, separated by dividers only)
+- Row 1: Small square thumbnail (40x40) + Title + Probability badge (e.g., "68%" in green pill, top-right)
+- Row 2: Creator name below title (small, muted text: "by CreatorName")
+- Row 3: Full-width Yes/No buttons side by side (green background for Yes, red/pink for No) -- larger touch targets
+- For multi-outcome: show outcome rows with label + percentage + Yes/No buttons
+- Row 4: Pot size ("Pot $231k") left-aligned + share icon + bookmark icon right-aligned
+- Dot pagination indicator if the card has multiple outcome views (like the reference)
+- Clean spacing: `py-3 px-4` with no card borders
+
+**Key visual changes**:
+- Yes/No buttons: full-width, side-by-side, with soft colored backgrounds (bg-yes/10 and bg-no/10) and bold colored text
+- Probability percentage displayed as a prominent badge next to the title (green pill with "68%" and small "chance" label below)
+- Remove the probability bar on mobile (the reference doesn't use it)
+- Pot displayed as "Pot $231k" in the footer, not as a pill
+
+---
+
+## 5. Sizing and Density
+
+- Hero section: max 180px height on mobile
+- Each market list item: approximately 140-160px height
+- This means 2-3 full market items visible below the hero on a standard 844px mobile viewport
+- Bottom nav clearance: add `pb-24` to the feed container for the floating nav bar
+
+---
+
+## Files Modified
 
 | File | Changes |
 |------|---------|
-| MarketGridCard.tsx | Add `getPotTier` helper, `PotBadge` component, replace pot text in both layouts |
-| index.css | Add `@keyframes shimmer` and `.pot-shimmer` utility class |
+| Feed.tsx | Add mobile hero slide with dot indicators, hide desktop hero on mobile, switch grid to list on mobile, add search bar |
+| FeedFilters.tsx | Mobile-specific layout with full-width search bar above category pills |
+| MarketGridCard.tsx | Flat list-item mobile layout: remove card borders, larger Yes/No buttons, probability badge, simplified footer |
 
-**Total: 2 files modified**
+**Total: 3 files modified**
+
+---
+
+## Technical Notes
+
+- Use `useIsMobile()` hook (already available) or Tailwind responsive classes (`sm:hidden` / `md:hidden`) to differentiate layouts
+- Hero slide state: simple `useState` for `activeSlide` index with dot indicators
+- The desktop layout remains completely unchanged -- all changes are scoped to mobile breakpoints
+- Category pills: use `scrollbar-hide` utility class (already in use) for clean horizontal scroll
 
