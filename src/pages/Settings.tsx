@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { PageHeader } from "@/components/PageHeader";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -25,12 +26,20 @@ import {
   Eye,
   EyeOff,
   Camera,
-  Check
+  Check,
+  Lock,
+  Smartphone,
+  Timer,
+  Ticket,
+  AlertTriangle,
+  Wallet,
+  ExternalLink,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const Settings = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [isCreator, setIsCreator] = useState(false);
   
   // Account settings
@@ -45,7 +54,9 @@ const Settings = () => {
   // Notification settings
   const [notifications, setNotifications] = useState({
     marketResolution: true,
-    priceAlerts: true,
+    oddsChanges: true,
+    drawResults: true,
+    entryConfirmations: true,
     newFollowers: true,
     marketUpdates: false,
     newsletter: false,
@@ -54,11 +65,33 @@ const Settings = () => {
 
   // Privacy settings
   const [privacy, setPrivacy] = useState({
-    showPortfolio: true,
-    showPositions: false,
+    showWinnings: true,
+    showEntries: false,
     showActivity: true,
     publicProfile: true,
   });
+
+  // Security settings
+  const [security, setSecurity] = useState({
+    twoFactor: false,
+  });
+
+  // Responsible gambling settings
+  const [responsible, setResponsible] = useState({
+    dailyLimit: "",
+    weeklyLimit: "",
+    sessionReminder: false,
+    reminderInterval: "1hr",
+  });
+
+  // Preferences
+  const [preferences, setPreferences] = useState({
+    oddsFormat: "percentage",
+    defaultTickets: "1",
+  });
+
+  // Crypto wallet
+  const [cryptoWallet, setCryptoWallet] = useState("");
 
   const handleSave = () => {
     toast({
@@ -206,6 +239,90 @@ const Settings = () => {
               </CardContent>
             </Card>
 
+            {/* Security */}
+            <Card className="border-border/40">
+              <CardHeader className="p-4 sm:p-6 pb-2 sm:pb-4">
+                <div className="flex items-center gap-2">
+                  <Lock className="h-4 w-4 text-muted-foreground" />
+                  <CardTitle className="text-base sm:text-lg">Security</CardTitle>
+                </div>
+                <CardDescription className="text-xs sm:text-sm">Protect your account</CardDescription>
+              </CardHeader>
+              <CardContent className="p-4 sm:p-6 pt-2 sm:pt-0 space-y-3 sm:space-y-4">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                    <Smartphone className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2">
+                        <p className="font-medium text-sm">Two-Factor Authentication</p>
+                        <Badge variant={security.twoFactor ? "default" : "secondary"} className="text-[9px] px-1.5 py-0">
+                          {security.twoFactor ? "On" : "Off"}
+                        </Badge>
+                      </div>
+                      <p className="text-xs text-muted-foreground truncate">Add an extra layer of security</p>
+                    </div>
+                  </div>
+                  <Switch 
+                    checked={security.twoFactor}
+                    onCheckedChange={(checked) => setSecurity({...security, twoFactor: checked})}
+                  />
+                </div>
+                <div className="flex items-center justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="font-medium text-sm">Change Password</p>
+                    <p className="text-xs text-muted-foreground truncate">Update your account password</p>
+                  </div>
+                  <Button variant="outline" size="sm" className="text-xs flex-shrink-0">Change</Button>
+                </div>
+                <div className="flex items-center justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="font-medium text-sm">Active Sessions</p>
+                    <p className="text-xs text-muted-foreground truncate">Last login: Chrome on macOS · 2 hours ago</p>
+                  </div>
+                  <Button variant="ghost" size="sm" className="text-xs text-muted-foreground flex-shrink-0">View All</Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Preferences */}
+            <Card className="border-border/40">
+              <CardHeader className="p-4 sm:p-6 pb-2 sm:pb-4">
+                <div className="flex items-center gap-2">
+                  <Ticket className="h-4 w-4 text-muted-foreground" />
+                  <CardTitle className="text-base sm:text-lg">Preferences</CardTitle>
+                </div>
+                <CardDescription className="text-xs sm:text-sm">Customize your experience</CardDescription>
+              </CardHeader>
+              <CardContent className="p-4 sm:p-6 pt-2 sm:pt-0 space-y-3 sm:space-y-4">
+                <div className="space-y-1.5 sm:space-y-2">
+                  <Label className="text-xs sm:text-sm">Odds Display Format</Label>
+                  <Select value={preferences.oddsFormat} onValueChange={(v) => setPreferences({...preferences, oddsFormat: v})}>
+                    <SelectTrigger className="h-9 sm:h-10 text-sm">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="percentage">Percentage (45%)</SelectItem>
+                      <SelectItem value="decimal">Decimal (2.22)</SelectItem>
+                      <SelectItem value="fractional">Fractional (11/9)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1.5 sm:space-y-2">
+                  <Label className="text-xs sm:text-sm">Default Ticket Quantity</Label>
+                  <Select value={preferences.defaultTickets} onValueChange={(v) => setPreferences({...preferences, defaultTickets: v})}>
+                    <SelectTrigger className="h-9 sm:h-10 text-sm">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="1">1 ticket</SelectItem>
+                      <SelectItem value="5">5 tickets</SelectItem>
+                      <SelectItem value="10">10 tickets</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </CardContent>
+            </Card>
+
             <div className="flex justify-end">
               <Button onClick={handleSave} size="sm" className="gap-1.5 sm:gap-2 text-xs sm:text-sm">
                 <Check className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
@@ -218,8 +335,8 @@ const Settings = () => {
           <TabsContent value="notifications" className="space-y-4 sm:space-y-6">
             <Card className="border-border/40">
               <CardHeader className="p-4 sm:p-6 pb-2 sm:pb-4">
-                <CardTitle className="text-base sm:text-lg">Trading Notifications</CardTitle>
-                <CardDescription className="text-xs sm:text-sm">Get notified about your trading activity</CardDescription>
+                <CardTitle className="text-base sm:text-lg">Activity Alerts</CardTitle>
+                <CardDescription className="text-xs sm:text-sm">Get notified about your entries and results</CardDescription>
               </CardHeader>
               <CardContent className="p-4 sm:p-6 pt-2 sm:pt-0 space-y-3 sm:space-y-4">
                 <div className="flex items-center justify-between gap-3">
@@ -234,12 +351,32 @@ const Settings = () => {
                 </div>
                 <div className="flex items-center justify-between gap-3">
                   <div className="min-w-0">
-                    <p className="font-medium text-sm">Price Alerts</p>
-                    <p className="text-xs text-muted-foreground truncate">When prices move significantly</p>
+                    <p className="font-medium text-sm">Odds Changes</p>
+                    <p className="text-xs text-muted-foreground truncate">When odds shift on markets you've entered</p>
                   </div>
                   <Switch 
-                    checked={notifications.priceAlerts}
-                    onCheckedChange={(checked) => setNotifications({...notifications, priceAlerts: checked})}
+                    checked={notifications.oddsChanges}
+                    onCheckedChange={(checked) => setNotifications({...notifications, oddsChanges: checked})}
+                  />
+                </div>
+                <div className="flex items-center justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="font-medium text-sm">Draw Results</p>
+                    <p className="text-xs text-muted-foreground truncate">Weekly draw winners and your results</p>
+                  </div>
+                  <Switch 
+                    checked={notifications.drawResults}
+                    onCheckedChange={(checked) => setNotifications({...notifications, drawResults: checked})}
+                  />
+                </div>
+                <div className="flex items-center justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="font-medium text-sm">Entry Confirmations</p>
+                    <p className="text-xs text-muted-foreground truncate">When your ticket purchase is confirmed</p>
+                  </div>
+                  <Switch 
+                    checked={notifications.entryConfirmations}
+                    onCheckedChange={(checked) => setNotifications({...notifications, entryConfirmations: checked})}
                   />
                 </div>
                 <div className="flex items-center justify-between gap-3">
@@ -325,28 +462,28 @@ const Settings = () => {
                 </div>
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-                    {privacy.showPortfolio ? <Eye className="h-4 w-4 text-muted-foreground flex-shrink-0" /> : <EyeOff className="h-4 w-4 text-muted-foreground flex-shrink-0" />}
+                    {privacy.showWinnings ? <Eye className="h-4 w-4 text-muted-foreground flex-shrink-0" /> : <EyeOff className="h-4 w-4 text-muted-foreground flex-shrink-0" />}
                     <div className="min-w-0">
-                      <p className="font-medium text-sm">Show Portfolio Value</p>
-                      <p className="text-xs text-muted-foreground truncate">Display your total portfolio value</p>
+                      <p className="font-medium text-sm">Show Winnings</p>
+                      <p className="text-xs text-muted-foreground truncate">Display your total winnings on your profile</p>
                     </div>
                   </div>
                   <Switch 
-                    checked={privacy.showPortfolio}
-                    onCheckedChange={(checked) => setPrivacy({...privacy, showPortfolio: checked})}
+                    checked={privacy.showWinnings}
+                    onCheckedChange={(checked) => setPrivacy({...privacy, showWinnings: checked})}
                   />
                 </div>
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-                    {privacy.showPositions ? <Eye className="h-4 w-4 text-muted-foreground flex-shrink-0" /> : <EyeOff className="h-4 w-4 text-muted-foreground flex-shrink-0" />}
+                    {privacy.showEntries ? <Eye className="h-4 w-4 text-muted-foreground flex-shrink-0" /> : <EyeOff className="h-4 w-4 text-muted-foreground flex-shrink-0" />}
                     <div className="min-w-0">
-                      <p className="font-medium text-sm">Show Active Positions</p>
-                      <p className="text-xs text-muted-foreground truncate">Let others see your current trades</p>
+                      <p className="font-medium text-sm">Show Active Entries</p>
+                      <p className="text-xs text-muted-foreground truncate">Let others see your current entries</p>
                     </div>
                   </div>
                   <Switch 
-                    checked={privacy.showPositions}
-                    onCheckedChange={(checked) => setPrivacy({...privacy, showPositions: checked})}
+                    checked={privacy.showEntries}
+                    onCheckedChange={(checked) => setPrivacy({...privacy, showEntries: checked})}
                   />
                 </div>
                 <div className="flex items-center justify-between gap-3">
@@ -361,6 +498,93 @@ const Settings = () => {
                     checked={privacy.showActivity}
                     onCheckedChange={(checked) => setPrivacy({...privacy, showActivity: checked})}
                   />
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Responsible Gambling */}
+            <Card className="border-border/40">
+              <CardHeader className="p-4 sm:p-6 pb-2 sm:pb-4">
+                <div className="flex items-center gap-2">
+                  <AlertTriangle className="h-4 w-4 text-destructive" />
+                  <CardTitle className="text-base sm:text-lg">Responsible Gambling</CardTitle>
+                </div>
+                <CardDescription className="text-xs sm:text-sm">Set limits to keep your experience healthy</CardDescription>
+              </CardHeader>
+              <CardContent className="p-4 sm:p-6 pt-2 sm:pt-0 space-y-3 sm:space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                  <div className="space-y-1.5 sm:space-y-2">
+                    <Label className="text-xs sm:text-sm">Daily Deposit Limit</Label>
+                    <div className="relative">
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">$</span>
+                      <Input 
+                        type="number"
+                        value={responsible.dailyLimit} 
+                        onChange={(e) => setResponsible({...responsible, dailyLimit: e.target.value})}
+                        placeholder="No limit"
+                        className="h-9 sm:h-10 text-sm pl-7"
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-1.5 sm:space-y-2">
+                    <Label className="text-xs sm:text-sm">Weekly Deposit Limit</Label>
+                    <div className="relative">
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">$</span>
+                      <Input 
+                        type="number"
+                        value={responsible.weeklyLimit} 
+                        onChange={(e) => setResponsible({...responsible, weeklyLimit: e.target.value})}
+                        placeholder="No limit"
+                        className="h-9 sm:h-10 text-sm pl-7"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                    <Timer className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                    <div className="min-w-0">
+                      <p className="font-medium text-sm">Session Time Reminder</p>
+                      <p className="text-xs text-muted-foreground truncate">Get reminded to take a break</p>
+                    </div>
+                  </div>
+                  <Switch 
+                    checked={responsible.sessionReminder}
+                    onCheckedChange={(checked) => setResponsible({...responsible, sessionReminder: checked})}
+                  />
+                </div>
+                {responsible.sessionReminder && (
+                  <div className="space-y-1.5 sm:space-y-2 pl-6 sm:pl-7">
+                    <Label className="text-xs sm:text-sm">Reminder Interval</Label>
+                    <Select value={responsible.reminderInterval} onValueChange={(v) => setResponsible({...responsible, reminderInterval: v})}>
+                      <SelectTrigger className="h-9 sm:h-10 text-sm">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="30min">Every 30 minutes</SelectItem>
+                        <SelectItem value="1hr">Every 1 hour</SelectItem>
+                        <SelectItem value="2hr">Every 2 hours</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+                <div className="pt-2 border-t border-border/40">
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="font-medium text-sm text-destructive">Self-Exclusion</p>
+                      <p className="text-xs text-muted-foreground truncate">Temporarily lock yourself out</p>
+                    </div>
+                    <Select>
+                      <SelectTrigger className="h-8 w-24 text-xs">
+                        <SelectValue placeholder="Period" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="24h">24 hours</SelectItem>
+                        <SelectItem value="7d">7 days</SelectItem>
+                        <SelectItem value="30d">30 days</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -434,8 +658,54 @@ const Settings = () => {
                     </SelectContent>
                   </Select>
                 </div>
+                <div className="space-y-1.5 sm:space-y-2">
+                  <Label className="text-xs sm:text-sm">Crypto Wallet Address</Label>
+                  <div className="flex items-center gap-2">
+                    <Wallet className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                    <Input 
+                      value={cryptoWallet} 
+                      onChange={(e) => setCryptoWallet(e.target.value)}
+                      placeholder="0x..."
+                      className="h-9 sm:h-10 text-sm font-mono"
+                    />
+                  </div>
+                  <p className="text-[10px] sm:text-xs text-muted-foreground">For cryptocurrency withdrawals (ERC-20)</p>
+                </div>
               </CardContent>
             </Card>
+
+            {/* Deposit Limits */}
+            {(responsible.dailyLimit || responsible.weeklyLimit) && (
+              <Card className="border-border/40">
+                <CardHeader className="p-4 sm:p-6 pb-2 sm:pb-4">
+                  <CardTitle className="text-base sm:text-lg">Active Deposit Limits</CardTitle>
+                  <CardDescription className="text-xs sm:text-sm">Managed in Privacy → Responsible Gambling</CardDescription>
+                </CardHeader>
+                <CardContent className="p-4 sm:p-6 pt-2 sm:pt-0 space-y-2">
+                  {responsible.dailyLimit && (
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-muted-foreground">Daily limit</span>
+                      <span className="font-medium">${responsible.dailyLimit}</span>
+                    </div>
+                  )}
+                  {responsible.weeklyLimit && (
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-muted-foreground">Weekly limit</span>
+                      <span className="font-medium">${responsible.weeklyLimit}</span>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+
+            <Button 
+              variant="outline" 
+              className="w-full gap-2 text-xs sm:text-sm h-9 sm:h-10"
+              onClick={() => navigate("/portfolio")}
+            >
+              <ExternalLink className="h-3.5 w-3.5" />
+              View Transaction History
+            </Button>
           </TabsContent>
 
           {/* Creator Profile Settings (only shown if user is a creator) */}
