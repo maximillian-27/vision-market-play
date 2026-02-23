@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Zap, Wallet } from "lucide-react";
+import { Wallet } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface Outcome {
@@ -24,7 +24,14 @@ interface QuickTradeSheetProps {
     id: string;
     title: string;
     outcomes: Outcome[];
+    pot?: number;
   };
+}
+
+function formatPot(pot: number): string {
+  if (pot >= 1000000) return `$${(pot / 1000000).toFixed(1)}M`;
+  if (pot >= 1000) return `$${(pot / 1000).toFixed(0)}K`;
+  return `$${pot}`;
 }
 
 export function QuickTradeSheet({ open, onOpenChange, market }: QuickTradeSheetProps) {
@@ -37,11 +44,12 @@ export function QuickTradeSheet({ open, onOpenChange, market }: QuickTradeSheetP
     (market.outcomes[0].label.toLowerCase() === "yes" || market.outcomes[0].label.toLowerCase() === "no");
 
   const amountNum = parseFloat(amount) || 0;
-  const shares = selectedOutcome && selectedOutcome.price > 0 
-    ? Math.floor((amountNum * 100) / selectedOutcome.price) 
-    : 0;
-  const potentialPayout = shares;
-  const potentialProfit = potentialPayout - amountNum;
+  
+  // Pari-mutuel: Payout = (Entry / Total Outcome Entries) * Pot
+  const totalPot = market.pot || 0;
+  const selectedPrice = selectedOutcome?.price || 0;
+  const payout = selectedPrice > 0 ? (amountNum / (selectedPrice / 100)) : 0;
+  const winnings = payout - amountNum;
 
   const yesOutcome = isBinary ? market.outcomes.find(o => o.label.toLowerCase() === "yes") : null;
   const noOutcome = isBinary ? market.outcomes.find(o => o.label.toLowerCase() === "no") : null;
@@ -51,7 +59,7 @@ export function QuickTradeSheet({ open, onOpenChange, market }: QuickTradeSheetP
     if (!selectedOutcome) {
       toast({
         title: "Select an outcome",
-        description: "Please select an outcome before placing an order",
+        description: "Please select an outcome before placing an entry",
         variant: "destructive"
       });
       return;
@@ -60,7 +68,7 @@ export function QuickTradeSheet({ open, onOpenChange, market }: QuickTradeSheetP
     if (amountNum < 1) {
       toast({
         title: "Invalid amount",
-        description: "Minimum amount is $1",
+        description: "Minimum entry is $1",
         variant: "destructive"
       });
       return;
@@ -70,8 +78,8 @@ export function QuickTradeSheet({ open, onOpenChange, market }: QuickTradeSheetP
     
     setTimeout(() => {
       toast({
-        title: "Order placed!",
-        description: `You bought ${shares} shares of "${selectedOutcome.label}" for $${amountNum.toFixed(2)}`,
+        title: "Entry placed!",
+        description: `You entered $${amountNum.toFixed(2)} on "${selectedOutcome.label}"`,
       });
       setIsSubmitting(false);
       setAmount("10");
@@ -86,15 +94,14 @@ export function QuickTradeSheet({ open, onOpenChange, market }: QuickTradeSheetP
     onOpenChange(false);
   };
 
+  const quickAmounts = [5, 10, 25, 50, 100];
+
   return (
     <Drawer open={open} onOpenChange={handleClose}>
       <DrawerContent className="px-4 pb-8">
         <DrawerHeader className="px-0 pt-4 pb-2">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Zap className="h-4 w-4 text-primary" />
-              <DrawerTitle className="text-base font-semibold">Quick Trade</DrawerTitle>
-            </div>
+            <DrawerTitle className="text-base font-semibold">Place Entry</DrawerTitle>
             <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
               <Wallet className="h-3.5 w-3.5" />
               <span>$5,230</span>
@@ -102,16 +109,20 @@ export function QuickTradeSheet({ open, onOpenChange, market }: QuickTradeSheetP
           </div>
         </DrawerHeader>
 
-        {/* Market Title */}
-        <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
-          {market.title}
-        </p>
+        {/* Market Title & Pot */}
+        <div className="mb-4">
+          <p className="text-sm text-muted-foreground line-clamp-2 mb-2">{market.title}</p>
+          {totalPot > 0 && (
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-extrabold">
+              {formatPot(totalPot)} Pot
+            </span>
+          )}
+        </div>
 
         {/* Outcome Selection */}
         <div className="space-y-3">
           {isBinary ? (
             <div className="space-y-2">
-              {/* Probability bar */}
               <div className="flex items-center gap-2 text-xs font-bold">
                 <span className="text-success w-10">{yesPercent}%</span>
                 <div className="flex-1 h-2 rounded-full bg-muted overflow-hidden">
@@ -123,7 +134,6 @@ export function QuickTradeSheet({ open, onOpenChange, market }: QuickTradeSheetP
                 <span className="text-muted-foreground w-10 text-right">{100 - yesPercent}%</span>
               </div>
               
-              {/* Outcome buttons */}
               <div className="grid grid-cols-2 gap-2">
                 <button
                   onClick={() => setSelectedOutcome(yesOutcome || null)}
@@ -177,7 +187,7 @@ export function QuickTradeSheet({ open, onOpenChange, market }: QuickTradeSheetP
             </div>
           )}
 
-          {/* Amount & Buy */}
+          {/* Amount & Enter */}
           <div className="flex items-center gap-2 pt-2">
             <div className="relative flex-1">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground font-medium text-sm">$</span>
@@ -198,29 +208,44 @@ export function QuickTradeSheet({ open, onOpenChange, market }: QuickTradeSheetP
               {isSubmitting 
                 ? "..." 
                 : selectedOutcome 
-                  ? `Buy`
+                  ? `Enter`
                   : "Select"
               }
             </Button>
           </div>
 
-          {/* Order Summary */}
-          <div className="flex items-center justify-between text-sm bg-muted/30 rounded-lg px-3 py-2.5">
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-1.5">
-                <span className="text-muted-foreground">Shares</span>
-                <span className="font-semibold">{selectedOutcome ? shares : '-'}</span>
-              </div>
-              <div className="w-px h-4 bg-border" />
-              <div className="flex items-center gap-1.5">
-                <span className="text-muted-foreground">Avg</span>
-                <span className="font-semibold">{selectedOutcome ? `${selectedOutcome.price}¢` : '-'}</span>
-              </div>
+          {/* Quick amounts */}
+          <div className="flex gap-1.5">
+            {quickAmounts.map((qa) => (
+              <button
+                key={qa}
+                onClick={() => setAmount(qa.toString())}
+                className={`flex-1 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                  amount === qa.toString() 
+                    ? 'bg-primary/10 text-primary border border-primary/30' 
+                    : 'bg-muted/50 text-muted-foreground border border-transparent hover:bg-muted'
+                }`}
+              >
+                ${qa}
+              </button>
+            ))}
+          </div>
+
+          {/* "If You Win" Summary */}
+          <div className="rounded-lg bg-muted/30 border border-border/50 p-3 space-y-2">
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-muted-foreground">Your Entry</span>
+              <span className="font-semibold">${amountNum.toFixed(2)}</span>
             </div>
-            <div className="flex items-center gap-1.5">
-              <span className="text-muted-foreground">Profit</span>
-              <span className={`font-semibold ${selectedOutcome && potentialProfit > 0 ? 'text-success' : ''}`}>
-                {selectedOutcome ? `+$${potentialProfit.toFixed(2)}` : '-'}
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-muted-foreground">If you win</span>
+              <span className="font-bold">{selectedOutcome ? `$${payout.toFixed(2)}` : '-'}</span>
+            </div>
+            <div className="h-px bg-border" />
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-muted-foreground">Potential Winnings</span>
+              <span className={`font-bold ${selectedOutcome && winnings > 0 ? 'text-success' : ''}`}>
+                {selectedOutcome ? `+$${winnings.toFixed(2)}` : '-'}
               </span>
             </div>
           </div>

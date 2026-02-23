@@ -1,4 +1,4 @@
-import { TrendingUp, Clock } from "lucide-react";
+import { Clock, Users } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
 import bitcoinImage from "@/assets/bitcoin-market.jpg";
@@ -7,25 +7,28 @@ import fedImage from "@/assets/federal-reserve.jpg";
 
 const hottestMarkets = [
   {
-    id: "1",
-    title: "Will Bitcoin reach $100,000 by end of 2025?",
-    image: bitcoinImage,
-    volume: "$2.4M",
-    yesPrice: 68,
-  },
-  {
     id: "4",
     title: "Next US Federal Reserve interest rate decision?",
     image: fedImage,
-    volume: "$3.1M",
-    yesPrice: 45,
+    pot: "$3.1M",
+    probability: 45,
+    players: 15200,
+  },
+  {
+    id: "1",
+    title: "Will Bitcoin reach $100,000 by end of 2025?",
+    image: bitcoinImage,
+    pot: "$2.4M",
+    probability: 68,
+    players: 12400,
   },
   {
     id: "2",
     title: "Who will win the NBA Championship this season?",
     image: nbaImage,
-    volume: "$890K",
-    yesPrice: 32,
+    pot: "$890K",
+    probability: 32,
+    players: 8200,
   },
 ];
 
@@ -37,13 +40,12 @@ export function HottestMarkets() {
       <Card className="border-border/40 overflow-hidden">
         <CardHeader className="pb-2 pt-4 px-4">
           <CardTitle className="text-sm font-semibold flex items-center gap-2">
-            <TrendingUp className="h-4 w-4 text-primary" />
-            Trending Now
+            Biggest Pots
           </CardTitle>
         </CardHeader>
         <CardContent className="p-2 pt-0">
           <div className="space-y-1">
-            {hottestMarkets.map((market, index) => (
+            {hottestMarkets.map((market) => (
               <div
                 key={market.id}
                 onClick={() => navigate(`/market/${market.id}`)}
@@ -59,9 +61,12 @@ export function HottestMarkets() {
                     {market.title}
                   </h4>
                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                    <span className="font-medium">{market.volume}</span>
+                    <span className="font-extrabold text-primary">{market.pot}</span>
                     <span className="text-muted-foreground/40">•</span>
-                    <span className="font-semibold text-success">Yes {market.yesPrice}¢</span>
+                    <span className="flex items-center gap-0.5">
+                      <Users className="h-3 w-3" />
+                      {market.players.toLocaleString()}
+                    </span>
                   </div>
                 </div>
               </div>

@@ -5,32 +5,31 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { 
   ArrowLeft, 
   Heart, 
   MessageCircle, 
   Share2, 
-  Repeat2,
-  Check, 
-  X, 
   BadgeCheck, 
   ChevronDown, 
   ChevronUp, 
   Send,
-  TrendingUp,
   Users,
   Clock,
   FileText,
   Scale,
   Wallet,
-  Zap
+  Bookmark,
+  Timer
 } from "lucide-react";
 import { ResponsiveContainer, AreaChart, Area, XAxis, Tooltip } from "recharts";
 import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
-import { QuoteRepostDialog } from "@/components/QuoteRepostDialog";
+
+import bitcoinImage from "@/assets/bitcoin-market.jpg";
+import nbaImage from "@/assets/nba-championship.jpg";
+import aiImage from "@/assets/ai-customer-service.jpg";
 
 interface Comment {
   id: string;
@@ -41,7 +40,6 @@ interface Comment {
   isLiked: boolean;
 }
 
-// Mock data
 const mockMarketData: Record<string, any> = {
   "1": {
     creator: {
@@ -53,15 +51,16 @@ const mockMarketData: Record<string, any> = {
     title: "Will Bitcoin reach $100,000 by end of 2025?",
     description: "This market resolves to YES if Bitcoin reaches or exceeds $100,000 USD on any major exchange before December 31, 2025. The price must be sustained for at least 5 minutes on Coinbase, Binance, or Kraken.",
     resolutionCriteria: "Resolution is based on official price data from Coinbase, Binance, or Kraken. The price must hit $100,000 USD and remain at or above this level for at least 5 consecutive minutes. In case of exchange discrepancies, Coinbase price will be the primary reference.",
+    image: bitcoinImage,
     outcomes: [
       { label: "Yes", price: 68, color: "success" },
       { label: "No", price: 32, color: "destructive" }
     ],
-    volume: "$2.4M",
+    pot: 2400000,
     endDate: "Dec 31, 2025",
     endsIn: "3 months",
-    traders: 12400,
-    volume24h: "$324K",
+    players: 12400,
+    activity24h: 1240,
     likesCount: 342,
     priceHistory: [
       { date: "Jan", price: 45 },
@@ -81,6 +80,7 @@ const mockMarketData: Record<string, any> = {
     title: "Who will win the NBA Championship this season?",
     description: "This market resolves based on the winner of the 2024-2025 NBA Finals, as officially announced by the NBA.",
     resolutionCriteria: "The market resolves to the team that wins the 2024-2025 NBA Finals, as officially announced by the NBA. If the season is cancelled, the market resolves to 'Other'.",
+    image: nbaImage,
     isMultiOutcome: true,
     outcomes: [
       { label: "Celtics", price: 32, logo: "https://cdn.nba.com/logos/nba/1610612738/primary/L/logo.svg" },
@@ -89,11 +89,11 @@ const mockMarketData: Record<string, any> = {
       { label: "Warriors", price: 12, logo: "https://cdn.nba.com/logos/nba/1610612744/primary/L/logo.svg" },
       { label: "Other", price: 10 },
     ],
-    volume: "$890K",
+    pot: 890000,
     endDate: "Jun 30, 2025",
     endsIn: "2 months",
-    traders: 8200,
-    volume24h: "$67K",
+    players: 8200,
+    activity24h: 430,
     likesCount: 189,
     priceHistory: [
       { date: "Jan", price: 28 },
@@ -112,15 +112,16 @@ const mockMarketData: Record<string, any> = {
     title: "Will AI replace 25% of customer service jobs by 2026?",
     description: "This market resolves to YES if at least 25% of customer service positions are replaced by AI chatbots or automated systems by December 31, 2026, as measured by major industry reports.",
     resolutionCriteria: "Resolution is based on industry reports from Gartner, McKinsey, or similar authoritative sources. The 25% threshold must be met globally across major markets.",
+    image: aiImage,
     outcomes: [
       { label: "Yes", price: 71, color: "success" },
       { label: "No", price: 29, color: "destructive" }
     ],
-    volume: "$1.8M",
+    pot: 1800000,
     endDate: "Dec 31, 2025",
     endsIn: "Ended",
-    traders: 9800,
-    volume24h: "$0",
+    players: 9800,
+    activity24h: 0,
     likesCount: 176,
     status: "awaiting_resolution",
     resolutionDate: "Jan 15, 2026",
@@ -163,9 +164,15 @@ const mockComments: Comment[] = [
 
 const buySchema = z.object({
   amount: z.number()
-    .min(1, { message: "Minimum amount is $1" })
-    .max(10000, { message: "Maximum amount is $10,000" })
+    .min(1, { message: "Minimum entry is $1" })
+    .max(10000, { message: "Maximum entry is $10,000" })
 });
+
+function formatPot(pot: number): string {
+  if (pot >= 1000000) return `$${(pot / 1000000).toFixed(1)}M`;
+  if (pot >= 1000) return `$${(pot / 1000).toFixed(0)}K`;
+  return `$${pot}`;
+}
 
 export default function MarketDetail() {
   const { id } = useParams();
@@ -183,7 +190,7 @@ export default function MarketDetail() {
   const [showAllOutcomes, setShowAllOutcomes] = useState(false);
   const [showResolution, setShowResolution] = useState(false);
   const [showComments, setShowComments] = useState(false);
-  const [showRepostDialog, setShowRepostDialog] = useState(false);
+  const [isBookmarked, setIsBookmarked] = useState(false);
 
   if (!market) {
     return (
@@ -199,11 +206,11 @@ export default function MarketDetail() {
   const isBinary = !market.isMultiOutcome;
   const isAwaitingResolution = market.status === "awaiting_resolution";
   const amountNum = parseFloat(amount) || 0;
-  const shares = selectedOutcome && selectedOutcome.price > 0 
-    ? Math.floor((amountNum * 100) / selectedOutcome.price) 
-    : 0;
-  const potentialPayout = shares;
-  const potentialProfit = potentialPayout - amountNum;
+  
+  // Pari-mutuel payout calculation
+  const selectedPrice = selectedOutcome?.price || 0;
+  const payout = selectedPrice > 0 ? amountNum / (selectedPrice / 100) : 0;
+  const winnings = payout - amountNum;
 
   const handleComment = () => {
     if (!commentText.trim()) return;
@@ -228,7 +235,7 @@ export default function MarketDetail() {
     if (!selectedOutcome) {
       toast({
         title: "Select an outcome",
-        description: "Please select an outcome before placing an order",
+        description: "Please select an outcome before placing an entry",
         variant: "destructive"
       });
       return;
@@ -241,8 +248,8 @@ export default function MarketDetail() {
       
       setTimeout(() => {
         toast({
-          title: "Order placed!",
-          description: `You bought ${shares} shares of "${selectedOutcome.label}" for $${amountNum.toFixed(2)}`,
+          title: "Entry placed!",
+          description: `You entered $${amountNum.toFixed(2)} on "${selectedOutcome.label}"`,
         });
         setIsSubmitting(false);
         setAmount("10");
@@ -272,7 +279,7 @@ export default function MarketDetail() {
     ? sortedOutcomes.slice(0, 3) 
     : sortedOutcomes;
 
-  const quickAmounts = [5, 10, 25, 50];
+  const quickAmounts = [5, 10, 25, 50, 100];
 
   return (
     <div className="min-h-screen bg-background pb-48">
@@ -298,10 +305,13 @@ export default function MarketDetail() {
             <Button 
               variant="ghost" 
               size="icon" 
-              className="h-8 w-8"
-              onClick={() => setShowRepostDialog(true)}
+              className={`h-8 w-8 ${isBookmarked ? 'text-primary' : ''}`}
+              onClick={() => {
+                setIsBookmarked(!isBookmarked);
+                toast({ title: isBookmarked ? "Removed from watchlist" : "Added to watchlist" });
+              }}
             >
-              <Repeat2 className="h-5 w-5" />
+              <Bookmark className={`h-5 w-5 ${isBookmarked ? 'fill-primary' : ''}`} />
             </Button>
           </div>
         </div>
@@ -309,6 +319,18 @@ export default function MarketDetail() {
 
       {/* Main Content */}
       <div className="max-w-2xl mx-auto">
+        {/* Hero Image Banner */}
+        {market.image && (
+          <div className="relative w-full aspect-[16/7] overflow-hidden">
+            <img 
+              src={market.image} 
+              alt={market.title}
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
+          </div>
+        )}
+
         {/* Creator Row */}
         <div className="flex items-center justify-between px-4 py-3">
           <button 
@@ -326,6 +348,7 @@ export default function MarketDetail() {
                   <BadgeCheck className="h-4 w-4 text-primary fill-primary/20" />
                 )}
               </div>
+              <span className="text-[11px] text-muted-foreground">Creator</span>
             </div>
           </button>
           <Badge variant="secondary" className={`text-[10px] px-2 ${isAwaitingResolution ? 'bg-blue-500/10 text-blue-600 border-blue-500/20' : ''}`}>
@@ -334,20 +357,27 @@ export default function MarketDetail() {
         </div>
 
         {/* Title */}
-        <div className="px-4 pb-3">
+        <div className="px-4 pb-2">
           <h1 className="text-lg font-bold leading-snug">{market.title}</h1>
         </div>
 
-        {/* Stats Row */}
+        {/* Pot Size Hero */}
+        <div className="px-4 pb-3">
+          <span className="inline-flex items-center px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-lg font-extrabold">
+            {formatPot(market.pot)} Pot
+          </span>
+        </div>
+
+        {/* Key Stats Row */}
         <div className="flex flex-wrap items-center gap-4 px-4 pb-4 text-xs text-muted-foreground">
           <div className="flex items-center gap-1">
-            <TrendingUp className="h-3.5 w-3.5 text-primary" />
-            <span className="font-semibold text-foreground">{market.volume}</span>
-            <span>volume</span>
+            <Users className="h-3.5 w-3.5" />
+            <span className="font-semibold text-foreground">{formatNumber(market.players)}</span>
+            <span>players</span>
           </div>
           <div className="flex items-center gap-1">
-            <Users className="h-3.5 w-3.5" />
-            <span>{formatNumber(market.traders)} traders</span>
+            <Timer className="h-3.5 w-3.5" />
+            <span>{market.activity24h > 0 ? formatNumber(market.activity24h) : '0'} entries today</span>
           </div>
           <div className="flex items-center gap-1">
             <Clock className="h-3.5 w-3.5" />
@@ -355,7 +385,7 @@ export default function MarketDetail() {
           </div>
         </div>
 
-        {/* Chart with timeframe filters */}
+        {/* Chart */}
         <div className="px-4 pb-4 space-y-2">
           <div className="flex items-center gap-1.5">
             {["1D", "1W", "1M", "All"].map((tf) => (
@@ -391,28 +421,12 @@ export default function MarketDetail() {
                     fontSize: "12px",
                     padding: "6px 10px"
                   }}
-                  formatter={(value: any) => [`${value}%`, "Price"]}
-                  labelFormatter={(label) => `Date: ${label}`}
+                  formatter={(value: any) => [`${value}% chance`, "Probability"]}
+                  labelFormatter={(label) => `${label}`}
                 />
                 <Area type="monotone" dataKey="price" stroke="hsl(var(--primary))" fill="url(#chartGradient)" strokeWidth={2} />
               </AreaChart>
             </ResponsiveContainer>
-          </div>
-        </div>
-
-        {/* Key Stats Grid */}
-        <div className="grid grid-cols-3 gap-2 px-4 pb-4">
-          <div className="p-2.5 rounded-lg bg-muted/30 text-center">
-            <p className="text-[10px] text-muted-foreground uppercase">Volume</p>
-            <p className="text-sm font-bold">{market.volume}</p>
-          </div>
-          <div className="p-2.5 rounded-lg bg-muted/30 text-center">
-            <p className="text-[10px] text-muted-foreground uppercase">Traders</p>
-            <p className="text-sm font-bold">{formatNumber(market.traders)}</p>
-          </div>
-          <div className="p-2.5 rounded-lg bg-muted/30 text-center">
-            <p className="text-[10px] text-muted-foreground uppercase">24h Vol</p>
-            <p className="text-sm font-bold">{market.volume24h || "$45K"}</p>
           </div>
         </div>
 
@@ -486,7 +500,6 @@ export default function MarketDetail() {
             <div className="px-4 pb-4 space-y-4">
               <Separator />
               
-              {/* Comment Input */}
               <div className="flex items-center gap-3">
                 <Avatar className="h-8 w-8 flex-shrink-0">
                   <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=User" />
@@ -511,7 +524,6 @@ export default function MarketDetail() {
                 </div>
               </div>
               
-              {/* Comments List */}
               <div className="space-y-3">
                 {comments.map((comment) => (
                   <div key={comment.id} className="flex items-start gap-3">
@@ -541,15 +553,12 @@ export default function MarketDetail() {
         </Collapsible>
       </div>
 
-      {/* Sticky Trade Panel at Bottom */}
+      {/* Sticky Entry Panel at Bottom */}
       <div className="fixed bottom-14 md:bottom-0 left-0 right-0 bg-background/95 backdrop-blur-md border-t border-border/40 z-30">
         <div className="max-w-2xl mx-auto p-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] space-y-2">
-          {/* Quick Trade Header */}
+          {/* Header */}
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Zap className="h-4 w-4 text-primary" />
-              <span className="text-sm font-semibold">Quick Trade</span>
-            </div>
+            <span className="text-sm font-semibold">Place Entry</span>
             {!isAwaitingResolution && (
               <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                 <Wallet className="h-3.5 w-3.5" />
@@ -558,20 +567,18 @@ export default function MarketDetail() {
             )}
           </div>
 
-          {/* Awaiting Resolution State */}
+          {/* Awaiting Resolution */}
           {isAwaitingResolution ? (
             <div className="space-y-3">
-              {/* Status Banner */}
               <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20 text-center">
                 <Clock className="h-5 w-5 text-blue-500 mx-auto mb-1.5" />
-                <p className="text-sm font-semibold text-blue-600 dark:text-blue-400">Betting Closed</p>
+                <p className="text-sm font-semibold text-blue-600 dark:text-blue-400">Entries Closed</p>
                 <p className="text-xs text-muted-foreground mt-0.5">Awaiting resolution</p>
                 {market.resolutionDate && (
                   <p className="text-xs text-blue-500 mt-1">{market.resolutionDate}</p>
                 )}
               </div>
               
-              {/* Final Prices Display */}
               {isBinary && (
                 <div className="space-y-2">
                   <div className="flex items-center gap-2 text-xs font-bold opacity-75">
@@ -609,7 +616,6 @@ export default function MarketDetail() {
               {/* Outcome Selection */}
               {isBinary ? (
                 <div className="space-y-2">
-                  {/* Probability bar */}
                   <div className="flex items-center gap-2 text-xs font-bold">
                     <span className="text-success w-10">{market.outcomes[0].price}%</span>
                     <div className="flex-1 h-2 rounded-full bg-muted overflow-hidden">
@@ -621,7 +627,6 @@ export default function MarketDetail() {
                     <span className="text-muted-foreground w-10 text-right">{market.outcomes[1].price}%</span>
                   </div>
                   
-                  {/* Outcome buttons */}
                   <div className="grid grid-cols-2 gap-2">
                     {market.outcomes.map((outcome: any, index: number) => {
                       const isYes = outcome.label.toLowerCase() === "yes";
@@ -677,7 +682,7 @@ export default function MarketDetail() {
                 </div>
               )}
 
-              {/* Amount & Buy */}
+              {/* Amount & Enter */}
               <div className="flex items-center gap-2">
                 <div className="relative flex-1">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground font-medium text-sm">$</span>
@@ -698,29 +703,46 @@ export default function MarketDetail() {
                   {isSubmitting 
                     ? "..." 
                     : selectedOutcome 
-                      ? `Buy $${amountNum}`
+                      ? `Enter $${amountNum}`
                       : "Select"
                   }
                 </Button>
               </div>
 
-              {/* Order Summary - always visible with key info */}
+              {/* Quick amounts */}
+              <div className="flex gap-1">
+                {quickAmounts.map((qa) => (
+                  <button
+                    key={qa}
+                    onClick={() => setAmount(qa.toString())}
+                    className={`flex-1 py-1 rounded-md text-[10px] font-semibold transition-all ${
+                      amount === qa.toString() 
+                        ? 'bg-primary/10 text-primary border border-primary/30' 
+                        : 'bg-muted/50 text-muted-foreground border border-transparent hover:bg-muted'
+                    }`}
+                  >
+                    ${qa}
+                  </button>
+                ))}
+              </div>
+
+              {/* "If You Win" Summary */}
               <div className="flex items-center justify-between text-xs bg-muted/30 rounded-lg px-3 py-2">
                 <div className="flex items-center gap-3">
                   <div className="flex items-center gap-1">
-                    <span className="text-muted-foreground">Shares</span>
-                    <span className="font-semibold">{selectedOutcome ? shares : '-'}</span>
+                    <span className="text-muted-foreground">Entry</span>
+                    <span className="font-semibold">${amountNum.toFixed(2)}</span>
                   </div>
                   <div className="w-px h-3 bg-border" />
                   <div className="flex items-center gap-1">
-                    <span className="text-muted-foreground">Avg</span>
-                    <span className="font-semibold">{selectedOutcome ? `${selectedOutcome.price}¢` : '-'}</span>
+                    <span className="text-muted-foreground">If you win</span>
+                    <span className="font-bold">{selectedOutcome ? `$${payout.toFixed(2)}` : '-'}</span>
                   </div>
                 </div>
                 <div className="flex items-center gap-1">
-                  <span className="text-muted-foreground">Profit</span>
-                  <span className={`font-semibold ${selectedOutcome && potentialProfit > 0 ? 'text-success' : ''}`}>
-                    {selectedOutcome ? `+$${potentialProfit.toFixed(2)}` : '-'}
+                  <span className="text-muted-foreground">Winnings</span>
+                  <span className={`font-bold ${selectedOutcome && winnings > 0 ? 'text-success' : ''}`}>
+                    {selectedOutcome ? `+$${winnings.toFixed(2)}` : '-'}
                   </span>
                 </div>
               </div>
@@ -728,13 +750,6 @@ export default function MarketDetail() {
           )}
         </div>
       </div>
-
-      <QuoteRepostDialog
-        open={showRepostDialog}
-        onOpenChange={setShowRepostDialog}
-        marketTitle={market.title}
-        marketImage={undefined}
-      />
     </div>
   );
 }

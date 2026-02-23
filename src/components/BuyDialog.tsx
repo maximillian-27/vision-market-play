@@ -8,7 +8,7 @@ import { Separator } from "@/components/ui/separator";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
-import { TrendingUp, Wallet } from "lucide-react";
+import { Wallet } from "lucide-react";
 
 interface BuyDialogProps {
   open: boolean;
@@ -20,25 +20,30 @@ interface BuyDialogProps {
   };
   marketTitle: string;
   marketId: string;
+  pot?: number;
 }
 
 const buySchema = z.object({
   amount: z.number()
-    .min(1, { message: "Minimum amount is $1" })
-    .max(10000, { message: "Maximum amount is $10,000" })
+    .min(1, { message: "Minimum entry is $1" })
+    .max(10000, { message: "Maximum entry is $10,000" })
 });
 
-export function BuyDialog({ open, onOpenChange, outcome, marketTitle, marketId }: BuyDialogProps) {
+function formatPot(pot: number): string {
+  if (pot >= 1000000) return `$${(pot / 1000000).toFixed(1)}M`;
+  if (pot >= 1000) return `$${(pot / 1000).toFixed(0)}K`;
+  return `$${pot}`;
+}
+
+export function BuyDialog({ open, onOpenChange, outcome, marketTitle, marketId, pot = 0 }: BuyDialogProps) {
   const isMobile = useIsMobile();
   const { toast } = useToast();
   const [amount, setAmount] = useState("10");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Calculate shares and potential payout
   const amountNum = parseFloat(amount) || 0;
-  const shares = outcome.price > 0 ? Math.floor((amountNum * 100) / outcome.price) : 0;
-  const potentialPayout = shares;
-  const potentialProfit = potentialPayout - amountNum;
+  const payout = outcome.price > 0 ? amountNum / (outcome.price / 100) : 0;
+  const winnings = payout - amountNum;
 
   const handleBuy = () => {
     try {
@@ -46,11 +51,10 @@ export function BuyDialog({ open, onOpenChange, outcome, marketTitle, marketId }
       
       setIsSubmitting(true);
       
-      // Simulate API call
       setTimeout(() => {
         toast({
-          title: "Order placed",
-          description: `You bought ${shares} shares of "${outcome.label}" for $${amountNum.toFixed(2)}`,
+          title: "Entry placed!",
+          description: `You entered $${amountNum.toFixed(2)} on "${outcome.label}"`,
         });
         onOpenChange(false);
         setIsSubmitting(false);
@@ -67,7 +71,7 @@ export function BuyDialog({ open, onOpenChange, outcome, marketTitle, marketId }
     }
   };
 
-  const quickAmounts = [10, 25, 50, 100];
+  const quickAmounts = [5, 10, 25, 50, 100];
 
   const contentWithoutButton = (
     <div className="space-y-6">
@@ -75,22 +79,27 @@ export function BuyDialog({ open, onOpenChange, outcome, marketTitle, marketId }
       <div className="space-y-2">
         <h3 className="text-sm font-medium text-muted-foreground">Market</h3>
         <p className="text-sm leading-tight">{marketTitle}</p>
+        {pot > 0 && (
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-extrabold">
+            {formatPot(pot)} Pot
+          </span>
+        )}
       </div>
 
       <Separator />
 
-      {/* Outcome Selection */}
+      {/* Outcome */}
       <div className="space-y-2">
-        <h3 className="text-sm font-medium text-muted-foreground">Buying</h3>
+        <h3 className="text-sm font-medium text-muted-foreground">Your Pick</h3>
         <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30 border">
           <span className="font-semibold">{outcome.label}</span>
-          <span className="text-lg font-bold">{outcome.price}¢</span>
+          <span className="text-lg font-bold">{outcome.price}%</span>
         </div>
       </div>
 
       {/* Amount Input */}
       <div className="space-y-3">
-        <Label htmlFor="amount" className="text-sm font-medium">Amount</Label>
+        <Label htmlFor="amount" className="text-sm font-medium">Entry Amount</Label>
         <div className="relative">
           <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
           <Input
@@ -105,15 +114,14 @@ export function BuyDialog({ open, onOpenChange, outcome, marketTitle, marketId }
           />
         </div>
         
-        {/* Quick Amount Buttons */}
-        <div className="grid grid-cols-4 gap-2">
+        <div className="grid grid-cols-5 gap-2">
           {quickAmounts.map((quickAmount) => (
             <Button
               key={quickAmount}
               variant="outline"
               size="sm"
               onClick={() => setAmount(quickAmount.toString())}
-              className="h-9"
+              className={`h-9 ${amount === quickAmount.toString() ? 'border-primary bg-primary/5' : ''}`}
             >
               ${quickAmount}
             </Button>
@@ -121,25 +129,21 @@ export function BuyDialog({ open, onOpenChange, outcome, marketTitle, marketId }
         </div>
       </div>
 
-      {/* Order Summary */}
-      <div className="space-y-2 p-4 rounded-lg bg-muted/20">
+      {/* If You Win Summary */}
+      <div className="space-y-2 p-4 rounded-lg bg-muted/20 border border-border/50">
         <div className="flex justify-between text-sm">
-          <span className="text-muted-foreground">Shares</span>
-          <span className="font-semibold">{shares.toLocaleString()}</span>
+          <span className="text-muted-foreground">Your Entry</span>
+          <span className="font-semibold">${amountNum.toFixed(2)}</span>
         </div>
         <div className="flex justify-between text-sm">
-          <span className="text-muted-foreground">Avg. price</span>
-          <span className="font-semibold">{outcome.price}¢</span>
+          <span className="text-muted-foreground">If you win</span>
+          <span className="font-bold">${payout.toFixed(2)}</span>
         </div>
         <Separator className="my-2" />
         <div className="flex justify-between text-sm">
-          <span className="text-muted-foreground">Potential payout</span>
-          <span className="font-semibold">${potentialPayout.toFixed(2)}</span>
-        </div>
-        <div className="flex justify-between text-sm">
-          <span className="text-muted-foreground">Potential profit</span>
-          <span className={`font-semibold ${potentialProfit > 0 ? 'text-success' : ''}`}>
-            ${potentialProfit.toFixed(2)}
+          <span className="text-muted-foreground">Potential Winnings</span>
+          <span className={`font-bold ${winnings > 0 ? 'text-success' : ''}`}>
+            +${winnings.toFixed(2)}
           </span>
         </div>
       </div>
@@ -155,14 +159,12 @@ export function BuyDialog({ open, onOpenChange, outcome, marketTitle, marketId }
   const content = (
     <div className="space-y-6">
       {contentWithoutButton}
-
-      {/* Buy Button */}
       <Button
         className="w-full h-12 text-base font-semibold"
         onClick={handleBuy}
         disabled={isSubmitting || amountNum < 1 || amountNum > 10000}
       >
-        {isSubmitting ? "Placing order..." : `Buy ${outcome.label} for $${amountNum.toFixed(2)}`}
+        {isSubmitting ? "Placing entry..." : `Enter ${outcome.label} • $${amountNum.toFixed(2)}`}
       </Button>
     </div>
   );
@@ -172,7 +174,7 @@ export function BuyDialog({ open, onOpenChange, outcome, marketTitle, marketId }
       <Drawer open={open} onOpenChange={onOpenChange}>
         <DrawerContent className="px-4 pb-6 flex flex-col max-h-[85vh]">
           <DrawerHeader className="px-0 pb-4 flex-shrink-0">
-            <DrawerTitle>Place Order</DrawerTitle>
+            <DrawerTitle>Place Entry</DrawerTitle>
           </DrawerHeader>
           <div className="overflow-y-auto flex-1 -mx-4 px-4">
             {contentWithoutButton}
@@ -183,7 +185,7 @@ export function BuyDialog({ open, onOpenChange, outcome, marketTitle, marketId }
               onClick={handleBuy}
               disabled={isSubmitting || amountNum < 1 || amountNum > 10000}
             >
-              {isSubmitting ? "Placing order..." : `Buy ${outcome.label} for $${amountNum.toFixed(2)}`}
+              {isSubmitting ? "Placing entry..." : `Enter ${outcome.label} • $${amountNum.toFixed(2)}`}
             </Button>
           </div>
         </DrawerContent>
@@ -195,7 +197,7 @@ export function BuyDialog({ open, onOpenChange, outcome, marketTitle, marketId }
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Place Order</DialogTitle>
+          <DialogTitle>Place Entry</DialogTitle>
         </DialogHeader>
         {content}
       </DialogContent>

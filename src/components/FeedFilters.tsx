@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { SlidersHorizontal, X, Search } from "lucide-react";
+import { SlidersHorizontal, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-const categories = ["All", "Following", "Hot", "Politics", "Sports", "Crypto", "Tech", "Entertainment", "Finance"];
+const categories = ["All", "My Markets", "Hot", "Closing Soon", "Politics", "Sports", "Crypto", "Tech", "Entertainment", "Finance"];
 
 export interface FilterState {
   category: string;
@@ -26,7 +26,7 @@ export function FeedFilters({ filters, onFiltersChange }: FeedFiltersProps) {
     onFiltersChange({ ...filters, [key]: value });
   };
 
-  const hasActiveFilters = filters.sortBy !== "trending" || filters.region !== "global" || filters.status !== "all" || filters.timeframe !== "all";
+  const hasActiveFilters = filters.sortBy !== "trending" || filters.status !== "all" || filters.timeframe !== "all";
 
   return (
     <div className="space-y-3 sticky top-14 z-10 bg-background/95 backdrop-blur-xl border-b border-border py-3 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
@@ -73,7 +73,7 @@ export function FeedFilters({ filters, onFiltersChange }: FeedFiltersProps) {
               <X className="h-4 w-4" />
             </Button>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             <div className="space-y-1.5">
               <Label className="text-xs text-muted-foreground font-medium">Sort By</Label>
               <Select value={filters.sortBy} onValueChange={(v) => updateFilter('sortBy', v)}>
@@ -82,25 +82,10 @@ export function FeedFilters({ filters, onFiltersChange }: FeedFiltersProps) {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="trending">Trending</SelectItem>
-                  <SelectItem value="volume">Highest Volume</SelectItem>
+                  <SelectItem value="volume">Biggest Pots</SelectItem>
                   <SelectItem value="newest">Newest</SelectItem>
-                  <SelectItem value="ending">Ending Soon</SelectItem>
+                  <SelectItem value="ending">Closing Soon</SelectItem>
                   <SelectItem value="active">Most Active</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-1.5">
-              <Label className="text-xs text-muted-foreground font-medium">Region</Label>
-              <Select value={filters.region} onValueChange={(v) => updateFilter('region', v)}>
-                <SelectTrigger className="h-9 text-sm rounded-lg">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="global">Global</SelectItem>
-                  <SelectItem value="us">United States</SelectItem>
-                  <SelectItem value="europe">Europe</SelectItem>
-                  <SelectItem value="asia">Asia</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -142,7 +127,7 @@ export function FeedFilters({ filters, onFiltersChange }: FeedFiltersProps) {
               variant="ghost" 
               size="sm" 
               className="mt-4 text-xs text-muted-foreground hover:text-foreground"
-              onClick={() => onFiltersChange({ ...filters, sortBy: "trending", region: "global", status: "all", timeframe: "all" })}
+              onClick={() => onFiltersChange({ ...filters, sortBy: "trending", status: "all", timeframe: "all" })}
             >
               Clear all filters
             </Button>
