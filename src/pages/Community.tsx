@@ -201,26 +201,7 @@ export default function Community() {
             />
           </div>
 
-          {/* Highlights Strip */}
-          <div className="flex gap-2 overflow-x-auto scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0 pb-1">
-            {highlights.map((h) => (
-              <Card key={h.type} className="border-border/40 shrink-0 flex-1 min-w-[140px] sm:min-w-0">
-                <CardContent className="p-2.5 sm:p-3 flex items-center gap-2.5">
-                  <Avatar className="h-8 w-8 sm:h-9 sm:w-9 shrink-0">
-                    <AvatarImage src={h.avatar} alt={h.name} />
-                    <AvatarFallback>{h.name.slice(0, 2)}</AvatarFallback>
-                  </Avatar>
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-1">
-                      {h.icon}
-                      <span className="font-bold text-xs sm:text-sm">{h.value}</span>
-                    </div>
-                    <p className="text-[9px] sm:text-[10px] text-muted-foreground truncate">{h.name} · {h.sub}</p>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+
 
           {/* Leaderboard Tabs */}
           <Tabs defaultValue="players" className="w-full">
