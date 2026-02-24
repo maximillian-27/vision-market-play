@@ -1,92 +1,126 @@
 
 
-## Mobile Market Detail -- Match Desktop Dialog Layout
+## Mobile Market Detail -- Compact Sticky Purchase Bar
 
-### Goal
-Restructure the mobile `MarketDetail` page so it mirrors the desktop `MarketDialog` content, flow, and trading experience, all in a single-column mobile-optimized layout.
+### Problem
+The current sticky entry panel contains everything (outcome buttons, ticket counter, quick pills, weekly draw badge, summary card, buy button, pot split bar) making it ~300px tall. This covers half the screen and hides the market content beneath it. Users can't see market details and the purchase area simultaneously.
 
-### Current Issues on Mobile
-- Uses a different trading system (dollar amounts + quick amounts) vs the desktop dialog (ticket counter + quick tickets)
-- Has a large revenue distribution pie chart section that the dialog doesn't show (wastes space)
-- The sticky entry panel at the bottom is cramped and hard to use
-- Hero image takes up too much vertical space before users see actionable content
-- Missing the pot split bar visual that the dialog has
-- Engagement actions (like, comment, share) are separated from the main flow
+### Solution: Split the UI into two zones
+
+**Zone 1: Inline content (scrollable)** -- Move the detailed purchase info INTO the main scrollable content, below the engagement row. This includes the full summary breakdown, weekly draw badge, and pot split bar.
+
+**Zone 2: Sticky bottom bar (compact, ~120px)** -- Keep only the essentials locked at the bottom: outcome selection, a compact ticket stepper, and the buy button with key numbers visible inline.
 
 ### Changes
 
-**1. Reduce hero image height on mobile**
-- Change mobile aspect ratio from `aspect-[16/9]` to a shorter `aspect-[2/1]` so users see content faster
-- Keep the overlay back/share/bookmark buttons as-is
+**1. Compact sticky bottom bar (~120px instead of ~300px)**
 
-**2. Switch mobile trading to ticket-based system (match dialog)**
-- Replace the dollar input + quick amounts with the ticket counter (minus/plus buttons + input) from the dialog
-- Add the same quick ticket buttons (1, 5, 10, 25)
-- Show ticket price ($0.50/ticket) info
-- Show the summary breakdown (cost, potential winning, potential profit) matching the dialog's rounded card style
-- Add the Weekly Draw entry bonus badge
-- Add the pot split bar at the bottom of the panel
+The sticky panel will contain only:
+- Row 1: Outcome buttons (Yes/No for binary, horizontal scroll for multi) -- same as now but slightly smaller padding
+- Row 2: Inline ticket stepper `[-] 5 [+]` on the left, Buy button on the right showing price
+- A tiny text line below showing "$0.50/ticket | Profit: +$X.XX" for at-a-glance info
 
-**3. Replace revenue distribution section with pot split bar**
-- Remove the full pie chart / revenue distribution section on mobile (lines 475-504)
-- The pot split bar in the sticky panel already shows this info more compactly
+**2. Inline purchase details section (new, in scrollable content)**
 
-**4. Move engagement actions inline with the main content**
-- Keep the like/comment/share row but make it more compact
-- Move it above the description section so it's more accessible
+Add a new section between the engagement row and comments containing:
+- Quick ticket pills (1, 5, 10, 25)
+- Summary card (Cost / Potential Winning / Potential Profit) -- same rounded card style
+- Weekly Draw entry badge
+- Pot split bar (95% Pot | 2% Draw | 3% Platform)
 
-**5. Compact the sticky entry panel**
-- Make the panel tighter with the ticket system
-- Ensure proper clearance above the mobile nav bar (`bottom-14`)
+This way users see all details while scrolling, but can always buy from the compact bottom bar.
+
+**3. Keep hero and content sections as-is**
+
+The hero image (2:1 ratio), creator block, metrics strip, probability chart, description, resolution criteria, and engagement row remain unchanged.
 
 ### Technical Details
 
 **File: `src/pages/MarketDetail.tsx`**
 
-Key changes:
-- Add new state: `ticketCount` (default 5), replace `amount`/`selectedOutcome` dollar logic with ticket logic
-- Add imports: `Minus`, `Plus`, `Ticket` (already imported), `Trophy` (already imported)
-- Add constants: `quickTickets = [1, 5, 10, 25]`, `currentTicketPrice = 0.50`, `POT_SPLIT` array
-- Compute `totalCost`, `estimatedPayout`, `estimatedProfit` matching the dialog's formulas
+**Sticky panel refactor (lines 629-843):**
 
-- **Hero image** (line 331): Change `aspect-[16/9]` to `aspect-[2/1] sm:aspect-[16/7]`
+Replace the current massive sticky panel with a compact version:
 
-- **Remove revenue distribution section** (lines 475-504): Delete the pie chart section and its separator on mobile, wrap in `hidden sm:block` or remove entirely
+```text
+=== COMPACT STICKY BAR ===
+[Yes (68%) | No (32%)]           <- outcome buttons, same style, py-2
+[[-] [5] [+]  |  Buy 5 Tickets · $2.50]  <- stepper + buy in one row
+[$0.50/ticket · Profit: +$X.XX]  <- tiny info line
+```
 
-- **Sticky entry panel** (lines 610-770): Replace the dollar-based system with:
-  - Outcome selection (binary yes/no buttons or multi-outcome horizontal scroll) -- keep as-is
-  - Ticket counter row: minus button, input, plus button
-  - Quick ticket pills: 1, 5, 10, 25
-  - Weekly Draw badge
-  - Summary card (cost / potential winning / potential profit)
-  - Buy button: "Buy X Tickets + Entries . $Y.YY"
-  - Pot split bar below the buy button
+- Outcome buttons: reduce `py-2.5` to `py-2`, keep grid layout
+- Ticket stepper + buy button on same row using `flex`: stepper on left (h-8 buttons, smaller input), buy button on right (flex-1)
+- Info line: single text row with ticket price and estimated profit, text-[10px]
 
-- **Quick amounts removal**: Remove the old `quickAmounts` array and dollar-based quick select buttons
+**New inline section (after engagement row, before comments):**
+
+Insert between the engagement row (line 573) and comments collapsible (line 576):
+
+```tsx
+{/* Purchase Details -- scrollable */}
+{!isAwaitingResolution && (
+  <div className="px-4 py-4 space-y-3 sm:hidden">
+    {/* Quick ticket pills */}
+    <div className="grid grid-cols-4 gap-1.5">
+      {quickTickets.map(...)} // same as current
+    </div>
+
+    {/* Weekly Draw badge */}
+    <div className="flex items-center gap-2 ...">
+      <Trophy /> Includes X Weekly Draw entries
+    </div>
+
+    {/* Summary card */}
+    <div className="rounded-xl border divide-y ...">
+      Cost / Potential Winning / Potential Profit rows
+    </div>
+
+    {/* Pot split bar */}
+    <div className="space-y-1">
+      colored bar + labels
+    </div>
+  </div>
+)}
+```
+
+This section is wrapped in `sm:hidden` so it only appears on mobile.
+
+**Bottom padding:** Keep `pb-56` on the container but can reduce to `pb-40` since the sticky bar is now shorter.
 
 ### Mobile Layout (top to bottom)
+
 ```text
-[Hero Image (shorter 2:1 ratio)]
-  [Back] [Share] [Bookmark] overlay
+[Hero Image (2:1)]
+  [Back] [Share] [Bookmark]
 [Creator + Title]
-[Pot + Players + Date + Activity metrics]
+[Pot + Players + Date + Activity]
 [Win teaser]
 ---
-[Probability Chart with timeframe buttons]
+[Probability Chart]
 ---
-[About This Market - description]
-[Resolution Criteria - collapsible]
-[Like | Comment | Share row]
-[Comments - collapsible]
-                    ...space for sticky panel...
-
-=== STICKY ENTRY PANEL ===
-[Outcome buttons: Yes / No or multi-scroll]
-[Ticket counter: [-] [5] [+]]
-[Quick: 1 | 5 | 10 | 25]
+[About This Market]
+[Resolution Criteria]
+[Like | Comment | Share]
+---
+[Quick Ticket Pills: 1 | 5 | 10 | 25]    <-- NEW inline section
 [Weekly Draw badge]
-[Cost / Potential / Profit card]
-[Buy X Tickets button]
-[Pot split bar: 95% Pot | 2% Draw | 3% Platform]
+[Cost / Winning / Profit card]
+[Pot Split Bar]
+---
+[Comments]
+         ... scroll space ...
+
+=== COMPACT STICKY BAR (bottom) ===
+[ Yes 68%  |  No 32% ]
+[ [-][5][+]   Buy 5 Tickets · $2.50 ]
+[ $0.50/ticket · Profit: +$4.17 ]
 ```
+
+### Key Benefits
+- Sticky bar shrinks from ~300px to ~120px -- users see 2x more content
+- All purchase details are still visible when scrolling (inline section)
+- The buy action is always one tap away
+- Ticket price, potential winnings, and profit are visible both inline (detailed) and in the sticky bar (summary)
+- Matches the professional, clean UX directive
 
