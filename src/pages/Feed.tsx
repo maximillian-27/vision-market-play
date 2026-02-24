@@ -947,7 +947,9 @@ export default function Feed() {
     <div className="w-full max-w-[1600px] mx-auto px-4 md:px-6 lg:px-8 pb-24 sm:pb-0">
       <div className="space-y-1.5">
         {/* 1. Filters */}
-        <FeedFilters filters={filters} onFiltersChange={setFilters} />
+        <div className="pt-2">
+          <FeedFilters filters={filters} onFiltersChange={setFilters} />
+        </div>
 
         {/* 2a. Mobile: Weekly Draw + Hero + Banner + Sponsored */}
         <MobileTopSection
