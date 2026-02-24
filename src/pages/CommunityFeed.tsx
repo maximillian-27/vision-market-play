@@ -1,12 +1,11 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { FollowingSidebar } from "@/components/FollowingSidebar";
 import { MarketsSidebar } from "@/components/MarketsSidebar";
 import { CommunityPost, CommunityPostData } from "@/components/CommunityPost";
-import { ChartBar, X, Plus, TrendingUp } from "lucide-react";
+import { Image, ChartBar, X } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -14,13 +13,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet";
-import { useIsMobile } from "@/hooks/use-mobile";
 import bitcoinImage from "@/assets/bitcoin-market.jpg";
 import nbaImage from "@/assets/nba-championship.jpg";
 import iphoneImage from "@/assets/foldable-iphone.jpg";
@@ -33,15 +25,6 @@ const mockMarkets = [
   { id: "3", title: "Will Apple release a foldable iPhone in 2025?", image: iphoneImage, yesPrice: 23, noPrice: 77, volume: "$1.2M" },
   { id: "4", title: "Next US Federal Reserve interest rate decision?", image: fedImage, yesPrice: 45, noPrice: 55, volume: "$3.1M" },
   { id: "5", title: "Will AI replace 25% of customer service jobs by 2026?", image: aiImage, yesPrice: 71, noPrice: 29, volume: "$1.8M" },
-];
-
-const topTraders = [
-  { name: "Alex T", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=AlexT", username: "alexthompson", profit: "+42%" },
-  { name: "Sarah C", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah", username: "sarahchen", profit: "+38%" },
-  { name: "David K", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=David", username: "davidkim", profit: "+31%" },
-  { name: "Sophie C", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sophie", username: "sophiechen", profit: "+28%" },
-  { name: "Maria G", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Maria", username: "mariagarcia", profit: "+25%" },
-  { name: "James W", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=James", username: "jameswilson", profit: "+22%" },
 ];
 
 const mockPosts: CommunityPostData[] = [
@@ -118,155 +101,11 @@ const currentUser = {
   username: "@sarahchen",
 };
 
-/* ── Mobile-only: Top Traders Row ── */
-function TopTradersRow() {
-  const navigate = useNavigate();
-  return (
-    <div className="sm:hidden border-b border-border/40 px-3 py-2.5">
-      <div className="flex gap-4 overflow-x-auto scrollbar-hide">
-        {topTraders.map((trader) => (
-          <button
-            key={trader.username}
-            onClick={() => navigate(`/profile/${trader.username}`)}
-            className="flex flex-col items-center gap-1 flex-shrink-0"
-          >
-            <div className="relative">
-              <Avatar className="h-12 w-12 ring-2 ring-primary/40 ring-offset-2 ring-offset-background">
-                <AvatarImage src={trader.avatar} alt={trader.name} />
-                <AvatarFallback className="text-[10px]">{trader.name.slice(0, 2)}</AvatarFallback>
-              </Avatar>
-              <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 text-[9px] font-bold bg-success text-success-foreground px-1.5 rounded-full whitespace-nowrap">
-                {trader.profit}
-              </span>
-            </div>
-            <span className="text-[10px] text-muted-foreground truncate w-14 text-center mt-0.5">
-              {trader.name}
-            </span>
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-/* ── Mobile-only: Trending Markets Row ── */
-function TrendingMarketsRow() {
-  return (
-    <div className="sm:hidden border-b border-border/40 px-3 py-2.5">
-      <div className="flex items-center gap-1.5 mb-2">
-        <TrendingUp className="h-3.5 w-3.5 text-primary" />
-        <span className="text-xs font-semibold text-muted-foreground">Trending</span>
-      </div>
-      <div className="flex gap-2.5 overflow-x-auto scrollbar-hide">
-        {mockMarkets.slice(0, 4).map((market) => (
-          <div
-            key={market.id}
-            className="flex-shrink-0 w-[200px] rounded-xl border border-border/50 bg-card/50 overflow-hidden"
-          >
-            <img src={market.image} alt="" className="h-16 w-full object-cover" />
-            <div className="p-2">
-              <p className="text-[11px] font-medium leading-tight line-clamp-2 mb-1.5">
-                {market.title}
-              </p>
-              <div className="flex gap-1.5">
-                <span className="text-[10px] font-bold text-success bg-success/10 px-1.5 py-0.5 rounded">
-                  YES {market.yesPrice}¢
-                </span>
-                <span className="text-[10px] font-bold text-destructive bg-destructive/10 px-1.5 py-0.5 rounded">
-                  NO {market.noPrice}¢
-                </span>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-/* ── Composer (shared between inline & sheet) ── */
-function ComposerContent({
-  postContent,
-  setPostContent,
-  selectedMarket,
-  setSelectedMarket,
-  isPosting,
-  handlePost,
-}: {
-  postContent: string;
-  setPostContent: (v: string) => void;
-  selectedMarket: string | null;
-  setSelectedMarket: (v: string | null) => void;
-  isPosting: boolean;
-  handlePost: () => void;
-}) {
-  const selectedMarketData = selectedMarket ? mockMarkets.find((m) => m.id === selectedMarket) : null;
-
-  return (
-    <div className="flex gap-3">
-      <Avatar className="h-8 w-8 sm:h-10 sm:w-10 flex-shrink-0">
-        <AvatarImage src={currentUser.avatar} alt={currentUser.name} />
-        <AvatarFallback>{currentUser.name.slice(0, 2)}</AvatarFallback>
-      </Avatar>
-      <div className="flex-1">
-        <Textarea
-          placeholder="What's happening?"
-          value={postContent}
-          onChange={(e) => setPostContent(e.target.value)}
-          className="min-h-[36px] sm:min-h-[44px] text-sm sm:text-base bg-transparent border-0 resize-none focus-visible:ring-0 p-0 placeholder:text-muted-foreground/50"
-          maxLength={280}
-        />
-        {selectedMarketData && (
-          <div className="relative flex items-center gap-2 px-3 py-2 rounded-xl border border-border/60 mt-1">
-            <img src={selectedMarketData.image} alt="" className="h-5 w-5 rounded object-cover" />
-            <span className="text-sm truncate flex-1">{selectedMarketData.title}</span>
-            <button onClick={() => setSelectedMarket(null)} className="text-muted-foreground hover:text-foreground">
-              <X className="h-4 w-4" />
-            </button>
-          </div>
-        )}
-        <div className="flex items-center justify-between mt-2 pt-2 border-t border-border/30">
-          <div className="flex items-center gap-1">
-            <Select value={selectedMarket || "none"} onValueChange={(v) => setSelectedMarket(v === "none" ? null : v)}>
-              <SelectTrigger className="h-8 w-8 p-0 border-0 bg-transparent hover:bg-primary/10 [&>svg]:hidden text-primary/70 hover:text-primary">
-                <ChartBar className="h-[18px] w-[18px]" />
-              </SelectTrigger>
-              <SelectContent align="start">
-                <SelectItem value="none">No market</SelectItem>
-                {mockMarkets.map((m) => (
-                  <SelectItem key={m.id} value={m.id}>
-                    <span className="truncate max-w-[200px] block">{m.title}</span>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="flex items-center gap-3">
-            <span className={`text-xs ${postContent.length > 250 ? "text-destructive" : "text-muted-foreground"}`}>
-              {postContent.length}/280
-            </span>
-            <Button
-              size="sm"
-              onClick={handlePost}
-              disabled={!postContent.trim() || isPosting}
-              className="rounded-full px-5 font-bold"
-            >
-              {isPosting ? "Posting..." : "Post"}
-            </Button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 export default function CommunityFeed() {
-  const isMobile = useIsMobile();
   const [activeTab, setActiveTab] = useState<"foryou" | "following">("foryou");
   const [postContent, setPostContent] = useState("");
   const [selectedMarket, setSelectedMarket] = useState<string | null>(null);
   const [isPosting, setIsPosting] = useState(false);
-  const [composerOpen, setComposerOpen] = useState(false);
 
   const handlePost = () => {
     if (!postContent.trim()) return;
@@ -275,9 +114,10 @@ export default function CommunityFeed() {
       setPostContent("");
       setSelectedMarket(null);
       setIsPosting(false);
-      setComposerOpen(false);
     }, 500);
   };
+
+  const selectedMarketData = selectedMarket ? mockMarkets.find((m) => m.id === selectedMarket) : null;
 
   return (
     <div className="w-full max-w-7xl mx-auto">
@@ -285,7 +125,7 @@ export default function CommunityFeed() {
         <FollowingSidebar />
 
         {/* Main Feed Column */}
-        <div className="w-full max-w-[600px] border-x border-border/40 min-h-screen pb-24 sm:pb-0">
+        <div className="w-full max-w-[600px] border-x border-border/40 min-h-screen">
           {/* Sticky Tab Bar */}
           <div className="sticky top-14 z-20 bg-background/80 backdrop-blur-md border-b border-border/40">
             <div className="flex">
@@ -293,7 +133,7 @@ export default function CommunityFeed() {
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
-                  className="flex-1 py-3 sm:py-3.5 text-sm font-medium relative transition-colors hover:bg-muted/30"
+                  className="flex-1 py-3.5 text-sm font-medium relative transition-colors hover:bg-muted/30"
                 >
                   <span className={activeTab === tab ? "text-foreground" : "text-muted-foreground"}>
                     {tab === "foryou" ? "For You" : "Following"}
@@ -306,20 +146,62 @@ export default function CommunityFeed() {
             </div>
           </div>
 
-          {/* Mobile discovery rows */}
-          <TopTradersRow />
-          <TrendingMarketsRow />
-
-          {/* Desktop-only inline composer */}
-          <div className="hidden sm:block border-b border-border/40 px-4 py-3">
-            <ComposerContent
-              postContent={postContent}
-              setPostContent={setPostContent}
-              selectedMarket={selectedMarket}
-              setSelectedMarket={setSelectedMarket}
-              isPosting={isPosting}
-              handlePost={handlePost}
-            />
+          {/* Composer */}
+          <div className="border-b border-border/40 px-4 py-3">
+            <div className="flex gap-3">
+              <Avatar className="h-8 w-8 sm:h-10 sm:w-10 flex-shrink-0">
+                <AvatarImage src={currentUser.avatar} alt={currentUser.name} />
+                <AvatarFallback>{currentUser.name.slice(0, 2)}</AvatarFallback>
+              </Avatar>
+              <div className="flex-1">
+                <Textarea
+                  placeholder="What's happening?"
+                  value={postContent}
+                  onChange={(e) => setPostContent(e.target.value)}
+                  className="min-h-[36px] sm:min-h-[44px] text-sm sm:text-base bg-transparent border-0 resize-none focus-visible:ring-0 p-0 placeholder:text-muted-foreground/50"
+                  maxLength={280}
+                />
+                {selectedMarketData && (
+                  <div className="relative flex items-center gap-2 px-3 py-2 rounded-xl border border-border/60 mt-1">
+                    <img src={selectedMarketData.image} alt="" className="h-5 w-5 rounded object-cover" />
+                    <span className="text-sm truncate flex-1">{selectedMarketData.title}</span>
+                    <button onClick={() => setSelectedMarket(null)} className="text-muted-foreground hover:text-foreground">
+                      <X className="h-4 w-4" />
+                    </button>
+                  </div>
+                )}
+                <div className="flex items-center justify-between mt-2 pt-2 border-t border-border/30">
+                  <div className="flex items-center gap-1">
+                    <Select value={selectedMarket || "none"} onValueChange={(v) => setSelectedMarket(v === "none" ? null : v)}>
+                      <SelectTrigger className="h-8 w-8 p-0 border-0 bg-transparent hover:bg-primary/10 [&>svg]:hidden text-primary/70 hover:text-primary">
+                        <ChartBar className="h-[18px] w-[18px]" />
+                      </SelectTrigger>
+                      <SelectContent align="start">
+                        <SelectItem value="none">No market</SelectItem>
+                        {mockMarkets.map((m) => (
+                          <SelectItem key={m.id} value={m.id}>
+                            <span className="truncate max-w-[200px] block">{m.title}</span>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className={`text-xs ${postContent.length > 250 ? "text-destructive" : "text-muted-foreground"}`}>
+                      {postContent.length}/280
+                    </span>
+                    <Button
+                      size="sm"
+                      onClick={handlePost}
+                      disabled={!postContent.trim() || isPosting}
+                      className="rounded-full px-5 font-bold"
+                    >
+                      {isPosting ? "Posting..." : "Post"}
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Feed */}
@@ -332,34 +214,6 @@ export default function CommunityFeed() {
 
         <MarketsSidebar />
       </div>
-
-      {/* Mobile FAB */}
-      {isMobile && (
-        <>
-          <button
-            onClick={() => setComposerOpen(true)}
-            className="fixed bottom-20 right-4 z-30 h-14 w-14 rounded-full bg-primary text-primary-foreground shadow-lg flex items-center justify-center active:scale-95 transition-transform"
-          >
-            <Plus className="h-6 w-6" />
-          </button>
-
-          <Sheet open={composerOpen} onOpenChange={setComposerOpen}>
-            <SheetContent side="bottom" className="rounded-t-2xl px-4 pt-4 pb-8">
-              <SheetHeader className="mb-3">
-                <SheetTitle className="text-base">Create Post</SheetTitle>
-              </SheetHeader>
-              <ComposerContent
-                postContent={postContent}
-                setPostContent={setPostContent}
-                selectedMarket={selectedMarket}
-                setSelectedMarket={setSelectedMarket}
-                isPosting={isPosting}
-                handlePost={handlePost}
-              />
-            </SheetContent>
-          </Sheet>
-        </>
-      )}
     </div>
   );
 }
