@@ -7,6 +7,8 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowLeft, UserPlus, UserCheck, BadgeCheck, TrendingUp, Clock, Calendar, MapPin, Share2, ArrowUpRight, ArrowDownLeft, MessageCircle, Heart, Repeat2, Link2, ExternalLink, ChevronRight } from "lucide-react";
 import { MarketCard } from "@/components/MarketCard";
+import { MarketDialog } from "@/components/MarketDialog";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { SocialStats } from "@/components/SocialStats";
 import { ProfileStats } from "@/components/ProfileStats";
 import { useToast } from "@/hooks/use-toast";
@@ -77,11 +79,11 @@ const creatorData: Record<string, {
 };
 
 const mockCreatorMarkets = [
-  { id: "1", title: "Will Bitcoin reach $100K by end of 2025?", pot: "$1.2M", players: 8420, yesPercent: 68, endsIn: "3mo" },
-  { id: "2", title: "Fed cuts interest rates before April?", pot: "$890K", players: 5130, yesPercent: 42, endsIn: "5w" },
-  { id: "3", title: "Apple announces foldable iPhone in 2025?", pot: "$340K", players: 3200, yesPercent: 23, endsIn: "8mo" },
-  { id: "4", title: "SpaceX Starship orbital flight success?", pot: "$210K", players: 2100, yesPercent: 81, endsIn: "2w" },
-  { id: "5", title: "Will Ethereum flip Bitcoin market cap?", pot: "$156K", players: 1840, yesPercent: 12, endsIn: "1y" },
+  { id: "1", title: "Will Bitcoin reach $100K by end of 2025?", pot: "$1.2M", players: 8420, yesPercent: 68, endsIn: "3mo", image: bitcoinImage },
+  { id: "2", title: "Fed cuts interest rates before April?", pot: "$890K", players: 5130, yesPercent: 42, endsIn: "5w", image: "" },
+  { id: "3", title: "Apple announces foldable iPhone in 2025?", pot: "$340K", players: 3200, yesPercent: 23, endsIn: "8mo", image: "" },
+  { id: "4", title: "SpaceX Starship orbital flight success?", pot: "$210K", players: 2100, yesPercent: 81, endsIn: "2w", image: "" },
+  { id: "5", title: "Will Ethereum flip Bitcoin market cap?", pot: "$156K", players: 1840, yesPercent: 12, endsIn: "1y", image: "" },
 ];
 
 // Mock activity data - X-style posts
@@ -137,6 +139,8 @@ export default function Profile() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [isFollowing, setIsFollowing] = useState(false);
+  const [selectedMarket, setSelectedMarket] = useState<typeof mockCreatorMarkets[0] | null>(null);
+  const isMobile = useIsMobile();
   const isOwnProfile = !userId;
   
   const displayName = userId 
@@ -376,7 +380,10 @@ export default function Profile() {
                   {mockCreatorMarkets.map((market) => (
                     <div
                       key={market.id}
-                      onClick={() => navigate(`/market/${market.id}`)}
+                      onClick={() => {
+                        if (isMobile) navigate(`/market/${market.id}`);
+                        else setSelectedMarket(market);
+                      }}
                       className="px-4 py-3 flex items-center gap-3 cursor-pointer hover:bg-muted/30 active:bg-muted/50 transition-colors"
                     >
                       <div className="flex-1 min-w-0">
@@ -536,6 +543,31 @@ export default function Profile() {
           </Tabs>
         </Card>
       </div>
+
+      {/* Market Dialog for creator markets on desktop */}
+      {selectedMarket && (
+        <MarketDialog
+          open={!!selectedMarket}
+          onOpenChange={(open) => { if (!open) setSelectedMarket(null); }}
+          market={{
+            id: selectedMarket.id,
+            title: selectedMarket.title,
+            image: selectedMarket.image,
+            creator: {
+              name: displayName,
+              avatar: userData.avatar,
+              isCreator: true,
+            },
+            outcomes: [
+              { label: "Yes", price: selectedMarket.yesPercent },
+              { label: "No", price: 100 - selectedMarket.yesPercent },
+            ],
+            volume: selectedMarket.pot,
+            players: selectedMarket.players,
+            endsIn: selectedMarket.endsIn,
+          }}
+        />
+      )}
     </div>
   );
 }
