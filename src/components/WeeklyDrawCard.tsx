@@ -34,42 +34,42 @@ const COUNTDOWN = "3d 14h";
 
 export function WeeklyDrawCard() {
   return (
-    <div className="flex flex-col p-4 rounded-xl border border-primary/20 bg-gradient-to-br from-primary/[0.08] via-primary/[0.02] to-card h-full relative overflow-hidden">
+    <div className="flex flex-col p-3 rounded-xl border border-primary/20 bg-gradient-to-br from-primary/[0.08] via-primary/[0.02] to-card h-full relative overflow-hidden">
       {/* Decorative glows */}
       <div className="absolute -top-10 -right-10 w-28 h-28 rounded-full bg-primary/[0.1] blur-3xl pointer-events-none" />
       <div className="absolute -bottom-6 -left-6 w-20 h-20 rounded-full bg-primary/[0.05] blur-2xl pointer-events-none" />
       
       {/* Header: Title + Timer */}
-      <div className="flex items-center justify-between mb-2.5 relative">
-        <div className="flex items-center gap-2">
-          <div className="flex items-center justify-center w-6 h-6 rounded-lg bg-primary/15 shadow-sm shadow-primary/10">
-            <Trophy className="h-3.5 w-3.5 text-primary" />
+      <div className="flex items-center justify-between mb-1.5 relative">
+        <div className="flex items-center gap-1.5">
+          <div className="flex items-center justify-center w-5 h-5 rounded-md bg-primary/15 shadow-sm shadow-primary/10">
+            <Trophy className="h-3 w-3 text-primary" />
           </div>
-          <span className="text-[10px] uppercase tracking-widest font-bold text-primary/90">Weekly Draw</span>
+          <span className="text-[9px] uppercase tracking-widest font-bold text-primary/90">Weekly Draw</span>
         </div>
-        <div className="flex items-center gap-1 text-[10px] bg-primary/10 px-2.5 py-1 rounded-full border border-primary/10">
-          <Timer className="h-3 w-3 text-primary animate-pulse" />
+        <div className="flex items-center gap-1 text-[9px] bg-primary/10 px-2 py-0.5 rounded-full border border-primary/10">
+          <Timer className="h-2.5 w-2.5 text-primary animate-pulse" />
           <span className="font-semibold text-foreground">{COUNTDOWN}</span>
         </div>
       </div>
 
       {/* Pot + entries */}
-      <div className="flex items-center gap-2.5 relative">
-        <div className="text-2xl font-extrabold text-foreground leading-none tracking-tight">
+      <div className="flex items-center gap-2 relative">
+        <div className="text-xl font-extrabold text-foreground leading-none tracking-tight">
           ${WEEKLY_POT.toLocaleString()}
         </div>
-        <div className="flex items-center gap-1 text-[10px] bg-muted/50 px-2 py-0.5 rounded-full border border-border/40">
-          <Ticket className="h-3 w-3 text-primary" />
+        <div className="flex items-center gap-1 text-[9px] bg-muted/50 px-1.5 py-0.5 rounded-full border border-border/40">
+          <Ticket className="h-2.5 w-2.5 text-primary" />
           <span className="font-semibold text-foreground">{MY_ENTRIES} entries</span>
         </div>
       </div>
-      <p className="text-[10px] text-muted-foreground mt-1 mb-3 leading-relaxed">
+      <p className="text-[9px] text-muted-foreground mt-0.5 mb-2 leading-relaxed">
         Prize pool redistributed weekly to random participants
       </p>
 
       {/* Distribution bar */}
-      <div className="mb-2.5">
-        <div className="flex rounded-full overflow-hidden h-2 shadow-inner shadow-black/10">
+      <div className="mb-1.5">
+        <div className="flex rounded-full overflow-hidden h-1.5 shadow-inner shadow-black/10">
           {distribution.map((d, i) => (
             <div
               key={d.place}
@@ -82,7 +82,7 @@ export function WeeklyDrawCard() {
             />
           ))}
         </div>
-        <div className="flex items-center justify-between mt-1.5 text-[9px] text-muted-foreground">
+        <div className="flex items-center justify-between mt-1 text-[8px] text-muted-foreground">
           {distribution.map((d) => (
             <span key={d.place}>
               <span className="font-semibold text-foreground">{d.place}</span> {d.pct}%
@@ -92,7 +92,7 @@ export function WeeklyDrawCard() {
       </div>
 
       {/* Footer links */}
-      <div className="flex items-center gap-3 pt-2 border-t border-border/20 mt-auto">
+      <div className="flex items-center gap-3 pt-1.5 border-t border-border/20 mt-auto">
         <Dialog>
           <DialogTrigger asChild>
             <button className="flex items-center gap-1 text-[9px] text-muted-foreground hover:text-foreground transition-colors">
