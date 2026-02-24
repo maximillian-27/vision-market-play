@@ -688,7 +688,7 @@ export default function Feed() {
         <FeedFilters filters={filters} onFiltersChange={setFilters} />
 
         {/* 2a. Mobile: Weekly Draw + Hero + Banner + Sponsored */}
-        <div className="sm:hidden space-y-1.5 mt-3">
+        <div className="sm:hidden space-y-1.5 mt-1">
           {/* Weekly Draw compact strip */}
           <div className="flex items-center justify-between rounded-xl border border-primary/20 bg-card px-3 py-2">
             <div className="flex items-center gap-2">
