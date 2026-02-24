@@ -62,11 +62,13 @@ export function ProfileStats({ type, stats }: ProfileStatsProps) {
         label="Total Winnings"
         value={stats.totalProfit || "$0"}
         valueClassName={stats.totalProfit?.startsWith("+") ? "text-success" : stats.totalProfit?.startsWith("-") ? "text-destructive" : ""}
+        rank={24}
       />
       <StatCard
         icon={<Target className="h-3.5 w-3.5 sm:h-4 sm:w-4" />}
         label="Win Rate"
         value={`${stats.winRate || stats.accuracy || 0}%`}
+        rank={18}
       />
       <StatCard
         icon={<Ticket className="h-3.5 w-3.5 sm:h-4 sm:w-4" />}
@@ -88,12 +90,16 @@ interface StatCardProps {
   label: string;
   value: string;
   valueClassName?: string;
+  rank?: number;
 }
 
-function StatCard({ icon, label, value, valueClassName = "" }: StatCardProps) {
+function StatCard({ icon, label, value, valueClassName = "", rank }: StatCardProps) {
   return (
-    <Card className="border-border/40 bg-muted/20">
+    <Card className="border-border/40 bg-muted/20 relative">
       <CardContent className="p-3 sm:p-4">
+        {rank && (
+          <span className="absolute top-1.5 right-2 text-[8px] sm:text-[9px] text-muted-foreground/50 font-medium">#{rank}</span>
+        )}
         <div className="flex items-center gap-1.5 text-muted-foreground text-[10px] sm:text-xs mb-1">
           {icon}
           <span className="truncate">{label}</span>
