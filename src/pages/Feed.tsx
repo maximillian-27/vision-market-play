@@ -552,50 +552,28 @@ const previousWinners = [
   { place: "3rd", name: "Jake P.", amount: 7290 },
 ];
 
-function MobileWeeklyDrawCard() {
+function MobileWeeklyDrawBanner() {
   const [tab, setTab] = useState<"info" | "winners">("info");
 
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <div className="flex flex-col p-3 rounded-xl border border-primary/20 bg-gradient-to-br from-primary/[0.08] via-primary/[0.02] to-card h-full relative overflow-hidden cursor-pointer active:scale-[0.98] transition-transform">
-          <div className="absolute -top-10 -right-10 w-28 h-28 rounded-full bg-primary/[0.1] blur-3xl pointer-events-none" />
-          <div className="absolute -bottom-6 -left-6 w-20 h-20 rounded-full bg-primary/[0.05] blur-2xl pointer-events-none" />
-          <div className="flex items-center justify-between mb-1 relative">
-            <div className="flex items-center gap-1.5">
-              <div className="flex items-center justify-center w-5 h-5 rounded-md bg-primary/15 shadow-sm shadow-primary/10">
-                <Trophy className="h-3 w-3 text-primary" />
-              </div>
-              <span className="text-[9px] uppercase tracking-widest font-bold text-primary/90">Weekly Draw</span>
-            </div>
-            <div className="flex items-center gap-1 text-[9px] bg-primary/10 px-2 py-0.5 rounded-full border border-primary/10">
-              <Timer className="h-2.5 w-2.5 text-primary animate-pulse" />
-              <span className="font-semibold text-foreground">{COUNTDOWN}</span>
-            </div>
+        <button className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg bg-gradient-to-r from-primary/[0.12] via-primary/[0.06] to-card border border-primary/20 relative overflow-hidden cursor-pointer active:scale-[0.99] transition-transform">
+          <div className="absolute -top-8 -right-8 w-20 h-20 rounded-full bg-primary/[0.08] blur-2xl pointer-events-none" />
+          <div className="flex items-center justify-center w-6 h-6 rounded-md bg-primary/15 shrink-0">
+            <Trophy className="h-3.5 w-3.5 text-primary" />
           </div>
-          <div className="flex items-center gap-2 relative">
-            <div className="text-xl font-extrabold text-foreground leading-none tracking-tight">
-              ${WEEKLY_POT.toLocaleString()}
-            </div>
-            <div className="flex items-center gap-1 text-[9px] bg-muted/50 px-1.5 py-0.5 rounded-full border border-border/40">
-              <Ticket className="h-2.5 w-2.5 text-primary" />
-              <span className="font-semibold text-foreground">{MY_ENTRIES} entries</span>
-            </div>
+          <span className="text-sm font-extrabold text-foreground">${WEEKLY_POT.toLocaleString()}</span>
+          <div className="flex items-center gap-1 text-[9px] bg-primary/10 px-1.5 py-0.5 rounded-full border border-primary/10">
+            <Timer className="h-2.5 w-2.5 text-primary animate-pulse" />
+            <span className="font-semibold text-foreground">{COUNTDOWN}</span>
           </div>
-          <p className="text-[9px] text-muted-foreground mt-0.5 mb-2 leading-relaxed">Prize pool redistributed weekly</p>
-          <div className="mt-auto">
-            <div className="flex rounded-full overflow-hidden h-1.5 shadow-inner shadow-black/10">
-              {drawDistribution.map((d, i) => (
-                <div key={d.place} className="h-full" style={{ width: `${d.pct}%`, background: `hsl(var(--primary) / ${1 - i * 0.2})`, borderRight: i < drawDistribution.length - 1 ? '1px solid hsl(var(--background) / 0.3)' : 'none' }} />
-              ))}
-            </div>
-            <div className="flex items-center justify-between mt-1 text-[8px] text-muted-foreground">
-              {drawDistribution.map((d) => (
-                <span key={d.place}><span className="font-semibold text-foreground">{d.place}</span> {d.pct}%</span>
-              ))}
-            </div>
+          <div className="flex items-center gap-1 text-[9px] bg-muted/50 px-1.5 py-0.5 rounded-full border border-border/40 ml-auto">
+            <Ticket className="h-2.5 w-2.5 text-primary" />
+            <span className="font-semibold text-foreground">{MY_ENTRIES}</span>
           </div>
-        </div>
+          <ArrowRight className="h-3 w-3 text-muted-foreground shrink-0" />
+        </button>
       </DialogTrigger>
       <DialogContent className="max-w-sm">
         <DialogHeader>
@@ -685,6 +663,10 @@ function MobileTopSection({
 }) {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: "center" });
 
+  // Sponsored carousel
+  const [sponsoredRef, sponsoredApi] = useEmblaCarousel({ loop: true });
+  const [sponsoredSlide, setSponsoredSlide] = useState(0);
+
   const onEmblaSelect = useCallback(() => {
     if (!emblaApi) return;
     setActiveSlide(emblaApi.selectedScrollSnap());
@@ -703,8 +685,20 @@ function MobileTopSection({
     }
   }, [emblaApi, activeSlide]);
 
+  // Sponsored auto-cycle every 3s
+  useEffect(() => {
+    if (!sponsoredApi) return;
+    const onSelect = () => setSponsoredSlide(sponsoredApi.selectedScrollSnap());
+    sponsoredApi.on("select", onSelect);
+    const interval = setInterval(() => { sponsoredApi.scrollNext(); }, 3000);
+    return () => { clearInterval(interval); sponsoredApi.off("select", onSelect); };
+  }, [sponsoredApi]);
+
   return (
     <div className="sm:hidden space-y-1.5 mt-3">
+      {/* Weekly Draw Banner — top strip */}
+      <MobileWeeklyDrawBanner />
+
       {/* Hero Carousel — swipeable */}
       <div className="relative rounded-xl overflow-hidden h-[180px]" ref={emblaRef}>
         <div className="flex h-full">
@@ -749,16 +743,25 @@ function MobileTopSection({
         </div>
       </div>
 
-      {/* Horizontal scroll: Weekly Draw + 2 Sponsored */}
-      <div className="flex gap-2.5 overflow-x-auto snap-x snap-mandatory pb-1 no-scrollbar px-0.5">
-        <div className="w-[75vw] shrink-0 snap-center">
-          <MobileWeeklyDrawCard />
+      {/* Sponsored Carousel — auto-cycles every 3s */}
+      <div className="relative">
+        <div className="overflow-hidden rounded-xl" ref={sponsoredRef}>
+          <div className="flex">
+            {sponsoredMarkets.map((market) => (
+              <div key={market.id} className="min-w-0 shrink-0 grow-0 basis-full">
+                <CompactFeaturedCard market={market} />
+              </div>
+            ))}
+          </div>
         </div>
-        <div className="w-[75vw] shrink-0 snap-center">
-          <CompactFeaturedCard market={sponsoredMarkets[0]} />
-        </div>
-        <div className="w-[75vw] shrink-0 snap-center">
-          <CompactFeaturedCard market={sponsoredMarkets[1]} />
+        <div className="flex justify-center gap-1.5 mt-1.5">
+          {sponsoredMarkets.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => sponsoredApi?.scrollTo(i)}
+              className={`h-1.5 rounded-full transition-all ${i === sponsoredSlide ? 'w-4 bg-primary' : 'w-1.5 bg-muted-foreground/30'}`}
+            />
+          ))}
         </div>
       </div>
 
