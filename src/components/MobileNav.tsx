@@ -27,8 +27,8 @@ export function MobileNav() {
         </DialogContent>
       </Dialog>
 
-      <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-border/50 bg-background/95 backdrop-blur-xl supports-[backdrop-filter]:bg-background/80">
-        <div className="flex items-center justify-around h-14 max-w-lg mx-auto">
+      <nav className="fixed bottom-3 left-4 right-4 z-50 bg-background border border-border/50 rounded-2xl shadow-lg shadow-black/10">
+        <div className="flex items-center justify-around h-[60px] max-w-lg mx-auto">
           {items.map((item) => {
             const isActive = location.pathname === item.url;
             return (
