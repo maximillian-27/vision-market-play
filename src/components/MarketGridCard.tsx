@@ -241,7 +241,7 @@ export function MarketGridCard({
       )}
       
       <Card 
-        className={`group overflow-hidden cursor-pointer border-border bg-card card-hover sm:border sm:rounded-lg border-0 rounded-none shadow-none sm:shadow-sm sm:mb-2 break-inside-avoid ${
+        className={`group overflow-hidden cursor-pointer border border-border/60 bg-card card-hover rounded-xl shadow-none mx-3 mb-2.5 sm:mx-0 sm:mb-2 sm:shadow-sm break-inside-avoid ${
           isClosingSoon ? 'sm:ring-1 sm:ring-amber-500/30' : ''
         }`}
         onClick={handleCardClick}
