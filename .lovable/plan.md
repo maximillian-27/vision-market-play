@@ -1,24 +1,53 @@
 
 
-# Fix: Move Categories Row Above Weekly Draw on Mobile
+# Ticket + Entry Bundle Model
 
-## Problem
-The categories/filter row is overlapping the Weekly Draw strip due to the `sticky top-14` positioning and z-index. They visually collide instead of stacking cleanly.
+## Overview
+Change the model from "20 tickets = 1 draw entry" to "1 ticket = 1 entry." Every ticket purchased is automatically a draw entry. Update the price split to show **95% to pot, 2% to weekly draw, 3% platform fee**.
 
-## Solution
-Adjust the mobile layout in `src/pages/Feed.tsx` so the categories row sits flush below the header, with the weekly draw strip clearly below it. Two changes needed:
+## Changes
 
-### 1. `src/components/FeedFilters.tsx`
-- Increase z-index from `z-10` to `z-20` on the sticky container so it always stays above scrolling content
-- Ensure the background fully covers any content scrolling behind it
+### 1. WeeklyDrawCard (`src/components/WeeklyDrawCard.tsx`)
 
-### 2. `src/pages/Feed.tsx`
-- Add top margin/padding to the mobile hero block (`sm:hidden`) so the weekly draw strip doesn't sit underneath the sticky filter row
-- Alternatively, move `FeedFilters` rendering inside the mobile block structure and remove sticky on mobile, keeping it as a normal flow element that scrolls with content -- but this would lose the sticky filter behavior
+**Entry info section (lines 79-97):**
+- Replace the "20 tickets = 1 entry" tooltip with a simple statement: "Every ticket = 1 entry"
+- Change `MY_ENTRIES` display to reflect total tickets purchased this week (e.g., "3 entries this week")
+- Remove the `ENTRY_COST = 20` constant since it's no longer needed
+- Update the tooltip text to explain the bundle: "Every ticket you buy is also an entry into the weekly draw. 2% of your purchase funds the prize pool."
 
-The simplest fix: ensure the sticky filter bar has enough z-index and the content below it has proper spacing so nothing overlaps. Change `z-10` to `z-20` in FeedFilters, and add `mt-1` or `pt-1` to the mobile hero block to prevent visual collision.
+**"How it works" dialog (lines 174-181):**
+- Update the "Entry" step text from "Every 20 tickets you buy earns 1 draw entry" to "Every ticket is a bundle -- you get a market ticket + a draw entry. No separate purchase needed."
 
-### Files to edit:
-- `src/components/FeedFilters.tsx` -- bump z-index to z-20
-- `src/pages/Feed.tsx` -- add small top spacing to the mobile hero section so the weekly draw clears the sticky filter bar
+**"Funding" step (lines 169-172):**
+- Update to mention the 95/2/3 split explicitly
+
+### 2. MarketDialog (`src/components/MarketDialog.tsx`)
+
+**Pot split constants (lines 114-119):**
+- Change from `[90% Winners, 2% Draw, 5% Comp, 3% Platform]` to `[95% Pot, 2% Weekly Draw, 3% Platform]` (3 segments instead of 4)
+
+**Bundle label in the ticket purchase area (around line 551-601):**
+- Add a small badge/label above or below the ticket counter that says something like: "Each ticket includes 1 draw entry" with a Trophy icon, reinforcing the bundle concept
+
+**Buy button text (lines 638-643):**
+- Change from "Buy 5 tickets" to "Buy 5 Tickets + Entries" to reinforce the bundle
+
+**Summary breakdown (lines 604-622):**
+- Add a row showing draw entries earned (equal to ticket count) with a Trophy icon, e.g., "Draw entries: 5"
+
+**Pot split bar (lines 646-659):**
+- Update to 3 segments: 95% Pot, 2% Weekly Draw, 3% Platform Fee
+
+**Footer text (line 623-625):**
+- Update from "Winners split 90% of the pot" to "95% goes to the pot -- 2% funds the weekly draw"
+
+### 3. MarketsSidebar (`src/components/MarketsSidebar.tsx`)
+- No changes needed; the weekly draw strip there just shows pot/countdown/entries which remain valid
+
+## Technical Details
+
+- Remove `ENTRY_COST` constant from WeeklyDrawCard
+- Update `POT_SPLIT` array in MarketDialog from 4 items to 3: `[{label: "Pot", pct: 95}, {label: "Weekly Draw", pct: 2}, {label: "Platform", pct: 3}]`
+- Update `estimatedWinningPool` calculation from `potValue * 0.9` to `potValue * 0.95` in MarketDialog
+- Add a small informational row in the ticket purchase panel with a Trophy icon and text like "Includes {ticketCount} draw entries" between the ticket selector and the summary breakdown
 
