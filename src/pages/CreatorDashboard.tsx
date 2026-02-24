@@ -294,10 +294,10 @@ const CreatorDashboard = () => {
           <Card className="border-border/40 bg-muted/20">
             <CardContent className="p-2 sm:p-4">
               <div className="flex items-center gap-1 text-[9px] sm:text-xs text-muted-foreground mb-0.5">
-                <Trophy className="h-2.5 w-2.5 sm:h-3.5 sm:w-3.5 text-amber-500" />
-                <span className="truncate">Rank</span>
+                <Target className="h-2.5 w-2.5 sm:h-3.5 sm:w-3.5" />
+                <span className="truncate">Avg Odds</span>
               </div>
-              <p className="text-sm sm:text-xl font-bold">#{creatorStats.rank}</p>
+              <p className="text-sm sm:text-xl font-bold">{creatorStats.avgOdds}% / {100 - creatorStats.avgOdds}%</p>
             </CardContent>
           </Card>
         </div>
