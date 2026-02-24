@@ -493,14 +493,11 @@ const heroMarkets = [...mockMarkets]
   .sort((a, b) => b.pot - a.pot)
   .slice(0, 5);
 
-// Sponsored markets: 1 binary + 1 multi-outcome
-const sponsoredMarkets = (() => {
-  const eligible = [...mockMarkets]
-    .filter(m => (m.status === "open" || m.status === "closing") && !heroMarkets.some(h => h.id === m.id));
-  const binary = eligible.find(m => !m.outcomes);
-  const multi = eligible.find(m => !!m.outcomes);
-  return [binary || eligible[0], multi || eligible[1]].filter(Boolean) as Market[];
-})();
+// Sponsored markets (next 2 after hero)
+const sponsoredMarkets = [...mockMarkets]
+  .filter(m => m.status === "open" || m.status === "closing")
+  .sort((a, b) => b.pot - a.pot)
+  .slice(5, 7);
 
 function formatPot(pot: number): string {
   if (pot >= 1000000) return `$${(pot / 1000000).toFixed(1)}M`;
