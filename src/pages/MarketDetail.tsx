@@ -873,21 +873,21 @@ export default function MarketDetail() {
               </div>
 
               {/* Summary breakdown */}
-              <div className="rounded-xl border border-border/40 divide-y divide-border/30">
-                <div className="flex justify-between items-center px-3 py-1.5">
-                  <span className="text-xs text-muted-foreground">Cost</span>
-                  <span className="text-sm font-semibold">${totalCost.toFixed(2)}</span>
+              <div className="rounded-xl border border-border/50 bg-muted/20 overflow-hidden">
+                <div className="flex justify-between items-center px-3.5 py-2">
+                  <span className="text-sm text-muted-foreground font-medium">Cost</span>
+                  <span className="text-base font-bold">${totalCost.toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between items-center px-3 py-1.5">
-                  <span className="text-xs text-muted-foreground">Potential winning</span>
-                  <span className="text-sm font-semibold">${estimatedPayout > 0 ? estimatedPayout.toFixed(2) : '0.00'}</span>
+                <div className="border-t border-border/30 flex justify-between items-center px-3.5 py-2">
+                  <span className="text-sm text-muted-foreground font-medium">Potential winning</span>
+                  <span className="text-base font-bold">${estimatedPayout > 0 ? estimatedPayout.toFixed(2) : '0.00'}</span>
                 </div>
-                <div className="flex justify-between items-center px-3 py-1.5 bg-success/5">
+                <div className="border-t border-success/20 flex justify-between items-center px-3.5 py-2.5 bg-success/8">
                   <div className="flex items-center gap-1.5">
-                    <Trophy className="h-3.5 w-3.5 text-success" />
-                    <span className="text-xs font-medium text-success">Potential profit</span>
+                    <Trophy className="h-4 w-4 text-success" />
+                    <span className="text-sm font-semibold text-success">Potential profit</span>
                   </div>
-                  <span className={`text-base font-bold ${estimatedProfit > 0 ? 'text-success' : 'text-foreground'}`}>
+                  <span className={`text-lg font-extrabold ${estimatedProfit > 0 ? 'text-success' : 'text-foreground'}`}>
                     +${estimatedProfit > 0 ? estimatedProfit.toFixed(2) : '0.00'}
                   </span>
                 </div>
