@@ -118,6 +118,16 @@ export function Header() {
           
             {isLoggedIn && (
               <>
+                {/* Entry Counter */}
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={() => navigate("/portfolio")}
+                  className="h-8 text-xs gap-1 text-muted-foreground hover:text-foreground font-medium"
+                >
+                  🎟️ <span className="tabular-nums">24</span>
+                </Button>
+
                 {/* Notifications */}
                 <NotificationsDropdown />
 
