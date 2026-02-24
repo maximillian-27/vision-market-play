@@ -493,11 +493,16 @@ const heroMarkets = [...mockMarkets]
   .sort((a, b) => b.pot - a.pot)
   .slice(0, 5);
 
-// Sponsored markets (next 3 after hero)
-const sponsoredMarkets = [...mockMarkets]
-  .filter(m => m.status === "open" || m.status === "closing")
-  .sort((a, b) => b.pot - a.pot)
-  .slice(5, 8);
+// Sponsored markets — pick a mix including a multi-outcome
+const sponsoredMarkets = (() => {
+  const sorted = [...mockMarkets]
+    .filter(m => m.status === "open" || m.status === "closing")
+    .sort((a, b) => b.pot - a.pot)
+    .slice(5);
+  const multi = sorted.find(m => m.outcomes);
+  const binary = sorted.filter(m => !m.outcomes);
+  return [binary[0], multi || binary[1], binary[1] || binary[2]].filter(Boolean);
+})();
 
 function formatPot(pot: number): string {
   if (pot >= 1000000) return `$${(pot / 1000000).toFixed(1)}M`;
@@ -525,7 +530,7 @@ function GradientDivider() {
   );
 }
 
-/* ── Compact Sponsored Card (right side) ── */
+/* ── Compact Sponsored Card (matches MarketGridCard desktop style) ── */
 function CompactFeaturedCard({ market }: { market: Market }) {
   const navigate = useNavigate();
   const displayOutcomes = market.outcomes || [
@@ -534,80 +539,71 @@ function CompactFeaturedCard({ market }: { market: Market }) {
   ];
   const isBinary = !market.outcomes;
 
-  const lowestPrice = Math.min(...displayOutcomes.map(o => o.price).filter(p => p > 0));
-  const winUpTo = lowestPrice > 0 ? 10 / (lowestPrice / 100) : 0;
-  const winLabel = winUpTo >= 1000 ? `$${(winUpTo / 1000).toFixed(0)}K` : winUpTo > 0 ? `$${winUpTo.toFixed(0)}` : "";
-
   return (
     <div
       onClick={() => navigate(`/market/${market.id}`)}
-      className="flex flex-col p-3 rounded-xl border border-border/60 bg-card hover:bg-accent/30 cursor-pointer transition-colors h-full"
+      className="flex flex-col p-3 rounded-xl border border-border/60 bg-card hover:bg-accent/30 cursor-pointer transition-colors h-full gap-2"
     >
-      {/* Header: sponsored + creator */}
-      <div className="flex items-center justify-between mb-1.5">
-        <span className="text-[9px] uppercase tracking-wider font-bold text-pollgy-blue">Sponsored</span>
-        <div className="flex items-center gap-1">
-          <img src={market.creator.avatar} alt="" className="w-3.5 h-3.5 rounded-full" />
-          <span className="text-[9px] text-muted-foreground">{market.creator.name}</span>
+      {/* Image + Title */}
+      <div className="flex items-start gap-2">
+        <img src={market.image} alt={market.title} className="w-9 h-9 rounded-lg object-cover shrink-0" />
+        <div className="min-w-0">
+          <div className="flex items-center gap-1 mb-0.5">
+            <span className="text-[8px] uppercase tracking-wider font-bold text-pollgy-blue">Sponsored</span>
+          </div>
+          <h4 className="text-xs font-semibold leading-snug line-clamp-2 text-foreground">
+            {market.title}
+          </h4>
         </div>
       </div>
 
-      {/* Image + Title */}
-      <div className="flex gap-2.5 mb-2">
-        <img src={market.image} alt={market.title} className="w-14 h-14 rounded-lg object-cover shrink-0" />
-        <div className="flex flex-col justify-between flex-1 min-w-0">
-          <h4 className="text-xs font-semibold leading-tight line-clamp-2 text-foreground">
-            {market.title}
-          </h4>
-          <div className="flex items-center gap-2 mt-1">
-            <span className="text-primary text-[11px] font-extrabold">{formatPot(market.pot)} <span className="text-[9px] font-medium text-muted-foreground">pot</span></span>
-            <span className="text-[9px] text-muted-foreground flex items-center gap-0.5">
-              <Users className="h-2.5 w-2.5" />{market.players.toLocaleString()}
-            </span>
-          </div>
-        </div>
+      {/* Pot + Players */}
+      <div className="flex items-center gap-2">
+        <span className="text-primary text-xs font-extrabold">{formatPot(market.pot)}</span>
+        <span className="text-[9px] text-muted-foreground">·</span>
+        <span className="text-[9px] text-muted-foreground flex items-center gap-0.5">
+          <Users className="h-2.5 w-2.5" />{market.players.toLocaleString()}
+        </span>
       </div>
 
       {/* Outcome buttons */}
       {isBinary ? (
-        <div className="flex gap-1">
+        <div className="flex gap-1.5">
           <button
-            className="flex-1 rounded py-1.5 text-center bg-yes/15 hover:bg-yes text-yes hover:text-yes-foreground border border-yes/30 hover:border-yes transition-all active:scale-[0.98] text-[10px] font-bold"
+            className="flex-1 rounded-lg py-1.5 text-center bg-yes/15 hover:bg-yes text-yes hover:text-yes-foreground border border-yes/30 hover:border-yes transition-all active:scale-[0.97] text-[10px] font-bold"
             onClick={(e) => { e.stopPropagation(); navigate(`/market/${market.id}`); }}
           >
             Yes {displayOutcomes[0].price}%
           </button>
           <button
-            className="flex-1 rounded py-1.5 text-center bg-no/15 hover:bg-no text-no hover:text-no-foreground border border-no/30 hover:border-no transition-all active:scale-[0.98] text-[10px] font-bold"
+            className="flex-1 rounded-lg py-1.5 text-center bg-no/15 hover:bg-no text-no hover:text-no-foreground border border-no/30 hover:border-no transition-all active:scale-[0.97] text-[10px] font-bold"
             onClick={(e) => { e.stopPropagation(); navigate(`/market/${market.id}`); }}
           >
             No {displayOutcomes[1].price}%
           </button>
         </div>
       ) : (
-        <div className="space-y-0.5">
+        <div className="space-y-1">
           {displayOutcomes.slice(0, 2).map((o, i) => (
             <button
               key={i}
-              className="w-full flex items-center justify-between px-2 py-1 rounded bg-secondary/50 hover:bg-primary/10 border border-border/40 hover:border-primary/30 transition-all active:scale-[0.98]"
+              className="w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-secondary/50 hover:bg-primary/10 border border-border/40 hover:border-primary/30 transition-all active:scale-[0.97]"
               onClick={(e) => { e.stopPropagation(); navigate(`/market/${market.id}`); }}
             >
-              <span className="text-[10px] font-medium truncate">{o.label}</span>
-              <span className="text-[10px] font-bold text-primary">{o.price}%</span>
+              <span className="text-[11px] font-medium truncate">{o.label}</span>
+              <span className="text-[11px] font-bold text-primary">{o.price}%</span>
             </button>
           ))}
           {displayOutcomes.length > 2 && (
-            <span className="block text-center text-[9px] text-muted-foreground">+{displayOutcomes.length - 2} more</span>
+            <span className="block text-center text-[10px] text-muted-foreground">+{displayOutcomes.length - 2} more</span>
           )}
         </div>
       )}
 
-      {/* Footer: timer + win potential */}
-      <div className="flex items-center justify-between mt-1.5 text-[9px]">
-        <span className="text-muted-foreground flex items-center gap-0.5">
-          <Timer className="h-2.5 w-2.5" />{market.endsIn}
-        </span>
-      </div>
+      {/* Timer */}
+      <span className="text-muted-foreground flex items-center gap-0.5 text-[10px]">
+        <Timer className="h-2.5 w-2.5" />{market.endsIn}
+      </span>
     </div>
   );
 }
@@ -764,7 +760,7 @@ export default function Feed() {
         </div>
 
         {/* 2b. Desktop Split Hero */}
-        <div className="hidden sm:grid grid-cols-1 lg:grid-cols-2 gap-3 lg:h-[420px]">
+        <div className="hidden sm:grid grid-cols-1 lg:grid-cols-2 gap-3">
           {/* Left — Slideshow Carousel */}
           <div
             className="relative rounded-2xl overflow-hidden cursor-pointer group h-full"
