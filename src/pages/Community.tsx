@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Trophy, Award, ChevronRight, Flame, ArrowUp, ArrowDown, Star, TrendingUp, Minus } from "lucide-react";
+import { Trophy, Award, ChevronRight, Flame, ArrowUp, ArrowDown, TrendingUp, Minus, Crown, Zap } from "lucide-react";
 import { MarketsSidebar } from "@/components/MarketsSidebar";
 import { ActivitySidebar } from "@/components/ActivitySidebar";
 import { PageHeader } from "@/components/PageHeader";
@@ -38,22 +38,10 @@ const creators = [
   { name: "CrowdCall", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Crowd", rank: 10, potGenerated: 520000, marketsCreated: 11, totalPlayers: 2700, avgPot: 47273, rankChange: -1 },
 ];
 
-const hotStreaks = [
-  { name: "Sam Rivera", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sam", streak: 9, lastWin: "Will Bitcoin hit $100K by March?" },
-  { name: "Alex Chen", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Alex", streak: 7, lastWin: "Fed rate cut in February?" },
-  { name: "Jordan Smith", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Jordan", streak: 4, lastWin: "Super Bowl LVIII Winner" },
-];
-
-const biggestWins = [
-  { name: "Taylor Brown", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Taylor", market: "NBA Championship 2026", amount: 8420 },
-  { name: "Morgan Lee", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Morgan", market: "Will AI replace 50% of jobs by 2030?", amount: 6150 },
-  { name: "Casey Wilson", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Casey", market: "Tesla stock above $400?", amount: 4890 },
-];
-
-const risingStars = [
-  { name: "Jamie Nguyen", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Jamie", rankChange: 47, currentRank: 8 },
-  { name: "InsightHub", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Insight", rankChange: 31, currentRank: 4 },
-  { name: "Sam Rivera", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sam", rankChange: 22, currentRank: 6 },
+const highlights = [
+  { type: "streak" as const, name: "Sam Rivera", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sam", value: "9W Streak", sub: "Longest active streak", icon: <Flame className="h-4 w-4 text-orange-500" /> },
+  { type: "win" as const, name: "Taylor Brown", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Taylor", value: "$8,420", sub: "Biggest win this week", icon: <TrendingUp className="h-4 w-4 text-success" /> },
+  { type: "rising" as const, name: "Jamie Nguyen", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Jamie", value: "+47 ranks", sub: "Fastest climber", icon: <Zap className="h-4 w-4 text-primary" /> },
 ];
 
 // --- Helpers ---
@@ -61,6 +49,14 @@ const risingStars = [
 type TimePeriod = "week" | "month" | "all";
 type PlayerSort = "winnings" | "winRate" | "streak";
 type CreatorSort = "pot" | "markets" | "avgPot";
+
+const medalColors = [
+  "from-yellow-400/20 to-yellow-500/5 border-yellow-500/30",
+  "from-slate-300/20 to-slate-400/5 border-slate-400/30",
+  "from-amber-600/20 to-amber-700/5 border-amber-600/30",
+];
+
+const medalTextColors = ["text-yellow-600", "text-slate-500", "text-amber-600"];
 
 function getRankBadge(rank: number) {
   if (rank === 1) return "bg-yellow-500/10 text-yellow-600 border-yellow-500/20";
@@ -76,18 +72,66 @@ function formatMoney(n: number) {
 }
 
 function RankChange({ change }: { change: number | "new" }) {
-  if (change === "new") return <Badge variant="default" className="text-[9px] px-1.5 py-0">NEW</Badge>;
-  if (change === 0) return <Minus className="h-3 w-3 text-muted-foreground" />;
-  if (change > 0) return <span className="flex items-center text-[11px] font-semibold text-success"><ArrowUp className="h-3 w-3" />{change}</span>;
-  return <span className="flex items-center text-[11px] font-semibold text-destructive"><ArrowDown className="h-3 w-3" />{Math.abs(change)}</span>;
+  if (change === "new") return <Badge variant="default" className="text-[8px] px-1 py-0 h-4">NEW</Badge>;
+  if (change === 0) return <Minus className="h-3 w-3 text-muted-foreground/40" />;
+  if (change > 0) return <span className="flex items-center text-[10px] font-semibold text-success"><ArrowUp className="h-2.5 w-2.5" />{change}</span>;
+  return <span className="flex items-center text-[10px] font-semibold text-destructive"><ArrowDown className="h-2.5 w-2.5" />{Math.abs(change)}</span>;
 }
 
 function StreakBadge({ streak }: { streak: number }) {
   if (streak < 2) return null;
   return (
-    <span className="inline-flex items-center gap-0.5 text-[10px] font-bold text-orange-500 bg-orange-500/10 rounded-full px-1.5 py-0.5">
-      <Flame className="h-3 w-3" />{streak}W
+    <span className="inline-flex items-center gap-0.5 text-[9px] font-bold text-orange-500 bg-orange-500/10 rounded-full px-1.5 py-0.5">
+      <Flame className="h-2.5 w-2.5" />{streak}
     </span>
+  );
+}
+
+// --- Podium Component ---
+
+function Podium({ top3, getValue, getSecondary }: {
+  top3: { name: string; avatar: string; rankChange: number | "new" }[];
+  getValue: (p: any) => string;
+  getSecondary: (p: any) => string;
+}) {
+  const isMobile = useIsMobile();
+  // Display order: 2nd, 1st, 3rd
+  const order = [top3[1], top3[0], top3[2]];
+  const heights = ["h-16 sm:h-20", "h-20 sm:h-28", "h-12 sm:h-16"];
+  const sizes = ["h-11 w-11 sm:h-14 sm:w-14", "h-14 w-14 sm:h-16 sm:w-16", "h-11 w-11 sm:h-14 sm:w-14"];
+  const ranks = [2, 1, 3];
+
+  return (
+    <div className="flex items-end justify-center gap-2 sm:gap-4 pt-4 pb-2">
+      {order.map((player, i) => (
+        <Link
+          key={player.name}
+          to={`/profile/${player.name.toLowerCase().replace(' ', '-')}`}
+          className="flex flex-col items-center group"
+        >
+          <div className="relative mb-1.5">
+            {ranks[i] === 1 && (
+              <Crown className="h-4 w-4 sm:h-5 sm:w-5 text-yellow-500 absolute -top-4 sm:-top-5 left-1/2 -translate-x-1/2" />
+            )}
+            <Avatar className={`${sizes[i]} ring-2 ${i === 1 ? 'ring-yellow-500/40' : i === 0 ? 'ring-slate-400/30' : 'ring-amber-600/30'}`}>
+              <AvatarImage src={player.avatar} alt={player.name} />
+              <AvatarFallback>{player.name.slice(0, 2)}</AvatarFallback>
+            </Avatar>
+          </div>
+          <p className={`font-semibold text-[11px] sm:text-sm truncate max-w-[80px] sm:max-w-[100px] text-center ${ranks[i] === 1 ? '' : 'text-muted-foreground'}`}>
+            {isMobile ? player.name.split(' ')[0] : player.name}
+          </p>
+          <p className="text-success font-bold text-xs sm:text-sm mt-0.5">{getValue(player)}</p>
+          <p className="text-[9px] sm:text-[10px] text-muted-foreground">{getSecondary(player)}</p>
+          {/* Podium bar */}
+          <div className={`${heights[i]} w-16 sm:w-20 mt-2 rounded-t-lg bg-gradient-to-t ${medalColors[ranks[i] - 1]} border border-b-0 flex items-start justify-center pt-1.5`}>
+            <span className={`text-sm sm:text-lg font-bold ${medalTextColors[ranks[i] - 1]}`}>
+              #{ranks[i]}
+            </span>
+          </div>
+        </Link>
+      ))}
+    </div>
   );
 }
 
@@ -100,9 +144,9 @@ export default function Community() {
   const isMobile = useIsMobile();
 
   const timePeriodOptions: { label: string; shortLabel: string; value: TimePeriod }[] = [
-    { label: "THIS WEEK", shortLabel: "WEEK", value: "week" },
-    { label: "THIS MONTH", shortLabel: "MONTH", value: "month" },
-    { label: "ALL TIME", shortLabel: "ALL", value: "all" },
+    { label: "This Week", shortLabel: "Week", value: "week" },
+    { label: "This Month", shortLabel: "Month", value: "month" },
+    { label: "All Time", shortLabel: "All", value: "all" },
   ];
 
   const sortedPlayers = [...players].sort((a, b) => {
@@ -117,33 +161,32 @@ export default function Community() {
     return b.avgPot - a.avgPot;
   });
 
-  function getPlayerPrimary(p: typeof players[0]) {
-    if (playerSort === "winnings") return <span className="text-success font-semibold">{formatMoney(p.winnings)}</span>;
-    if (playerSort === "winRate") return <span className="font-semibold">{p.winRate}%</span>;
-    return <span className="font-semibold">{p.streak}W streak</span>;
+  function getPlayerValue(p: typeof players[0]) {
+    if (playerSort === "winnings") return formatMoney(p.winnings);
+    if (playerSort === "winRate") return `${p.winRate}%`;
+    return `${p.streak}W`;
   }
 
   function getPlayerSecondary(p: typeof players[0]) {
-    const parts: string[] = [];
-    if (playerSort !== "winRate") parts.push(isMobile ? `${p.winRate}%` : `${p.winRate}% win rate`);
-    if (playerSort !== "winnings") parts.push(formatMoney(p.winnings));
-    parts.push(isMobile ? `${p.marketsEntered} mkts` : `${p.marketsEntered} entered`);
-    return parts.slice(0, 2).join(" · ");
+    if (playerSort !== "winRate") return `${p.winRate}% win rate`;
+    return formatMoney(p.winnings);
   }
 
-  function getCreatorPrimary(c: typeof creators[0]) {
-    if (creatorSort === "pot") return <span className="text-success font-semibold">{formatMoney(c.potGenerated)}</span>;
-    if (creatorSort === "markets") return <span className="font-semibold">{c.marketsCreated} mkts</span>;
-    return <span className="font-semibold">{formatMoney(c.avgPot)} avg</span>;
+  function getCreatorValue(c: typeof creators[0]) {
+    if (creatorSort === "pot") return formatMoney(c.potGenerated);
+    if (creatorSort === "markets") return `${c.marketsCreated}`;
+    return formatMoney(c.avgPot);
   }
 
   function getCreatorSecondary(c: typeof creators[0]) {
-    const parts: string[] = [];
-    if (creatorSort !== "markets") parts.push(isMobile ? `${c.marketsCreated} mkts` : `${c.marketsCreated} markets`);
-    if (creatorSort !== "pot") parts.push(formatMoney(c.potGenerated) + " pot");
-    parts.push(`${(c.totalPlayers / 1000).toFixed(1)}K players`);
-    return parts.slice(0, 2).join(" · ");
+    if (creatorSort !== "markets") return `${c.marketsCreated} markets`;
+    return formatMoney(c.potGenerated);
   }
+
+  const playerTop3 = sortedPlayers.slice(0, 3);
+  const playerRest = sortedPlayers.slice(3);
+  const creatorTop3 = sortedCreators.slice(0, 3);
+  const creatorRest = sortedCreators.slice(3);
 
   return (
     <div className="w-full max-w-7xl mx-auto py-4 lg:py-6">
@@ -151,7 +194,6 @@ export default function Community() {
         <ActivitySidebar />
 
         <div className="w-full max-w-2xl space-y-3 sm:space-y-4 px-4">
-          {/* Hide PageHeader on mobile */}
           <div className="hidden sm:block">
             <PageHeader
               title="Leaderboards"
@@ -159,124 +201,145 @@ export default function Community() {
             />
           </div>
 
+          {/* Highlights Strip */}
+          <div className="flex gap-2 overflow-x-auto scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0 pb-1">
+            {highlights.map((h) => (
+              <Card key={h.type} className="border-border/40 shrink-0 flex-1 min-w-[140px] sm:min-w-0">
+                <CardContent className="p-2.5 sm:p-3 flex items-center gap-2.5">
+                  <Avatar className="h-8 w-8 sm:h-9 sm:w-9 shrink-0">
+                    <AvatarImage src={h.avatar} alt={h.name} />
+                    <AvatarFallback>{h.name.slice(0, 2)}</AvatarFallback>
+                  </Avatar>
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-1">
+                      {h.icon}
+                      <span className="font-bold text-xs sm:text-sm">{h.value}</span>
+                    </div>
+                    <p className="text-[9px] sm:text-[10px] text-muted-foreground truncate">{h.name} · {h.sub}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
           {/* Leaderboard Tabs */}
           <Tabs defaultValue="players" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 h-11">
-              <TabsTrigger value="players" className="text-sm">Players</TabsTrigger>
-              <TabsTrigger value="creators" className="text-sm">Creators</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-2 h-10 sm:h-11">
+              <TabsTrigger value="players" className="text-xs sm:text-sm gap-1.5">
+                <Trophy className="h-3.5 w-3.5" />
+                Players
+              </TabsTrigger>
+              <TabsTrigger value="creators" className="text-xs sm:text-sm gap-1.5">
+                <Award className="h-3.5 w-3.5" />
+                Creators
+              </TabsTrigger>
             </TabsList>
 
             {/* Players Tab */}
-            <TabsContent value="players" className="space-y-3 mt-3 sm:mt-4">
-              {/* Single scrollable row on mobile, two rows on desktop */}
-              <div className="sm:flex sm:flex-row sm:items-center sm:justify-between sm:gap-2">
-                <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide pb-1 sm:pb-0 -mx-4 px-4 sm:mx-0 sm:px-0">
-                  <div className="flex gap-1 shrink-0">
-                    {timePeriodOptions.map((o) => (
-                      <Badge
-                        key={o.value}
-                        variant={timePeriod === o.value ? "default" : "outline"}
-                        className="cursor-pointer text-[10px] uppercase tracking-wider whitespace-nowrap"
-                        onClick={() => setTimePeriod(o.value)}
-                      >
-                        {isMobile ? o.shortLabel : o.label}
-                      </Badge>
-                    ))}
-                  </div>
-                  <div className="w-px h-4 bg-border shrink-0 sm:hidden" />
-                  <div className="flex gap-1 shrink-0 sm:hidden">
-                    {([["winnings", "Winnings"], ["winRate", "Win Rate"], ["streak", "Streak"]] as const).map(([val, label]) => (
-                      <Badge
-                        key={val}
-                        variant={playerSort === val ? "default" : "outline"}
-                        className="cursor-pointer text-[10px] whitespace-nowrap"
-                        onClick={() => setPlayerSort(val)}
-                      >
-                        {label}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-                {/* Desktop sort pills */}
-                <div className="hidden sm:flex gap-1.5">
-                  {([["winnings", "Winnings"], ["winRate", "Win Rate"], ["streak", "Streak"]] as const).map(([val, label]) => (
-                    <Badge
-                      key={val}
-                      variant={playerSort === val ? "default" : "outline"}
-                      className="cursor-pointer text-[10px]"
-                      onClick={() => setPlayerSort(val)}
+            <TabsContent value="players" className="space-y-3 mt-3">
+              {/* Filters */}
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex gap-1">
+                  {timePeriodOptions.map((o) => (
+                    <button
+                      key={o.value}
+                      onClick={() => setTimePeriod(o.value)}
+                      className={`px-2.5 py-1 rounded-full text-[10px] sm:text-[11px] font-medium transition-colors ${
+                        timePeriod === o.value
+                          ? "bg-primary text-primary-foreground"
+                          : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                      }`}
                     >
-                      {label}
-                    </Badge>
+                      {isMobile ? o.shortLabel : o.label}
+                    </button>
+                  ))}
+                </div>
+                <div className="flex gap-1">
+                  {([["winnings", "💰", "Winnings"], ["winRate", "🎯", "Win %"], ["streak", "🔥", "Streak"]] as const).map(([val, emoji, label]) => (
+                    <button
+                      key={val}
+                      onClick={() => setPlayerSort(val)}
+                      className={`px-2 py-1 rounded-full text-[10px] sm:text-[11px] font-medium transition-colors ${
+                        playerSort === val
+                          ? "bg-muted text-foreground"
+                          : "text-muted-foreground/60 hover:text-muted-foreground"
+                      }`}
+                    >
+                      {isMobile ? emoji : label}
+                    </button>
                   ))}
                 </div>
               </div>
 
-              <Card className="border-border/40 shadow-sm rounded-xl overflow-hidden">
-                <CardHeader className="pb-2 hidden sm:block">
-                  <CardTitle className="text-base flex items-center gap-2">
-                    <Trophy className="h-4 w-4 text-primary" />
-                    Top Players
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="pt-1 sm:pt-2 px-1.5 sm:px-4">
+              {/* Podium */}
+              <Card className="border-border/40 overflow-hidden">
+                <CardContent className="p-0 pb-0">
+                  <Podium
+                    top3={playerTop3}
+                    getValue={getPlayerValue}
+                    getSecondary={getPlayerSecondary}
+                  />
+                </CardContent>
+              </Card>
+
+              {/* Rest of rankings */}
+              <Card className="border-border/40 overflow-hidden">
+                <CardContent className="p-0">
                   <div className="divide-y divide-border/30">
-                    {sortedPlayers.map((player, i) => (
+                    {playerRest.map((player, i) => (
                       <Link
                         key={player.name}
                         to={`/profile/${player.name.toLowerCase().replace(' ', '-')}`}
-                        className="flex items-center gap-2.5 sm:gap-3 py-3 sm:py-3.5 hover:bg-muted/30 px-2 sm:px-3 rounded-xl transition-colors group"
+                        className="flex items-center gap-2.5 sm:gap-3 py-2.5 sm:py-3 hover:bg-muted/30 px-3 sm:px-4 transition-colors group"
                       >
-                        <div className="flex items-center gap-1.5 w-12 sm:w-14 shrink-0">
-                          <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-[11px] sm:text-xs font-bold border ${getRankBadge(i + 1)}`}>
-                            {i + 1}
-                          </div>
-                          <RankChange change={player.rankChange} />
+                        <div className="w-8 sm:w-9 flex items-center justify-center shrink-0">
+                          <span className="text-xs sm:text-sm font-bold text-muted-foreground">{i + 4}</span>
                         </div>
-                        <Avatar className="h-9 w-9 sm:h-10 sm:w-10">
+                        <RankChange change={player.rankChange} />
+                        <Avatar className="h-8 w-8 sm:h-9 sm:w-9">
                           <AvatarImage src={player.avatar} alt={player.name} />
                           <AvatarFallback>{player.name.slice(0, 2)}</AvatarFallback>
                         </Avatar>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-1.5">
-                            <p className="font-semibold text-[13px] sm:text-sm truncate">{player.name}</p>
+                            <p className="font-medium text-[13px] sm:text-sm truncate">{player.name}</p>
                             <StreakBadge streak={player.streak} />
                           </div>
-                          <p className="text-[11px] sm:text-xs text-muted-foreground truncate mt-0.5">{getPlayerSecondary(player)}</p>
+                          <p className="text-[10px] sm:text-xs text-muted-foreground mt-0.5">
+                            {getPlayerSecondary(player)}
+                          </p>
                         </div>
-                        <div className="text-right text-sm sm:text-base shrink-0 font-semibold">
-                          {getPlayerPrimary(player)}
-                        </div>
-                        <ChevronRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity shrink-0 hidden sm:block" />
+                        <span className="text-sm font-semibold text-success shrink-0">
+                          {getPlayerValue(player)}
+                        </span>
+                        <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/30 group-hover:text-muted-foreground transition-colors shrink-0 hidden sm:block" />
                       </Link>
                     ))}
+
+                    {/* Your rank */}
                     <div className="border-t-2 border-dashed border-primary/20 !border-b-0">
-                      <div className="flex items-center gap-2.5 sm:gap-3 py-3 sm:py-3.5 px-2 sm:px-3 rounded-xl bg-primary/[0.05] my-1">
-                        <div className="flex items-center gap-1.5 w-12 sm:w-14 shrink-0">
-                          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-[11px] sm:text-xs font-bold border border-primary/30 bg-primary/10 text-primary">
+                      <div className="flex items-center gap-2.5 sm:gap-3 py-2.5 sm:py-3 px-3 sm:px-4 bg-primary/[0.04]">
+                        <div className="w-8 sm:w-9 flex items-center justify-center shrink-0">
+                          <span className="text-xs sm:text-sm font-bold text-primary">
                             {playerSort === "winnings" ? 24 : playerSort === "winRate" ? 31 : 58}
-                          </div>
-                          <span className="flex items-center text-[11px] font-semibold text-success"><ArrowUp className="h-3 w-3" />3</span>
+                          </span>
                         </div>
-                        <Avatar className="h-9 w-9 sm:h-10 sm:w-10 ring-2 ring-primary/20">
-                          <AvatarFallback className="bg-primary/10 text-primary font-bold text-xs sm:text-sm">YOU</AvatarFallback>
+                        <span className="flex items-center text-[10px] font-semibold text-success"><ArrowUp className="h-2.5 w-2.5" />3</span>
+                        <Avatar className="h-8 w-8 sm:h-9 sm:w-9 ring-2 ring-primary/20">
+                          <AvatarFallback className="bg-primary/10 text-primary font-bold text-xs">YOU</AvatarFallback>
                         </Avatar>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-1.5">
                             <p className="font-semibold text-[13px] sm:text-sm text-primary">You</p>
                             <StreakBadge streak={2} />
                           </div>
-                          <p className="text-[11px] sm:text-xs text-muted-foreground truncate mt-0.5">
-                            {playerSort === "winnings"
-                              ? (isMobile ? "72% · 38 mkts" : "72% win rate · 38 entered")
-                              : playerSort === "winRate"
-                              ? (isMobile ? "$4.2K · 38 mkts" : "$4.2K · 38 entered")
-                              : (isMobile ? "$4.2K · 72%" : "$4.2K · 72% win rate")}
+                          <p className="text-[10px] sm:text-xs text-muted-foreground mt-0.5">
+                            {playerSort === "winnings" ? "72% win rate" : playerSort === "winRate" ? formatMoney(4200) : formatMoney(4200)}
                           </p>
                         </div>
-                        <div className="text-right text-sm sm:text-base shrink-0 font-semibold">
-                          {playerSort === "winnings" ? <span className="text-success">$4.2K</span> : playerSort === "winRate" ? <span>72%</span> : <span>2W streak</span>}
-                        </div>
+                        <span className="text-sm font-semibold text-success shrink-0">
+                          {playerSort === "winnings" ? "$4.2K" : playerSort === "winRate" ? "72%" : "2W"}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -285,107 +348,104 @@ export default function Community() {
             </TabsContent>
 
             {/* Creators Tab */}
-            <TabsContent value="creators" className="space-y-3 mt-3 sm:mt-4">
-              <div className="sm:flex sm:flex-row sm:items-center sm:justify-between sm:gap-2">
-                <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide pb-1 sm:pb-0 -mx-4 px-4 sm:mx-0 sm:px-0">
-                  <div className="flex gap-1 shrink-0">
-                    {timePeriodOptions.map((o) => (
-                      <Badge
-                        key={o.value}
-                        variant={timePeriod === o.value ? "default" : "outline"}
-                        className="cursor-pointer text-[10px] uppercase tracking-wider whitespace-nowrap"
-                        onClick={() => setTimePeriod(o.value)}
-                      >
-                        {isMobile ? o.shortLabel : o.label}
-                      </Badge>
-                    ))}
-                  </div>
-                  <div className="w-px h-4 bg-border shrink-0 sm:hidden" />
-                  <div className="flex gap-1 shrink-0 sm:hidden">
-                    {([["pot", "Pot"], ["markets", "Markets"], ["avgPot", "Avg Pot"]] as const).map(([val, label]) => (
-                      <Badge
-                        key={val}
-                        variant={creatorSort === val ? "default" : "outline"}
-                        className="cursor-pointer text-[10px] whitespace-nowrap"
-                        onClick={() => setCreatorSort(val)}
-                      >
-                        {label}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-                <div className="hidden sm:flex gap-1.5">
-                  {([["pot", "Pot Generated"], ["markets", "Markets"], ["avgPot", "Avg Pot"]] as const).map(([val, label]) => (
-                    <Badge
-                      key={val}
-                      variant={creatorSort === val ? "default" : "outline"}
-                      className="cursor-pointer text-[10px]"
-                      onClick={() => setCreatorSort(val)}
+            <TabsContent value="creators" className="space-y-3 mt-3">
+              {/* Filters */}
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex gap-1">
+                  {timePeriodOptions.map((o) => (
+                    <button
+                      key={o.value}
+                      onClick={() => setTimePeriod(o.value)}
+                      className={`px-2.5 py-1 rounded-full text-[10px] sm:text-[11px] font-medium transition-colors ${
+                        timePeriod === o.value
+                          ? "bg-primary text-primary-foreground"
+                          : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                      }`}
                     >
-                      {label}
-                    </Badge>
+                      {isMobile ? o.shortLabel : o.label}
+                    </button>
+                  ))}
+                </div>
+                <div className="flex gap-1">
+                  {([["pot", "💰", "Pot"], ["markets", "📊", "Markets"], ["avgPot", "📈", "Avg Pot"]] as const).map(([val, emoji, label]) => (
+                    <button
+                      key={val}
+                      onClick={() => setCreatorSort(val)}
+                      className={`px-2 py-1 rounded-full text-[10px] sm:text-[11px] font-medium transition-colors ${
+                        creatorSort === val
+                          ? "bg-muted text-foreground"
+                          : "text-muted-foreground/60 hover:text-muted-foreground"
+                      }`}
+                    >
+                      {isMobile ? emoji : label}
+                    </button>
                   ))}
                 </div>
               </div>
 
-              <Card className="border-border/40 shadow-sm rounded-xl overflow-hidden">
-                <CardHeader className="pb-2 hidden sm:block">
-                  <CardTitle className="text-base flex items-center gap-2">
-                    <Award className="h-4 w-4 text-primary" />
-                    Top Creators
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="pt-1 sm:pt-2 px-1.5 sm:px-4">
+              {/* Podium */}
+              <Card className="border-border/40 overflow-hidden">
+                <CardContent className="p-0 pb-0">
+                  <Podium
+                    top3={creatorTop3}
+                    getValue={getCreatorValue}
+                    getSecondary={getCreatorSecondary}
+                  />
+                </CardContent>
+              </Card>
+
+              {/* Rest of rankings */}
+              <Card className="border-border/40 overflow-hidden">
+                <CardContent className="p-0">
                   <div className="divide-y divide-border/30">
-                    {sortedCreators.map((creator, i) => (
+                    {creatorRest.map((creator, i) => (
                       <Link
                         key={creator.name}
                         to={`/creator/${creator.name.toLowerCase().replace(' ', '-')}`}
-                        className="flex items-center gap-2.5 sm:gap-3 py-3 sm:py-3.5 hover:bg-muted/30 px-2 sm:px-3 rounded-xl transition-colors group"
+                        className="flex items-center gap-2.5 sm:gap-3 py-2.5 sm:py-3 hover:bg-muted/30 px-3 sm:px-4 transition-colors group"
                       >
-                        <div className="flex items-center gap-1.5 w-12 sm:w-14 shrink-0">
-                          <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-[11px] sm:text-xs font-bold border ${getRankBadge(i + 1)}`}>
-                            {i + 1}
-                          </div>
-                          <RankChange change={creator.rankChange} />
+                        <div className="w-8 sm:w-9 flex items-center justify-center shrink-0">
+                          <span className="text-xs sm:text-sm font-bold text-muted-foreground">{i + 4}</span>
                         </div>
-                        <Avatar className="h-9 w-9 sm:h-10 sm:w-10">
+                        <RankChange change={creator.rankChange} />
+                        <Avatar className="h-8 w-8 sm:h-9 sm:w-9">
                           <AvatarImage src={creator.avatar} alt={creator.name} />
                           <AvatarFallback>{creator.name.slice(0, 2)}</AvatarFallback>
                         </Avatar>
                         <div className="flex-1 min-w-0">
-                          <p className="font-semibold text-[13px] sm:text-sm truncate">{creator.name}</p>
-                          <p className="text-[11px] sm:text-xs text-muted-foreground truncate mt-0.5">{getCreatorSecondary(creator)}</p>
+                          <p className="font-medium text-[13px] sm:text-sm truncate">{creator.name}</p>
+                          <p className="text-[10px] sm:text-xs text-muted-foreground mt-0.5">
+                            {getCreatorSecondary(creator)}
+                          </p>
                         </div>
-                        <div className="text-right text-sm sm:text-base shrink-0 font-semibold">
-                          {getCreatorPrimary(creator)}
-                        </div>
-                        <ChevronRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity shrink-0 hidden sm:block" />
+                        <span className="text-sm font-semibold text-success shrink-0">
+                          {getCreatorValue(creator)}
+                        </span>
+                        <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/30 group-hover:text-muted-foreground transition-colors shrink-0 hidden sm:block" />
                       </Link>
                     ))}
+
+                    {/* Your rank */}
                     <div className="border-t-2 border-dashed border-primary/20 !border-b-0">
-                      <div className="flex items-center gap-2.5 sm:gap-3 py-3 sm:py-3.5 px-2 sm:px-3 rounded-xl bg-primary/[0.05] my-1">
-                        <div className="flex items-center gap-1.5 w-12 sm:w-14 shrink-0">
-                          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-[11px] sm:text-xs font-bold border border-primary/30 bg-primary/10 text-primary">
+                      <div className="flex items-center gap-2.5 sm:gap-3 py-2.5 sm:py-3 px-3 sm:px-4 bg-primary/[0.04]">
+                        <div className="w-8 sm:w-9 flex items-center justify-center shrink-0">
+                          <span className="text-xs sm:text-sm font-bold text-primary">
                             {creatorSort === "pot" ? 42 : creatorSort === "markets" ? 37 : 29}
-                          </div>
+                          </span>
                         </div>
-                        <Avatar className="h-9 w-9 sm:h-10 sm:w-10 ring-2 ring-primary/20">
-                          <AvatarFallback className="bg-primary/10 text-primary font-bold text-xs sm:text-sm">YOU</AvatarFallback>
+                        <span className="w-4" />
+                        <Avatar className="h-8 w-8 sm:h-9 sm:w-9 ring-2 ring-primary/20">
+                          <AvatarFallback className="bg-primary/10 text-primary font-bold text-xs">YOU</AvatarFallback>
                         </Avatar>
                         <div className="flex-1 min-w-0">
                           <p className="font-semibold text-[13px] sm:text-sm text-primary">You</p>
-                          <p className="text-[11px] sm:text-xs text-muted-foreground truncate mt-0.5">
-                            {creatorSort === "pot"
-                              ? (isMobile ? "3 mkts · 1.2K players" : "3 markets · 1.2K players")
-                              : creatorSort === "markets"
-                              ? (isMobile ? "$12.4K · 1.2K players" : "$12.4K pot · 1.2K players")
-                              : (isMobile ? "3 mkts · $12.4K" : "3 markets · $12.4K pot")}
+                          <p className="text-[10px] sm:text-xs text-muted-foreground mt-0.5">
+                            {creatorSort === "pot" ? "3 markets" : creatorSort === "markets" ? "$12.4K pot" : "3 markets"}
                           </p>
                         </div>
-                        <div className="text-right text-sm sm:text-base shrink-0 font-semibold">
-                          {creatorSort === "pot" ? <span className="text-success">$12.4K</span> : creatorSort === "markets" ? <span>3 mkts</span> : <span>$4.1K avg</span>}
-                        </div>
+                        <span className="text-sm font-semibold text-success shrink-0">
+                          {creatorSort === "pot" ? "$12.4K" : creatorSort === "markets" ? "3" : "$4.1K"}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -393,99 +453,6 @@ export default function Community() {
               </Card>
             </TabsContent>
           </Tabs>
-
-          {/* Highlights Section — compact on mobile */}
-          <div className="space-y-2 sm:space-y-3">
-            <h2 className="text-base font-semibold flex items-center gap-2 px-1">
-              <Star className="h-4 w-4 text-primary" />
-              Highlights
-            </h2>
-
-            {/* Hot Streaks */}
-            <Card className="border-border/50">
-              <CardHeader className="pb-1 sm:pb-2 pt-3 sm:pt-4 px-3 sm:px-4">
-                <CardTitle className="text-sm flex items-center gap-2">
-                  <Flame className="h-4 w-4 text-orange-500" />
-                  Hot Streaks
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="px-3 sm:px-4 pb-3 sm:pb-4 pt-1">
-                <div className="space-y-1 sm:space-y-2">
-                  {hotStreaks.map((s) => (
-                    <div key={s.name} className="flex items-center gap-2 sm:gap-3 py-1 sm:py-1.5">
-                      <Avatar className="h-6 w-6 sm:h-7 sm:w-7">
-                        <AvatarImage src={s.avatar} alt={s.name} />
-                        <AvatarFallback>{s.name.slice(0, 2)}</AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium">{s.name}</p>
-                        <p className="text-xs text-muted-foreground truncate">{s.lastWin}</p>
-                      </div>
-                      <span className="inline-flex items-center gap-0.5 text-xs font-bold text-orange-500 bg-orange-500/10 rounded-full px-2 py-0.5">
-                        <Flame className="h-3 w-3" />{s.streak}W
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Biggest Wins */}
-            <Card className="border-border/50">
-              <CardHeader className="pb-1 sm:pb-2 pt-3 sm:pt-4 px-3 sm:px-4">
-                <CardTitle className="text-sm flex items-center gap-2">
-                  <TrendingUp className="h-4 w-4 text-success" />
-                  Biggest Wins This Week
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="px-3 sm:px-4 pb-3 sm:pb-4 pt-1">
-                <div className="space-y-1 sm:space-y-2">
-                  {biggestWins.map((w) => (
-                    <div key={w.name} className="flex items-center gap-2 sm:gap-3 py-1 sm:py-1.5">
-                      <Avatar className="h-6 w-6 sm:h-7 sm:w-7">
-                        <AvatarImage src={w.avatar} alt={w.name} />
-                        <AvatarFallback>{w.name.slice(0, 2)}</AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium">{w.name}</p>
-                        <p className="text-xs text-muted-foreground truncate">{w.market}</p>
-                      </div>
-                      <span className="text-sm font-semibold text-success">{formatMoney(w.amount)}</span>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Rising Stars */}
-            <Card className="border-border/50">
-              <CardHeader className="pb-1 sm:pb-2 pt-3 sm:pt-4 px-3 sm:px-4">
-                <CardTitle className="text-sm flex items-center gap-2">
-                  <ArrowUp className="h-4 w-4 text-primary" />
-                  Rising Stars
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="px-3 sm:px-4 pb-3 sm:pb-4 pt-1">
-                <div className="space-y-1 sm:space-y-2">
-                  {risingStars.map((r) => (
-                    <div key={r.name} className="flex items-center gap-2 sm:gap-3 py-1 sm:py-1.5">
-                      <Avatar className="h-6 w-6 sm:h-7 sm:w-7">
-                        <AvatarImage src={r.avatar} alt={r.name} />
-                        <AvatarFallback>{r.name.slice(0, 2)}</AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium">{r.name}</p>
-                        <p className="text-xs text-muted-foreground">Now #{r.currentRank}</p>
-                      </div>
-                      <span className="flex items-center gap-0.5 text-xs font-bold text-success">
-                        <ArrowUp className="h-3 w-3" />+{r.rankChange}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
         </div>
 
         <MarketsSidebar />
