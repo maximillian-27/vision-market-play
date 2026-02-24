@@ -393,12 +393,12 @@ export default function MarketDetail() {
         )}
 
         {/* Creator + Title Block */}
-        <div className="px-4 pt-3 pb-2">
+        <div className="px-4 pt-3 sm:pb-2">
           <button 
             onClick={() => navigate(`/creator/${market.creator.id}`)}
-            className="flex items-center gap-2 mb-2.5"
+            className="flex items-center gap-2 mb-2"
           >
-            <Avatar className="h-7 w-7 ring-1 ring-border">
+            <Avatar className="h-6 w-6 ring-1 ring-border">
               <AvatarImage src={market.creator.avatar} alt={market.creator.name} />
               <AvatarFallback>{market.creator.name.slice(0, 2)}</AvatarFallback>
             </Avatar>
@@ -407,47 +407,41 @@ export default function MarketDetail() {
               <BadgeCheck className="h-3.5 w-3.5 text-primary fill-primary/20" />
             )}
           </button>
-          <h1 className="text-xl font-bold leading-snug tracking-tight">{market.title}</h1>
+          <h1 className="text-lg sm:text-xl font-bold leading-snug tracking-tight">{market.title}</h1>
         </div>
 
-        {/* Key Metrics Strip */}
-        <div className="px-4 py-3">
-          <div className="flex items-center gap-3 flex-wrap">
-            <span className="inline-flex items-center px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-base font-extrabold">
-              {formatPot(market.pot)} Pot
-            </span>
-            <div className="flex items-center gap-1 text-xs text-muted-foreground">
-              <Users className="h-3.5 w-3.5" />
-              <span className="font-semibold text-foreground">{formatNumber(market.players)}</span>
-              <span>players</span>
-            </div>
-            <div className="flex items-center gap-1 text-xs text-muted-foreground">
-              <Clock className="h-3.5 w-3.5" />
-              <span>{market.endDate}</span>
-            </div>
-            {market.activity24h > 0 && (
-              <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                <Timer className="h-3.5 w-3.5" />
-                <span>{formatNumber(market.activity24h)} today</span>
-              </div>
-            )}
+        {/* Key Metrics — minimal */}
+        <div className="px-4 py-2 sm:py-3">
+          <div className="flex items-center gap-3 text-xs text-muted-foreground">
+            <span className="font-bold text-primary text-sm">{formatPot(market.pot)}</span>
+            <span>·</span>
+            <span>{formatNumber(market.players)} players</span>
+            <span>·</span>
+            <span>{market.endDate}</span>
           </div>
-          {/* Win teaser */}
-          <div className="mt-2 flex items-center gap-1.5 text-xs">
+          {/* Win teaser - desktop only, mobile has it in sticky */}
+          <div className="hidden sm:flex mt-2 items-center gap-1.5 text-xs">
             <Trophy className="h-3.5 w-3.5 text-primary" />
             <span className="text-muted-foreground">Win up to</span>
             <span className="font-bold text-primary">${potentialWin}</span>
             <span className="text-muted-foreground">from a $10 ticket</span>
           </div>
+          {/* Activity - desktop only */}
+          {market.activity24h > 0 && (
+            <div className="hidden sm:flex items-center gap-1 text-xs text-muted-foreground mt-1">
+              <Timer className="h-3.5 w-3.5" />
+              <span>{formatNumber(market.activity24h)} today</span>
+            </div>
+          )}
         </div>
 
-        <Separator className="mx-4" />
+        <Separator className="mx-4 hidden sm:block" />
 
-        {/* Probability Chart */}
-        <div className="px-4 py-4 space-y-2">
+        {/* Probability Chart — compact on mobile */}
+        <div className="px-4 py-2 sm:py-4 space-y-1 sm:space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-muted-foreground">Probability History</span>
-            <div className="flex items-center gap-1">
+            <span className="text-[11px] font-medium text-muted-foreground">Probability</span>
+            <div className="hidden sm:flex items-center gap-1">
               {["1D", "1W", "1M", "All"].map((tf, i) => (
                 <button
                   key={tf}
@@ -460,7 +454,7 @@ export default function MarketDetail() {
               ))}
             </div>
           </div>
-          <div className="h-32 rounded-xl overflow-hidden bg-muted/20 p-2">
+          <div className="h-24 sm:h-32 rounded-xl overflow-hidden bg-muted/20 p-2">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={market.priceHistory} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
                 <defs>
@@ -491,54 +485,19 @@ export default function MarketDetail() {
           </div>
         </div>
 
-        <Separator className="mx-4" />
-
-        {/* Revenue Distribution - desktop only */}
-        <div className="hidden sm:block">
-          <div className="px-4 py-4 space-y-3">
-            <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-              <PieChartIcon className="h-3 w-3" />
-              <span>Transparency: Where your entry goes</span>
-            </div>
-            <div className="space-y-2">
-              <div className="flex rounded-full overflow-hidden h-2">
-                {revenueData.map((item, i) => (
-                  <div 
-                    key={i} 
-                    style={{ width: `${item.value}%`, backgroundColor: item.color }} 
-                    className="h-full first:rounded-l-full last:rounded-r-full"
-                  />
-                ))}
-              </div>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                {revenueData.map((item, i) => (
-                  <div key={i} className="flex flex-col">
-                    <div className="flex items-center gap-1.5 mb-0.5">
-                      <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: item.color }} />
-                      <span className="text-[10px] font-bold">{item.value}%</span>
-                    </div>
-                    <span className="text-[9px] text-muted-foreground whitespace-nowrap">{item.name}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-          <Separator className="mx-4" />
-        </div>
-
-        {/* Description */}
-        <div className="px-4 py-4 space-y-2">
-          <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+        {/* Description — clean, no label on mobile */}
+        <div className="px-4 py-2 sm:py-4 space-y-2">
+          <div className="hidden sm:flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
             <FileText className="h-3.5 w-3.5" />
             <span>About This Market</span>
           </div>
-          <p className="text-sm text-foreground/80 leading-relaxed">{market.description}</p>
+          <p className="text-sm text-muted-foreground leading-relaxed">{market.description}</p>
         </div>
 
         {/* Resolution Criteria */}
-        <div className="px-4 pb-4">
+        <div className="px-4 pb-2 sm:pb-4">
           <Collapsible open={showResolution} onOpenChange={setShowResolution}>
-            <CollapsibleTrigger className="flex items-center justify-between w-full py-2.5 px-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors">
+            <CollapsibleTrigger className="flex items-center justify-between w-full py-2 px-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors">
               <div className="flex items-center gap-1.5 text-xs font-medium">
                 <Scale className="h-3.5 w-3.5 text-muted-foreground" />
                 <span>Resolution Criteria</span>
@@ -546,21 +505,21 @@ export default function MarketDetail() {
               {showResolution ? <ChevronUp className="h-4 w-4 text-muted-foreground" /> : <ChevronDown className="h-4 w-4 text-muted-foreground" />}
             </CollapsibleTrigger>
             <CollapsibleContent>
-              <p className="text-sm text-muted-foreground leading-relaxed mt-3 px-1">{market.resolutionCriteria}</p>
+              <p className="text-sm text-muted-foreground leading-relaxed mt-2 px-1">{market.resolutionCriteria}</p>
             </CollapsibleContent>
           </Collapsible>
         </div>
 
         {/* Engagement Row */}
-        <div className="flex items-center justify-between px-4 py-3 border-t border-border/40">
-          <div className="flex items-center gap-5">
-            <button onClick={handleLike} className="flex items-center gap-1.5 active:scale-95 transition-transform">
-              <Heart className={`h-5 w-5 ${isLiked ? 'fill-destructive text-destructive' : ''}`} />
-              <span className="text-xs font-medium">{formatNumber(likesCount)}</span>
+        <div className="flex items-center px-4 py-2 sm:py-3 border-t border-border/40">
+          <div className="flex items-center gap-4">
+            <button onClick={handleLike} className="flex items-center gap-1 active:scale-95 transition-transform">
+              <Heart className={`h-4 w-4 ${isLiked ? 'fill-destructive text-destructive' : 'text-muted-foreground'}`} />
+              <span className="text-[11px] text-muted-foreground">{formatNumber(likesCount)}</span>
             </button>
-            <button onClick={() => setShowComments(!showComments)} className="flex items-center gap-1.5 active:scale-95 transition-transform">
-              <MessageCircle className="h-5 w-5" />
-              <span className="text-xs font-medium">{comments.length}</span>
+            <button onClick={() => setShowComments(!showComments)} className="flex items-center gap-1 active:scale-95 transition-transform">
+              <MessageCircle className="h-4 w-4 text-muted-foreground" />
+              <span className="text-[11px] text-muted-foreground">{comments.length}</span>
             </button>
             <button 
               className="active:scale-95 transition-transform"
@@ -569,7 +528,7 @@ export default function MarketDetail() {
                 toast({ title: "Link copied!" });
               }}
             >
-              <Share2 className="h-5 w-5" />
+              <Share2 className="h-4 w-4 text-muted-foreground" />
             </button>
           </div>
         </div>
