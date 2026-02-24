@@ -303,16 +303,35 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
                   </div>
                 </div>
 
-                {/* Community Sentiment - inline under metadata */}
-                {isBinary && (
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-semibold text-success">{yesPct}%</span>
-                    <div className="flex-1 h-1 rounded-full bg-muted overflow-hidden">
-                      <div className="h-full rounded-full bg-success/60" style={{ width: `${yesPct}%` }} />
-                    </div>
-                    <span className="text-[10px] font-semibold text-muted-foreground">{100 - yesPct}%</span>
-                  </div>
-                )}
+                {/* Outcome Probabilities */}
+                <div className="space-y-2">
+                  {market.outcomes.map((o, i) => {
+                    const colors = [
+                      { bar: "bg-success", text: "text-success" },
+                      { bar: "bg-destructive", text: "text-destructive" },
+                      { bar: "bg-primary", text: "text-primary" },
+                      { bar: "bg-accent-foreground", text: "text-accent-foreground" },
+                      { bar: "bg-[hsl(var(--pollgy-blue))]", text: "text-[hsl(var(--pollgy-blue))]" },
+                    ];
+                    const colorSet = isBinary
+                      ? (o.label.toLowerCase() === "yes" ? colors[0] : colors[1])
+                      : colors[i % colors.length];
+                    return (
+                      <div key={o.label} className="space-y-1">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-medium">{o.label}</span>
+                          <span className={`text-sm font-bold ${colorSet.text}`}>{o.price}%</span>
+                        </div>
+                        <div className="h-1.5 rounded-full bg-muted overflow-hidden">
+                          <div
+                            className={`h-full rounded-full ${colorSet.bar} transition-all duration-500`}
+                            style={{ width: `${o.price}%` }}
+                          />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
 
                 {/* Probability Chart - all outcomes */}
                 <div className="space-y-1.5">
@@ -378,7 +397,7 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
                       </AreaChart>
                     </ResponsiveContainer>
                   </div>
-                  {/* Legend */}
+                  {/* Legend - labels only, percentages shown above */}
                   <div className="flex items-center justify-center gap-3 flex-wrap">
                     {market.outcomes.map((o, i) => {
                       const colors = [
@@ -394,7 +413,7 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
                       return (
                         <span key={o.label} className="flex items-center gap-1 text-[10px] text-muted-foreground">
                           <span className={`inline-block h-1.5 w-1.5 rounded-full ${colorClass}`} />
-                          {o.label} {o.price}%
+                          {o.label}
                         </span>
                       );
                     })}
