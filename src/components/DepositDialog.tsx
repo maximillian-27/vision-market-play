@@ -8,13 +8,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { CreditCard, Bitcoin, Building2, ArrowLeft, Check, Copy, AlertTriangle } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import { useToast } from "@/hooks/use-toast";
@@ -56,26 +49,11 @@ const paymentMethods = [
 
 const quickAmounts = [50, 100, 250, 500, 1000];
 
-const networks = [
-  { id: "polygon", label: "Polygon", color: "bg-violet-500" },
-  { id: "ethereum", label: "Ethereum", color: "bg-blue-500" },
-  { id: "bsc", label: "BNB Chain", color: "bg-yellow-500" },
-  { id: "arbitrum", label: "Arbitrum", color: "bg-sky-500" },
-  { id: "solana", label: "Solana", color: "bg-emerald-500" },
-];
-
-const tokens = [
-  { id: "usdc", label: "USDC", symbol: "$" },
-  { id: "usdt", label: "USDT", symbol: "₮" },
-];
-
-// Mock addresses per network
-const walletAddresses: Record<string, string> = {
-  polygon: "0xF4E7cB4a23aEa16A819EF0f71F689fdb78A62",
-  ethereum: "0xA1B2C3D4E5F6a7b8c9d0E1F2a3B4c5D6e7F8a9",
-  bsc: "0x1234567890abcdef1234567890abcdef12345678",
-  arbitrum: "0xDeadBeef0123456789abcdef0123456789abcdef",
-  solana: "7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU",
+// Mock crypto wallet data
+const cryptoWalletData = {
+  address: "0xF4E7cB4a23aEa16A819EF0f71F689fdb78A62",
+  network: "Polygon",
+  token: "USDC",
 };
 
 export function DepositDialog({ open, onOpenChange }: DepositDialogProps) {
@@ -84,12 +62,6 @@ export function DepositDialog({ open, onOpenChange }: DepositDialogProps) {
   const [selectedMethod, setSelectedMethod] = useState<PaymentMethod>(null);
   const [customAmount, setCustomAmount] = useState("");
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
-  const [selectedNetwork, setSelectedNetwork] = useState("polygon");
-  const [selectedToken, setSelectedToken] = useState("usdc");
-
-  const currentAddress = walletAddresses[selectedNetwork];
-  const currentNetwork = networks.find(n => n.id === selectedNetwork)!;
-  const currentToken = tokens.find(t => t.id === selectedToken)!;
 
   const handleMethodSelect = (method: PaymentMethod) => {
     setSelectedMethod(method);
@@ -128,7 +100,7 @@ export function DepositDialog({ open, onOpenChange }: DepositDialogProps) {
   };
 
   const handleCopyAddress = () => {
-    navigator.clipboard.writeText(currentAddress);
+    navigator.clipboard.writeText(cryptoWalletData.address);
     toast({
       title: "Address copied",
       description: "Wallet address copied to clipboard",
@@ -189,60 +161,20 @@ export function DepositDialog({ open, onOpenChange }: DepositDialogProps) {
                   <ArrowLeft className="h-3.5 w-3.5" />
                 </Button>
                 <div>
-                  <DialogTitle className="text-sm font-semibold">Deposit Crypto</DialogTitle>
+                  <DialogTitle className="text-sm font-semibold">Deposit {cryptoWalletData.token}</DialogTitle>
                   <DialogDescription className="text-xs">
-                    Select network & token, then send to your wallet
+                    Send to your wallet on {cryptoWalletData.network}
                   </DialogDescription>
                 </div>
               </div>
             </DialogHeader>
             
             <div className="px-4 pb-4 pt-3 space-y-3">
-              {/* Network & Token Dropdowns */}
-              <div className="flex gap-2">
-                <div className="flex-1 space-y-1">
-                  <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide">Network</p>
-                  <Select value={selectedNetwork} onValueChange={setSelectedNetwork}>
-                    <SelectTrigger className="h-9 text-xs font-semibold bg-secondary/40 border-border/40 rounded-lg">
-                      <div className="flex items-center gap-2">
-                        <div className={`w-2.5 h-2.5 rounded-full ${currentNetwork.color}`} />
-                        <SelectValue />
-                      </div>
-                    </SelectTrigger>
-                    <SelectContent className="z-[100]">
-                      {networks.map((net) => (
-                        <SelectItem key={net.id} value={net.id}>
-                          <div className="flex items-center gap-2">
-                            <div className={`w-2.5 h-2.5 rounded-full ${net.color}`} />
-                            {net.label}
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="flex-1 space-y-1">
-                  <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide">Token</p>
-                  <Select value={selectedToken} onValueChange={setSelectedToken}>
-                    <SelectTrigger className="h-9 text-xs font-semibold bg-secondary/40 border-border/40 rounded-lg">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent className="z-[100]">
-                      {tokens.map((tok) => (
-                        <SelectItem key={tok.id} value={tok.id}>
-                          {tok.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
               {/* QR Code Section */}
               <div className="flex flex-col items-center">
                 <div className="p-3 bg-white rounded-xl shadow-sm border border-border/30">
                   <QRCodeSVG 
-                    value={currentAddress} 
+                    value={cryptoWalletData.address} 
                     size={120}
                     level="M"
                     includeMargin={false}
@@ -264,12 +196,34 @@ export function DepositDialog({ open, onOpenChange }: DepositDialogProps) {
                   className="w-full flex items-center gap-2 p-2.5 bg-secondary/40 hover:bg-secondary/60 rounded-lg border border-border/40 transition-all group"
                 >
                   <div className="flex-1 font-mono text-xs truncate text-left">
-                    {currentAddress}
+                    {cryptoWalletData.address}
                   </div>
                   <div className="shrink-0 h-6 w-6 rounded-md bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
                     <Copy className="h-3 w-3 text-primary" />
                   </div>
                 </button>
+              </div>
+
+              {/* Network & Token Pills */}
+              <div className="flex gap-2">
+                <div className="flex-1 flex items-center gap-2 px-2.5 py-2 bg-secondary/40 rounded-lg border border-border/30">
+                  <div className="w-6 h-6 rounded-full bg-violet-500/10 flex items-center justify-center">
+                    <div className="w-3 h-3 rounded-full bg-violet-500" />
+                  </div>
+                  <div>
+                    <p className="text-[9px] text-muted-foreground uppercase tracking-wide">Network</p>
+                    <p className="text-xs font-semibold -mt-0.5">{cryptoWalletData.network}</p>
+                  </div>
+                </div>
+                <div className="flex-1 flex items-center gap-2 px-2.5 py-2 bg-secondary/40 rounded-lg border border-border/30">
+                  <div className="w-6 h-6 rounded-full bg-emerald-500/10 flex items-center justify-center">
+                    <span className="text-xs font-bold text-emerald-600">$</span>
+                  </div>
+                  <div>
+                    <p className="text-[9px] text-muted-foreground uppercase tracking-wide">Token</p>
+                    <p className="text-xs font-semibold -mt-0.5">{cryptoWalletData.token}</p>
+                  </div>
+                </div>
               </div>
 
               {/* Warning */}
@@ -278,7 +232,7 @@ export function DepositDialog({ open, onOpenChange }: DepositDialogProps) {
                   <AlertTriangle className="h-3 w-3 text-amber-500" />
                 </div>
                 <p className="text-[10px] text-muted-foreground leading-relaxed">
-                  Only send <span className="font-semibold text-foreground">{currentToken.label}</span> on <span className="font-semibold text-foreground">{currentNetwork.label}</span>. Wrong tokens may cause permanent loss.
+                  Only send <span className="font-semibold text-foreground">{cryptoWalletData.token}</span> on <span className="font-semibold text-foreground">{cryptoWalletData.network}</span>. Wrong tokens may cause permanent loss.
                 </p>
               </div>
 
