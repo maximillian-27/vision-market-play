@@ -38,19 +38,21 @@ export function MarketsSidebar() {
   return (
     <div className="hidden lg:block sticky top-20 w-72 self-start space-y-3">
       {/* Weekly Draw — promoted card */}
-      <div className="rounded-xl border border-border/40 bg-card p-3.5">
-        <div className="flex items-center justify-between mb-2.5">
+      <div className="rounded-xl border border-primary/20 bg-gradient-to-b from-primary/[0.08] to-card p-3.5">
+        <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-1.5">
-            <Trophy className="h-3.5 w-3.5 text-primary" />
-            <span className="text-[11px] font-semibold text-foreground">Weekly Draw</span>
+            <div className="h-5 w-5 rounded-md bg-primary/15 flex items-center justify-center">
+              <Trophy className="h-3 w-3 text-primary" />
+            </div>
+            <span className="text-[11px] font-bold text-primary uppercase tracking-wider">Weekly Draw</span>
           </div>
-          <span className="flex items-center gap-1 text-[10px] text-muted-foreground">
+          <span className="flex items-center gap-1 text-[10px] text-muted-foreground bg-muted/50 px-2 py-0.5 rounded-full">
             <Timer className="h-3 w-3" />
             {COUNTDOWN}
           </span>
         </div>
         <div className="flex items-baseline justify-between">
-          <span className="text-lg font-bold tracking-tight">${WEEKLY_POT.toLocaleString()}</span>
+          <span className="text-xl font-black tracking-tight">${WEEKLY_POT.toLocaleString()}</span>
           <span className="text-[10px] text-muted-foreground flex items-center gap-1">
             <Ticket className="h-3 w-3" />
             {MY_ENTRIES} entries
