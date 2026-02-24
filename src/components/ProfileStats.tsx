@@ -1,5 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { TrendingUp, Target, Award, BarChart3, Users, Eye, DollarSign, Zap, Ticket } from "lucide-react";
+import { TrendingUp, Target, Award, BarChart3, DollarSign, Ticket, Trophy } from "lucide-react";
 
 interface ProfileStatsProps {
   type: "trader" | "creator";
@@ -14,6 +14,7 @@ interface ProfileStatsProps {
     winRate?: number;
     totalTrades?: number;
     accuracy?: number;
+    biggestWin?: string;
     
     // Creator stats
     marketsCreated?: number;
@@ -55,27 +56,28 @@ export function ProfileStats({ type, stats }: ProfileStatsProps) {
   }
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+    <div className="grid grid-cols-4 gap-2 sm:gap-3">
       <StatCard
-        icon={<TrendingUp className="h-4 w-4" />}
+        icon={<TrendingUp className="h-3.5 w-3.5 sm:h-4 sm:w-4" />}
         label="Total Winnings"
         value={stats.totalProfit || "$0"}
         valueClassName={stats.totalProfit?.startsWith("+") ? "text-success" : stats.totalProfit?.startsWith("-") ? "text-destructive" : ""}
       />
       <StatCard
-        icon={<Target className="h-4 w-4" />}
+        icon={<Target className="h-3.5 w-3.5 sm:h-4 sm:w-4" />}
         label="Win Rate"
         value={`${stats.winRate || stats.accuracy || 0}%`}
       />
       <StatCard
-        icon={<Ticket className="h-4 w-4" />}
-        label="Markets Entered"
+        icon={<Ticket className="h-3.5 w-3.5 sm:h-4 sm:w-4" />}
+        label="All Entries"
         value={stats.totalTrades?.toString() || "0"}
       />
       <StatCard
-        icon={<Award className="h-4 w-4" />}
-        label="Rank"
-        value={`#${stats.rank || "-"}`}
+        icon={<Trophy className="h-3.5 w-3.5 sm:h-4 sm:w-4" />}
+        label="Biggest Win"
+        value={stats.biggestWin || "$0"}
+        valueClassName="text-success"
       />
     </div>
   );
@@ -91,21 +93,13 @@ interface StatCardProps {
 function StatCard({ icon, label, value, valueClassName = "" }: StatCardProps) {
   return (
     <Card className="border-border/40 bg-muted/20">
-      <CardContent className="p-4">
-        <div className="flex items-center gap-2 text-muted-foreground text-xs mb-1.5">
+      <CardContent className="p-3 sm:p-4">
+        <div className="flex items-center gap-1.5 text-muted-foreground text-[10px] sm:text-xs mb-1">
           {icon}
-          {label}
+          <span className="truncate">{label}</span>
         </div>
-        <p className={`text-xl font-bold ${valueClassName}`}>{value}</p>
+        <p className={`text-base sm:text-xl font-bold ${valueClassName}`}>{value}</p>
       </CardContent>
     </Card>
   );
-}
-
-function formatNumber(num: string | number | undefined): string {
-  if (!num) return "0";
-  if (typeof num === "string") return num;
-  if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
-  if (num >= 1000) return `${(num / 1000).toFixed(1)}K`;
-  return num.toString();
 }
