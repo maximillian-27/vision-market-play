@@ -1,11 +1,20 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import { FeedFilters, FilterState } from "@/components/FeedFilters";
 import { MarketGridCard } from "@/components/MarketGridCard";
 import { Button } from "@/components/ui/button";
-import { Timer, Users, ArrowRight, Trophy, Ticket, Zap, ChevronDown, Gift, Calendar, History, Info } from "lucide-react";
+import { Timer, Users, ArrowRight, Trophy, Ticket, Zap, Gift, Calendar, History, Info } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { WeeklyDrawCard } from "@/components/WeeklyDrawCard";
+import useEmblaCarousel from "embla-carousel-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import bitcoinImage from "@/assets/bitcoin-market.jpg";
 import nbaImage from "@/assets/nba-championship.jpg";
 import iphoneImage from "@/assets/foldable-iphone.jpg";
@@ -543,147 +552,126 @@ const previousWinners = [
   { place: "3rd", name: "Jake P.", amount: 7290 },
 ];
 
-function MobileWeeklyDraw() {
-  const [expanded, setExpanded] = useState(false);
+function MobileWeeklyDrawCard() {
   const [tab, setTab] = useState<"info" | "winners">("info");
 
   return (
-    <div
-      className="rounded-xl border border-primary/25 bg-gradient-to-r from-primary/[0.1] via-primary/[0.04] to-card overflow-hidden relative"
-    >
-      {/* Decorative glow */}
-      <div className="absolute -top-6 -right-6 w-20 h-20 rounded-full bg-primary/[0.12] blur-2xl pointer-events-none" />
-
-      {/* Collapsed strip */}
-      <button
-        onClick={() => setExpanded(!expanded)}
-        className="w-full flex items-center justify-between px-3.5 py-2.5 relative"
-      >
-        <div className="flex items-center gap-2">
-          <div className="flex items-center justify-center w-6 h-6 rounded-lg bg-primary/15 shadow-sm shadow-primary/10">
-            <Trophy className="h-3.5 w-3.5 text-primary" />
+    <Dialog>
+      <DialogTrigger asChild>
+        <div className="flex flex-col p-3 rounded-xl border border-primary/20 bg-gradient-to-br from-primary/[0.08] via-primary/[0.02] to-card h-full relative overflow-hidden cursor-pointer active:scale-[0.98] transition-transform">
+          <div className="absolute -top-10 -right-10 w-28 h-28 rounded-full bg-primary/[0.1] blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-6 -left-6 w-20 h-20 rounded-full bg-primary/[0.05] blur-2xl pointer-events-none" />
+          <div className="flex items-center justify-between mb-1 relative">
+            <div className="flex items-center gap-1.5">
+              <div className="flex items-center justify-center w-5 h-5 rounded-md bg-primary/15 shadow-sm shadow-primary/10">
+                <Trophy className="h-3 w-3 text-primary" />
+              </div>
+              <span className="text-[9px] uppercase tracking-widest font-bold text-primary/90">Weekly Draw</span>
+            </div>
+            <div className="flex items-center gap-1 text-[9px] bg-primary/10 px-2 py-0.5 rounded-full border border-primary/10">
+              <Timer className="h-2.5 w-2.5 text-primary animate-pulse" />
+              <span className="font-semibold text-foreground">{COUNTDOWN}</span>
+            </div>
           </div>
-          <div className="flex items-center gap-1.5">
-            <span className="text-sm font-extrabold text-foreground">${WEEKLY_POT.toLocaleString()}</span>
-            <span className="text-[9px] text-muted-foreground font-medium">prize pool</span>
+          <div className="flex items-center gap-2 relative">
+            <div className="text-xl font-extrabold text-foreground leading-none tracking-tight">
+              ${WEEKLY_POT.toLocaleString()}
+            </div>
+            <div className="flex items-center gap-1 text-[9px] bg-muted/50 px-1.5 py-0.5 rounded-full border border-border/40">
+              <Ticket className="h-2.5 w-2.5 text-primary" />
+              <span className="font-semibold text-foreground">{MY_ENTRIES} entries</span>
+            </div>
           </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="text-[9px] bg-muted/60 px-1.5 py-0.5 rounded-full flex items-center gap-0.5 text-muted-foreground border border-border/30">
-            <Ticket className="h-2.5 w-2.5 text-primary" />{MY_ENTRIES}
-          </span>
-          <span className="text-[9px] bg-primary/10 px-1.5 py-0.5 rounded-full flex items-center gap-0.5 font-semibold text-foreground border border-primary/10">
-            <Timer className="h-2.5 w-2.5 text-primary animate-pulse" />{COUNTDOWN}
-          </span>
-          <ChevronDown className={`h-3.5 w-3.5 text-muted-foreground transition-transform duration-300 ${expanded ? 'rotate-180' : ''}`} />
-        </div>
-      </button>
-
-      {/* Expanded content */}
-      <div className={`transition-all duration-300 ease-in-out overflow-hidden ${expanded ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'}`}>
-        <div className="px-3.5 pb-3.5 space-y-3">
-          {/* Distribution bar */}
-          <div>
+          <p className="text-[9px] text-muted-foreground mt-0.5 mb-2 leading-relaxed">Prize pool redistributed weekly</p>
+          <div className="mt-auto">
             <div className="flex rounded-full overflow-hidden h-1.5 shadow-inner shadow-black/10">
               {drawDistribution.map((d, i) => (
-                <div
-                  key={d.place}
-                  className="h-full"
-                  style={{
-                    width: `${d.pct}%`,
-                    background: `hsl(var(--primary) / ${1 - i * 0.2})`,
-                    borderRight: i < drawDistribution.length - 1 ? '1px solid hsl(var(--background) / 0.3)' : 'none',
-                  }}
-                />
+                <div key={d.place} className="h-full" style={{ width: `${d.pct}%`, background: `hsl(var(--primary) / ${1 - i * 0.2})`, borderRight: i < drawDistribution.length - 1 ? '1px solid hsl(var(--background) / 0.3)' : 'none' }} />
               ))}
             </div>
             <div className="flex items-center justify-between mt-1 text-[8px] text-muted-foreground">
               {drawDistribution.map((d) => (
-                <span key={d.place}>
-                  <span className="font-semibold text-foreground">{d.place}</span> {d.pct}%
-                </span>
+                <span key={d.place}><span className="font-semibold text-foreground">{d.place}</span> {d.pct}%</span>
               ))}
             </div>
           </div>
-
-          {/* Tabs */}
-          <div className="flex gap-1">
-            <button
-              onClick={() => setTab("info")}
-              className={`flex-1 flex items-center justify-center gap-1 text-[10px] font-medium py-1.5 rounded-lg transition-colors ${
-                tab === "info" ? "bg-primary/10 text-primary border border-primary/20" : "bg-muted/40 text-muted-foreground"
-              }`}
-            >
-              <Info className="h-3 w-3" /> How it works
-            </button>
-            <button
-              onClick={() => setTab("winners")}
-              className={`flex-1 flex items-center justify-center gap-1 text-[10px] font-medium py-1.5 rounded-lg transition-colors ${
-                tab === "winners" ? "bg-primary/10 text-primary border border-primary/20" : "bg-muted/40 text-muted-foreground"
-              }`}
-            >
-              <History className="h-3 w-3" /> Previous winners
-            </button>
-          </div>
-
-          {/* Tab content */}
-          {tab === "info" ? (
-            <div className="space-y-1.5">
-              <div className="flex gap-2.5 p-2.5 rounded-lg bg-muted/30">
-                <Gift className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
-                <div>
-                  <p className="text-[11px] font-medium text-foreground">Funding</p>
-                  <p className="text-[10px] text-muted-foreground leading-relaxed">95% to pot, 2% to draw, 3% platform fee.</p>
-                </div>
-              </div>
-              <div className="flex gap-2.5 p-2.5 rounded-lg bg-muted/30">
-                <Ticket className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
-                <div>
-                  <p className="text-[11px] font-medium text-foreground">Entry</p>
-                  <p className="text-[10px] text-muted-foreground leading-relaxed">Every ticket is a bundle — market ticket + draw entry.</p>
-                </div>
-              </div>
-              <div className="flex gap-2.5 p-2.5 rounded-lg bg-muted/30">
-                <Calendar className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
-                <div>
-                  <p className="text-[11px] font-medium text-foreground">Draw</p>
-                  <p className="text-[10px] text-muted-foreground leading-relaxed">Every Sunday, 10 random winners are selected.</p>
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div className="space-y-1">
-              {previousWinners.map((w, i) => (
-                <div key={w.place} className="flex items-center justify-between p-2 rounded-lg bg-muted/30">
-                  <div className="flex items-center gap-2">
-                    <div className={`flex items-center justify-center w-5 h-5 rounded-full text-[9px] font-bold ${
-                      i === 0 ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground"
-                    }`}>
-                      {w.place}
-                    </div>
-                    <span className="text-[11px] font-medium">{w.name}</span>
-                  </div>
-                  <span className="text-[11px] font-bold text-primary">${w.amount.toLocaleString()}</span>
-                </div>
-              ))}
-              <div className="flex items-center gap-1.5 p-2 rounded-lg border border-dashed border-border text-[9px] text-muted-foreground">
-                <Users className="h-3 w-3 shrink-0" />
-                <span>+ 7 more winners shared <span className="font-semibold text-foreground">${(WEEKLY_POT * 0.1).toLocaleString()}</span></span>
-              </div>
-            </div>
-          )}
-
-          <p className="text-[9px] text-muted-foreground/70 flex items-center gap-1">
-            <Zap className="h-2.5 w-2.5" />
-            All draws are verifiable. Winners announced every Monday.
-          </p>
         </div>
-      </div>
-    </div>
+      </DialogTrigger>
+      <DialogContent className="max-w-sm">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10">
+              <Trophy className="h-4 w-4 text-primary" />
+            </div>
+            Weekly Draw — ${WEEKLY_POT.toLocaleString()}
+          </DialogTitle>
+          <DialogDescription className="flex items-center gap-2 text-xs">
+            <span className="flex items-center gap-1"><Timer className="h-3 w-3 text-primary" />{COUNTDOWN} left</span>
+            <span className="flex items-center gap-1"><Ticket className="h-3 w-3 text-primary" />{MY_ENTRIES} entries</span>
+          </DialogDescription>
+        </DialogHeader>
+        <div>
+          <div className="flex rounded-full overflow-hidden h-2 shadow-inner shadow-black/10">
+            {drawDistribution.map((d, i) => (
+              <div key={d.place} className="h-full" style={{ width: `${d.pct}%`, background: `hsl(var(--primary) / ${1 - i * 0.2})`, borderRight: i < drawDistribution.length - 1 ? '1px solid hsl(var(--background) / 0.3)' : 'none' }} />
+            ))}
+          </div>
+          <div className="flex items-center justify-between mt-1.5 text-[10px] text-muted-foreground">
+            {drawDistribution.map((d) => (
+              <span key={d.place}><span className="font-semibold text-foreground">{d.place}</span> {d.pct}%</span>
+            ))}
+          </div>
+        </div>
+        <div className="flex gap-1">
+          <button onClick={() => setTab("info")} className={`flex-1 flex items-center justify-center gap-1 text-[11px] font-medium py-2 rounded-lg transition-colors ${tab === "info" ? "bg-primary/10 text-primary border border-primary/20" : "bg-muted/40 text-muted-foreground"}`}>
+            <Info className="h-3 w-3" /> How it works
+          </button>
+          <button onClick={() => setTab("winners")} className={`flex-1 flex items-center justify-center gap-1 text-[11px] font-medium py-2 rounded-lg transition-colors ${tab === "winners" ? "bg-primary/10 text-primary border border-primary/20" : "bg-muted/40 text-muted-foreground"}`}>
+            <History className="h-3 w-3" /> Previous winners
+          </button>
+        </div>
+        {tab === "info" ? (
+          <div className="space-y-1.5">
+            <div className="flex gap-3 p-3 rounded-lg bg-muted/40">
+              <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10 flex-shrink-0"><Gift className="h-4 w-4 text-primary" /></div>
+              <div><p className="text-sm font-medium text-foreground">Funding</p><p className="text-xs text-muted-foreground mt-0.5">95% to pot, 2% to draw, 3% platform fee.</p></div>
+            </div>
+            <div className="flex gap-3 p-3 rounded-lg bg-muted/40">
+              <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10 flex-shrink-0"><Ticket className="h-4 w-4 text-primary" /></div>
+              <div><p className="text-sm font-medium text-foreground">Entry</p><p className="text-xs text-muted-foreground mt-0.5">Every ticket is a bundle — market ticket + draw entry.</p></div>
+            </div>
+            <div className="flex gap-3 p-3 rounded-lg bg-muted/40">
+              <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10 flex-shrink-0"><Calendar className="h-4 w-4 text-primary" /></div>
+              <div><p className="text-sm font-medium text-foreground">Draw</p><p className="text-xs text-muted-foreground mt-0.5">Every Sunday, 10 random winners are selected.</p></div>
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-1">
+            {previousWinners.map((w, i) => (
+              <div key={w.place} className="flex items-center justify-between p-2.5 rounded-lg bg-muted/40">
+                <div className="flex items-center gap-2.5">
+                  <div className={`flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold ${i === 0 ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground"}`}>{w.place}</div>
+                  <span className="text-sm font-medium">{w.name}</span>
+                </div>
+                <span className="text-sm font-bold text-primary">${w.amount.toLocaleString()}</span>
+              </div>
+            ))}
+            <div className="flex items-center gap-2 p-2.5 rounded-lg border border-dashed border-border text-xs text-muted-foreground">
+              <Users className="h-3.5 w-3.5 flex-shrink-0" />
+              <span>+ 7 more winners shared <span className="font-semibold text-foreground">${(WEEKLY_POT * 0.1).toLocaleString()}</span></span>
+            </div>
+          </div>
+        )}
+        <p className="text-[10px] text-muted-foreground/70 flex items-center gap-1.5">
+          <Zap className="h-3 w-3" />
+          All draws are verifiable. Winners announced every Monday.
+        </p>
+      </DialogContent>
+    </Dialog>
   );
 }
 
-/* ── Mobile Top Section ── */
+/* ── Mobile Top Section (optimized) ── */
 function MobileTopSection({
   heroMarket, heroMarkets, heroDisplayOutcomes, heroIsBinary, activeSlide, setActiveSlide, navigate,
 }: {
@@ -695,72 +683,92 @@ function MobileTopSection({
   setActiveSlide: (i: number) => void;
   navigate: (path: string) => void;
 }) {
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: "center" });
+
+  const onEmblaSelect = useCallback(() => {
+    if (!emblaApi) return;
+    setActiveSlide(emblaApi.selectedScrollSnap());
+  }, [emblaApi, setActiveSlide]);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+    emblaApi.on("select", onEmblaSelect);
+    return () => { emblaApi.off("select", onEmblaSelect); };
+  }, [emblaApi, onEmblaSelect]);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+    if (emblaApi.selectedScrollSnap() !== activeSlide) {
+      emblaApi.scrollTo(activeSlide);
+    }
+  }, [emblaApi, activeSlide]);
+
   return (
     <div className="sm:hidden space-y-1.5 mt-3">
-      {/* Weekly Draw expandable */}
-      <MobileWeeklyDraw />
-
-      {/* Hero Slideshow */}
-      <div
-        className="relative rounded-xl overflow-hidden cursor-pointer h-[220px]"
-        onClick={() => navigate(`/market/${heroMarket.id}`)}
-      >
-        <img src={heroMarket.image} alt={heroMarket.title} className="w-full h-full object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0 p-3">
-          <h3 className="text-white text-sm font-bold leading-snug line-clamp-2 mb-1.5">
-            {heroMarket.title}
-          </h3>
-          <div className="flex items-center gap-2 mb-2">
-            <span className="text-primary text-[11px] font-extrabold">{formatPot(heroMarket.pot)} pot</span>
-            <span className="text-white/60 text-[10px] flex items-center gap-1">
-              <Users className="h-2.5 w-2.5" />{heroMarket.players.toLocaleString()}
-            </span>
-          </div>
-          {heroIsBinary ? (
-            <div className="flex gap-1.5">
-              <button className="flex-1 rounded py-1.5 text-center bg-yes/20 border border-yes/40 text-yes text-[11px] font-bold" onClick={(e) => { e.stopPropagation(); navigate(`/market/${heroMarket.id}`); }}>
-                Yes {heroDisplayOutcomes[0].price}%
-              </button>
-              <button className="flex-1 rounded py-1.5 text-center bg-no/20 border border-no/40 text-no text-[11px] font-bold" onClick={(e) => { e.stopPropagation(); navigate(`/market/${heroMarket.id}`); }}>
-                No {heroDisplayOutcomes[1].price}%
-              </button>
-            </div>
-          ) : (
-            <div className="flex gap-1.5 overflow-x-auto">
-              {heroDisplayOutcomes.slice(0, 3).map((o, i) => (
-                <button key={i} className="shrink-0 px-3 py-1 rounded bg-white/10 border border-white/20 text-white text-[10px] font-bold" onClick={(e) => { e.stopPropagation(); navigate(`/market/${heroMarket.id}`); }}>
-                  {o.label} {o.price}%
-                </button>
-              ))}
-              {heroDisplayOutcomes.length > 3 && (
-                <span className="shrink-0 px-2 py-1 text-white/50 text-[10px]">+{heroDisplayOutcomes.length - 3}</span>
-              )}
-            </div>
-          )}
+      {/* Hero Carousel — swipeable */}
+      <div className="relative rounded-xl overflow-hidden h-[180px]" ref={emblaRef}>
+        <div className="flex h-full">
+          {heroMarkets.map((market) => {
+            const outcomes = market.outcomes || [
+              { label: "Yes", price: market.yesPrice || 0, color: "success" },
+              { label: "No", price: market.noPrice || 0, color: "destructive" }
+            ];
+            const isBinary = !market.outcomes;
+            return (
+              <div key={market.id} className="min-w-0 shrink-0 grow-0 basis-full h-full cursor-pointer relative" onClick={() => navigate(`/market/${market.id}`)}>
+                <img src={market.image} alt={market.title} className="w-full h-full object-cover" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 p-3">
+                  <h3 className="text-white text-sm font-bold leading-snug line-clamp-2 mb-1.5">{market.title}</h3>
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-primary text-[11px] font-extrabold">{formatPot(market.pot)} pot</span>
+                    <span className="text-white/60 text-[10px] flex items-center gap-1"><Users className="h-2.5 w-2.5" />{market.players.toLocaleString()}</span>
+                  </div>
+                  {isBinary ? (
+                    <div className="flex gap-1.5">
+                      <button className="flex-1 rounded py-1.5 text-center bg-yes/20 border border-yes/40 text-yes text-[11px] font-bold" onClick={(e) => { e.stopPropagation(); navigate(`/market/${market.id}`); }}>Yes {outcomes[0].price}%</button>
+                      <button className="flex-1 rounded py-1.5 text-center bg-no/20 border border-no/40 text-no text-[11px] font-bold" onClick={(e) => { e.stopPropagation(); navigate(`/market/${market.id}`); }}>No {outcomes[1].price}%</button>
+                    </div>
+                  ) : (
+                    <div className="flex gap-1.5 overflow-x-auto">
+                      {outcomes.slice(0, 3).map((o, i) => (
+                        <button key={i} className="shrink-0 px-3 py-1 rounded bg-white/10 border border-white/20 text-white text-[10px] font-bold" onClick={(e) => { e.stopPropagation(); navigate(`/market/${market.id}`); }}>{o.label} {o.price}%</button>
+                      ))}
+                      {outcomes.length > 3 && <span className="shrink-0 px-2 py-1 text-white/50 text-[10px]">+{outcomes.length - 3}</span>}
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          })}
         </div>
-        <div className="absolute bottom-1.5 right-3 flex gap-1">
+        <div className="absolute bottom-1.5 right-3 flex gap-1 z-10">
           {heroMarkets.map((_, i) => (
-            <button
-              key={i}
-              onClick={(e) => { e.stopPropagation(); setActiveSlide(i); }}
-              className={`h-1.5 rounded-full transition-all ${i === activeSlide ? 'w-4 bg-white' : 'w-1.5 bg-white/40'}`}
-            />
+            <button key={i} onClick={(e) => { e.stopPropagation(); setActiveSlide(i); }} className={`h-1.5 rounded-full transition-all ${i === activeSlide ? 'w-4 bg-white' : 'w-1.5 bg-white/40'}`} />
           ))}
+        </div>
+      </div>
+
+      {/* Horizontal scroll: Weekly Draw + 2 Sponsored */}
+      <div className="flex gap-2.5 overflow-x-auto snap-x snap-mandatory pb-1 no-scrollbar px-0.5">
+        <div className="w-[75vw] shrink-0 snap-center">
+          <MobileWeeklyDrawCard />
+        </div>
+        <div className="w-[75vw] shrink-0 snap-center">
+          <CompactFeaturedCard market={sponsoredMarkets[0]} />
+        </div>
+        <div className="w-[75vw] shrink-0 snap-center">
+          <CompactFeaturedCard market={sponsoredMarkets[1]} />
         </div>
       </div>
 
       {/* Gradient Banner */}
       <GradientDivider />
-
-      {/* Two Sponsored Markets — stacked */}
-      <div className="flex flex-col gap-1.5">
-        <CompactFeaturedCard market={sponsoredMarkets[0]} />
-        <CompactFeaturedCard market={sponsoredMarkets[1]} />
-      </div>
     </div>
   );
 }
+
+
 
 
 function CompactFeaturedCard({ market }: { market: Market }) {
