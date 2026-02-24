@@ -1,126 +1,90 @@
 
 
-## Mobile Market Detail -- Compact Sticky Purchase Bar
+# Improved Market Creation Flow
 
-### Problem
-The current sticky entry panel contains everything (outcome buttons, ticket counter, quick pills, weekly draw badge, summary card, buy button, pot split bar) making it ~300px tall. This covers half the screen and hides the market content beneath it. Users can't see market details and the purchase area simultaneously.
+Redesign the `CreateMarketButton.tsx` component with a cleaner 4-step flow that feels intuitive and professional.
 
-### Solution: Split the UI into two zones
-
-**Zone 1: Inline content (scrollable)** -- Move the detailed purchase info INTO the main scrollable content, below the engagement row. This includes the full summary breakdown, weekly draw badge, and pot split bar.
-
-**Zone 2: Sticky bottom bar (compact, ~120px)** -- Keep only the essentials locked at the bottom: outcome selection, a compact ticket stepper, and the buy button with key numbers visible inline.
-
-### Changes
-
-**1. Compact sticky bottom bar (~120px instead of ~300px)**
-
-The sticky panel will contain only:
-- Row 1: Outcome buttons (Yes/No for binary, horizontal scroll for multi) -- same as now but slightly smaller padding
-- Row 2: Inline ticket stepper `[-] 5 [+]` on the left, Buy button on the right showing price
-- A tiny text line below showing "$0.50/ticket | Profit: +$X.XX" for at-a-glance info
-
-**2. Inline purchase details section (new, in scrollable content)**
-
-Add a new section between the engagement row and comments containing:
-- Quick ticket pills (1, 5, 10, 25)
-- Summary card (Cost / Potential Winning / Potential Profit) -- same rounded card style
-- Weekly Draw entry badge
-- Pot split bar (95% Pot | 2% Draw | 3% Platform)
-
-This way users see all details while scrolling, but can always buy from the compact bottom bar.
-
-**3. Keep hero and content sections as-is**
-
-The hero image (2:1 ratio), creator block, metrics strip, probability chart, description, resolution criteria, and engagement row remain unchanged.
-
-### Technical Details
-
-**File: `src/pages/MarketDetail.tsx`**
-
-**Sticky panel refactor (lines 629-843):**
-
-Replace the current massive sticky panel with a compact version:
+## New Flow (4 Steps)
 
 ```text
-=== COMPACT STICKY BAR ===
-[Yes (68%) | No (32%)]           <- outcome buttons, same style, py-2
-[[-] [5] [+]  |  Buy 5 Tickets · $2.50]  <- stepper + buy in one row
-[$0.50/ticket · Profit: +$X.XX]  <- tiny info line
+Step 1: Create        Step 2: AI Review      Step 3: Fix           Step 4: Post
++-----------------+   +-----------------+    +-----------------+   +-----------------+
+| Question        |   | Analyzing...    |    | AI suggestions  |   | Free Post       |
+| Description     |   |                 |    | inline in form  |   |   or            |
+| Category        |   | Score: 8/10     |    | Edit fields     |   | Promote $1/day  |
+| Outcomes        |   | Suggestions x3  |    | Re-check button |   |                 |
+| End Date        |   |                 |    |                 |   | Duration picker |
+| Resolution      |   |                 |    |                 |   | Total cost      |
++-----------------+   +-----------------+    +-----------------+   +-----------------+
 ```
 
-- Outcome buttons: reduce `py-2.5` to `py-2`, keep grid layout
-- Ticket stepper + buy button on same row using `flex`: stepper on left (h-8 buttons, smaller input), buy button on right (flex-1)
-- Info line: single text row with ticket price and estimated profit, text-[10px]
+## Step-by-Step Design
 
-**New inline section (after engagement row, before comments):**
+### Step 1 -- Create Market (single page form)
+Combine the current 3 sub-steps into one clean scrollable form. Fields:
+- Market Question (required)
+- Description (required)
+- Category dropdown (required)
+- Outcomes (min 2, max 10, default Yes/No)
+- End Date (required)
+- Resolution Criteria (required)
+- Resolution Source (optional)
 
-Insert between the engagement row (line 573) and comments collapsible (line 576):
+This removes friction -- one page instead of three clicks.
 
-```tsx
-{/* Purchase Details -- scrollable */}
-{!isAwaitingResolution && (
-  <div className="px-4 py-4 space-y-3 sm:hidden">
-    {/* Quick ticket pills */}
-    <div className="grid grid-cols-4 gap-1.5">
-      {quickTickets.map(...)} // same as current
-    </div>
+### Step 2 -- AI Review (automatic)
+- Clicking "Next" on Step 1 automatically triggers the AI check (no separate "Check with AI" button needed).
+- Shows a loading state with a Sparkles animation and "Reviewing your market..." text.
+- Once done, displays:
+  - A quality score (e.g., "8/10") in a large circular badge.
+  - A list of recommendations, each with type (success/warning/suggestion) and an icon.
+  - If score is perfect: green "All Good" state with confetti-style check.
 
-    {/* Weekly Draw badge */}
-    <div className="flex items-center gap-2 ...">
-      <Trophy /> Includes X Weekly Draw entries
-    </div>
+### Step 3 -- Fix Issues (conditional)
+- Only appears if AI found warnings or suggestions (skipped if all clear).
+- Shows the same form as Step 1, but with the problematic fields highlighted (yellow/blue border) and the AI suggestion shown inline below each flagged field.
+- A "Re-check" button at the bottom runs AI review again.
+- If user fixes issues, re-check updates the score.
 
-    {/* Summary card */}
-    <div className="rounded-xl border divide-y ...">
-      Cost / Potential Winning / Potential Profit rows
-    </div>
+### Step 4 -- Post / Promote
+- Two clear options presented as selectable cards:
+  - **Free Post** -- "List your market for free. It will appear in the feed organically." (default selected)
+  - **Sponsored Post** -- "$1/day -- Boost visibility with promoted placement." With a duration selector (1-30 days slider or input) and a total cost display (e.g., "7 days = $7").
+- Market summary shown above the options (compact: question, category, outcomes, end date).
+- "Post Market" button at bottom.
 
-    {/* Pot split bar */}
-    <div className="space-y-1">
-      colored bar + labels
-    </div>
-  </div>
-)}
-```
+### Success State
+- Clean confirmation with checkmark.
+- If sponsored: "Your market is live and promoted for X days!"
+- If free: "Your market is live! It will appear in the feed shortly."
 
-This section is wrapped in `sm:hidden` so it only appears on mobile.
+## Technical Details
 
-**Bottom padding:** Keep `pb-56` on the container but can reduce to `pb-40` since the sticky bar is now shorter.
+### File changes
+**`src/components/CreateMarketButton.tsx`** -- Full rewrite of the component:
 
-### Mobile Layout (top to bottom)
+- Change step count from 3 to 4, update progress bar to 4 segments.
+- Step labels: "Create" / "AI Review" / "Fix" / "Post".
+- Add new state:
+  - `aiScore: number` (0-10)
+  - `promotionType: "free" | "sponsored"`
+  - `promotionDays: number` (default 1)
+  - `hasIssues: boolean` (derived from recommendations)
+- Step 1: Merge all form fields into a single scrollable section with compact spacing.
+- Step 2: Auto-trigger `handleAICheck` via `useEffect` when step becomes 2. Show loading animation, then score + recommendations.
+- Step 3: Re-render the form fields but only show ones flagged by AI, with inline suggestion text and highlighted borders. Include "Re-check with AI" button.
+- Step 4: Two selectable cards (free vs sponsored) using a simple radio-style selection with card borders. Sponsored card includes a day input (number input, 1-30) and shows `$${days}` total. Compact market summary at top.
+- Navigation logic: Step 2 "Next" skips to Step 4 if no issues found; otherwise goes to Step 3.
+- Step 3 "Re-check" stays on Step 3 but re-runs AI; "Next" goes to Step 4.
+- Update success message based on promotion choice.
 
-```text
-[Hero Image (2:1)]
-  [Back] [Share] [Bookmark]
-[Creator + Title]
-[Pot + Players + Date + Activity]
-[Win teaser]
----
-[Probability Chart]
----
-[About This Market]
-[Resolution Criteria]
-[Like | Comment | Share]
----
-[Quick Ticket Pills: 1 | 5 | 10 | 25]    <-- NEW inline section
-[Weekly Draw badge]
-[Cost / Winning / Profit card]
-[Pot Split Bar]
----
-[Comments]
-         ... scroll space ...
+### UI Components Used
+- Existing: `Dialog`, `Input`, `Textarea`, `Select`, `Button`, `Label`
+- New usage of `Slider` from `@radix-ui/react-slider` (already installed) for promotion days
+- `Switch` component for toggling sponsored mode (already available)
 
-=== COMPACT STICKY BAR (bottom) ===
-[ Yes 68%  |  No 32% ]
-[ [-][5][+]   Buy 5 Tickets · $2.50 ]
-[ $0.50/ticket · Profit: +$4.17 ]
-```
-
-### Key Benefits
-- Sticky bar shrinks from ~300px to ~120px -- users see 2x more content
-- All purchase details are still visible when scrolling (inline section)
-- The buy action is always one tap away
-- Ticket price, potential winnings, and profit are visible both inline (detailed) and in the sticky bar (summary)
-- Matches the professional, clean UX directive
-
+### Visual Polish
+- Step indicator uses labeled dots instead of plain bars (e.g., small text under each dot: Create / Review / Fix / Post)
+- AI score displayed in a circular progress ring using SVG
+- Sponsored card has a subtle gradient border when selected
+- Compact spacing throughout to keep everything above the fold on mobile
