@@ -303,6 +303,35 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
                   </div>
                 </div>
 
+                {/* Outcome Probabilities */}
+                <div className="space-y-2">
+                  {market.outcomes.map((o, i) => {
+                    const colors = [
+                      { bar: "bg-success", text: "text-success" },
+                      { bar: "bg-destructive", text: "text-destructive" },
+                      { bar: "bg-primary", text: "text-primary" },
+                      { bar: "bg-accent-foreground", text: "text-accent-foreground" },
+                      { bar: "bg-[hsl(var(--pollgy-blue))]", text: "text-[hsl(var(--pollgy-blue))]" },
+                    ];
+                    const colorSet = isBinary
+                      ? (o.label.toLowerCase() === "yes" ? colors[0] : colors[1])
+                      : colors[i % colors.length];
+                    return (
+                      <div key={o.label} className="space-y-1">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-medium">{o.label}</span>
+                          <span className={`text-sm font-bold ${colorSet.text}`}>{o.price}%</span>
+                        </div>
+                        <div className="h-1.5 rounded-full bg-muted overflow-hidden">
+                          <div
+                            className={`h-full rounded-full ${colorSet.bar} transition-all duration-500`}
+                            style={{ width: `${o.price}%` }}
+                          />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
 
                 {/* Probability Chart - all outcomes */}
                 <div className="space-y-1.5">
@@ -514,7 +543,6 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
                                 }`}
                               >
                                 <span className="text-lg font-bold uppercase">{isYes ? '👍' : '👎'} {outcome.label}</span>
-                                <span className="block text-xs font-semibold mt-0.5 opacity-80">{outcome.price}%</span>
                               </button>
                             );
                           })}
@@ -537,9 +565,8 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
                                   <div className="h-5 w-5 rounded-md bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary">{outcome.label.charAt(0)}</div>
                                 )}
                                 <span className="flex-1 text-sm font-medium truncate">{outcome.label}</span>
-                                <span className="text-xs font-bold text-muted-foreground">{outcome.price}%</span>
                                 {isSelected && (
-                                  <span className="text-[10px] font-semibold text-primary ml-1">✓</span>
+                                  <span className="text-[10px] font-semibold text-primary">Selected</span>
                                 )}
                               </button>
                             );
