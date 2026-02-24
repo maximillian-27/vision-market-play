@@ -493,11 +493,11 @@ const heroMarkets = [...mockMarkets]
   .sort((a, b) => b.pot - a.pot)
   .slice(0, 5);
 
-// Sponsored markets (next 2 after hero)
+// Sponsored markets (next 3 after hero)
 const sponsoredMarkets = [...mockMarkets]
   .filter(m => m.status === "open" || m.status === "closing")
   .sort((a, b) => b.pot - a.pot)
-  .slice(5, 7);
+  .slice(5, 8);
 
 function formatPot(pot: number): string {
   if (pot >= 1000000) return `$${(pot / 1000000).toFixed(1)}M`;
@@ -764,67 +764,70 @@ export default function Feed() {
         </div>
 
         {/* 2b. Desktop Split Hero */}
-        <div className="hidden sm:grid grid-cols-1 lg:grid-cols-5 gap-3 lg:max-h-[340px]">
-          {/* Left — Slideshow hero */}
+        <div className="hidden sm:grid grid-cols-1 lg:grid-cols-2 gap-3">
+          {/* Left — Square Slideshow Carousel */}
           <div
-            className="lg:col-span-3 relative rounded-2xl overflow-hidden cursor-pointer group"
+            className="relative rounded-2xl overflow-hidden cursor-pointer group aspect-square"
             onClick={() => navigate(`/market/${heroMarket.id}`)}
           >
-            <div className="relative h-[260px] lg:h-[340px]">
-              <img src={heroMarket.image} alt={heroMarket.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
-              <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-5">
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="text-primary text-sm font-extrabold">{formatPot(heroMarket.pot)} pot</span>
-                  <span className="text-white/60 text-xs flex items-center gap-1"><Users className="h-3 w-3" />{heroMarket.players.toLocaleString()}</span>
-                  <span className="text-white/50 text-xs">· {heroMarket.endsIn}</span>
+            <img src={heroMarket.image} alt={heroMarket.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
+            <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-5">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-primary text-sm font-extrabold">{formatPot(heroMarket.pot)} pot</span>
+                <span className="text-white/60 text-xs flex items-center gap-1"><Users className="h-3 w-3" />{heroMarket.players.toLocaleString()}</span>
+                <span className="text-white/50 text-xs">· {heroMarket.endsIn}</span>
+              </div>
+              <h2 className="text-white text-lg sm:text-xl font-bold leading-snug line-clamp-2 max-w-2xl mb-3">
+                {heroMarket.title}
+              </h2>
+              {heroIsBinary ? (
+                <div className="flex gap-2 max-w-sm">
+                  <button className="flex-1 rounded-lg py-2 text-center bg-yes/20 border border-yes/40 hover:bg-yes text-yes hover:text-yes-foreground text-sm font-bold transition-all active:scale-[0.98]" onClick={(e) => { e.stopPropagation(); navigate(`/market/${heroMarket.id}`); }}>
+                    Yes {heroDisplayOutcomes[0].price}%
+                  </button>
+                  <button className="flex-1 rounded-lg py-2 text-center bg-no/20 border border-no/40 hover:bg-no text-no hover:text-no-foreground text-sm font-bold transition-all active:scale-[0.98]" onClick={(e) => { e.stopPropagation(); navigate(`/market/${heroMarket.id}`); }}>
+                    No {heroDisplayOutcomes[1].price}%
+                  </button>
                 </div>
-                <h2 className="text-white text-lg sm:text-xl font-bold leading-snug line-clamp-2 max-w-2xl mb-3">
-                  {heroMarket.title}
-                </h2>
-                {/* Hero outcome buttons */}
-                {heroIsBinary ? (
-                  <div className="flex gap-2 max-w-sm">
-                    <button className="flex-1 rounded-lg py-2 text-center bg-yes/20 border border-yes/40 hover:bg-yes text-yes hover:text-yes-foreground text-sm font-bold transition-all active:scale-[0.98]" onClick={(e) => { e.stopPropagation(); navigate(`/market/${heroMarket.id}`); }}>
-                      Yes {heroDisplayOutcomes[0].price}%
+              ) : (
+                <div className="flex gap-2 flex-wrap">
+                  {heroDisplayOutcomes.slice(0, 4).map((o, i) => (
+                    <button key={i} className="px-4 py-1.5 rounded-lg bg-white/10 border border-white/20 hover:bg-white/20 text-white text-xs font-bold transition-all active:scale-[0.98]" onClick={(e) => { e.stopPropagation(); navigate(`/market/${heroMarket.id}`); }}>
+                      {o.label} <span className="text-primary ml-1">{o.price}%</span>
                     </button>
-                    <button className="flex-1 rounded-lg py-2 text-center bg-no/20 border border-no/40 hover:bg-no text-no hover:text-no-foreground text-sm font-bold transition-all active:scale-[0.98]" onClick={(e) => { e.stopPropagation(); navigate(`/market/${heroMarket.id}`); }}>
-                      No {heroDisplayOutcomes[1].price}%
-                    </button>
-                  </div>
-                ) : (
-                  <div className="flex gap-2 flex-wrap">
-                    {heroDisplayOutcomes.slice(0, 4).map((o, i) => (
-                      <button key={i} className="px-4 py-1.5 rounded-lg bg-white/10 border border-white/20 hover:bg-white/20 text-white text-xs font-bold transition-all active:scale-[0.98]" onClick={(e) => { e.stopPropagation(); navigate(`/market/${heroMarket.id}`); }}>
-                        {o.label} <span className="text-primary ml-1">{o.price}%</span>
-                      </button>
-                    ))}
-                    {heroDisplayOutcomes.length > 4 && (
-                      <span className="px-3 py-1.5 text-white/40 text-xs">+{heroDisplayOutcomes.length - 4} more</span>
-                    )}
-                  </div>
-                )}
-              </div>
-              {/* Dot indicators */}
-              <div className="absolute top-3 right-3 flex gap-1">
-                {heroMarkets.map((_, i) => (
-                  <button
-                    key={i}
-                    onClick={(e) => { e.stopPropagation(); setActiveSlide(i); }}
-                    className={`h-1.5 rounded-full transition-all ${i === activeSlide ? 'w-5 bg-white' : 'w-1.5 bg-white/40'}`}
-                  />
-                ))}
-              </div>
+                  ))}
+                  {heroDisplayOutcomes.length > 4 && (
+                    <span className="px-3 py-1.5 text-white/40 text-xs">+{heroDisplayOutcomes.length - 4} more</span>
+                  )}
+                </div>
+              )}
+            </div>
+            {/* Dot indicators */}
+            <div className="absolute top-3 right-3 flex gap-1">
+              {heroMarkets.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={(e) => { e.stopPropagation(); setActiveSlide(i); }}
+                  className={`h-1.5 rounded-full transition-all ${i === activeSlide ? 'w-5 bg-white' : 'w-1.5 bg-white/40'}`}
+                />
+              ))}
             </div>
           </div>
 
-          {/* Right — Sponsored + Weekly Draw */}
-          <div className="lg:col-span-2 flex flex-row lg:flex-col gap-3">
-            <div className="flex-1">
+          {/* Right — 2×2 Grid: 3 Sponsored + Weekly Draw */}
+          <div className="grid grid-cols-2 grid-rows-2 gap-3 aspect-square">
+            <div className="min-h-0">
+              <CompactFeaturedCard market={sponsoredMarkets[0]} />
+            </div>
+            <div className="min-h-0">
               <WeeklyDrawCard />
             </div>
-            <div className="flex-1">
-              <CompactFeaturedCard market={sponsoredMarkets[0]} />
+            <div className="min-h-0">
+              <CompactFeaturedCard market={sponsoredMarkets[1]} />
+            </div>
+            <div className="min-h-0">
+              <CompactFeaturedCard market={sponsoredMarkets[2]} />
             </div>
           </div>
         </div>
