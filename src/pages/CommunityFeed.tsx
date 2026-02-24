@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { FollowingSidebar } from "@/components/FollowingSidebar";
 import { MarketsSidebar } from "@/components/MarketsSidebar";
 import { CommunityPost, CommunityPostData } from "@/components/CommunityPost";
-import { Image, ChartBar, X, Plus, TrendingUp } from "lucide-react";
+import { Image, ChartBar, X, Plus } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -109,19 +109,6 @@ const currentUser = {
   username: "@sarahchen",
 };
 
-const topTraders = [
-  { name: "Alex T.", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=AlexT", profit: "+$12.4K" },
-  { name: "Maria G.", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Maria", profit: "+$9.8K" },
-  { name: "David K.", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=David", profit: "+$15.2K" },
-  { name: "Sophie C.", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sophie", profit: "+$6.7K" },
-  { name: "James W.", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=James", profit: "+$4.2K" },
-];
-
-const trendingMarkets = [
-  { id: "1", title: "Bitcoin $100K?", image: bitcoinImage, pot: "$2.4M" },
-  { id: "4", title: "Fed rate cut?", image: fedImage, pot: "$3.1M" },
-  { id: "5", title: "AI customer service?", image: aiImage, pot: "$1.8M" },
-];
 
 export default function CommunityFeed() {
   const navigate = useNavigate();
@@ -201,11 +188,11 @@ export default function CommunityFeed() {
 
   return (
     <div className="w-full max-w-7xl mx-auto">
-      <div className="flex gap-6 justify-center">
+      <div className="flex sm:gap-6 justify-center">
         <FollowingSidebar />
 
         {/* Main Feed Column */}
-        <div className="w-full max-w-[600px] sm:border-x border-border/40 min-h-screen">
+        <div className="w-full sm:max-w-[600px] sm:border-x border-border/40 min-h-screen">
           {/* Sticky Tab Bar */}
           <div className="sticky top-14 z-20 bg-background border-b border-border/40">
             <div className="flex">
@@ -213,7 +200,7 @@ export default function CommunityFeed() {
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
-                  className="flex-1 py-3 sm:py-3.5 text-[13px] sm:text-sm font-medium relative transition-colors hover:bg-muted/30"
+                  className="flex-1 py-3 text-[13px] sm:text-sm font-medium relative transition-colors hover:bg-muted/30"
                 >
                   <span className={activeTab === tab ? "text-foreground" : "text-muted-foreground"}>
                     {tab === "foryou" ? "For You" : "Following"}
@@ -226,46 +213,7 @@ export default function CommunityFeed() {
             </div>
           </div>
 
-          {/* Mobile Discovery: Top Traders */}
-          <div className="sm:hidden border-b border-border/40 px-3 py-2.5">
-            <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">Top Traders</p>
-            <div className="flex gap-3 overflow-x-auto scrollbar-none pb-1">
-              {topTraders.map((trader) => (
-                <div key={trader.name} className="flex flex-col items-center gap-1 flex-shrink-0">
-                  <Avatar className="h-10 w-10 ring-2 ring-primary/20">
-                    <AvatarImage src={trader.avatar} />
-                    <AvatarFallback className="text-[9px]">{trader.name.slice(0, 2)}</AvatarFallback>
-                  </Avatar>
-                  <span className="text-[9px] text-muted-foreground truncate w-12 text-center">{trader.name}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Mobile Discovery: Trending Markets */}
-          <div className="sm:hidden border-b border-border/40 px-3 py-2.5">
-            <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-1">
-              <TrendingUp className="h-3 w-3" />
-              Trending
-            </p>
-            <div className="flex gap-2 overflow-x-auto scrollbar-none pb-1">
-              {trendingMarkets.map((m) => (
-                <div
-                  key={m.id}
-                  onClick={() => navigate(`/market/${m.id}`)}
-                  className="flex items-center gap-2 flex-shrink-0 rounded-lg border border-border/40 bg-muted/20 px-2.5 py-1.5 cursor-pointer hover:bg-muted/40 transition-colors"
-                >
-                  <img src={m.image} alt="" className="h-6 w-6 rounded object-cover" />
-                  <div>
-                    <p className="text-[11px] font-medium leading-tight">{m.title}</p>
-                    <p className="text-[9px] text-primary font-semibold">{m.pot}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Desktop Composer */}
+          {/* Composer - visible on all screen sizes */}
           <div className="hidden sm:block border-b border-border/40 px-4 py-3">
             {composerContent}
           </div>
@@ -284,8 +232,8 @@ export default function CommunityFeed() {
       {/* Mobile FAB for composing */}
       <Sheet open={composeOpen} onOpenChange={setComposeOpen}>
         <SheetTrigger asChild>
-          <button className="sm:hidden fixed bottom-20 right-4 z-30 h-12 w-12 rounded-full bg-primary text-primary-foreground shadow-lg flex items-center justify-center active:scale-95 transition-transform">
-            <Plus className="h-5 w-5" />
+          <button className="sm:hidden fixed bottom-20 right-4 z-30 h-12 w-12 rounded-full bg-primary text-primary-foreground shadow-[0_2px_12px_hsl(var(--primary)/0.35)] hover:shadow-[0_4px_20px_hsl(var(--primary)/0.45)] hover:scale-105 active:scale-95 transition-all duration-200 flex items-center justify-center">
+            <Plus className="h-5 w-5" strokeWidth={2.5} />
           </button>
         </SheetTrigger>
         <SheetContent side="bottom" className="rounded-t-2xl pb-8">
