@@ -701,7 +701,7 @@ export default function MarketDetail() {
                   {isSubmitting
                     ? "Buying..."
                     : selectedOutcome
-                      ? `🎟️ ${ticketCount} Ticket${ticketCount !== 1 ? 's' : ''} · $${totalCost.toFixed(2)}`
+                      ? `🎟️ ${ticketCount} Ticket${ticketCount !== 1 ? 's' : ''} + ${ticketCount === 1 ? 'Entry' : 'Entries'} · $${totalCost.toFixed(2)}`
                       : "Pick a side"
                   }
                 </Button>
@@ -889,7 +889,7 @@ export default function MarketDetail() {
                   {isSubmitting
                     ? "Buying..."
                     : selectedOutcome
-                      ? `🎟️ Buy ${ticketCount} Ticket${ticketCount !== 1 ? 's' : ''} · $${totalCost.toFixed(2)}`
+                      ? `🎟️ Buy ${ticketCount} Ticket${ticketCount !== 1 ? 's' : ''} + ${ticketCount === 1 ? 'Entry' : 'Entries'} · $${totalCost.toFixed(2)}`
                       : "Pick your side first"
                   }
                 </Button>
