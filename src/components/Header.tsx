@@ -22,8 +22,6 @@ import { DepositDialog } from "@/components/DepositDialog";
 import { NotificationsDropdown } from "@/components/NotificationsDropdown";
 import { AffiliateDialog } from "@/components/AffiliateDialog";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Progress } from "@/components/ui/progress";
-import { Ticket } from "lucide-react";
 
 export function Header() {
   const isMobile = useIsMobile();
@@ -123,37 +121,6 @@ export function Header() {
                 {/* Notifications */}
                 <NotificationsDropdown />
 
-                {/* Ticket Counter */}
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <button className="flex items-center gap-1.5 h-8 px-2.5 rounded-lg border border-border/50 hover:border-border transition-colors text-xs">
-                      <Ticket className="h-3.5 w-3.5 text-primary" />
-                      <span className="font-medium text-muted-foreground">14<span className="text-muted-foreground/50">/20</span></span>
-                      <span className="w-px h-3 bg-border" />
-                      <span className="font-semibold text-foreground">3</span>
-                    </button>
-                  </PopoverTrigger>
-                  <PopoverContent align="end" className="w-56 p-0 overflow-hidden">
-                    <div className="px-3.5 pt-3 pb-2">
-                      <p className="text-xs font-semibold text-foreground">Weekly Draw</p>
-                      <p className="text-[10px] text-muted-foreground mt-0.5">Buy tickets to earn draw entries</p>
-                    </div>
-                    <div className="px-3.5 pb-3 space-y-2">
-                      <div>
-                        <div className="flex justify-between text-[11px] mb-1">
-                          <span className="text-muted-foreground">Next entry</span>
-                          <span className="font-medium">14 / 20 tickets</span>
-                        </div>
-                        <Progress value={70} className="h-1" />
-                        <p className="text-[10px] text-muted-foreground mt-1">6 more tickets for another entry</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center justify-between px-3.5 py-2.5 bg-muted/50 border-t border-border/50 text-[11px]">
-                      <span className="text-muted-foreground">Entries earned</span>
-                      <span className="font-bold text-primary">3</span>
-                    </div>
-                  </PopoverContent>
-                </Popover>
 
                 {/* Deposit Button */}
                 <Button 
