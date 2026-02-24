@@ -1,4 +1,4 @@
-import { Trophy, Timer, Users, Ticket, Info, History, Gift, Calendar, Zap, Sparkles } from "lucide-react";
+import { Trophy, Timer, Users, Ticket, Info, History, Gift, Calendar, Zap } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -34,44 +34,35 @@ const COUNTDOWN = "3d 14h";
 
 export function WeeklyDrawCard() {
   return (
-    <div className="relative flex flex-col p-3.5 rounded-xl border border-[hsl(var(--prize)_/_0.4)] bg-gradient-to-br from-[hsl(var(--prize)_/_0.08)] via-card to-[hsl(var(--prize)_/_0.04)] h-full overflow-hidden shadow-[0_0_20px_-6px_hsl(var(--prize)_/_0.15)]">
-      {/* Subtle shimmer overlay */}
-      <div className="absolute inset-0 bg-[linear-gradient(105deg,transparent_40%,hsl(var(--prize)_/_0.06)_45%,hsl(var(--prize)_/_0.12)_50%,hsl(var(--prize)_/_0.06)_55%,transparent_60%)] animate-[shimmer_3s_ease-in-out_infinite] pointer-events-none" />
-
+    <div className="flex flex-col p-3.5 rounded-xl border border-border/50 bg-card h-full">
       {/* Header: Title + Timer */}
-      <div className="relative flex items-center justify-between mb-1.5">
+      <div className="flex items-center justify-between mb-1.5">
         <div className="flex items-center gap-1.5">
-          <div className="flex items-center justify-center w-5 h-5 rounded-md bg-[hsl(var(--prize)_/_0.2)]">
-            <Trophy className="h-3 w-3 text-[hsl(var(--prize))]" />
-          </div>
-          <span className="text-[10px] uppercase tracking-widest font-bold text-[hsl(var(--prize))]">Weekly Draw</span>
-          <Sparkles className="h-2.5 w-2.5 text-[hsl(var(--prize)_/_0.6)]" />
+          <Trophy className="h-3.5 w-3.5 text-primary" />
+          <span className="text-[10px] uppercase tracking-widest font-semibold text-muted-foreground">Weekly Draw</span>
         </div>
-        <div className="flex items-center gap-1 text-[10px] text-muted-foreground bg-[hsl(var(--prize)_/_0.08)] px-2 py-0.5 rounded-full">
-          <Timer className="h-3 w-3 text-[hsl(var(--prize))]" />
-          <span className="font-semibold">{COUNTDOWN}</span>
+        <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
+          <Timer className="h-3 w-3" />
+          <span className="font-medium">{COUNTDOWN}</span>
         </div>
       </div>
 
-      {/* Pot amount — big, golden */}
-      <div className="relative text-xl font-extrabold leading-none tracking-tight bg-gradient-to-r from-[hsl(var(--prize))] to-[hsl(36_100%_50%)] bg-clip-text text-transparent">
+      {/* Pot + description */}
+      <div className="text-lg font-extrabold text-foreground leading-none tracking-tight">
         ${WEEKLY_POT.toLocaleString()}
       </div>
-      <p className="text-[9px] text-muted-foreground mt-0.5 mb-2.5 leading-relaxed relative">
+      <p className="text-[9px] text-muted-foreground mt-0.5 mb-2.5 leading-relaxed">
         Prize pool redistributed weekly to random participants
       </p>
 
-      {/* Distribution bar — golden */}
-      <div className="mb-2.5 relative">
-        <div className="flex rounded-full overflow-hidden h-1.5">
+      {/* Distribution bar */}
+      <div className="mb-2.5">
+        <div className="flex rounded-full overflow-hidden h-1">
           {distribution.map((d, i) => (
             <div
               key={d.place}
-              className="h-full"
-              style={{
-                width: `${d.pct}%`,
-                background: `hsl(${45 - i * 3} ${93 - i * 10}% ${47 + i * 5}%)`,
-              }}
+              className="h-full bg-primary"
+              style={{ width: `${d.pct}%`, opacity: 1 - i * 0.2 }}
             />
           ))}
         </div>
@@ -85,12 +76,12 @@ export function WeeklyDrawCard() {
       </div>
 
       {/* Entry info */}
-      <div className="flex items-center justify-between text-[9px] mb-2.5 relative">
+      <div className="flex items-center justify-between text-[9px] mb-2.5">
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
               <span className="flex items-center gap-1 text-muted-foreground cursor-help">
-                <Ticket className="h-3 w-3 text-[hsl(var(--prize))]" />
+                <Ticket className="h-3 w-3 text-primary" />
                 <span>Every ticket = <span className="font-semibold text-foreground">1 entry</span></span>
               </span>
             </TooltipTrigger>
@@ -100,15 +91,15 @@ export function WeeklyDrawCard() {
           </Tooltip>
         </TooltipProvider>
         <span className="text-muted-foreground">
-          <span className="font-semibold text-[hsl(var(--prize))]">{MY_ENTRIES}</span> entries this week
+          <span className="font-semibold text-foreground">{MY_ENTRIES}</span> entries this week
         </span>
       </div>
 
       {/* Footer links */}
-      <div className="flex items-center gap-3 pt-2 border-t border-[hsl(var(--prize)_/_0.15)] mt-auto relative">
+      <div className="flex items-center gap-3 pt-2 border-t border-border/30 mt-auto">
         <Dialog>
           <DialogTrigger asChild>
-            <button className="flex items-center gap-1 text-[9px] text-muted-foreground hover:text-[hsl(var(--prize))] transition-colors">
+            <button className="flex items-center gap-1 text-[9px] text-muted-foreground hover:text-foreground transition-colors">
               <History className="h-3 w-3" />
               Previous winners
             </button>
@@ -116,8 +107,8 @@ export function WeeklyDrawCard() {
           <DialogContent className="max-w-sm">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
-                <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-[hsl(var(--prize)_/_0.15)]">
-                  <Trophy className="h-4 w-4 text-[hsl(var(--prize))]" />
+                <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10">
+                  <Trophy className="h-4 w-4 text-primary" />
                 </div>
                 Last Week's Winners
               </DialogTitle>
@@ -133,13 +124,13 @@ export function WeeklyDrawCard() {
                 >
                   <div className="flex items-center gap-2.5">
                     <div className={`flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold ${
-                      i === 0 ? "bg-[hsl(var(--prize)_/_0.15)] text-[hsl(var(--prize))]" : "bg-muted text-muted-foreground"
+                      i === 0 ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground"
                     }`}>
                       {w.place}
                     </div>
                     <span className="text-sm font-medium">{w.name}</span>
                   </div>
-                  <span className="text-sm font-bold text-[hsl(var(--prize))]">${w.amount.toLocaleString()}</span>
+                  <span className="text-sm font-bold text-primary">${w.amount.toLocaleString()}</span>
                 </div>
               ))}
             </div>
@@ -152,7 +143,7 @@ export function WeeklyDrawCard() {
 
         <Dialog>
           <DialogTrigger asChild>
-            <button className="flex items-center gap-1 text-[9px] text-muted-foreground hover:text-[hsl(var(--prize))] transition-colors">
+            <button className="flex items-center gap-1 text-[9px] text-muted-foreground hover:text-foreground transition-colors">
               <Info className="h-3 w-3" />
               How it works
             </button>
@@ -160,8 +151,8 @@ export function WeeklyDrawCard() {
           <DialogContent className="max-w-sm">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
-                <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-[hsl(var(--prize)_/_0.15)]">
-                  <Info className="h-4 w-4 text-[hsl(var(--prize))]" />
+                <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10">
+                  <Info className="h-4 w-4 text-primary" />
                 </div>
                 How the Weekly Draw Works
               </DialogTitle>
@@ -171,8 +162,8 @@ export function WeeklyDrawCard() {
             </DialogHeader>
             <div className="space-y-1 mt-1">
               <div className="flex gap-3 p-3 rounded-lg bg-muted/40">
-                <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-[hsl(var(--prize)_/_0.15)] flex-shrink-0">
-                  <Gift className="h-4 w-4 text-[hsl(var(--prize))]" />
+                <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10 flex-shrink-0">
+                  <Gift className="h-4 w-4 text-primary" />
                 </div>
                 <div>
                   <p className="text-sm font-medium text-foreground">Funding</p>
@@ -180,8 +171,8 @@ export function WeeklyDrawCard() {
                 </div>
               </div>
               <div className="flex gap-3 p-3 rounded-lg bg-muted/40">
-                <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-[hsl(var(--prize)_/_0.15)] flex-shrink-0">
-                  <Ticket className="h-4 w-4 text-[hsl(var(--prize))]" />
+                <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10 flex-shrink-0">
+                  <Ticket className="h-4 w-4 text-primary" />
                 </div>
                 <div>
                   <p className="text-sm font-medium text-foreground">Entry</p>
@@ -189,8 +180,8 @@ export function WeeklyDrawCard() {
                 </div>
               </div>
               <div className="flex gap-3 p-3 rounded-lg bg-muted/40">
-                <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-[hsl(var(--prize)_/_0.15)] flex-shrink-0">
-                  <Calendar className="h-4 w-4 text-[hsl(var(--prize))]" />
+                <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10 flex-shrink-0">
+                  <Calendar className="h-4 w-4 text-primary" />
                 </div>
                 <div>
                   <p className="text-sm font-medium text-foreground">Draw</p>
@@ -204,18 +195,15 @@ export function WeeklyDrawCard() {
                 {distribution.map((d, i) => (
                   <div
                     key={d.place}
-                    className="h-full"
-                    style={{
-                      width: `${d.pct}%`,
-                      background: `hsl(${45 - i * 3} ${93 - i * 10}% ${47 + i * 5}%)`,
-                    }}
+                    className="h-full bg-primary"
+                    style={{ width: `${d.pct}%`, opacity: 1 - i * 0.2 }}
                   />
                 ))}
               </div>
               <div className="grid grid-cols-2 gap-1">
                 {distribution.map((d) => (
                   <div key={d.place} className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                    <div className="w-1.5 h-1.5 rounded-full bg-[hsl(var(--prize))]" />
+                    <div className="w-1.5 h-1.5 rounded-full bg-primary" />
                     <span className="font-medium text-foreground">{d.place}</span> {d.pct}%
                   </div>
                 ))}
