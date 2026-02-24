@@ -189,7 +189,7 @@ const Portfolio = () => {
             {/* Summary bar */}
             <div className="flex items-center justify-between px-0.5 text-[10px] sm:text-[11px] text-muted-foreground">
               <span>${totalAtStake} at stake · {entries.length} markets</span>
-              <span className="text-success font-medium">${totalPotentialPayout} potential</span>
+              <span className="text-success font-medium">~${totalPotentialPayout} potential</span>
             </div>
 
             {entries.map((entry) => (
@@ -221,8 +221,9 @@ const Portfolio = () => {
                         </span>
                       </div>
                       <div className="flex items-center justify-between mt-1.5">
-                        <span className="text-[10px] sm:text-xs font-semibold text-success">
-                          Win: ${entry.potentialPayout}
+                        <span className="text-[10px] sm:text-xs font-semibold text-success flex items-center gap-0.5">
+                          Win: ~${entry.potentialPayout}
+                          <span className="text-[8px] sm:text-[9px] font-normal text-muted-foreground">(est.)</span>
                         </span>
                         <span className="text-[9px] sm:text-[10px] text-muted-foreground flex items-center gap-0.5">
                           <Timer className="h-2.5 w-2.5" />
