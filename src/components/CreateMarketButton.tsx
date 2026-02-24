@@ -1,6 +1,6 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { Plus, Sparkles, Check, AlertCircle, Lightbulb, Loader2, X, ArrowLeft } from "lucide-react";
+import { Plus, Sparkles, Check, AlertCircle, Lightbulb, Loader2, X, ArrowLeft, ImagePlus } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -21,12 +21,31 @@ const categories = [
 ];
 
 interface AIFeedback {
-  type: "success" | "warning" | "suggestion";
-  field?: string;
+  type: "required" | "suggested";
+  field: string;
   message: string;
 }
 
 type FlowState = "form" | "checking" | "feedback" | "posting" | "done";
+
+function FieldFeedback({ feedback }: { feedback?: AIFeedback }) {
+  if (!feedback) return null;
+  const isRequired = feedback.type === "required";
+  return (
+    <div className={`flex items-start gap-2 mt-1.5 p-2 rounded-lg text-xs ${
+      isRequired
+        ? "bg-amber-500/10 text-amber-600 dark:text-amber-400"
+        : "bg-blue-500/10 text-blue-600 dark:text-blue-400"
+    }`}>
+      {isRequired ? (
+        <AlertCircle className="h-3.5 w-3.5 mt-0.5 shrink-0" />
+      ) : (
+        <Lightbulb className="h-3.5 w-3.5 mt-0.5 shrink-0" />
+      )}
+      <span>{feedback.message}</span>
+    </div>
+  );
+}
 
 export function CreateMarketButton() {
   const [open, setOpen] = useState(false);
@@ -34,6 +53,8 @@ export function CreateMarketButton() {
   const [aiFeedback, setAiFeedback] = useState<AIFeedback[]>([]);
   const [aiScore, setAiScore] = useState(0);
   const [outcomes, setOutcomes] = useState<string[]>(["Yes", "No"]);
+  const [coverImage, setCoverImage] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -44,7 +65,8 @@ export function CreateMarketButton() {
     resolutionSource: "",
   });
 
-  const isGreenLight = aiScore >= 8 && !aiFeedback.some(f => f.type === "warning");
+  const hasRequired = aiFeedback.some(f => f.type === "required");
+  const isGreenLight = aiScore >= 8 && !hasRequired;
 
   const addOutcome = () => {
     if (outcomes.length < 10) setOutcomes([...outcomes, ""]);
@@ -65,6 +87,26 @@ export function CreateMarketButton() {
     formData.endDate && formData.resolutionCriteria &&
     outcomes.filter(o => o.trim()).length >= 2;
 
+  const getFeedbackForField = (field: string) =>
+    aiFeedback.find(f => f.field === field);
+
+  const getFieldHighlight = (field: string) => {
+    const fb = getFeedbackForField(field);
+    if (!fb) return "";
+    return fb.type === "required"
+      ? "border-amber-400/50 focus-visible:ring-amber-400/30"
+      : "border-blue-400/50 focus-visible:ring-blue-400/30";
+  };
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => setCoverImage(reader.result as string);
+      reader.readAsDataURL(file);
+    }
+  };
+
   const runAICheck = useCallback(async () => {
     setFlowState("checking");
     await new Promise(resolve => setTimeout(resolve, 2000));
@@ -73,24 +115,20 @@ export function CreateMarketButton() {
     let score = 10;
 
     if (formData.title.length < 20) {
-      recs.push({ type: "suggestion", field: "title", message: "Make your question more specific for better engagement." });
+      recs.push({ type: "suggested", field: "title", message: "Make your question more specific for better engagement." });
       score -= 1;
     }
     if (!formData.resolutionCriteria || formData.resolutionCriteria.length < 30) {
-      recs.push({ type: "warning", field: "resolutionCriteria", message: "Add more detailed resolution criteria to avoid disputes." });
+      recs.push({ type: "required", field: "resolutionCriteria", message: "Add more detailed resolution criteria to avoid disputes." });
       score -= 2;
     }
     if (!formData.resolutionSource) {
-      recs.push({ type: "suggestion", field: "resolutionSource", message: "Add a trusted source for resolution verification." });
+      recs.push({ type: "suggested", field: "resolutionSource", message: "Add a trusted source for resolution verification." });
       score -= 1;
     }
     if (formData.description.length < 30) {
-      recs.push({ type: "suggestion", field: "description", message: "A longer description helps players understand the market better." });
+      recs.push({ type: "suggested", field: "description", message: "A longer description helps players understand the market better." });
       score -= 1;
-    }
-
-    if (recs.length === 0) {
-      recs.push({ type: "success", message: "Your market looks great! Ready to post." });
     }
 
     setAiScore(Math.max(score, 1));
@@ -111,16 +149,9 @@ export function CreateMarketButton() {
       setAiFeedback([]);
       setAiScore(0);
       setOutcomes(["Yes", "No"]);
+      setCoverImage(null);
       setFormData({ title: "", description: "", category: "", endDate: "", resolutionCriteria: "", resolutionSource: "" });
     }, 300);
-  };
-
-  const getFieldHighlight = (field: string) => {
-    const fb = aiFeedback.find(f => f.field === field);
-    if (!fb) return "";
-    return fb.type === "warning"
-      ? "border-amber-400/50 focus-visible:ring-amber-400/30"
-      : "border-blue-400/50 focus-visible:ring-blue-400/30";
   };
 
   const scoreColor = aiScore >= 8 ? "text-success" : aiScore >= 5 ? "text-amber-500" : "text-destructive";
@@ -167,53 +198,57 @@ export function CreateMarketButton() {
             </div>
           )}
 
-          {/* Form + AI feedback in one view */}
+          {/* Form + AI feedback inline */}
           {flowState !== "done" && (
             <div className="p-5 space-y-4">
-              {/* AI Feedback banner (shown after check) */}
+              {/* Score badge (shown after check) */}
               {flowState === "feedback" && (
-                <div className="space-y-3">
-                  {/* Score badge */}
-                  <div className={`flex items-center justify-between p-3 rounded-xl ${
-                    isGreenLight ? "bg-success/10 border border-success/20" : "bg-amber-500/10 border border-amber-500/20"
-                  }`}>
-                    <div className="flex items-center gap-2">
-                      <Sparkles className={`h-4 w-4 ${isGreenLight ? "text-success" : "text-amber-500"}`} />
-                      <span className="text-sm font-medium">
-                        {isGreenLight ? "Ready to post!" : "AI suggestions"}
-                      </span>
-                    </div>
-                    <span className={`text-lg font-bold ${scoreColor}`}>{aiScore}/10</span>
+                <div className={`flex items-center justify-between p-3 rounded-xl ${
+                  isGreenLight ? "bg-success/10 border border-success/20" : "bg-amber-500/10 border border-amber-500/20"
+                }`}>
+                  <div className="flex items-center gap-2">
+                    <Sparkles className={`h-4 w-4 ${isGreenLight ? "text-success" : "text-amber-500"}`} />
+                    <span className="text-sm font-medium">
+                      {isGreenLight ? "Ready to post!" : hasRequired ? "Required changes below" : "Suggestions below"}
+                    </span>
                   </div>
-
-                  {/* Feedback items */}
-                  {aiFeedback.filter(f => f.type !== "success").map((fb, idx) => (
-                    <div
-                      key={idx}
-                      className={`flex items-start gap-2.5 p-3 rounded-lg text-xs ${
-                        fb.type === "warning"
-                          ? "bg-amber-500/8 text-amber-600 dark:text-amber-400"
-                          : "bg-blue-500/8 text-blue-600 dark:text-blue-400"
-                      }`}
-                    >
-                      {fb.type === "warning" ? (
-                        <AlertCircle className="h-3.5 w-3.5 mt-0.5 shrink-0" />
-                      ) : (
-                        <Lightbulb className="h-3.5 w-3.5 mt-0.5 shrink-0" />
-                      )}
-                      <div>
-                        {fb.field && (
-                          <span className="font-semibold capitalize">{fb.field === "resolutionCriteria" ? "Resolution Criteria" : fb.field === "resolutionSource" ? "Resolution Source" : fb.field}: </span>
-                        )}
-                        {fb.message}
-                      </div>
-                    </div>
-                  ))}
+                  <span className={`text-lg font-bold ${scoreColor}`}>{aiScore}/10</span>
                 </div>
               )}
 
-              {/* Form fields - always visible for editing */}
+              {/* Form fields with inline feedback */}
               <div className="space-y-3">
+                {/* Cover Photo */}
+                <div className="space-y-1.5">
+                  <Label className="text-xs">Cover Photo</Label>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleImageUpload}
+                  />
+                  {coverImage ? (
+                    <div className="relative rounded-xl overflow-hidden border border-border/40">
+                      <img src={coverImage} alt="Cover" className="w-full h-32 object-cover" />
+                      <button
+                        onClick={() => setCoverImage(null)}
+                        className="absolute top-2 right-2 h-7 w-7 rounded-full bg-background/80 backdrop-blur flex items-center justify-center hover:bg-background transition-colors"
+                      >
+                        <X className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => fileInputRef.current?.click()}
+                      className="w-full h-24 rounded-xl border-2 border-dashed border-border/60 hover:border-primary/40 transition-colors flex flex-col items-center justify-center gap-1.5 text-muted-foreground hover:text-foreground"
+                    >
+                      <ImagePlus className="h-5 w-5" />
+                      <span className="text-xs">Add cover photo</span>
+                    </button>
+                  )}
+                </div>
+
                 <div className="space-y-1.5">
                   <Label htmlFor="title" className="text-xs">Question *</Label>
                   <Input
@@ -223,6 +258,7 @@ export function CreateMarketButton() {
                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                     className={getFieldHighlight("title")}
                   />
+                  {flowState === "feedback" && <FieldFeedback feedback={getFeedbackForField("title")} />}
                 </div>
 
                 <div className="space-y-1.5">
@@ -235,6 +271,7 @@ export function CreateMarketButton() {
                     className={`resize-none ${getFieldHighlight("description")}`}
                     rows={2}
                   />
+                  {flowState === "feedback" && <FieldFeedback feedback={getFeedbackForField("description")} />}
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
@@ -302,6 +339,7 @@ export function CreateMarketButton() {
                     className={`resize-none ${getFieldHighlight("resolutionCriteria")}`}
                     rows={2}
                   />
+                  {flowState === "feedback" && <FieldFeedback feedback={getFeedbackForField("resolutionCriteria")} />}
                 </div>
 
                 <div className="space-y-1.5">
@@ -313,6 +351,7 @@ export function CreateMarketButton() {
                     onChange={(e) => setFormData({ ...formData, resolutionSource: e.target.value })}
                     className={getFieldHighlight("resolutionSource")}
                   />
+                  {flowState === "feedback" && <FieldFeedback feedback={getFeedbackForField("resolutionSource")} />}
                 </div>
               </div>
 
@@ -331,6 +370,11 @@ export function CreateMarketButton() {
                   <Button className="w-full gap-2" disabled>
                     <Loader2 className="h-4 w-4 animate-spin" /> Posting...
                   </Button>
+                ) : flowState === "feedback" && hasRequired ? (
+                  <Button className="w-full gap-2" onClick={runAICheck}>
+                    <Sparkles className="h-4 w-4" />
+                    Re-check with AI
+                  </Button>
                 ) : flowState === "feedback" ? (
                   <div className="flex gap-2">
                     <Button variant="outline" className="flex-1 gap-2" onClick={runAICheck}>
@@ -338,7 +382,7 @@ export function CreateMarketButton() {
                       Re-check
                     </Button>
                     <Button className="flex-1 gap-2" onClick={handlePost}>
-                      Post Anyway
+                      Post Market
                     </Button>
                   </div>
                 ) : (
