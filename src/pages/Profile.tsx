@@ -5,7 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, UserPlus, UserCheck, BadgeCheck, TrendingUp, Clock, Calendar, MapPin, Share2, ArrowUpRight, ArrowDownLeft, MessageCircle, Heart, Repeat2 } from "lucide-react";
+import { ArrowLeft, UserPlus, UserCheck, BadgeCheck, TrendingUp, Clock, Calendar, MapPin, Share2, ArrowUpRight, ArrowDownLeft, MessageCircle, Heart, Repeat2, Link2, ExternalLink } from "lucide-react";
 import { MarketCard } from "@/components/MarketCard";
 import { SocialStats } from "@/components/SocialStats";
 import { ProfileStats } from "@/components/ProfileStats";
@@ -23,6 +23,8 @@ const creatorData: Record<string, {
   following: number;
   description: string;
   successRate: number;
+  avgPot: string;
+  link?: string;
 }> = {
   'marketmaven': { 
     markets: 47, 
@@ -30,6 +32,8 @@ const creatorData: Record<string, {
     followers: 12340,
     following: 234,
     successRate: 89,
+    avgPot: '$59.6K',
+    link: 'marketmaven.com',
     description: 'Professional market analyst specializing in crypto and tech predictions.'
   },
   'predictpro': { 
@@ -38,6 +42,8 @@ const creatorData: Record<string, {
     followers: 9800,
     following: 156,
     successRate: 85,
+    avgPot: '$55.3K',
+    link: 'predictpro.io',
     description: 'Data-driven predictions across finance, sports, and politics.'
   },
   'trendsetter': { 
@@ -46,6 +52,7 @@ const creatorData: Record<string, {
     followers: 8200,
     following: 89,
     successRate: 82,
+    avgPot: '$54.8K',
     description: 'Identifying emerging trends before they go mainstream.'
   },
   'insighthub': { 
@@ -54,6 +61,8 @@ const creatorData: Record<string, {
     followers: 7100,
     following: 67,
     successRate: 79,
+    avgPot: '$51.7K',
+    link: 'insighthub.co',
     description: 'Providing actionable insights through well-researched prediction markets.'
   },
   'datadriven': { 
@@ -62,6 +71,7 @@ const creatorData: Record<string, {
     followers: 6400,
     following: 45,
     successRate: 76,
+    avgPot: '$50.0K',
     description: 'Quantitative analyst creating markets based on statistical analysis.'
   },
 };
@@ -260,6 +270,17 @@ export default function Profile() {
               <p className="text-foreground/90 leading-relaxed max-w-2xl">{userData.bio}</p>
               
               <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted-foreground">
+                {isCreator && creatorStats?.link && (
+                  <a 
+                    href={`https://${creatorStats.link}`} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1.5 text-primary hover:underline"
+                  >
+                    <Link2 className="h-4 w-4" />
+                    {creatorStats.link}
+                  </a>
+                )}
                 {userData.location && (
                   <div className="flex items-center gap-1.5">
                     <MapPin className="h-4 w-4" />
@@ -309,6 +330,7 @@ export default function Profile() {
             stats={{
               marketsCreated: creatorStats.markets,
               totalVolume: creatorStats.volume,
+              avgVolume: creatorStats.avgPot,
               followers: creatorStats.followers,
               successRate: creatorStats.successRate,
             }}
@@ -330,12 +352,16 @@ export default function Profile() {
         <Card className="border-border/40">
           <Tabs defaultValue={isCreator ? "markets" : "posts"} className="w-full">
             <CardHeader className="pb-0">
-              <TabsList className={`grid w-full ${isCreator ? 'grid-cols-3' : 'grid-cols-2'}`}>
+              <TabsList className="grid w-full grid-cols-2">
                 {isCreator ? (
                   <>
-                    <TabsTrigger value="markets">Markets</TabsTrigger>
-                    <TabsTrigger value="activity">Activity</TabsTrigger>
-                    <TabsTrigger value="about">About</TabsTrigger>
+                    <TabsTrigger value="posts">Posts</TabsTrigger>
+                    <TabsTrigger value="markets">
+                      Markets
+                      <span className="ml-1.5 bg-primary/10 text-primary text-[9px] font-semibold px-1.5 py-0.5 rounded-full">
+                        {creatorStats?.markets || 0}
+                      </span>
+                    </TabsTrigger>
                   </>
                 ) : (
                   <>
@@ -487,33 +513,8 @@ export default function Profile() {
               </TabsContent>
             )}
             
-            {/* About Tab - Creators */}
-            {isCreator && creatorStats && (
-              <TabsContent value="about" className="p-4 space-y-6">
-                <div>
-                  <h4 className="font-semibold mb-2">About</h4>
-                  <p className="text-muted-foreground leading-relaxed">{creatorStats.description}</p>
-                </div>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t">
-                  <div className="text-center">
-                    <p className="text-2xl font-bold">{creatorStats.markets}</p>
-                    <p className="text-sm text-muted-foreground">Markets</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-2xl font-bold text-success">{creatorStats.volume}</p>
-                    <p className="text-sm text-muted-foreground">Pot Generated</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-2xl font-bold">{creatorStats.followers.toLocaleString()}</p>
-                    <p className="text-sm text-muted-foreground">Followers</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-2xl font-bold text-success">{creatorStats.successRate}%</p>
-                    <p className="text-sm text-muted-foreground">Success</p>
-                  </div>
-                </div>
-              </TabsContent>
-            )}
+
+
           </Tabs>
         </Card>
       </div>

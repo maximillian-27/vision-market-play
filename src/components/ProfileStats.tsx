@@ -1,5 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { TrendingUp, Target, Award, BarChart3, DollarSign, Ticket, Trophy } from "lucide-react";
+import { TrendingUp, Target, Award, BarChart3, DollarSign, Ticket, Trophy, Users } from "lucide-react";
 
 interface ProfileStatsProps {
   type: "trader" | "creator";
@@ -29,27 +29,27 @@ interface ProfileStatsProps {
 export function ProfileStats({ type, stats }: ProfileStatsProps) {
   if (type === "creator") {
     return (
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div className="grid grid-cols-4 gap-2 sm:gap-3">
         <StatCard
-          icon={<DollarSign className="h-4 w-4" />}
-          label="Pot Generated"
+          icon={<DollarSign className="h-3.5 w-3.5 sm:h-4 sm:w-4" />}
+          label="Pot Volume"
           value={stats.totalVolume || "$0"}
           valueClassName="text-success"
         />
         <StatCard
-          icon={<Award className="h-4 w-4" />}
-          label="Rank"
-          value={`#${stats.rank || "-"}`}
-        />
-        <StatCard
-          icon={<BarChart3 className="h-4 w-4" />}
+          icon={<BarChart3 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />}
           label="Markets Created"
           value={stats.marketsCreated?.toString() || "0"}
         />
         <StatCard
-          icon={<TrendingUp className="h-4 w-4" />}
+          icon={<TrendingUp className="h-3.5 w-3.5 sm:h-4 sm:w-4" />}
           label="Avg Pot / Market"
           value={stats.avgVolume || "$0"}
+        />
+        <StatCard
+          icon={<Users className="h-3.5 w-3.5 sm:h-4 sm:w-4" />}
+          label="Followers"
+          value={typeof stats.followers === 'number' ? (stats.followers >= 1000 ? `${(stats.followers / 1000).toFixed(1)}K` : stats.followers.toString()) : stats.followers?.toString() || "0"}
         />
       </div>
     );
