@@ -160,6 +160,7 @@ export default function Profile() {
     winRate: 78,
     totalTrades: 142,
     accuracy: 72,
+    biggestWin: "$1,240",
     portfolioValue: 18450,
     cashBalance: 5230,
   };
@@ -320,15 +321,16 @@ export default function Profile() {
               winRate: userData.winRate,
               totalTrades: userData.totalTrades,
               accuracy: userData.accuracy,
+              biggestWin: userData.biggestWin,
             }}
           />
         )}
 
         {/* Content Tabs */}
         <Card className="border-border/40">
-          <Tabs defaultValue={isCreator ? "markets" : "entries"} className="w-full">
+          <Tabs defaultValue={isCreator ? "markets" : "posts"} className="w-full">
             <CardHeader className="pb-0">
-              <TabsList className="grid w-full grid-cols-3">
+              <TabsList className={`grid w-full ${isCreator ? 'grid-cols-3' : 'grid-cols-2'}`}>
                 {isCreator ? (
                   <>
                     <TabsTrigger value="markets">Markets</TabsTrigger>
@@ -337,9 +339,13 @@ export default function Profile() {
                   </>
                 ) : (
                   <>
-                    <TabsTrigger value="entries">Entries</TabsTrigger>
                     <TabsTrigger value="posts">Posts</TabsTrigger>
-                    <TabsTrigger value="achievements">Achievements</TabsTrigger>
+                    <TabsTrigger value="active">
+                      Active
+                      <span className="ml-1.5 bg-primary/10 text-primary text-[9px] font-semibold px-1.5 py-0.5 rounded-full">
+                        {isOwnProfile ? 2 : 3}
+                      </span>
+                    </TabsTrigger>
                   </>
                 )}
               </TabsList>
@@ -351,96 +357,6 @@ export default function Profile() {
                 {mockCreatorMarkets.map((market, index) => (
                   <MarketCard key={index} {...market} />
                 ))}
-              </TabsContent>
-            )}
-            
-            {/* Entries Tab - Players */}
-            {!isCreator && (
-              <TabsContent value="entries" className="p-0">
-                <div className="divide-y divide-border/40">
-                  {isOwnProfile ? (
-                    <>
-                      <div 
-                        className="px-4 py-3 flex items-center justify-between cursor-pointer hover:bg-muted/30 active:bg-muted/50 transition-colors"
-                        onClick={() => navigate('/market/1')}
-                      >
-                        <div className="flex-1 min-w-0 pr-4">
-                          <h3 className="font-medium text-sm leading-snug">Bitcoin reaches $100K by 2025?</h3>
-                          <p className="text-xs text-muted-foreground mt-0.5">
-                            <Badge variant="success" className="text-[10px] px-1.5 py-0 mr-1.5">YES</Badge>
-                            25 tickets · 3mo left
-                          </p>
-                        </div>
-                        <div className="text-right shrink-0">
-                          <div className="text-sm font-semibold text-success">Potential winning: $312</div>
-                        </div>
-                      </div>
-                      <div 
-                        className="px-4 py-3 flex items-center justify-between cursor-pointer hover:bg-muted/30 active:bg-muted/50 transition-colors"
-                        onClick={() => navigate('/market/2')}
-                      >
-                        <div className="flex-1 min-w-0 pr-4">
-                          <h3 className="font-medium text-sm leading-snug">Lakers make NBA playoffs?</h3>
-                          <p className="text-xs text-muted-foreground mt-0.5">
-                            <Badge variant="destructive" className="text-[10px] px-1.5 py-0 mr-1.5">NO</Badge>
-                            10 tickets · 2w left
-                          </p>
-                        </div>
-                        <div className="text-right shrink-0">
-                          <div className="text-sm font-semibold text-success">Potential winning: $185</div>
-                        </div>
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <div 
-                        className="px-4 py-3 flex items-center justify-between cursor-pointer hover:bg-muted/30 active:bg-muted/50 transition-colors"
-                        onClick={() => navigate('/market/3')}
-                      >
-                        <div className="flex-1 min-w-0 pr-4">
-                          <h3 className="font-medium text-sm leading-snug">Will AI replace 50% of jobs by 2030?</h3>
-                          <p className="text-xs text-muted-foreground mt-0.5">
-                            <Badge variant="success" className="text-[10px] px-1.5 py-0 mr-1.5">YES</Badge>
-                            40 tickets · 5y left
-                          </p>
-                        </div>
-                        <div className="text-right shrink-0">
-                          <div className="text-sm font-semibold text-success">Potential winning: $520</div>
-                        </div>
-                      </div>
-                      <div 
-                        className="px-4 py-3 flex items-center justify-between cursor-pointer hover:bg-muted/30 active:bg-muted/50 transition-colors"
-                        onClick={() => navigate('/market/4')}
-                      >
-                        <div className="flex-1 min-w-0 pr-4">
-                          <h3 className="font-medium text-sm leading-snug">Tesla stock above $300 by Q2 2025?</h3>
-                          <p className="text-xs text-muted-foreground mt-0.5">
-                            <Badge variant="destructive" className="text-[10px] px-1.5 py-0 mr-1.5">NO</Badge>
-                            15 tickets · 6mo left
-                          </p>
-                        </div>
-                        <div className="text-right shrink-0">
-                          <div className="text-sm font-semibold text-success">Potential winning: $245</div>
-                        </div>
-                      </div>
-                      <div 
-                        className="px-4 py-3 flex items-center justify-between cursor-pointer hover:bg-muted/30 active:bg-muted/50 transition-colors"
-                        onClick={() => navigate('/market/5')}
-                      >
-                        <div className="flex-1 min-w-0 pr-4">
-                          <h3 className="font-medium text-sm leading-snug">Fed cuts rates before March 2025?</h3>
-                          <p className="text-xs text-muted-foreground mt-0.5">
-                            <Badge variant="success" className="text-[10px] px-1.5 py-0 mr-1.5">YES</Badge>
-                            30 tickets · 3mo left
-                          </p>
-                        </div>
-                        <div className="text-right shrink-0">
-                          <div className="text-sm font-semibold text-success">Potential winning: $410</div>
-                        </div>
-                      </div>
-                    </>
-                  )}
-                </div>
               </TabsContent>
             )}
             
@@ -461,15 +377,12 @@ export default function Profile() {
                     )}
                     
                     <div className="flex gap-3">
-                      {/* Avatar */}
                       <Avatar className="h-10 w-10 flex-shrink-0">
                         <AvatarImage src={userData.avatar} alt={displayName} />
                         <AvatarFallback>{displayName.slice(0, 2)}</AvatarFallback>
                       </Avatar>
                       
-                      {/* Post Content */}
                       <div className="flex-1 min-w-0 space-y-2">
-                        {/* Header */}
                         <div className="flex items-center gap-2">
                           <span className="font-semibold text-sm">{displayName}</span>
                           <span className="text-muted-foreground text-sm">{userData.username}</span>
@@ -477,10 +390,8 @@ export default function Profile() {
                           <span className="text-muted-foreground text-sm">{activity.timestamp}</span>
                         </div>
                         
-                        {/* Post text */}
                         <p className="text-sm leading-relaxed">{activity.content}</p>
                         
-                        {/* Attached Market */}
                         {activity.market && (
                           <div 
                             className="border border-border/50 rounded-xl overflow-hidden cursor-pointer hover:bg-muted/30 transition-colors"
@@ -500,7 +411,6 @@ export default function Profile() {
                           </div>
                         )}
                         
-                        {/* Engagement actions */}
                         <div className="flex items-center gap-6 pt-2">
                           <button className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors text-sm">
                             <MessageCircle className="h-4 w-4" />
@@ -522,6 +432,61 @@ export default function Profile() {
               </div>
             </TabsContent>
             
+            {/* Active Tickets Tab - Players */}
+            {!isCreator && (
+              <TabsContent value="active" className="p-0">
+                <div className="divide-y divide-border/40">
+                  {isOwnProfile ? (
+                    <>
+                      <TicketEntry
+                        title="Bitcoin reaches $100K by 2025?"
+                        outcome="YES"
+                        tickets={25}
+                        timeLeft="3mo left"
+                        potential="$312"
+                        onClick={() => navigate('/market/1')}
+                      />
+                      <TicketEntry
+                        title="Lakers make NBA playoffs?"
+                        outcome="NO"
+                        tickets={10}
+                        timeLeft="2w left"
+                        potential="$185"
+                        onClick={() => navigate('/market/2')}
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <TicketEntry
+                        title="Will AI replace 50% of jobs by 2030?"
+                        outcome="YES"
+                        tickets={40}
+                        timeLeft="5y left"
+                        potential="$520"
+                        onClick={() => navigate('/market/3')}
+                      />
+                      <TicketEntry
+                        title="Tesla stock above $300 by Q2 2025?"
+                        outcome="NO"
+                        tickets={15}
+                        timeLeft="6mo left"
+                        potential="$245"
+                        onClick={() => navigate('/market/4')}
+                      />
+                      <TicketEntry
+                        title="Fed cuts rates before March 2025?"
+                        outcome="YES"
+                        tickets={30}
+                        timeLeft="3mo left"
+                        potential="$410"
+                        onClick={() => navigate('/market/5')}
+                      />
+                    </>
+                  )}
+                </div>
+              </TabsContent>
+            )}
+            
             {/* About Tab - Creators */}
             {isCreator && creatorStats && (
               <TabsContent value="about" className="p-4 space-y-6">
@@ -529,7 +494,7 @@ export default function Profile() {
                   <h4 className="font-semibold mb-2">About</h4>
                   <p className="text-muted-foreground leading-relaxed">{creatorStats.description}</p>
                 </div>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t">
                   <div className="text-center">
                     <p className="text-2xl font-bold">{creatorStats.markets}</p>
                     <p className="text-sm text-muted-foreground">Markets</p>
@@ -549,37 +514,35 @@ export default function Profile() {
                 </div>
               </TabsContent>
             )}
-            
-            {/* Achievements Tab - Traders */}
-            {!isCreator && (
-              <TabsContent value="achievements" className="p-4">
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  <Card className="border-border/40 bg-gradient-to-br from-yellow-500/10 to-yellow-500/5">
-                    <CardContent className="p-4 text-center">
-                      <div className="text-3xl mb-2">🎟️</div>
-                      <p className="font-semibold text-sm">First Entry</p>
-                      <p className="text-xs text-muted-foreground">Placed your first ticket</p>
-                    </CardContent>
-                  </Card>
-                  <Card className="border-border/40 bg-gradient-to-br from-blue-500/10 to-blue-500/5">
-                    <CardContent className="p-4 text-center">
-                      <div className="text-3xl mb-2">🔥</div>
-                      <p className="font-semibold text-sm">Hot Streak</p>
-                      <p className="text-xs text-muted-foreground">5+ wins in a row</p>
-                    </CardContent>
-                  </Card>
-                  <Card className="border-border/40 bg-gradient-to-br from-green-500/10 to-green-500/5">
-                    <CardContent className="p-4 text-center">
-                      <div className="text-3xl mb-2">💰</div>
-                      <p className="font-semibold text-sm">Big Winner</p>
-                      <p className="text-xs text-muted-foreground">$1,000+ in winnings</p>
-                    </CardContent>
-                  </Card>
-                </div>
-              </TabsContent>
-            )}
           </Tabs>
         </Card>
+      </div>
+    </div>
+  );
+}
+
+function TicketEntry({ title, outcome, tickets, timeLeft, potential, onClick }: {
+  title: string;
+  outcome: "YES" | "NO";
+  tickets: number;
+  timeLeft: string;
+  potential: string;
+  onClick: () => void;
+}) {
+  return (
+    <div
+      className="px-4 py-3 flex items-center justify-between cursor-pointer hover:bg-muted/30 active:bg-muted/50 transition-colors"
+      onClick={onClick}
+    >
+      <div className="flex-1 min-w-0 pr-4">
+        <h3 className="font-medium text-sm leading-snug">{title}</h3>
+        <p className="text-xs text-muted-foreground mt-0.5">
+          <Badge variant={outcome === "YES" ? "success" : "destructive"} className="text-[10px] px-1.5 py-0 mr-1.5">{outcome}</Badge>
+          {tickets} tickets · {timeLeft}
+        </p>
+      </div>
+      <div className="text-right shrink-0">
+        <div className="text-sm font-semibold text-success">Potential winning: {potential}</div>
       </div>
     </div>
   );
