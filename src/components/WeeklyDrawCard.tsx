@@ -1,4 +1,10 @@
-import { Trophy, Timer, Users, Ticket, Info, History, Gift, Calendar, Zap, Sparkles } from "lucide-react";
+import { Trophy, Timer, Users, Ticket, Info, History, Gift, Calendar, Zap } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import {
   Dialog,
   DialogContent,
@@ -28,77 +34,66 @@ const COUNTDOWN = "3d 14h";
 
 export function WeeklyDrawCard() {
   return (
-    <div className="flex flex-col p-5 rounded-2xl border border-primary/25 bg-gradient-to-br from-primary/[0.08] via-primary/[0.02] to-card h-full relative overflow-hidden">
-      {/* Decorative glows */}
-      <div className="absolute -top-12 -right-12 w-32 h-32 rounded-full bg-primary/[0.08] blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-8 -left-8 w-24 h-24 rounded-full bg-primary/[0.05] blur-2xl pointer-events-none" />
+    <div className="flex flex-col p-4 rounded-xl border border-primary/20 bg-gradient-to-br from-primary/[0.06] via-card to-card h-full relative overflow-hidden">
+      {/* Subtle decorative glow */}
+      <div className="absolute -top-8 -right-8 w-24 h-24 rounded-full bg-primary/[0.07] blur-2xl pointer-events-none" />
       
-      {/* Header */}
-      <div className="flex items-center justify-between mb-3 relative">
-        <div className="flex items-center gap-2.5">
-          <div className="flex items-center justify-center w-8 h-8 rounded-xl bg-primary/15 shadow-sm">
-            <Trophy className="h-4 w-4 text-primary" />
+      {/* Header: Title + Timer */}
+      <div className="flex items-center justify-between mb-2 relative">
+        <div className="flex items-center gap-2">
+          <div className="flex items-center justify-center w-6 h-6 rounded-lg bg-primary/15">
+            <Trophy className="h-3.5 w-3.5 text-primary" />
           </div>
-          <div className="flex flex-col">
-            <span className="text-[10px] uppercase tracking-[0.15em] font-bold text-primary leading-none">Weekly Draw</span>
-            <span className="text-[9px] text-muted-foreground mt-0.5">Every Sunday</span>
-          </div>
+          <span className="text-[10px] uppercase tracking-widest font-bold text-primary">Weekly Draw</span>
         </div>
-        <div className="flex items-center gap-1.5 text-[10px] bg-primary/10 text-primary px-2.5 py-1 rounded-full font-semibold">
-          <Timer className="h-3 w-3" />
-          {COUNTDOWN}
+        <div className="flex items-center gap-1 text-[10px] bg-muted/60 px-2 py-0.5 rounded-full">
+          <Timer className="h-3 w-3 text-primary" />
+          <span className="font-semibold text-foreground">{COUNTDOWN}</span>
         </div>
       </div>
 
-      {/* Pot amount + entries */}
-      <div className="flex items-end gap-3 mb-1 relative">
-        <div className="text-3xl font-extrabold text-foreground leading-none tracking-tight">
+      {/* Pot + entries */}
+      <div className="flex items-center gap-2 relative">
+        <div className="text-2xl font-extrabold text-foreground leading-none tracking-tight">
           ${WEEKLY_POT.toLocaleString()}
         </div>
-        <div className="flex items-center gap-1 text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-semibold mb-0.5">
-          <Ticket className="h-3 w-3" />
-          {MY_ENTRIES} entries
+        <div className="flex items-center gap-1 text-[10px] bg-muted/60 px-2 py-0.5 rounded-full">
+          <Ticket className="h-3 w-3 text-primary" />
+          <span className="font-semibold text-foreground">{MY_ENTRIES} entries</span>
         </div>
       </div>
-      <p className="text-[10px] text-muted-foreground mb-4 leading-relaxed">
-        Prize pool redistributed to <span className="font-medium text-foreground">10 random winners</span>
+      <p className="text-[10px] text-muted-foreground mt-1 mb-3 leading-relaxed">
+        Prize pool redistributed weekly to random participants
       </p>
 
-      {/* Distribution — visual upgrade */}
-      <div className="mb-4 p-3 rounded-xl bg-muted/40 border border-border/30">
-        <div className="flex items-center gap-1.5 mb-2">
-          <Sparkles className="h-3 w-3 text-primary" />
-          <span className="text-[10px] font-semibold text-foreground">Prize Split</span>
-        </div>
-        <div className="flex rounded-full overflow-hidden h-2 mb-2 bg-muted/60">
+      {/* Distribution bar */}
+      <div className="mb-2.5">
+        <div className="flex rounded-full overflow-hidden h-1.5">
           {distribution.map((d, i) => (
             <div
               key={d.place}
-              className="h-full transition-all"
-              style={{
-                width: `${d.pct}%`,
-                background: `hsl(152 ${68 - i * 12}% ${42 + i * 8}%)`,
-              }}
+              className="h-full bg-primary"
+              style={{ width: `${d.pct}%`, opacity: 1 - i * 0.2 }}
             />
           ))}
         </div>
-        <div className="flex items-center justify-between text-[9px] text-muted-foreground">
+        <div className="flex items-center justify-between mt-1.5 text-[9px] text-muted-foreground">
           {distribution.map((d) => (
-            <span key={d.place} className="flex flex-col items-center gap-0.5">
-              <span className="font-bold text-foreground text-[10px]">{d.pct}%</span>
-              <span>{d.place}</span>
+            <span key={d.place}>
+              <span className="font-semibold text-foreground">{d.place}</span> {d.pct}%
             </span>
           ))}
         </div>
       </div>
 
-      {/* Footer actions */}
-      <div className="flex items-center gap-2 mt-auto">
+
+      {/* Footer links */}
+      <div className="flex items-center gap-3 pt-2 border-t border-border/30 mt-auto">
         <Dialog>
           <DialogTrigger asChild>
-            <button className="flex-1 flex items-center justify-center gap-1.5 text-[10px] font-medium text-muted-foreground hover:text-foreground hover:bg-muted/60 py-1.5 rounded-lg transition-colors border border-border/40">
+            <button className="flex items-center gap-1 text-[9px] text-muted-foreground hover:text-foreground transition-colors">
               <History className="h-3 w-3" />
-              Winners
+              Previous winners
             </button>
           </DialogTrigger>
           <DialogContent className="max-w-sm">
@@ -140,7 +135,7 @@ export function WeeklyDrawCard() {
 
         <Dialog>
           <DialogTrigger asChild>
-            <button className="flex-1 flex items-center justify-center gap-1.5 text-[10px] font-medium text-muted-foreground hover:text-foreground hover:bg-muted/60 py-1.5 rounded-lg transition-colors border border-border/40">
+            <button className="flex items-center gap-1 text-[9px] text-muted-foreground hover:text-foreground transition-colors">
               <Info className="h-3 w-3" />
               How it works
             </button>
