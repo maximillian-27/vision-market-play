@@ -83,27 +83,27 @@ const Portfolio = () => {
 
   return (
     <div className="min-h-screen bg-background pb-20 sm:pb-6">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
+      <div className="max-w-3xl mx-auto px-3 sm:px-6 py-3 sm:py-6">
         <div className="hidden sm:block">
           <PageHeader title="Portfolio" subtitle="Your balance, entries & winnings" />
         </div>
 
-        {/* Balance + Winnings + Net Profit */}
-        <div className="grid grid-cols-2 gap-2 sm:gap-3 mb-2 sm:mb-3">
+        {/* Balance + Winnings */}
+        <div className="grid grid-cols-2 gap-1.5 sm:gap-3 mb-1.5 sm:mb-3">
           <Card className="border-border/40">
-            <CardContent className="p-3 sm:p-4">
-              <div className="flex items-center gap-1.5 text-muted-foreground text-[11px] sm:text-xs mb-1">
-                <Wallet className="h-3.5 w-3.5" />
+            <CardContent className="p-2.5 sm:p-4">
+              <div className="flex items-center gap-1 text-muted-foreground text-[10px] sm:text-xs mb-0.5">
+                <Wallet className="h-3 w-3" />
                 Balance
               </div>
-              <p className="text-xl sm:text-2xl font-bold tracking-tight">${balance.toLocaleString()}</p>
-              <div className="flex gap-1.5 mt-2.5">
-                <Button size="sm" className="h-7 text-[10px] sm:text-xs px-2.5 gap-1">
-                  <Upload className="h-3 w-3" />
+              <p className="text-lg sm:text-2xl font-bold tracking-tight">${balance.toLocaleString()}</p>
+              <div className="flex gap-1 mt-2">
+                <Button size="sm" className="h-6 sm:h-7 text-[9px] sm:text-xs px-2 gap-0.5">
+                  <Upload className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
                   Deposit
                 </Button>
-                <Button variant="outline" size="sm" className="h-7 text-[10px] sm:text-xs px-2.5 gap-1">
-                  <Download className="h-3 w-3" />
+                <Button variant="outline" size="sm" className="h-6 sm:h-7 text-[9px] sm:text-xs px-2 gap-0.5">
+                  <Download className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
                   Withdraw
                 </Button>
               </div>
@@ -111,21 +111,28 @@ const Portfolio = () => {
           </Card>
 
           <Card className="border-border/40">
-            <CardContent className="p-3 sm:p-4">
-              <div className="flex items-center justify-between mb-1">
-                <div className="flex items-center gap-1.5 text-muted-foreground text-[11px] sm:text-xs">
-                  <Trophy className="h-3.5 w-3.5" />
+            <CardContent className="p-2.5 sm:p-4">
+              <div className="flex items-center justify-between mb-0.5">
+                <div className="flex items-center gap-1 text-muted-foreground text-[10px] sm:text-xs">
+                  <Trophy className="h-3 w-3" />
                   Winnings
                 </div>
-                <div className="flex gap-0.5">
-                  {(["1d", "7d", "30d", "90d", "all"] as WinningsPeriod[]).map((p) => (
+              </div>
+              <p className="text-lg sm:text-2xl font-bold text-success tracking-tight">${currentWin.winnings.toLocaleString()}</p>
+              <div className="flex items-center justify-between mt-1">
+                <span className={`text-[9px] sm:text-xs font-medium flex items-center gap-0.5 ${netProfit >= 0 ? 'text-success/70' : 'text-destructive'}`}>
+                  <TrendingUp className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
+                  {netProfit >= 0 ? '+' : ''}${netProfit.toLocaleString()}
+                </span>
+                <div className="flex gap-px">
+                  {(["7d", "30d", "all"] as WinningsPeriod[]).map((p) => (
                     <button
                       key={p}
                       onClick={() => setWinPeriod(p)}
-                      className={`px-1.5 py-0.5 text-[8px] sm:text-[9px] font-medium rounded transition-colors ${
+                      className={`px-1 py-0.5 text-[8px] sm:text-[9px] font-medium rounded transition-colors ${
                         winPeriod === p
                           ? "bg-primary/10 text-primary"
-                          : "text-muted-foreground/50 hover:text-muted-foreground"
+                          : "text-muted-foreground/40 hover:text-muted-foreground"
                       }`}
                     >
                       {p === "all" ? "All" : p.toUpperCase()}
@@ -133,58 +140,53 @@ const Portfolio = () => {
                   ))}
                 </div>
               </div>
-              <p className="text-xl sm:text-2xl font-bold text-success tracking-tight">${currentWin.winnings.toLocaleString()}</p>
-              <span className={`text-[10px] sm:text-xs font-medium flex items-center gap-0.5 mt-1 ${netProfit >= 0 ? 'text-success/70' : 'text-destructive'}`}>
-                <TrendingUp className="h-3 w-3" />
-                {netProfit >= 0 ? '+' : ''}${netProfit.toLocaleString()} net
-              </span>
             </CardContent>
           </Card>
         </div>
 
         {/* Quick Stats Strip */}
-        <div className="grid grid-cols-4 gap-1.5 sm:gap-2 mb-4 sm:mb-5">
+        <div className="grid grid-cols-4 gap-1 sm:gap-2 mb-3 sm:mb-5">
           {[
-            { label: "Active", value: quickStats.activeEntries, icon: <Ticket className="h-3 w-3" />, rank: null },
-            { label: "Won", value: quickStats.marketsWon, icon: <Trophy className="h-3 w-3" />, rank: 24 },
-            { label: "Win Rate", value: `${quickStats.winRate}%`, icon: <Target className="h-3 w-3" />, rank: 18 },
+            { label: "Active", value: quickStats.activeEntries, icon: <Ticket className="h-2.5 w-2.5 sm:h-3 sm:w-3" />, rank: null },
+            { label: "Won", value: quickStats.marketsWon, icon: <Trophy className="h-2.5 w-2.5 sm:h-3 sm:w-3" />, rank: 24 },
+            { label: "Win Rate", value: `${quickStats.winRate}%`, icon: <Target className="h-2.5 w-2.5 sm:h-3 sm:w-3" />, rank: 18 },
             { label: "Streak", value: `🔥 ${quickStats.streak}`, icon: null, rank: null },
           ].map((stat) => (
-            <div key={stat.label} className="relative rounded-lg border border-border/30 bg-muted/30 py-2 px-1.5 sm:px-2 text-center">
+            <div key={stat.label} className="relative rounded-lg border border-border/30 bg-muted/30 py-1.5 px-1 sm:px-2 text-center">
               {stat.rank && (
-                <span className="absolute top-1 right-1.5 text-[8px] text-muted-foreground/60 font-medium">#{stat.rank}</span>
+                <span className="absolute top-0.5 right-1 text-[7px] sm:text-[8px] text-muted-foreground/60 font-medium">#{stat.rank}</span>
               )}
-              <p className="text-xs sm:text-base font-bold leading-tight">{stat.value}</p>
+              <p className="text-[11px] sm:text-base font-bold leading-tight">{stat.value}</p>
               <div className="flex items-center justify-center gap-0.5 text-muted-foreground mt-0.5">
                 {stat.icon}
-                <span className="text-[9px] sm:text-[10px]">{stat.label}</span>
+                <span className="text-[8px] sm:text-[10px]">{stat.label}</span>
               </div>
             </div>
           ))}
         </div>
 
         {/* Tabs */}
-        <Tabs defaultValue="entries" className="space-y-3 sm:space-y-4">
-          <TabsList className="bg-muted/50 p-1 w-full grid grid-cols-3">
-            <TabsTrigger value="entries" className="data-[state=active]:bg-background text-xs sm:text-sm gap-1.5">
-              My Entries
-              <span className="bg-primary/10 text-primary text-[9px] font-semibold px-1.5 py-0.5 rounded-full">{entries.length}</span>
+        <Tabs defaultValue="entries" className="space-y-2 sm:space-y-4">
+          <TabsList className="bg-muted/50 p-0.5 sm:p-1 w-full grid grid-cols-3 h-8 sm:h-9">
+            <TabsTrigger value="entries" className="data-[state=active]:bg-background text-[11px] sm:text-sm gap-1 h-7 sm:h-auto">
+              Entries
+              <span className="bg-primary/10 text-primary text-[8px] sm:text-[9px] font-semibold px-1 sm:px-1.5 py-0.5 rounded-full">{entries.length}</span>
             </TabsTrigger>
-            <TabsTrigger value="past" className="data-[state=active]:bg-background text-xs sm:text-sm gap-1.5">
+            <TabsTrigger value="past" className="data-[state=active]:bg-background text-[11px] sm:text-sm gap-1 h-7 sm:h-auto">
               Past
-              <span className="bg-muted-foreground/10 text-muted-foreground text-[9px] font-semibold px-1.5 py-0.5 rounded-full">{pastEntries.length}</span>
+              <span className="bg-muted-foreground/10 text-muted-foreground text-[8px] sm:text-[9px] font-semibold px-1 sm:px-1.5 py-0.5 rounded-full">{pastEntries.length}</span>
             </TabsTrigger>
-            <TabsTrigger value="wallet" className="data-[state=active]:bg-background text-xs sm:text-sm">
+            <TabsTrigger value="wallet" className="data-[state=active]:bg-background text-[11px] sm:text-sm h-7 sm:h-auto">
               Wallet
             </TabsTrigger>
           </TabsList>
 
           {/* My Entries */}
-          <TabsContent value="entries" className="space-y-2 sm:space-y-2.5">
+          <TabsContent value="entries" className="space-y-1.5 sm:space-y-2.5">
             {/* Summary bar */}
-            <div className="flex items-center justify-between px-1 text-[11px] text-muted-foreground mb-1">
-              <span>${totalAtStake} at stake across {entries.length} markets</span>
-              <span className="text-success font-medium">Potential: ${totalPotentialPayout}</span>
+            <div className="flex items-center justify-between px-0.5 text-[10px] sm:text-[11px] text-muted-foreground">
+              <span>${totalAtStake} at stake · {entries.length} markets</span>
+              <span className="text-success font-medium">${totalPotentialPayout} potential</span>
             </div>
 
             {entries.map((entry) => (
@@ -193,38 +195,35 @@ const Portfolio = () => {
                 className="border-border/40 hover:border-border/60 transition-colors cursor-pointer active:scale-[0.995]"
                 onClick={() => navigate(`/market/${entry.id}`)}
               >
-                <CardContent className="p-3 sm:p-4">
-                  <div className="flex items-start gap-3">
-                    <span className="text-xl sm:text-2xl flex-shrink-0 mt-0.5">{entry.image}</span>
+                <CardContent className="p-2.5 sm:p-4">
+                  <div className="flex items-start gap-2 sm:gap-3">
+                    <span className="text-lg sm:text-2xl flex-shrink-0">{entry.image}</span>
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between gap-2">
-                        <p className="font-medium text-[13px] sm:text-sm leading-tight line-clamp-2">{entry.market}</p>
-                        <ChevronRight className="h-4 w-4 text-muted-foreground/50 flex-shrink-0 mt-0.5" />
+                      <div className="flex items-start justify-between gap-1.5">
+                        <p className="font-medium text-[12px] sm:text-sm leading-tight line-clamp-2">{entry.market}</p>
+                        <ChevronRight className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground/40 flex-shrink-0 mt-0.5" />
                       </div>
-                      <div className="flex flex-wrap items-center gap-2 mt-1.5">
+                      <div className="flex items-center gap-1.5 mt-1">
                         <Badge
                           variant={entry.outcome === "Yes" ? "default" : "destructive"}
-                          className={`text-[10px] px-1.5 ${entry.outcome === "Yes" ? "bg-success/15 text-success border-success/30" : ""}`}
+                          className={`text-[9px] sm:text-[10px] px-1 sm:px-1.5 h-4 ${entry.outcome === "Yes" ? "bg-success/15 text-success border-success/30" : ""}`}
                         >
                           {entry.outcome}
                         </Badge>
-                        <span className="text-[10px] sm:text-[11px] text-muted-foreground">
-                          {entry.tickets} tickets · ${(entry.tickets * entry.ticketPrice).toFixed(0)}
+                        <span className="text-[9px] sm:text-[11px] text-muted-foreground">
+                          {entry.tickets}× · ${(entry.tickets * entry.ticketPrice).toFixed(0)}
                         </span>
                       </div>
-                      <div className="flex items-center justify-between mt-2">
-                        <span className="text-[11px] sm:text-xs font-semibold text-success">
+                      <div className="flex items-center justify-between mt-1.5">
+                        <span className="text-[10px] sm:text-xs font-semibold text-success">
                           Win: ${entry.potentialPayout}
                         </span>
-                        <span className="text-[10px] text-muted-foreground flex items-center gap-1">
+                        <span className="text-[9px] sm:text-[10px] text-muted-foreground flex items-center gap-0.5">
                           <Timer className="h-2.5 w-2.5" />
                           {entry.endsIn}
                         </span>
                       </div>
-                      {/* Time remaining bar */}
-                      <div className="mt-1.5">
-                        <Progress value={entry.timePercent} className="h-[3px] bg-muted/60" />
-                      </div>
+                      <Progress value={entry.timePercent} className="h-[2px] sm:h-[3px] bg-muted/60 mt-1" />
                     </div>
                   </div>
                 </CardContent>
