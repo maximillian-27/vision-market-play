@@ -711,10 +711,27 @@ function MobileTopSection({
       {/* Gradient Banner */}
       <GradientDivider />
 
-      {/* Highlighted Markets */}
-      <div className="grid grid-cols-2 gap-1.5">
+      {/* Highlighted Markets — stacked as regular cards */}
+      <div className="space-y-1.5">
         {highlightedMarkets.map((market) => (
-          <CompactFeaturedCard key={market.id} market={market} />
+          <MarketGridCard
+            key={market.id}
+            id={market.id}
+            creator={market.creator}
+            title={market.title}
+            image={market.image}
+            outcomes={market.outcomes}
+            yesPrice={market.yesPrice}
+            noPrice={market.noPrice}
+            volume={market.volume}
+            pot={market.pot}
+            players={market.players}
+            endsIn={market.endsIn}
+            status={market.status}
+            resolution={market.resolution}
+            disputeEndsIn={market.disputeEndsIn}
+            resolvedAt={market.resolvedAt}
+          />
         ))}
       </div>
     </div>
