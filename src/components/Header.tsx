@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Globe, LogOut, Settings, Home, Newspaper, Users, MessageSquare, Briefcase, Sparkles, Shield, Plus, Moon, Sun, HelpCircle, FileText, Twitter, Instagram, Linkedin, Gift } from "lucide-react";
+import { Globe, LogOut, Settings, Home, Newspaper, Users, MessageSquare, Briefcase, Sparkles, Shield, Plus, Moon, Sun, HelpCircle, FileText, Twitter, Instagram, Linkedin, Gift, Ticket } from "lucide-react";
 import { SearchDropdown } from "@/components/SearchDropdown";
 import pollgyLogo from "@/assets/pollgy-logo-new.png";
 import { useNavigate } from "react-router-dom";
@@ -118,17 +118,18 @@ export function Header() {
           
             {isLoggedIn && (
               <>
+                {/* Notifications */}
+                <NotificationsDropdown />
+
                 {/* Entry Counter */}
                 <button 
                   onClick={() => navigate("/portfolio")}
-                  className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors tabular-nums"
+                  className="flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  <span className="text-[13px]">🎟️</span>
-                  <span className="font-medium">24</span>
+                  <Ticket className="h-4 w-4" />
+                  <span className="text-xs font-medium tabular-nums">24</span>
                 </button>
 
-                {/* Notifications */}
-                <NotificationsDropdown />
 
 
                 {/* Deposit Button */}
