@@ -1,4 +1,12 @@
-import { Users, Trophy, Timer, Ticket, ChevronRight } from "lucide-react";
+import { Users, Trophy, Timer, Ticket, ChevronRight, History } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { useNavigate } from "react-router-dom";
 import bitcoinImage from "@/assets/bitcoin-market.jpg";
 import nbaImage from "@/assets/nba-championship.jpg";
@@ -8,6 +16,12 @@ import aiImage from "@/assets/ai-customer-service.jpg";
 const WEEKLY_POT = 48600;
 const COUNTDOWN = "3d 14h";
 const MY_ENTRIES = 3;
+
+const previousWinners = [
+  { place: "1st", name: "Alex K.", amount: 24300 },
+  { place: "2nd", name: "Maria T.", amount: 12150 },
+  { place: "3rd", name: "Jake P.", amount: 7290 },
+];
 
 const biggestMarkets = [
   {
