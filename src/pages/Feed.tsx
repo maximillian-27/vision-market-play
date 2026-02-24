@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect, useCallback } from "react";
 import { FeedFilters, FilterState } from "@/components/FeedFilters";
 import { MarketGridCard } from "@/components/MarketGridCard";
 import { Button } from "@/components/ui/button";
-import { Timer, Users, ArrowRight, Trophy, Ticket, Zap, Gift, Calendar, History, Info } from "lucide-react";
+import { Timer, Users, ArrowRight, ChevronRight, Trophy, Ticket, Zap, Gift, Calendar, History, Info } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { WeeklyDrawCard } from "@/components/WeeklyDrawCard";
@@ -558,21 +558,31 @@ function MobileWeeklyDrawBanner() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <button className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg bg-gradient-to-r from-primary/[0.12] via-primary/[0.06] to-card border border-primary/20 relative overflow-hidden cursor-pointer active:scale-[0.99] transition-transform">
+        <button className="w-full flex flex-col gap-0.5 px-3 py-2 rounded-lg bg-gradient-to-r from-primary/[0.12] via-primary/[0.06] to-card border border-primary/20 relative overflow-hidden cursor-pointer active:scale-[0.99] transition-transform">
           <div className="absolute -top-8 -right-8 w-20 h-20 rounded-full bg-primary/[0.08] blur-2xl pointer-events-none" />
-          <div className="flex items-center justify-center w-6 h-6 rounded-md bg-primary/15 shrink-0">
-            <Trophy className="h-3.5 w-3.5 text-primary" />
+          {/* Row 1: Label + timer + entries */}
+          <div className="flex items-center gap-1.5 w-full relative">
+            <div className="flex items-center justify-center w-4.5 h-4.5 rounded bg-primary/15 shrink-0">
+              <Trophy className="h-3 w-3 text-primary" />
+            </div>
+            <span className="text-[9px] uppercase tracking-widest font-bold text-primary/90">Weekly Draw</span>
+            <span className="text-[8px] text-muted-foreground/50">·</span>
+            <div className="flex items-center gap-0.5 text-[9px]">
+              <Timer className="h-2.5 w-2.5 text-primary animate-pulse" />
+              <span className="font-semibold text-foreground">{COUNTDOWN}</span>
+            </div>
+            <div className="flex items-center gap-0.5 text-[9px] bg-primary/10 px-1.5 py-0.5 rounded-full border border-primary/10 ml-auto">
+              <Ticket className="h-2.5 w-2.5 text-primary" />
+              <span className="font-semibold text-foreground">{MY_ENTRIES} entries</span>
+            </div>
           </div>
-          <span className="text-sm font-extrabold text-foreground">${WEEKLY_POT.toLocaleString()}</span>
-          <div className="flex items-center gap-1 text-[9px] bg-primary/10 px-1.5 py-0.5 rounded-full border border-primary/10">
-            <Timer className="h-2.5 w-2.5 text-primary animate-pulse" />
-            <span className="font-semibold text-foreground">{COUNTDOWN}</span>
+          {/* Row 2: Pot + hint + chevron */}
+          <div className="flex items-center gap-1.5 w-full relative">
+            <span className="text-sm font-extrabold text-foreground">${WEEKLY_POT.toLocaleString()}</span>
+            <span className="text-[9px] text-muted-foreground">prize pool</span>
+            <span className="text-[8px] text-muted-foreground/50 hidden min-[360px]:inline">— tap to learn more</span>
+            <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/60 ml-auto shrink-0" />
           </div>
-          <div className="flex items-center gap-1 text-[9px] bg-muted/50 px-1.5 py-0.5 rounded-full border border-border/40 ml-auto">
-            <Ticket className="h-2.5 w-2.5 text-primary" />
-            <span className="font-semibold text-foreground">{MY_ENTRIES}</span>
-          </div>
-          <ArrowRight className="h-3 w-3 text-muted-foreground shrink-0" />
         </button>
       </DialogTrigger>
       <DialogContent className="max-w-sm">
