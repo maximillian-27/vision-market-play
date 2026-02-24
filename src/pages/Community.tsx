@@ -212,63 +212,61 @@ export default function Community() {
                 </div>
               </div>
 
-              {/* Card — hide header on mobile */}
-              <Card className="border-border/50 sm:border-border/50">
+              <Card className="border-border/40 shadow-sm rounded-xl overflow-hidden">
                 <CardHeader className="pb-2 hidden sm:block">
                   <CardTitle className="text-base flex items-center gap-2">
                     <Trophy className="h-4 w-4 text-primary" />
                     Top Players
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="pt-2 sm:pt-2 px-2 sm:px-6">
-                  <div className="divide-y divide-border/50">
+                <CardContent className="pt-1 sm:pt-2 px-1.5 sm:px-4">
+                  <div className="divide-y divide-border/30">
                     {sortedPlayers.map((player, i) => (
                       <Link
                         key={player.name}
                         to={`/profile/${player.name.toLowerCase().replace(' ', '-')}`}
-                        className="flex items-center gap-2 sm:gap-3 py-2 sm:py-3 hover:bg-muted/30 -mx-1 sm:-mx-2 px-1 sm:px-2 rounded-lg transition-colors group"
+                        className="flex items-center gap-2.5 sm:gap-3 py-3 sm:py-3.5 hover:bg-muted/30 px-2 sm:px-3 rounded-xl transition-colors group"
                       >
-                        <div className="flex items-center gap-1 sm:gap-1.5 w-9 sm:w-10 shrink-0">
-                          <div className={`w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center text-[10px] sm:text-xs font-bold border ${getRankBadge(i + 1)}`}>
+                        <div className="flex items-center gap-1.5 w-12 sm:w-14 shrink-0">
+                          <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-[11px] sm:text-xs font-bold border ${getRankBadge(i + 1)}`}>
                             {i + 1}
                           </div>
                           <RankChange change={player.rankChange} />
                         </div>
-                        <Avatar className="h-7 w-7 sm:h-9 sm:w-9">
+                        <Avatar className="h-9 w-9 sm:h-10 sm:w-10">
                           <AvatarImage src={player.avatar} alt={player.name} />
                           <AvatarFallback>{player.name.slice(0, 2)}</AvatarFallback>
                         </Avatar>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-1.5">
-                            <p className="font-medium text-sm truncate">{player.name}</p>
+                            <p className="font-semibold text-[13px] sm:text-sm truncate">{player.name}</p>
                             <StreakBadge streak={player.streak} />
                           </div>
-                          <p className="text-xs text-muted-foreground truncate">{getPlayerSecondary(player)}</p>
+                          <p className="text-[11px] sm:text-xs text-muted-foreground truncate mt-0.5">{getPlayerSecondary(player)}</p>
                         </div>
-                        <div className="text-right text-sm shrink-0">
+                        <div className="text-right text-sm sm:text-base shrink-0 font-semibold">
                           {getPlayerPrimary(player)}
                         </div>
                         <ChevronRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity shrink-0 hidden sm:block" />
                       </Link>
                     ))}
-                    {/* Your Rank */}
-                    <div className="border-t-2 border-dashed border-primary/20 mt-1 pt-1">
-                      <div className="flex items-center gap-2 sm:gap-3 py-2 sm:py-3 -mx-1 sm:-mx-2 px-1 sm:px-2 rounded-lg bg-primary/[0.04]">
-                        <div className="flex items-center gap-1 sm:gap-1.5 w-9 sm:w-10 shrink-0">
-                          <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center text-[10px] sm:text-xs font-bold border border-primary/30 bg-primary/10 text-primary">
+                    <div className="border-t-2 border-dashed border-primary/20 !border-b-0">
+                      <div className="flex items-center gap-2.5 sm:gap-3 py-3 sm:py-3.5 px-2 sm:px-3 rounded-xl bg-primary/[0.05] my-1">
+                        <div className="flex items-center gap-1.5 w-12 sm:w-14 shrink-0">
+                          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-[11px] sm:text-xs font-bold border border-primary/30 bg-primary/10 text-primary">
                             {playerSort === "winnings" ? 24 : playerSort === "winRate" ? 31 : 58}
                           </div>
                           <span className="flex items-center text-[11px] font-semibold text-success"><ArrowUp className="h-3 w-3" />3</span>
                         </div>
-                        <Avatar className="h-7 w-7 sm:h-9 sm:w-9 ring-2 ring-primary/20">
-                          <AvatarFallback className="bg-primary/10 text-primary font-bold text-[10px] sm:text-sm">YOU</AvatarFallback>
+                        <Avatar className="h-9 w-9 sm:h-10 sm:w-10 ring-2 ring-primary/20">
+                          <AvatarFallback className="bg-primary/10 text-primary font-bold text-xs sm:text-sm">YOU</AvatarFallback>
                         </Avatar>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-1.5">
-                            <p className="font-medium text-sm text-primary">You</p>
+                            <p className="font-semibold text-[13px] sm:text-sm text-primary">You</p>
                             <StreakBadge streak={2} />
                           </div>
-                          <p className="text-xs text-muted-foreground truncate">
+                          <p className="text-[11px] sm:text-xs text-muted-foreground truncate mt-0.5">
                             {playerSort === "winnings"
                               ? (isMobile ? "72% · 38 mkts" : "72% win rate · 38 entered")
                               : playerSort === "winRate"
@@ -276,8 +274,8 @@ export default function Community() {
                               : (isMobile ? "$4.2K · 72%" : "$4.2K · 72% win rate")}
                           </p>
                         </div>
-                        <div className="text-right text-sm shrink-0">
-                          {playerSort === "winnings" ? <span className="text-success font-semibold">$4.2K</span> : playerSort === "winRate" ? <span className="font-semibold">72%</span> : <span className="font-semibold">2W streak</span>}
+                        <div className="text-right text-sm sm:text-base shrink-0 font-semibold">
+                          {playerSort === "winnings" ? <span className="text-success">$4.2K</span> : playerSort === "winRate" ? <span>72%</span> : <span>2W streak</span>}
                         </div>
                       </div>
                     </div>
@@ -330,55 +328,54 @@ export default function Community() {
                 </div>
               </div>
 
-              <Card className="border-border/50">
+              <Card className="border-border/40 shadow-sm rounded-xl overflow-hidden">
                 <CardHeader className="pb-2 hidden sm:block">
                   <CardTitle className="text-base flex items-center gap-2">
                     <Award className="h-4 w-4 text-primary" />
                     Top Creators
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="pt-2 sm:pt-2 px-2 sm:px-6">
-                  <div className="divide-y divide-border/50">
+                <CardContent className="pt-1 sm:pt-2 px-1.5 sm:px-4">
+                  <div className="divide-y divide-border/30">
                     {sortedCreators.map((creator, i) => (
                       <Link
                         key={creator.name}
                         to={`/creator/${creator.name.toLowerCase().replace(' ', '-')}`}
-                        className="flex items-center gap-2 sm:gap-3 py-2 sm:py-3 hover:bg-muted/30 -mx-1 sm:-mx-2 px-1 sm:px-2 rounded-lg transition-colors group"
+                        className="flex items-center gap-2.5 sm:gap-3 py-3 sm:py-3.5 hover:bg-muted/30 px-2 sm:px-3 rounded-xl transition-colors group"
                       >
-                        <div className="flex items-center gap-1 sm:gap-1.5 w-9 sm:w-10 shrink-0">
-                          <div className={`w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center text-[10px] sm:text-xs font-bold border ${getRankBadge(i + 1)}`}>
+                        <div className="flex items-center gap-1.5 w-12 sm:w-14 shrink-0">
+                          <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-[11px] sm:text-xs font-bold border ${getRankBadge(i + 1)}`}>
                             {i + 1}
                           </div>
                           <RankChange change={creator.rankChange} />
                         </div>
-                        <Avatar className="h-7 w-7 sm:h-9 sm:w-9">
+                        <Avatar className="h-9 w-9 sm:h-10 sm:w-10">
                           <AvatarImage src={creator.avatar} alt={creator.name} />
                           <AvatarFallback>{creator.name.slice(0, 2)}</AvatarFallback>
                         </Avatar>
                         <div className="flex-1 min-w-0">
-                          <p className="font-medium text-sm truncate">{creator.name}</p>
-                          <p className="text-xs text-muted-foreground truncate">{getCreatorSecondary(creator)}</p>
+                          <p className="font-semibold text-[13px] sm:text-sm truncate">{creator.name}</p>
+                          <p className="text-[11px] sm:text-xs text-muted-foreground truncate mt-0.5">{getCreatorSecondary(creator)}</p>
                         </div>
-                        <div className="text-right text-sm shrink-0">
+                        <div className="text-right text-sm sm:text-base shrink-0 font-semibold">
                           {getCreatorPrimary(creator)}
                         </div>
                         <ChevronRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity shrink-0 hidden sm:block" />
                       </Link>
                     ))}
-                    {/* Your Rank */}
-                    <div className="border-t-2 border-dashed border-primary/20 mt-1 pt-1">
-                      <div className="flex items-center gap-2 sm:gap-3 py-2 sm:py-3 -mx-1 sm:-mx-2 px-1 sm:px-2 rounded-lg bg-primary/[0.04]">
-                        <div className="flex items-center gap-1 sm:gap-1.5 w-9 sm:w-10 shrink-0">
-                          <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center text-[10px] sm:text-xs font-bold border border-primary/30 bg-primary/10 text-primary">
+                    <div className="border-t-2 border-dashed border-primary/20 !border-b-0">
+                      <div className="flex items-center gap-2.5 sm:gap-3 py-3 sm:py-3.5 px-2 sm:px-3 rounded-xl bg-primary/[0.05] my-1">
+                        <div className="flex items-center gap-1.5 w-12 sm:w-14 shrink-0">
+                          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-[11px] sm:text-xs font-bold border border-primary/30 bg-primary/10 text-primary">
                             {creatorSort === "pot" ? 42 : creatorSort === "markets" ? 37 : 29}
                           </div>
                         </div>
-                        <Avatar className="h-7 w-7 sm:h-9 sm:w-9 ring-2 ring-primary/20">
-                          <AvatarFallback className="bg-primary/10 text-primary font-bold text-[10px] sm:text-sm">YOU</AvatarFallback>
+                        <Avatar className="h-9 w-9 sm:h-10 sm:w-10 ring-2 ring-primary/20">
+                          <AvatarFallback className="bg-primary/10 text-primary font-bold text-xs sm:text-sm">YOU</AvatarFallback>
                         </Avatar>
                         <div className="flex-1 min-w-0">
-                          <p className="font-medium text-sm text-primary">You</p>
-                          <p className="text-xs text-muted-foreground truncate">
+                          <p className="font-semibold text-[13px] sm:text-sm text-primary">You</p>
+                          <p className="text-[11px] sm:text-xs text-muted-foreground truncate mt-0.5">
                             {creatorSort === "pot"
                               ? (isMobile ? "3 mkts · 1.2K players" : "3 markets · 1.2K players")
                               : creatorSort === "markets"
@@ -386,8 +383,8 @@ export default function Community() {
                               : (isMobile ? "3 mkts · $12.4K" : "3 markets · $12.4K pot")}
                           </p>
                         </div>
-                        <div className="text-right text-sm shrink-0">
-                          {creatorSort === "pot" ? <span className="text-success font-semibold">$12.4K</span> : creatorSort === "markets" ? <span className="font-semibold">3 mkts</span> : <span className="font-semibold">$4.1K avg</span>}
+                        <div className="text-right text-sm sm:text-base shrink-0 font-semibold">
+                          {creatorSort === "pot" ? <span className="text-success">$12.4K</span> : creatorSort === "markets" ? <span>3 mkts</span> : <span>$4.1K avg</span>}
                         </div>
                       </div>
                     </div>
