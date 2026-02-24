@@ -94,7 +94,7 @@ export function Header() {
           )}
 
           {/* Search - Desktop */}
-          <div className="hidden md:flex flex-1 max-w-sm ml-auto">
+          <div className="hidden md:flex flex-1 mx-4">
             <SearchDropdown />
           </div>
 

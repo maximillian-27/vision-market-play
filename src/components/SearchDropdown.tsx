@@ -101,7 +101,7 @@ export function SearchDropdown({ embedded = false, onResultClick }: SearchDropdo
   };
 
   return (
-    <div ref={containerRef} className={cn("relative", !embedded && "flex-1 max-w-sm ml-auto")}>
+    <div ref={containerRef} className={cn("relative", !embedded && "flex-1")}>
       <div className="relative">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
