@@ -554,108 +554,112 @@ const previousWinners = [
 
 function MobileWeeklyDrawBanner() {
   const [tab, setTab] = useState<"info" | "winners">("info");
+  const [expanded, setExpanded] = useState(false);
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <button className="w-full flex flex-col gap-0.5 px-3 py-2 rounded-lg bg-gradient-to-r from-primary/[0.12] via-primary/[0.06] to-card border border-primary/20 relative overflow-hidden cursor-pointer active:scale-[0.99] transition-transform">
-          <div className="absolute -top-8 -right-8 w-20 h-20 rounded-full bg-primary/[0.08] blur-2xl pointer-events-none" />
-          {/* Row 1: Label + timer + entries */}
-          <div className="flex items-center gap-1.5 w-full relative">
-            <div className="flex items-center justify-center w-4.5 h-4.5 rounded bg-primary/15 shrink-0">
-              <Trophy className="h-3 w-3 text-primary" />
-            </div>
-            <span className="text-[9px] uppercase tracking-widest font-bold text-primary/90">Weekly Draw</span>
-            <span className="text-[8px] text-muted-foreground/50">·</span>
-            <div className="flex items-center gap-0.5 text-[9px]">
-              <Timer className="h-2.5 w-2.5 text-primary animate-pulse" />
-              <span className="font-semibold text-foreground">{COUNTDOWN}</span>
-            </div>
-            <div className="flex items-center gap-0.5 text-[9px] bg-primary/10 px-1.5 py-0.5 rounded-full border border-primary/10 ml-auto">
-              <Ticket className="h-2.5 w-2.5 text-primary" />
-              <span className="font-semibold text-foreground">{MY_ENTRIES} entries</span>
-            </div>
+    <div className="w-full rounded-lg bg-gradient-to-r from-primary/[0.12] via-primary/[0.06] to-card border border-primary/20 relative overflow-hidden">
+      <div className="absolute -top-8 -right-8 w-20 h-20 rounded-full bg-primary/[0.08] blur-2xl pointer-events-none" />
+      {/* Tap target: compact banner */}
+      <button
+        onClick={() => setExpanded((v) => !v)}
+        className="w-full flex flex-col gap-0.5 px-3 py-2 cursor-pointer active:scale-[0.99] transition-transform"
+      >
+        {/* Row 1: Label + timer + entries */}
+        <div className="flex items-center gap-1.5 w-full relative">
+          <div className="flex items-center justify-center w-4.5 h-4.5 rounded bg-primary/15 shrink-0">
+            <Trophy className="h-3 w-3 text-primary" />
           </div>
-          {/* Row 2: Pot + hint + chevron */}
-          <div className="flex items-center gap-1.5 w-full relative">
-            <span className="text-sm font-extrabold text-foreground">${WEEKLY_POT.toLocaleString()}</span>
-            <span className="text-[9px] text-muted-foreground">prize pool</span>
-            <span className="text-[8px] text-muted-foreground/50 hidden min-[360px]:inline">— tap to learn more</span>
-            <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/60 ml-auto shrink-0" />
+          <span className="text-[9px] uppercase tracking-widest font-bold text-primary/90">Weekly Draw</span>
+          <span className="text-[8px] text-muted-foreground/50">·</span>
+          <div className="flex items-center gap-0.5 text-[9px]">
+            <Timer className="h-2.5 w-2.5 text-primary animate-pulse" />
+            <span className="font-semibold text-foreground">{COUNTDOWN}</span>
           </div>
-        </button>
-      </DialogTrigger>
-      <DialogContent className="max-w-sm">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10">
-              <Trophy className="h-4 w-4 text-primary" />
-            </div>
-            Weekly Draw — ${WEEKLY_POT.toLocaleString()}
-          </DialogTitle>
-          <DialogDescription className="flex items-center gap-2 text-xs">
-            <span className="flex items-center gap-1"><Timer className="h-3 w-3 text-primary" />{COUNTDOWN} left</span>
-            <span className="flex items-center gap-1"><Ticket className="h-3 w-3 text-primary" />{MY_ENTRIES} entries</span>
-          </DialogDescription>
-        </DialogHeader>
-        <div>
-          <div className="flex rounded-full overflow-hidden h-2 shadow-inner shadow-black/10">
-            {drawDistribution.map((d, i) => (
-              <div key={d.place} className="h-full" style={{ width: `${d.pct}%`, background: `hsl(var(--primary) / ${1 - i * 0.2})`, borderRight: i < drawDistribution.length - 1 ? '1px solid hsl(var(--background) / 0.3)' : 'none' }} />
-            ))}
-          </div>
-          <div className="flex items-center justify-between mt-1.5 text-[10px] text-muted-foreground">
-            {drawDistribution.map((d) => (
-              <span key={d.place}><span className="font-semibold text-foreground">{d.place}</span> {d.pct}%</span>
-            ))}
+          <div className="flex items-center gap-0.5 text-[9px] bg-primary/10 px-1.5 py-0.5 rounded-full border border-primary/10 ml-auto">
+            <Ticket className="h-2.5 w-2.5 text-primary" />
+            <span className="font-semibold text-foreground">{MY_ENTRIES} entries</span>
           </div>
         </div>
-        <div className="flex gap-1">
-          <button onClick={() => setTab("info")} className={`flex-1 flex items-center justify-center gap-1 text-[11px] font-medium py-2 rounded-lg transition-colors ${tab === "info" ? "bg-primary/10 text-primary border border-primary/20" : "bg-muted/40 text-muted-foreground"}`}>
-            <Info className="h-3 w-3" /> How it works
-          </button>
-          <button onClick={() => setTab("winners")} className={`flex-1 flex items-center justify-center gap-1 text-[11px] font-medium py-2 rounded-lg transition-colors ${tab === "winners" ? "bg-primary/10 text-primary border border-primary/20" : "bg-muted/40 text-muted-foreground"}`}>
-            <History className="h-3 w-3" /> Previous winners
-          </button>
+        {/* Row 2: Pot + hint + chevron */}
+        <div className="flex items-center gap-1.5 w-full relative">
+          <span className="text-sm font-extrabold text-foreground">${WEEKLY_POT.toLocaleString()}</span>
+          <span className="text-[9px] text-muted-foreground">prize pool</span>
+          <span className="text-[8px] text-muted-foreground/50 hidden min-[360px]:inline">— tap to {expanded ? "collapse" : "learn more"}</span>
+          <ChevronRight className={`h-3.5 w-3.5 text-muted-foreground/60 ml-auto shrink-0 transition-transform duration-200 ${expanded ? "rotate-90" : ""}`} />
         </div>
-        {tab === "info" ? (
-          <div className="space-y-1.5">
-            <div className="flex gap-3 p-3 rounded-lg bg-muted/40">
-              <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10 flex-shrink-0"><Gift className="h-4 w-4 text-primary" /></div>
-              <div><p className="text-sm font-medium text-foreground">Funding</p><p className="text-xs text-muted-foreground mt-0.5">95% to pot, 2% to draw, 3% platform fee.</p></div>
-            </div>
-            <div className="flex gap-3 p-3 rounded-lg bg-muted/40">
-              <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10 flex-shrink-0"><Ticket className="h-4 w-4 text-primary" /></div>
-              <div><p className="text-sm font-medium text-foreground">Entry</p><p className="text-xs text-muted-foreground mt-0.5">Every ticket is a bundle — market ticket + draw entry.</p></div>
-            </div>
-            <div className="flex gap-3 p-3 rounded-lg bg-muted/40">
-              <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10 flex-shrink-0"><Calendar className="h-4 w-4 text-primary" /></div>
-              <div><p className="text-sm font-medium text-foreground">Draw</p><p className="text-xs text-muted-foreground mt-0.5">Every Sunday, 10 random winners are selected.</p></div>
-            </div>
-          </div>
-        ) : (
-          <div className="space-y-1">
-            {previousWinners.map((w, i) => (
-              <div key={w.place} className="flex items-center justify-between p-2.5 rounded-lg bg-muted/40">
-                <div className="flex items-center gap-2.5">
-                  <div className={`flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold ${i === 0 ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground"}`}>{w.place}</div>
-                  <span className="text-sm font-medium">{w.name}</span>
-                </div>
-                <span className="text-sm font-bold text-primary">${w.amount.toLocaleString()}</span>
+      </button>
+
+      {/* Expandable content */}
+      <div
+        className={`grid transition-all duration-300 ease-in-out ${expanded ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}`}
+      >
+        <div className="overflow-hidden">
+          <div className="px-3 pb-3 pt-1 space-y-2.5 border-t border-primary/10">
+            {/* Distribution bar */}
+            <div>
+              <div className="flex rounded-full overflow-hidden h-2 shadow-inner shadow-black/10">
+                {drawDistribution.map((d, i) => (
+                  <div key={d.place} className="h-full" style={{ width: `${d.pct}%`, background: `hsl(var(--primary) / ${1 - i * 0.2})`, borderRight: i < drawDistribution.length - 1 ? '1px solid hsl(var(--background) / 0.3)' : 'none' }} />
+                ))}
               </div>
-            ))}
-            <div className="flex items-center gap-2 p-2.5 rounded-lg border border-dashed border-border text-xs text-muted-foreground">
-              <Users className="h-3.5 w-3.5 flex-shrink-0" />
-              <span>+ 7 more winners shared <span className="font-semibold text-foreground">${(WEEKLY_POT * 0.1).toLocaleString()}</span></span>
+              <div className="flex items-center justify-between mt-1.5 text-[10px] text-muted-foreground">
+                {drawDistribution.map((d) => (
+                  <span key={d.place}><span className="font-semibold text-foreground">{d.place}</span> {d.pct}%</span>
+                ))}
+              </div>
             </div>
+
+            {/* Tabs */}
+            <div className="flex gap-1">
+              <button onClick={() => setTab("info")} className={`flex-1 flex items-center justify-center gap-1 text-[11px] font-medium py-2 rounded-lg transition-colors ${tab === "info" ? "bg-primary/10 text-primary border border-primary/20" : "bg-muted/40 text-muted-foreground"}`}>
+                <Info className="h-3 w-3" /> How it works
+              </button>
+              <button onClick={() => setTab("winners")} className={`flex-1 flex items-center justify-center gap-1 text-[11px] font-medium py-2 rounded-lg transition-colors ${tab === "winners" ? "bg-primary/10 text-primary border border-primary/20" : "bg-muted/40 text-muted-foreground"}`}>
+                <History className="h-3 w-3" /> Previous winners
+              </button>
+            </div>
+
+            {tab === "info" ? (
+              <div className="space-y-1.5">
+                <div className="flex gap-3 p-3 rounded-lg bg-muted/40">
+                  <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10 flex-shrink-0"><Gift className="h-4 w-4 text-primary" /></div>
+                  <div><p className="text-sm font-medium text-foreground">Funding</p><p className="text-xs text-muted-foreground mt-0.5">95% to pot, 2% to draw, 3% platform fee.</p></div>
+                </div>
+                <div className="flex gap-3 p-3 rounded-lg bg-muted/40">
+                  <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10 flex-shrink-0"><Ticket className="h-4 w-4 text-primary" /></div>
+                  <div><p className="text-sm font-medium text-foreground">Entry</p><p className="text-xs text-muted-foreground mt-0.5">Every ticket is a bundle — market ticket + draw entry.</p></div>
+                </div>
+                <div className="flex gap-3 p-3 rounded-lg bg-muted/40">
+                  <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10 flex-shrink-0"><Calendar className="h-4 w-4 text-primary" /></div>
+                  <div><p className="text-sm font-medium text-foreground">Draw</p><p className="text-xs text-muted-foreground mt-0.5">Every Sunday, 10 random winners are selected.</p></div>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-1">
+                {previousWinners.map((w, i) => (
+                  <div key={w.place} className="flex items-center justify-between p-2.5 rounded-lg bg-muted/40">
+                    <div className="flex items-center gap-2.5">
+                      <div className={`flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold ${i === 0 ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground"}`}>{w.place}</div>
+                      <span className="text-sm font-medium">{w.name}</span>
+                    </div>
+                    <span className="text-sm font-bold text-primary">${w.amount.toLocaleString()}</span>
+                  </div>
+                ))}
+                <div className="flex items-center gap-2 p-2.5 rounded-lg border border-dashed border-border text-xs text-muted-foreground">
+                  <Users className="h-3.5 w-3.5 flex-shrink-0" />
+                  <span>+ 7 more winners shared <span className="font-semibold text-foreground">${(WEEKLY_POT * 0.1).toLocaleString()}</span></span>
+                </div>
+              </div>
+            )}
+
+            <p className="text-[10px] text-muted-foreground/70 flex items-center gap-1.5">
+              <Zap className="h-3 w-3" />
+              All draws are verifiable. Winners announced every Monday.
+            </p>
           </div>
-        )}
-        <p className="text-[10px] text-muted-foreground/70 flex items-center gap-1.5">
-          <Zap className="h-3 w-3" />
-          All draws are verifiable. Winners announced every Monday.
-        </p>
-      </DialogContent>
-    </Dialog>
+        </div>
+      </div>
+    </div>
   );
 }
 
