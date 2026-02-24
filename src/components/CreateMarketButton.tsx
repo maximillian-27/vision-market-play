@@ -158,13 +158,12 @@ export function CreateMarketButton() {
 
   return (
     <>
-      <Button
-        size="lg"
-        className="fixed bottom-28 right-4 md:bottom-8 md:right-6 h-14 w-14 rounded-full shadow-lg gap-0 z-40"
+      <button
+        className="fixed bottom-28 right-4 md:bottom-8 md:right-6 h-12 w-12 rounded-full bg-primary text-primary-foreground shadow-[0_2px_12px_hsl(var(--primary)/0.35)] hover:shadow-[0_4px_20px_hsl(var(--primary)/0.45)] hover:scale-105 active:scale-95 transition-all duration-200 z-40 flex items-center justify-center"
         onClick={() => setOpen(true)}
       >
-        <Plus className="h-6 w-6" />
-      </Button>
+        <Plus className="h-5 w-5" strokeWidth={2.5} />
+      </button>
 
       <Dialog open={open} onOpenChange={handleClose}>
         <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto p-0 gap-0 [&>button]:hidden">
