@@ -46,21 +46,21 @@ export function WeeklyDrawCard() {
           </div>
           <span className="text-[10px] uppercase tracking-widest font-bold text-primary">Weekly Draw</span>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1 text-[10px] bg-muted/60 px-2 py-0.5 rounded-full">
-            <Ticket className="h-3 w-3 text-primary" />
-            <span className="font-semibold text-foreground">{MY_ENTRIES} entries</span>
-          </div>
-          <div className="flex items-center gap-1 text-[10px] bg-muted/60 px-2 py-0.5 rounded-full">
-            <Timer className="h-3 w-3 text-primary" />
-            <span className="font-semibold text-foreground">{COUNTDOWN}</span>
-          </div>
+        <div className="flex items-center gap-1 text-[10px] bg-muted/60 px-2 py-0.5 rounded-full">
+          <Timer className="h-3 w-3 text-primary" />
+          <span className="font-semibold text-foreground">{COUNTDOWN}</span>
         </div>
       </div>
 
-      {/* Pot + description */}
-      <div className="text-2xl font-extrabold text-foreground leading-none tracking-tight relative">
-        ${WEEKLY_POT.toLocaleString()}
+      {/* Pot + entries */}
+      <div className="flex items-center gap-2 relative">
+        <div className="text-2xl font-extrabold text-foreground leading-none tracking-tight">
+          ${WEEKLY_POT.toLocaleString()}
+        </div>
+        <div className="flex items-center gap-1 text-[10px] bg-muted/60 px-2 py-0.5 rounded-full">
+          <Ticket className="h-3 w-3 text-primary" />
+          <span className="font-semibold text-foreground">{MY_ENTRIES} entries</span>
+        </div>
       </div>
       <p className="text-[10px] text-muted-foreground mt-1 mb-3 leading-relaxed">
         Prize pool redistributed weekly to random participants
