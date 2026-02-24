@@ -764,10 +764,10 @@ export default function Feed() {
         </div>
 
         {/* 2b. Desktop Split Hero */}
-        <div className="hidden sm:grid grid-cols-1 lg:grid-cols-5 gap-3 lg:max-h-[340px]">
+        <div className="hidden sm:grid grid-cols-1 lg:grid-cols-2 gap-3 lg:max-h-[340px]">
           {/* Left — Slideshow hero */}
           <div
-            className="lg:col-span-3 relative rounded-2xl overflow-hidden cursor-pointer group"
+            className="relative rounded-2xl overflow-hidden cursor-pointer group"
             onClick={() => navigate(`/market/${heroMarket.id}`)}
           >
             <div className="relative h-[260px] lg:h-[340px]">
@@ -782,7 +782,6 @@ export default function Feed() {
                 <h2 className="text-white text-lg sm:text-xl font-bold leading-snug line-clamp-2 max-w-2xl mb-3">
                   {heroMarket.title}
                 </h2>
-                {/* Hero outcome buttons */}
                 {heroIsBinary ? (
                   <div className="flex gap-2 max-w-sm">
                     <button className="flex-1 rounded-lg py-2 text-center bg-yes/20 border border-yes/40 hover:bg-yes text-yes hover:text-yes-foreground text-sm font-bold transition-all active:scale-[0.98]" onClick={(e) => { e.stopPropagation(); navigate(`/market/${heroMarket.id}`); }}>
@@ -805,7 +804,6 @@ export default function Feed() {
                   </div>
                 )}
               </div>
-              {/* Dot indicators */}
               <div className="absolute top-3 right-3 flex gap-1">
                 {heroMarkets.map((_, i) => (
                   <button
@@ -818,13 +816,14 @@ export default function Feed() {
             </div>
           </div>
 
-          {/* Right — Sponsored + Weekly Draw */}
-          <div className="lg:col-span-2 flex flex-row lg:flex-col gap-3">
-            <div className="flex-1">
+          {/* Right — Weekly Draw + 2 Sponsored */}
+          <div className="flex flex-col gap-3 lg:max-h-[340px]">
+            <div className="flex-1 min-h-0">
               <WeeklyDrawCard />
             </div>
-            <div className="flex-1">
+            <div className="grid grid-cols-2 gap-3 flex-1 min-h-0">
               <CompactFeaturedCard market={sponsoredMarkets[0]} />
+              <CompactFeaturedCard market={sponsoredMarkets[1]} />
             </div>
           </div>
         </div>
