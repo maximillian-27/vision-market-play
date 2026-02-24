@@ -125,7 +125,7 @@ const Portfolio = () => {
                   {netProfit >= 0 ? '+' : ''}${netProfit.toLocaleString()}
                 </span>
                 <div className="flex gap-px">
-                  {(["7d", "30d", "all"] as WinningsPeriod[]).map((p) => (
+                  {(["1d", "7d", "30d", "all"] as WinningsPeriod[]).map((p) => (
                     <button
                       key={p}
                       onClick={() => setWinPeriod(p)}
