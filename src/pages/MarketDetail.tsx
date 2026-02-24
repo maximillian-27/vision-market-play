@@ -590,32 +590,32 @@ export default function MarketDetail() {
       </div>
 
       {/* ── MOBILE: Sticky Purchase Bar ── */}
-      <div className="sm:hidden fixed bottom-0 left-0 right-0 bg-background border-t border-border/40 z-30">
-        <div className="max-w-2xl mx-auto px-3 pt-2 pb-[calc(env(safe-area-inset-bottom)+0.5rem)] space-y-2">
+      <div className="sm:hidden fixed bottom-0 left-0 right-0 bg-background border-t border-border/50 z-30">
+        <div className="max-w-2xl mx-auto px-4 pt-1.5 pb-[calc(env(safe-area-inset-bottom)+0.35rem)]">
           {isAwaitingResolution ? (
-            <div className="p-2.5 rounded-lg bg-[hsl(var(--pollgy-blue))]/10 border border-[hsl(var(--pollgy-blue))]/20 text-center">
+            <div className="py-3 text-center">
               <p className="text-xs font-semibold text-[hsl(var(--pollgy-blue))]">Entries Closed — Awaiting Resolution</p>
             </div>
           ) : (
-            <>
-              {/* How it works - subtle expandable */}
+            <div className="space-y-1.5">
+              {/* How it works — minimal trigger */}
               <Collapsible open={showHowItWorks} onOpenChange={setShowHowItWorks}>
-                <CollapsibleTrigger className="flex items-center justify-center gap-1 w-full py-0.5 text-[10px] text-muted-foreground hover:text-foreground transition-colors">
-                  <HelpCircle className="h-3 w-3" />
+                <CollapsibleTrigger className="flex items-center justify-center gap-1 w-full py-0.5 text-[10px] text-muted-foreground/70 hover:text-muted-foreground transition-colors">
+                  <HelpCircle className="h-2.5 w-2.5" />
                   <span>How it works</span>
-                  {showHowItWorks ? <ChevronDown className="h-3 w-3" /> : <ChevronUp className="h-3 w-3" />}
+                  {showHowItWorks ? <ChevronDown className="h-2.5 w-2.5" /> : <ChevronUp className="h-2.5 w-2.5" />}
                 </CollapsibleTrigger>
                 <CollapsibleContent>
-                  <div className="mt-1.5 p-2.5 rounded-lg bg-muted/30 border border-border/30 space-y-1.5 text-[10px] text-muted-foreground leading-relaxed">
-                    <p><span className="font-semibold text-foreground">1. Pick a side</span> — Choose the outcome you believe in</p>
-                    <p><span className="font-semibold text-foreground">2. Buy tickets</span> — Each ticket is ${currentTicketPrice.toFixed(2)} and includes a Weekly Draw entry</p>
-                    <p><span className="font-semibold text-foreground">3. Win</span> — If your outcome wins, you split 95% of the pot with other winners</p>
-                    <div className="flex h-1 rounded-full overflow-hidden mt-1">
+                  <div className="mt-1 px-3 py-2 rounded-lg bg-muted/20 space-y-1 text-[10px] text-muted-foreground leading-snug">
+                    <p><span className="font-medium text-foreground">1.</span> Pick a side — choose your outcome</p>
+                    <p><span className="font-medium text-foreground">2.</span> Buy tickets — ${currentTicketPrice.toFixed(2)} each, includes Weekly Draw entry</p>
+                    <p><span className="font-medium text-foreground">3.</span> Win — winners split 95% of the pot</p>
+                    <div className="flex h-1 rounded-full overflow-hidden mt-0.5">
                       {POT_SPLIT.map((s) => (
                         <div key={s.label} className={s.color} style={{ width: `${s.pct}%` }} />
                       ))}
                     </div>
-                    <div className="flex items-center justify-between text-[9px]">
+                    <div className="flex items-center gap-3 text-[8px]">
                       {POT_SPLIT.map((s) => (
                         <span key={s.label} className="flex items-center gap-0.5">
                           <span className={`inline-block h-1 w-1 rounded-full ${s.color}`} />
@@ -627,9 +627,9 @@ export default function MarketDetail() {
                 </CollapsibleContent>
               </Collapsible>
 
-              {/* Outcome buttons */}
+              {/* Outcomes — tight */}
               {isBinary ? (
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-2 gap-1.5">
                   {market.outcomes.map((outcome: any, index: number) => {
                     const isYes = outcome.label.toLowerCase() === "yes";
                     const isSelected = selectedOutcome?.label === outcome.label;
@@ -637,27 +637,27 @@ export default function MarketDetail() {
                       <button
                         key={index}
                         onClick={() => setSelectedOutcome(outcome)}
-                        className={`rounded-lg py-2 text-center transition-all active:scale-[0.98] border ${
+                        className={`rounded-lg h-8 text-center transition-all active:scale-[0.98] border ${
                           isSelected
-                            ? isYes ? 'border-success bg-success/20 text-success' : 'border-destructive bg-destructive/20 text-destructive'
-                            : isYes ? 'border-success/30 bg-success/5 text-success' : 'border-destructive/30 bg-destructive/5 text-destructive'
+                            ? isYes ? 'border-success bg-success/15 text-success' : 'border-destructive bg-destructive/15 text-destructive'
+                            : isYes ? 'border-success/25 bg-success/5 text-success/80' : 'border-destructive/25 bg-destructive/5 text-destructive/80'
                         }`}
                       >
-                        <span className="text-xs font-bold uppercase">{outcome.label} {outcome.price}%</span>
+                        <span className="text-[11px] font-bold uppercase">{outcome.label} {outcome.price}%</span>
                       </button>
                     );
                   })}
                 </div>
               ) : (
-                <div className="flex gap-1.5 overflow-x-auto scrollbar-hide -mx-3 px-3">
+                <div className="flex gap-1.5 overflow-x-auto scrollbar-hide -mx-4 px-4">
                   {market.outcomes.map((outcome: any, index: number) => {
                     const isSelected = selectedOutcome?.label === outcome.label;
                     return (
                       <button
                         key={index}
                         onClick={() => setSelectedOutcome(outcome)}
-                        className={`flex-shrink-0 flex items-center gap-1.5 rounded-lg px-3 py-1.5 transition-all active:scale-[0.98] border text-xs ${
-                          isSelected ? 'border-primary bg-primary/10 font-bold' : 'border-border/40 bg-secondary/60'
+                        className={`flex-shrink-0 flex items-center gap-1 rounded-lg px-2.5 h-8 transition-all active:scale-[0.98] border text-[11px] ${
+                          isSelected ? 'border-primary bg-primary/10 font-bold' : 'border-border/30 bg-secondary/40'
                         }`}
                       >
                         <span className="font-semibold whitespace-nowrap">{outcome.label}</span>
@@ -668,12 +668,12 @@ export default function MarketDetail() {
                 </div>
               )}
 
-              {/* Quantity + Buy row */}
-              <div className="flex items-center gap-2">
-                <div className="flex items-center border border-border/50 rounded-lg h-9 bg-muted/20 flex-shrink-0">
+              {/* Stepper + Buy — compact */}
+              <div className="flex items-center gap-1.5">
+                <div className="flex items-center border border-border/40 rounded-md h-8 bg-muted/10 flex-shrink-0">
                   <button
                     onClick={() => setTicketCount(Math.max(1, ticketCount - 1))}
-                    className="h-full w-8 flex items-center justify-center hover:bg-muted/40 rounded-l-lg transition-colors active:scale-95"
+                    className="h-full w-7 flex items-center justify-center hover:bg-muted/30 rounded-l-md transition-colors active:scale-95"
                   >
                     <Minus className="h-3 w-3 text-muted-foreground" />
                   </button>
@@ -684,37 +684,37 @@ export default function MarketDetail() {
                       const v = parseInt(e.target.value);
                       if (!isNaN(v) && v >= 0) setTicketCount(Math.min(1000, v));
                     }}
-                    className="w-10 h-full text-center text-sm font-bold bg-transparent border-x border-border/30 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none focus:outline-none"
+                    className="w-8 h-full text-center text-xs font-bold bg-transparent border-x border-border/30 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none focus:outline-none"
                   />
                   <button
                     onClick={() => setTicketCount(Math.min(1000, ticketCount + 1))}
-                    className="h-full w-8 flex items-center justify-center hover:bg-muted/40 rounded-r-lg transition-colors active:scale-95"
+                    className="h-full w-7 flex items-center justify-center hover:bg-muted/30 rounded-r-md transition-colors active:scale-95"
                   >
                     <Plus className="h-3 w-3 text-muted-foreground" />
                   </button>
                 </div>
                 <Button
-                  className="flex-1 h-9 font-bold text-xs rounded-lg [background:var(--gradient-primary)] hover:opacity-90 transition-all active:scale-[0.98] shadow-sm"
+                  className="flex-1 h-8 font-bold text-[11px] rounded-md [background:var(--gradient-primary)] hover:opacity-90 transition-all active:scale-[0.98]"
                   onClick={handleBuy}
                   disabled={!selectedOutcome || isSubmitting || ticketCount < 1}
                 >
                   {isSubmitting
                     ? "Buying..."
                     : selectedOutcome
-                      ? `🎟️ Buy ${ticketCount} Ticket${ticketCount !== 1 ? 's' : ''} + ${ticketCount === 1 ? 'Entry' : 'Entries'} · $${totalCost.toFixed(2)}`
+                      ? `Buy ${ticketCount} Ticket${ticketCount !== 1 ? 's' : ''} + ${ticketCount === 1 ? 'Entry' : 'Entries'} · $${totalCost.toFixed(2)}`
                       : "Pick a side"
                   }
                 </Button>
               </div>
 
-              {/* Potential profit line */}
-              <div className="flex items-center justify-between text-[10px] text-muted-foreground px-0.5">
+              {/* Info line */}
+              <div className="flex items-center justify-between text-[9px] text-muted-foreground/70 px-0.5 pb-0.5">
                 <span>${currentTicketPrice.toFixed(2)}/ticket · {ticketCount} {ticketCount === 1 ? 'entry' : 'entries'}</span>
-                <span className={`font-semibold ${estimatedProfit > 0 ? 'text-success' : ''}`}>
-                  Potential profit: +${estimatedProfit > 0 ? estimatedProfit.toFixed(2) : '0.00'}
+                <span className={`font-medium ${estimatedProfit > 0 ? 'text-success' : ''}`}>
+                  Profit: +${estimatedProfit > 0 ? estimatedProfit.toFixed(2) : '0.00'}
                 </span>
               </div>
-            </>
+            </div>
           )}
         </div>
       </div>
