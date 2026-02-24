@@ -29,7 +29,8 @@ import {
   PenTool,
   XCircle,
   BadgeCheck,
-  FileText
+  FileText,
+  ArrowLeft
 } from "lucide-react";
 
 interface HowItWorksDialogProps {
@@ -801,10 +802,16 @@ export function HowItWorksDialog({ open, onOpenChange }: HowItWorksDialogProps) 
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg max-h-[85vh] overflow-hidden p-0">
-        <DialogHeader className="px-6 pt-6 pb-0">
-          <DialogTitle className="text-center">How It Works</DialogTitle>
-        </DialogHeader>
+      <DialogContent hideClose className="sm:max-w-lg max-h-[85vh] overflow-hidden p-0">
+        <div className="flex items-center gap-3 px-6 py-4 border-b border-border/40">
+          <button
+            onClick={() => onOpenChange(false)}
+            className="h-8 w-8 rounded-full flex items-center justify-center hover:bg-muted transition-colors"
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </button>
+          <h2 className="text-base font-semibold">How It Works</h2>
+        </div>
         <ScrollArea className="h-[calc(85vh-100px)] px-6 pb-6">
           {content}
         </ScrollArea>

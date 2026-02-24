@@ -2,12 +2,10 @@ import { useState } from "react";
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Card } from "@/components/ui/card";
 
@@ -45,13 +43,20 @@ export function QuoteRepostDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent onClick={(e) => e.stopPropagation()} className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>Repost to Community Feed</DialogTitle>
-          <DialogDescription>
-            Share your thoughts on this market with the community
-          </DialogDescription>
-        </DialogHeader>
+      <DialogContent hideClose onClick={(e) => e.stopPropagation()} className="sm:max-w-md p-0 gap-0">
+        <div className="flex items-center gap-3 p-4 border-b border-border/40">
+          <button
+            onClick={handleClose}
+            className="h-8 w-8 rounded-full flex items-center justify-center hover:bg-muted transition-colors"
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </button>
+          <div>
+            <h2 className="text-base font-semibold">Repost to Community Feed</h2>
+            <p className="text-xs text-muted-foreground">Share your thoughts on this market with the community</p>
+          </div>
+        </div>
+        <div className="p-5">
         <div className="space-y-4 pt-2">
           <Textarea
             placeholder="What do you think about this market? (optional)"
@@ -97,6 +102,7 @@ export function QuoteRepostDialog({
               </Button>
             </div>
           </div>
+        </div>
         </div>
       </DialogContent>
     </Dialog>

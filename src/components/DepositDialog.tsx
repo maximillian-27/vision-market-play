@@ -140,15 +140,21 @@ export function DepositDialog({ open, onOpenChange }: DepositDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="z-50 rounded-xl border-border/60 max-w-sm p-0 overflow-hidden">
+      <DialogContent hideClose className="z-50 rounded-xl border-border/60 max-w-sm p-0 overflow-hidden">
         {step === "method" && (
           <>
-            <DialogHeader className="p-5 pb-3">
-              <DialogTitle className="text-lg">Deposit Funds</DialogTitle>
-              <DialogDescription className="text-sm">
-                Choose your preferred payment method
-              </DialogDescription>
-            </DialogHeader>
+            <div className="flex items-center gap-3 p-4 border-b border-border/40">
+              <button
+                onClick={() => handleClose(false)}
+                className="h-8 w-8 rounded-full flex items-center justify-center hover:bg-muted transition-colors"
+              >
+                <ArrowLeft className="h-3.5 w-3.5" />
+              </button>
+              <div>
+                <p className="text-base font-semibold">Deposit Funds</p>
+                <p className="text-xs text-muted-foreground">Choose your preferred payment method</p>
+              </div>
+            </div>
             <div className="px-5 pb-5 space-y-2">
               {paymentMethods.map((method) => {
                 const Icon = method.icon;

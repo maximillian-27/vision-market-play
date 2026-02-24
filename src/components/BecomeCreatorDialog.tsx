@@ -2,9 +2,6 @@ import { useState } from "react";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -129,18 +126,22 @@ export function BecomeCreatorDialog({ open, onOpenChange, onSuccess }: BecomeCre
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-primary" />
-            Become a Creator
-          </DialogTitle>
-          {step <= 5 && (
-            <DialogDescription>
-              Step {step} of {totalSteps} — {getStepTitle()}
-            </DialogDescription>
-          )}
-        </DialogHeader>
+      <DialogContent hideClose className="sm:max-w-lg max-h-[90vh] overflow-y-auto p-0 gap-0">
+        <div className="flex items-center gap-3 p-4 border-b border-border/40">
+          <button
+            onClick={() => handleClose(false)}
+            className="h-8 w-8 rounded-full flex items-center justify-center hover:bg-muted transition-colors"
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </button>
+          <div>
+            <h2 className="text-base font-semibold">Become a Creator</h2>
+            {step <= 5 && (
+              <p className="text-xs text-muted-foreground">Step {step} of {totalSteps} — {getStepTitle()}</p>
+            )}
+          </div>
+        </div>
+        <div className="p-6">
 
         {/* Progress bar */}
         {step <= 5 && (
@@ -413,6 +414,7 @@ export function BecomeCreatorDialog({ open, onOpenChange, onSuccess }: BecomeCre
             </p>
           </div>
         )}
+        </div>
       </DialogContent>
     </Dialog>
   );

@@ -523,6 +523,12 @@ export function ResolvedMarketDialog({
       {/* Header with status badge */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-border/40 flex-shrink-0">
         <div className="flex items-center gap-2">
+          <button
+            onClick={() => handleClose(false)}
+            className="h-8 w-8 rounded-full flex items-center justify-center hover:bg-muted transition-colors"
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </button>
           <Avatar className="h-7 w-7">
             <AvatarImage src={market.creator.avatar} alt={market.creator.name} />
             <AvatarFallback className="text-[10px]">{market.creator.name.slice(0, 2)}</AvatarFallback>
@@ -878,7 +884,7 @@ export function ResolvedMarketDialog({
         </Sheet>
       ) : (
         <Dialog open={open} onOpenChange={handleClose}>
-          <DialogContent className="sm:max-w-[820px] p-0 gap-0 overflow-hidden max-h-[90vh] flex flex-col">
+          <DialogContent hideClose className="sm:max-w-[820px] p-0 gap-0 overflow-hidden max-h-[90vh] flex flex-col">
             {desktopContent}
           </DialogContent>
         </Dialog>

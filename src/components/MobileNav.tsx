@@ -2,8 +2,9 @@ import { Home, Users, MessageSquare, Search } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { SearchDropdown } from "@/components/SearchDropdown";
+import { ArrowLeft } from "lucide-react";
 
 const items = [
   { title: "Markets", url: "/", icon: Home },
@@ -18,11 +19,19 @@ export function MobileNav() {
   return (
     <>
       <Dialog open={showSearch} onOpenChange={setShowSearch}>
-        <DialogContent className="top-4 translate-y-0 rounded-lg border-border/60 max-h-[80vh] overflow-hidden">
-          <DialogHeader>
-            <DialogTitle>Search</DialogTitle>
-          </DialogHeader>
-          <SearchDropdown embedded onResultClick={() => setShowSearch(false)} />
+        <DialogContent hideClose className="top-4 translate-y-0 rounded-lg border-border/60 max-h-[80vh] overflow-hidden p-0 gap-0">
+          <div className="flex items-center gap-3 p-4 border-b border-border/40">
+            <button
+              onClick={() => setShowSearch(false)}
+              className="h-8 w-8 rounded-full flex items-center justify-center hover:bg-muted transition-colors"
+            >
+              <ArrowLeft className="h-4 w-4" />
+            </button>
+            <h2 className="text-base font-semibold">Search</h2>
+          </div>
+          <div className="p-4">
+            <SearchDropdown embedded onResultClick={() => setShowSearch(false)} />
+          </div>
         </DialogContent>
       </Dialog>
 
