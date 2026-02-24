@@ -1,53 +1,73 @@
 
 
-# Ticket + Entry Bundle Model
+## Mobile Home Page Optimization
 
-## Overview
-Change the model from "20 tickets = 1 draw entry" to "1 ticket = 1 entry." Every ticket purchased is automatically a draw entry. Update the price split to show **95% to pot, 2% to weekly draw, 3% platform fee**.
+### Problem
+The current mobile layout takes up too much vertical space before users reach regular markets. The stack is: Weekly Draw (collapsed ~50px) -> Hero slideshow (220px) -> Banner (40px) -> 2 full sponsored cards (~300px combined) = ~610px before any regular content. Key sections compete for space instead of working together efficiently.
 
-## Changes
+### Solution: Compact, Information-Dense Mobile Layout
 
-### 1. WeeklyDrawCard (`src/components/WeeklyDrawCard.tsx`)
+**New mobile hierarchy (top to bottom):**
 
-**Entry info section (lines 79-97):**
-- Replace the "20 tickets = 1 entry" tooltip with a simple statement: "Every ticket = 1 entry"
-- Change `MY_ENTRIES` display to reflect total tickets purchased this week (e.g., "3 entries this week")
-- Remove the `ENTRY_COST = 20` constant since it's no longer needed
-- Update the tooltip text to explain the bundle: "Every ticket you buy is also an entry into the weekly draw. 2% of your purchase funds the prize pool."
+1. **Filter pills** (unchanged)
+2. **Hero carousel (reduced to 180px)** -- slightly shorter, with swipe support using Embla carousel for smooth touch interaction
+3. **Weekly Draw + Sponsored in a horizontal scroll row** -- a single horizontal strip containing the Weekly Draw card and 2 sponsored market cards, all as equal-width snap-scrolling cards (~75% viewport width each). This puts all 3 items in ~140px of vertical space instead of ~400px
+4. **Gradient banner** (unchanged)
+5. **Regular market list** (unchanged)
 
-**"How it works" dialog (lines 174-181):**
-- Update the "Entry" step text from "Every 20 tickets you buy earns 1 draw entry" to "Every ticket is a bundle -- you get a market ticket + a draw entry. No separate purchase needed."
+### Detailed Changes
 
-**"Funding" step (lines 169-172):**
-- Update to mention the 95/2/3 split explicitly
+**File: `src/pages/Feed.tsx`**
 
-### 2. MarketDialog (`src/components/MarketDialog.tsx`)
+**A. Hero Slideshow -- add swipe support**
+- Replace the static image with Embla carousel for touch-swipeable slides
+- Reduce height from 220px to 180px
+- Keep dot indicators and auto-cycle
 
-**Pot split constants (lines 114-119):**
-- Change from `[90% Winners, 2% Draw, 5% Comp, 3% Platform]` to `[95% Pot, 2% Weekly Draw, 3% Platform]` (3 segments instead of 4)
+**B. New Horizontal Scroll Section (replaces stacked Weekly Draw + Sponsored)**
+- Create a horizontal scrollable container with `overflow-x-auto snap-x snap-mandatory`
+- 3 cards side by side, each `w-[75vw] snap-center shrink-0`
+- Card 1: Weekly Draw (compact card version, tap opens a bottom sheet/dialog with full details including distribution, how-it-works tabs, and previous winners)
+- Card 2: Sponsored market 1 (reuse CompactFeaturedCard styling)
+- Card 3: Sponsored market 2
 
-**Bundle label in the ticket purchase area (around line 551-601):**
-- Add a small badge/label above or below the ticket counter that says something like: "Each ticket includes 1 draw entry" with a Trophy icon, reinforcing the bundle concept
+**C. Weekly Draw -- redesigned for the horizontal card**
+- Collapsed/card form: Trophy icon, pot amount, countdown timer, entry count, and a small distribution bar preview -- all in a card matching the sponsored card height (~140px)
+- On tap: opens a Dialog with full details (distribution bar, how-it-works/previous-winners tabs) -- reuses the existing expanded content from MobileWeeklyDraw
+- More visually striking: gradient background with a subtle shimmer/glow effect, larger pot number
 
-**Buy button text (lines 638-643):**
-- Change from "Buy 5 tickets" to "Buy 5 Tickets + Entries" to reinforce the bundle
+### Technical Details
 
-**Summary breakdown (lines 604-622):**
-- Add a row showing draw entries earned (equal to ticket count) with a Trophy icon, e.g., "Draw entries: 5"
+```text
+Before (vertical stack):
++---------------------------+
+| Weekly Draw strip (~50px) |
++---------------------------+
+| Hero Slideshow (220px)    |
++---------------------------+
+| Banner (40px)             |
++---------------------------+
+| Sponsored Card 1 (~150px) |
++---------------------------+
+| Sponsored Card 2 (~150px) |
++---------------------------+
+| Regular markets...        |
+Total: ~610px before content
 
-**Pot split bar (lines 646-659):**
-- Update to 3 segments: 95% Pot, 2% Weekly Draw, 3% Platform Fee
+After (optimized):
++---------------------------+
+| Hero Carousel (180px)     |  <- swipeable
++---------------------------+
+| [Draw] [Spons1] [Spons2]  |  <- horizontal scroll (~140px)
++---------------------------+
+| Banner (40px)             |
++---------------------------+
+| Regular markets...        |
+Total: ~360px before content
+```
 
-**Footer text (line 623-625):**
-- Update from "Winners split 90% of the pot" to "95% goes to the pot -- 2% funds the weekly draw"
+**Files to modify:**
+- `src/pages/Feed.tsx` -- Refactor `MobileTopSection` with new layout, update `MobileWeeklyDraw` to be a card+dialog pattern, add Embla carousel for hero swipe
 
-### 3. MarketsSidebar (`src/components/MarketsSidebar.tsx`)
-- No changes needed; the weekly draw strip there just shows pot/countdown/entries which remain valid
-
-## Technical Details
-
-- Remove `ENTRY_COST` constant from WeeklyDrawCard
-- Update `POT_SPLIT` array in MarketDialog from 4 items to 3: `[{label: "Pot", pct: 95}, {label: "Weekly Draw", pct: 2}, {label: "Platform", pct: 3}]`
-- Update `estimatedWinningPool` calculation from `potValue * 0.9` to `potValue * 0.95` in MarketDialog
-- Add a small informational row in the ticket purchase panel with a Trophy icon and text like "Includes {ticketCount} draw entries" between the ticket selector and the summary breakdown
+**No new dependencies needed** -- Embla carousel is already installed and the Carousel UI components exist.
 
