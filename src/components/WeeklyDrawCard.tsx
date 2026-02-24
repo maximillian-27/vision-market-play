@@ -46,9 +46,15 @@ export function WeeklyDrawCard() {
           </div>
           <span className="text-[10px] uppercase tracking-widest font-bold text-primary">Weekly Draw</span>
         </div>
-        <div className="flex items-center gap-1 text-[10px] bg-muted/60 px-2 py-0.5 rounded-full">
-          <Timer className="h-3 w-3 text-primary" />
-          <span className="font-semibold text-foreground">{COUNTDOWN}</span>
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 text-[10px] bg-muted/60 px-2 py-0.5 rounded-full">
+            <Ticket className="h-3 w-3 text-primary" />
+            <span className="font-semibold text-foreground">{MY_ENTRIES} entries</span>
+          </div>
+          <div className="flex items-center gap-1 text-[10px] bg-muted/60 px-2 py-0.5 rounded-full">
+            <Timer className="h-3 w-3 text-primary" />
+            <span className="font-semibold text-foreground">{COUNTDOWN}</span>
+          </div>
         </div>
       </div>
 
@@ -80,25 +86,6 @@ export function WeeklyDrawCard() {
         </div>
       </div>
 
-      {/* Entry info */}
-      <div className="flex items-center justify-between text-[9px] mb-2.5">
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <span className="flex items-center gap-1 text-muted-foreground cursor-help">
-                <Ticket className="h-3 w-3 text-primary" />
-                <span>Every ticket = <span className="font-semibold text-foreground">1 entry</span></span>
-              </span>
-            </TooltipTrigger>
-            <TooltipContent side="bottom" className="text-xs max-w-[200px]">
-              Every ticket you buy is also an entry into the weekly draw. 2% of your purchase funds the prize pool.
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-        <span className="text-muted-foreground">
-          <span className="font-semibold text-foreground">{MY_ENTRIES}</span> entries this week
-        </span>
-      </div>
 
       {/* Footer links */}
       <div className="flex items-center gap-3 pt-2 border-t border-border/30 mt-auto">
