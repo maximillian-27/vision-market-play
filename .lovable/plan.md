@@ -1,73 +1,58 @@
 
 
-## Mobile Home Page Optimization
+## Mobile Home Page: Sponsored Carousel + Weekly Draw Banner
 
-### Problem
-The current mobile layout takes up too much vertical space before users reach regular markets. The stack is: Weekly Draw (collapsed ~50px) -> Hero slideshow (220px) -> Banner (40px) -> 2 full sponsored cards (~300px combined) = ~610px before any regular content. Key sections compete for space instead of working together efficiently.
+### Changes (mobile only, desktop untouched)
 
-### Solution: Compact, Information-Dense Mobile Layout
+**New mobile layout order:**
 
-**New mobile hierarchy (top to bottom):**
+```text
++-------------------------------+
+| Weekly Draw Banner (tap=expand)|  <- new position, full-width strip
++-------------------------------+
+| Hero Carousel (180px, swipe)  |  <- unchanged
++-------------------------------+
+| Sponsored Carousel (auto-3s)  |  <- replaces horizontal scroll
++-------------------------------+
+| Gradient Banner               |  <- unchanged
++-------------------------------+
+| Regular markets...            |  <- unchanged
+```
 
-1. **Filter pills** (unchanged)
-2. **Hero carousel (reduced to 180px)** -- slightly shorter, with swipe support using Embla carousel for smooth touch interaction
-3. **Weekly Draw + Sponsored in a horizontal scroll row** -- a single horizontal strip containing the Weekly Draw card and 2 sponsored market cards, all as equal-width snap-scrolling cards (~75% viewport width each). This puts all 3 items in ~140px of vertical space instead of ~400px
-4. **Gradient banner** (unchanged)
-5. **Regular market list** (unchanged)
+### A. Weekly Draw -- moves to top as an expanding banner
+- Full-width strip at the very top of the mobile section (above the hero carousel)
+- Compact single row: Trophy icon, "$48,600" pot, countdown timer, entry count -- all inline
+- Tapping opens the existing Dialog with full details (distribution bar, tabs for how-it-works / previous-winners)
+- Styled with a gradient background and subtle glow to stand out as a banner
 
-### Detailed Changes
-
-**File: `src/pages/Feed.tsx`**
-
-**A. Hero Slideshow -- add swipe support**
-- Replace the static image with Embla carousel for touch-swipeable slides
-- Reduce height from 220px to 180px
-- Keep dot indicators and auto-cycle
-
-**B. New Horizontal Scroll Section (replaces stacked Weekly Draw + Sponsored)**
-- Create a horizontal scrollable container with `overflow-x-auto snap-x snap-mandatory`
-- 3 cards side by side, each `w-[75vw] snap-center shrink-0`
-- Card 1: Weekly Draw (compact card version, tap opens a bottom sheet/dialog with full details including distribution, how-it-works tabs, and previous winners)
-- Card 2: Sponsored market 1 (reuse CompactFeaturedCard styling)
-- Card 3: Sponsored market 2
-
-**C. Weekly Draw -- redesigned for the horizontal card**
-- Collapsed/card form: Trophy icon, pot amount, countdown timer, entry count, and a small distribution bar preview -- all in a card matching the sponsored card height (~140px)
-- On tap: opens a Dialog with full details (distribution bar, how-it-works/previous-winners tabs) -- reuses the existing expanded content from MobileWeeklyDraw
-- More visually striking: gradient background with a subtle shimmer/glow effect, larger pot number
+### B. Sponsored Markets -- auto-cycling carousel
+- Replace the horizontal scroll row with an auto-rotating carousel
+- Shows one sponsored market card at a time, full width
+- Auto-cycles every 3 seconds with a crossfade/slide transition
+- Small dot indicators (2 dots) at the bottom
+- Users can also swipe manually using Embla carousel
+- Each card uses the existing `CompactFeaturedCard` component
 
 ### Technical Details
 
-```text
-Before (vertical stack):
-+---------------------------+
-| Weekly Draw strip (~50px) |
-+---------------------------+
-| Hero Slideshow (220px)    |
-+---------------------------+
-| Banner (40px)             |
-+---------------------------+
-| Sponsored Card 1 (~150px) |
-+---------------------------+
-| Sponsored Card 2 (~150px) |
-+---------------------------+
-| Regular markets...        |
-Total: ~610px before content
+**File: `src/pages/Feed.tsx`**
 
-After (optimized):
-+---------------------------+
-| Hero Carousel (180px)     |  <- swipeable
-+---------------------------+
-| [Draw] [Spons1] [Spons2]  |  <- horizontal scroll (~140px)
-+---------------------------+
-| Banner (40px)             |
-+---------------------------+
-| Regular markets...        |
-Total: ~360px before content
-```
+1. **MobileTopSection** -- reorder children:
+   - First: `MobileWeeklyDrawCard` as a full-width banner strip (no longer inside horizontal scroll)
+   - Second: Hero carousel (unchanged)
+   - Third: New sponsored auto-carousel with Embla (loop, autoplay via `useEffect` + `setInterval` every 3 seconds)
+   - Fourth: `GradientDivider` (unchanged)
 
-**Files to modify:**
-- `src/pages/Feed.tsx` -- Refactor `MobileTopSection` with new layout, update `MobileWeeklyDraw` to be a card+dialog pattern, add Embla carousel for hero swipe
+2. **MobileWeeklyDrawCard** -- restyle as banner:
+   - Change from card layout to a slim horizontal banner strip
+   - All key info (trophy, pot, timer, entries) in one line
+   - Keep the Dialog trigger for tap-to-expand with full details
 
-**No new dependencies needed** -- Embla carousel is already installed and the Carousel UI components exist.
+3. **Sponsored carousel** -- new Embla instance:
+   - Second `useEmblaCarousel({ loop: true })` instance inside `MobileTopSection`
+   - `useEffect` with 3-second interval calling `emblaApi.scrollNext()`
+   - Dot indicators synced with `onSelect` callback
+   - Each slide is a full-width `CompactFeaturedCard`
+
+No new dependencies -- Embla is already installed.
 
