@@ -312,7 +312,7 @@ export default function MarketDetail() {
   const potentialWin = bestOdds > 0 ? (10 / (bestOdds / 100)).toFixed(0) : "0";
 
   return (
-    <div className="min-h-screen bg-background pb-40 sm:pb-56">
+    <div className="min-h-screen bg-background pb-56">
       {/* Sticky Header — hidden on mobile, back arrow overlays hero instead */}
       <div className="hidden sm:block sticky top-14 z-20 bg-background/95 backdrop-blur-sm border-b border-border/40">
         <div className="max-w-2xl mx-auto flex items-center justify-between px-4 h-12">
@@ -572,74 +572,6 @@ export default function MarketDetail() {
           </div>
         </div>
 
-        {/* Inline Purchase Details — mobile only, scrollable */}
-        {!isAwaitingResolution && (
-          <div className="px-4 py-4 space-y-3 sm:hidden border-t border-border/40">
-            {/* Quick ticket pills */}
-            <div className="grid grid-cols-4 gap-1.5">
-              {quickTickets.map((qt) => (
-                <button
-                  key={qt}
-                  onClick={() => setTicketCount(qt)}
-                  className={`h-8 rounded-lg text-xs font-semibold transition-all active:scale-95 ${
-                    ticketCount === qt
-                      ? 'bg-primary/10 text-primary border border-primary/30'
-                      : 'bg-muted/40 text-muted-foreground hover:bg-muted/60 border border-transparent'
-                  }`}
-                >
-                  {qt} {qt === 1 ? 'ticket' : 'tickets'}
-                </button>
-              ))}
-            </div>
-
-            {/* Weekly Draw badge */}
-            <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[hsl(var(--pollgy-blue))]/5 border border-[hsl(var(--pollgy-blue))]/15">
-              <Trophy className="h-3.5 w-3.5 text-[hsl(var(--pollgy-blue))] flex-shrink-0" />
-              <span className="text-xs font-medium text-[hsl(var(--pollgy-blue))]">
-                Includes {ticketCount} Weekly Draw {ticketCount === 1 ? 'entry' : 'entries'}
-              </span>
-            </div>
-
-            {/* Summary card */}
-            <div className="rounded-xl border border-border/40 divide-y divide-border/30">
-              <div className="flex justify-between items-center px-3 py-2">
-                <span className="text-xs text-muted-foreground">Cost</span>
-                <span className="text-sm font-semibold">${totalCost.toFixed(2)}</span>
-              </div>
-              <div className="flex justify-between items-center px-3 py-2">
-                <span className="text-xs text-muted-foreground">Potential winning</span>
-                <span className="text-sm font-semibold">${estimatedPayout > 0 ? estimatedPayout.toFixed(2) : '0.00'}</span>
-              </div>
-              <div className="flex justify-between items-center px-3 py-2 bg-success/5">
-                <div className="flex items-center gap-1.5">
-                  <Trophy className="h-3.5 w-3.5 text-success" />
-                  <span className="text-xs font-medium text-success">Potential profit</span>
-                </div>
-                <span className={`text-base font-bold ${estimatedProfit > 0 ? 'text-success' : 'text-foreground'}`}>
-                  +${estimatedProfit > 0 ? estimatedProfit.toFixed(2) : '0.00'}
-                </span>
-              </div>
-            </div>
-
-            {/* Pot split bar */}
-            <div className="space-y-1.5">
-              <div className="flex h-1.5 rounded-full overflow-hidden">
-                {POT_SPLIT.map((s) => (
-                  <div key={s.label} className={s.color} style={{ width: `${s.pct}%` }} />
-                ))}
-              </div>
-              <div className="flex items-center justify-between text-[9px] text-muted-foreground">
-                {POT_SPLIT.map((s) => (
-                  <span key={s.label} className="flex items-center gap-0.5">
-                    <span className={`inline-block h-1.5 w-1.5 rounded-full ${s.color}`} />
-                    {s.pct}% {s.label}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
-
         {/* Comments Section */}
         <Collapsible open={showComments} onOpenChange={setShowComments}>
           <CollapsibleContent>
@@ -694,17 +626,27 @@ export default function MarketDetail() {
         </Collapsible>
       </div>
 
-      {/* ── Sticky Entry Panel — DESKTOP: full, MOBILE: compact ── */}
-      <div className="fixed bottom-14 md:bottom-0 left-0 right-0 bg-background/95 backdrop-blur-sm border-t border-border/40 z-30">
-        <div className="max-w-2xl mx-auto p-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)]">
+      {/* ── Sticky Entry Panel ── */}
+      <div className="fixed bottom-14 md:bottom-0 left-0 right-0 bg-background border-t border-border/40 z-30">
+        <div className="max-w-2xl mx-auto p-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] space-y-2">
+          {/* Header */}
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-semibold">Place Entry</span>
+            {!isAwaitingResolution && (
+              <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                <Wallet className="h-3.5 w-3.5" />
+                <span>$5,230</span>
+              </div>
+            )}
+          </div>
 
           {isAwaitingResolution ? (
             <div className="space-y-3">
-              <div className="p-3 rounded-lg bg-[hsl(var(--pollgy-blue))]/10 border border-[hsl(var(--pollgy-blue))]/20 text-center">
-                <Clock className="h-5 w-5 text-[hsl(var(--pollgy-blue))] mx-auto mb-1.5" />
-                <p className="text-sm font-semibold text-[hsl(var(--pollgy-blue))]">Entries Closed</p>
+              <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20 text-center">
+                <Clock className="h-5 w-5 text-blue-500 mx-auto mb-1.5" />
+                <p className="text-sm font-semibold text-blue-600 dark:text-blue-400">Entries Closed</p>
                 <p className="text-xs text-muted-foreground mt-0.5">Awaiting resolution</p>
-                {market.resolutionDate && <p className="text-xs text-[hsl(var(--pollgy-blue))] mt-1">{market.resolutionDate}</p>}
+                {market.resolutionDate && <p className="text-xs text-blue-500 mt-1">{market.resolutionDate}</p>}
               </div>
               {isBinary && (
                 <div className="space-y-2">
@@ -730,10 +672,16 @@ export default function MarketDetail() {
             </div>
           ) : (
             <>
-              {/* ===== MOBILE COMPACT BAR ===== */}
-              <div className="sm:hidden space-y-2.5">
-                {/* Row 1: Outcome buttons — compact */}
-                {isBinary ? (
+              {/* Outcome Selection */}
+              {isBinary ? (
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-xs font-bold">
+                    <span className="text-success w-10">{market.outcomes[0].price}%</span>
+                    <div className="flex-1 h-2 rounded-full bg-muted overflow-hidden">
+                      <div className="h-full rounded-full bg-gradient-to-r from-success to-success/80" style={{ width: `${market.outcomes[0].price}%` }} />
+                    </div>
+                    <span className="text-muted-foreground w-10 text-right">{market.outcomes[1].price}%</span>
+                  </div>
                   <div className="grid grid-cols-2 gap-2">
                     {market.outcomes.map((outcome: any, index: number) => {
                       const isYes = outcome.label.toLowerCase() === "yes";
@@ -742,264 +690,151 @@ export default function MarketDetail() {
                         <button
                           key={index}
                           onClick={() => setSelectedOutcome(outcome)}
-                          className={`rounded-lg py-2 text-center transition-all active:scale-[0.98] border ${
+                          className={`rounded-xl py-2.5 text-center transition-all active:scale-[0.98] border ${
                             isSelected
                               ? isYes ? 'border-success bg-success/20 text-success' : 'border-destructive bg-destructive/20 text-destructive'
                               : isYes ? 'border-success/30 bg-success/10 text-success hover:bg-success/15' : 'border-destructive/30 bg-destructive/10 text-destructive hover:bg-destructive/15'
                           }`}
                         >
-                          <span className="text-xs font-bold uppercase">{outcome.label} {outcome.price}%</span>
+                          <span className="text-sm font-bold uppercase">{outcome.label}</span>
                         </button>
                       );
                     })}
                   </div>
-                ) : (
-                  <div className="flex gap-1.5 overflow-x-auto scrollbar-hide -mx-3 px-3">
-                    {market.outcomes.map((outcome: any, index: number) => {
-                      const isSelected = selectedOutcome?.label === outcome.label;
-                      return (
-                        <button
-                          key={index}
-                          onClick={() => setSelectedOutcome(outcome)}
-                          className={`flex-shrink-0 flex items-center gap-1.5 rounded-lg px-3 py-1.5 transition-all active:scale-[0.98] border text-xs ${
-                            isSelected ? 'border-primary bg-primary/10' : 'border-border/40 bg-secondary/60 hover:bg-secondary'
-                          }`}
-                        >
-                          {outcome.logo && (
-                            <img src={outcome.logo} alt={outcome.label} className="h-4 w-4 object-contain rounded-sm" />
-                          )}
-                          <span className="font-semibold whitespace-nowrap">{outcome.label}</span>
-                          <span className="font-bold text-primary">{outcome.price}%</span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                )}
+                </div>
+              ) : (
+                <div className="flex gap-2 overflow-x-auto scrollbar-hide -mx-3 px-3 pb-1">
+                  {market.outcomes.map((outcome: any, index: number) => {
+                    const isSelected = selectedOutcome?.label === outcome.label;
+                    return (
+                      <button
+                        key={index}
+                        onClick={() => setSelectedOutcome(outcome)}
+                        className={`flex-shrink-0 flex items-center gap-2 rounded-xl px-4 py-2.5 transition-all active:scale-[0.98] border ${
+                          isSelected ? 'border-primary bg-primary/10' : 'border-border/40 bg-secondary/60 hover:bg-secondary'
+                        }`}
+                      >
+                        {outcome.logo ? (
+                          <img src={outcome.logo} alt={outcome.label} className="h-5 w-5 object-contain rounded-sm" />
+                        ) : (
+                          <div className="h-5 w-5 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary">
+                            {outcome.label.charAt(0)}
+                          </div>
+                        )}
+                        <span className="text-sm font-semibold whitespace-nowrap">{outcome.label}</span>
+                        <span className="text-sm font-bold text-primary">{outcome.price}%</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
 
-                {/* Row 2: Stepper + Buy button in one row */}
+              {/* Ticket counter */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] text-muted-foreground">${currentTicketPrice.toFixed(2)}/ticket</span>
+                </div>
                 <div className="flex items-center gap-2">
-                  <div className="flex items-center border border-border/50 rounded-lg h-9 bg-muted/20">
-                    <button
-                      onClick={() => setTicketCount(Math.max(1, ticketCount - 1))}
-                      className="h-full px-2.5 flex items-center justify-center hover:bg-muted/40 rounded-l-lg transition-colors active:scale-95"
-                    >
-                      <Minus className="h-3 w-3 text-muted-foreground" />
-                    </button>
-                    <input
-                      type="number"
-                      value={ticketCount}
-                      onChange={(e) => {
-                        const v = parseInt(e.target.value);
-                        if (!isNaN(v) && v >= 0) setTicketCount(Math.min(1000, v));
-                      }}
-                      className="w-10 h-full text-center text-sm font-bold bg-transparent border-x border-border/30 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none focus:outline-none"
-                      min="1"
-                      max="1000"
-                    />
-                    <button
-                      onClick={() => setTicketCount(Math.min(1000, ticketCount + 1))}
-                      className="h-full px-2.5 flex items-center justify-center hover:bg-muted/40 rounded-r-lg transition-colors active:scale-95"
-                    >
-                      <Plus className="h-3 w-3 text-muted-foreground" />
-                    </button>
-                  </div>
-                  <Button
-                    className="flex-1 h-9 font-bold text-xs rounded-lg [background:var(--gradient-primary)] hover:opacity-90 transition-all active:scale-[0.98] shadow-sm"
-                    onClick={handleBuy}
-                    disabled={!selectedOutcome || isSubmitting || ticketCount < 1}
+                  <button
+                    onClick={() => setTicketCount(Math.max(1, ticketCount - 1))}
+                    className="h-9 w-9 rounded-lg border border-border/50 bg-muted/30 hover:bg-muted/60 flex items-center justify-center transition-colors active:scale-95"
                   >
-                    {isSubmitting
-                      ? "Buying..."
-                      : selectedOutcome
-                        ? `Buy ${ticketCount} Ticket${ticketCount !== 1 ? 's' : ''} · $${totalCost.toFixed(2)}`
-                        : "Pick your side"
-                    }
-                  </Button>
+                    <Minus className="h-3.5 w-3.5 text-muted-foreground" />
+                  </button>
+                  <Input
+                    type="number"
+                    value={ticketCount}
+                    onChange={(e) => {
+                      const v = parseInt(e.target.value);
+                      if (!isNaN(v) && v >= 0) setTicketCount(Math.min(1000, v));
+                    }}
+                    className="h-9 text-center text-lg font-bold bg-background flex-1 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    min="1"
+                    max="1000"
+                  />
+                  <button
+                    onClick={() => setTicketCount(Math.min(1000, ticketCount + 1))}
+                    className="h-9 w-9 rounded-lg border border-border/50 bg-muted/30 hover:bg-muted/60 flex items-center justify-center transition-colors active:scale-95"
+                  >
+                    <Plus className="h-3.5 w-3.5 text-muted-foreground" />
+                  </button>
                 </div>
 
-                {/* Row 3: Tiny info line */}
-                <div className="flex items-center justify-center gap-2 text-[10px] text-muted-foreground">
-                  <span>${currentTicketPrice.toFixed(2)}/ticket</span>
-                  <span>·</span>
-                  <span className="text-success font-semibold">Profit: +${estimatedProfit > 0 ? estimatedProfit.toFixed(2) : '0.00'}</span>
-                  <span>·</span>
-                  <span>{ticketCount} {ticketCount === 1 ? 'entry' : 'entries'}</span>
+                {/* Quick ticket pills */}
+                <div className="grid grid-cols-4 gap-1.5">
+                  {quickTickets.map((qt) => (
+                    <button
+                      key={qt}
+                      onClick={() => setTicketCount(qt)}
+                      className={`h-7 rounded-lg text-[11px] font-semibold transition-all active:scale-95 ${
+                        ticketCount === qt
+                          ? 'bg-primary/10 text-primary border border-primary/30'
+                          : 'bg-muted/40 text-muted-foreground hover:bg-muted/60 border border-transparent'
+                      }`}
+                    >
+                      {qt} {qt === 1 ? 'ticket' : 'tickets'}
+                    </button>
+                  ))}
                 </div>
               </div>
 
-              {/* ===== DESKTOP FULL PANEL ===== */}
-              <div className="hidden sm:block space-y-2">
-                {/* Header */}
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-semibold">Place Entry</span>
-                  <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                    <Wallet className="h-3.5 w-3.5" />
-                    <span>$5,230</span>
-                  </div>
+              {/* Weekly Draw badge */}
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[hsl(var(--pollgy-blue))]/5 border border-[hsl(var(--pollgy-blue))]/15">
+                <Trophy className="h-3.5 w-3.5 text-[hsl(var(--pollgy-blue))] flex-shrink-0" />
+                <span className="text-[10px] font-medium text-[hsl(var(--pollgy-blue))]">
+                  Includes {ticketCount} Weekly Draw {ticketCount === 1 ? 'entry' : 'entries'}
+                </span>
+              </div>
+
+              {/* Summary breakdown */}
+              <div className="rounded-xl border border-border/40 divide-y divide-border/30">
+                <div className="flex justify-between items-center px-3 py-1.5">
+                  <span className="text-xs text-muted-foreground">Cost</span>
+                  <span className="text-sm font-semibold">${totalCost.toFixed(2)}</span>
                 </div>
-
-                {/* Outcome Selection */}
-                {isBinary ? (
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2 text-xs font-bold">
-                      <span className="text-success w-10">{market.outcomes[0].price}%</span>
-                      <div className="flex-1 h-2 rounded-full bg-muted overflow-hidden">
-                        <div className="h-full rounded-full bg-gradient-to-r from-success to-success/80" style={{ width: `${market.outcomes[0].price}%` }} />
-                      </div>
-                      <span className="text-muted-foreground w-10 text-right">{market.outcomes[1].price}%</span>
-                    </div>
-                    <div className="grid grid-cols-2 gap-2">
-                      {market.outcomes.map((outcome: any, index: number) => {
-                        const isYes = outcome.label.toLowerCase() === "yes";
-                        const isSelected = selectedOutcome?.label === outcome.label;
-                        return (
-                          <button
-                            key={index}
-                            onClick={() => setSelectedOutcome(outcome)}
-                            className={`rounded-xl py-2.5 text-center transition-all active:scale-[0.98] border ${
-                              isSelected
-                                ? isYes ? 'border-success bg-success/20 text-success' : 'border-destructive bg-destructive/20 text-destructive'
-                                : isYes ? 'border-success/30 bg-success/10 text-success hover:bg-success/15' : 'border-destructive/30 bg-destructive/10 text-destructive hover:bg-destructive/15'
-                            }`}
-                          >
-                            <span className="text-sm font-bold uppercase">{outcome.label}</span>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                ) : (
-                  <div className="flex gap-2 overflow-x-auto scrollbar-hide -mx-3 px-3 pb-1">
-                    {market.outcomes.map((outcome: any, index: number) => {
-                      const isSelected = selectedOutcome?.label === outcome.label;
-                      return (
-                        <button
-                          key={index}
-                          onClick={() => setSelectedOutcome(outcome)}
-                          className={`flex-shrink-0 flex items-center gap-2 rounded-xl px-4 py-2.5 transition-all active:scale-[0.98] border ${
-                            isSelected ? 'border-primary bg-primary/10' : 'border-border/40 bg-secondary/60 hover:bg-secondary'
-                          }`}
-                        >
-                          {outcome.logo ? (
-                            <img src={outcome.logo} alt={outcome.label} className="h-5 w-5 object-contain rounded-sm" />
-                          ) : (
-                            <div className="h-5 w-5 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary">
-                              {outcome.label.charAt(0)}
-                            </div>
-                          )}
-                          <span className="text-sm font-semibold whitespace-nowrap">{outcome.label}</span>
-                          <span className="text-sm font-bold text-primary">{outcome.price}%</span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                )}
-
-                {/* Ticket counter */}
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] text-muted-foreground">${currentTicketPrice.toFixed(2)}/ticket</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => setTicketCount(Math.max(1, ticketCount - 1))}
-                      className="h-9 w-9 rounded-lg border border-border/50 bg-muted/30 hover:bg-muted/60 flex items-center justify-center transition-colors active:scale-95"
-                    >
-                      <Minus className="h-3.5 w-3.5 text-muted-foreground" />
-                    </button>
-                    <Input
-                      type="number"
-                      value={ticketCount}
-                      onChange={(e) => {
-                        const v = parseInt(e.target.value);
-                        if (!isNaN(v) && v >= 0) setTicketCount(Math.min(1000, v));
-                      }}
-                      className="h-9 text-center text-lg font-bold bg-background flex-1 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                      min="1"
-                      max="1000"
-                    />
-                    <button
-                      onClick={() => setTicketCount(Math.min(1000, ticketCount + 1))}
-                      className="h-9 w-9 rounded-lg border border-border/50 bg-muted/30 hover:bg-muted/60 flex items-center justify-center transition-colors active:scale-95"
-                    >
-                      <Plus className="h-3.5 w-3.5 text-muted-foreground" />
-                    </button>
-                  </div>
-                  <div className="grid grid-cols-4 gap-1.5">
-                    {quickTickets.map((qt) => (
-                      <button
-                        key={qt}
-                        onClick={() => setTicketCount(qt)}
-                        className={`h-7 rounded-lg text-[11px] font-semibold transition-all active:scale-95 ${
-                          ticketCount === qt
-                            ? 'bg-primary/10 text-primary border border-primary/30'
-                            : 'bg-muted/40 text-muted-foreground hover:bg-muted/60 border border-transparent'
-                        }`}
-                      >
-                        {qt} {qt === 1 ? 'ticket' : 'tickets'}
-                      </button>
-                    ))}
-                  </div>
+                <div className="flex justify-between items-center px-3 py-1.5">
+                  <span className="text-xs text-muted-foreground">Potential winning</span>
+                  <span className="text-sm font-semibold">${estimatedPayout > 0 ? estimatedPayout.toFixed(2) : '0.00'}</span>
                 </div>
-
-                {/* Weekly Draw badge */}
-                <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[hsl(var(--pollgy-blue))]/5 border border-[hsl(var(--pollgy-blue))]/15">
-                  <Trophy className="h-3.5 w-3.5 text-[hsl(var(--pollgy-blue))] flex-shrink-0" />
-                  <span className="text-[10px] font-medium text-[hsl(var(--pollgy-blue))]">
-                    Includes {ticketCount} Weekly Draw {ticketCount === 1 ? 'entry' : 'entries'}
+                <div className="flex justify-between items-center px-3 py-1.5 bg-success/5">
+                  <div className="flex items-center gap-1.5">
+                    <Trophy className="h-3.5 w-3.5 text-success" />
+                    <span className="text-xs font-medium text-success">Potential profit</span>
+                  </div>
+                  <span className={`text-base font-bold ${estimatedProfit > 0 ? 'text-success' : 'text-foreground'}`}>
+                    +${estimatedProfit > 0 ? estimatedProfit.toFixed(2) : '0.00'}
                   </span>
                 </div>
+              </div>
 
-                {/* Summary breakdown */}
-                <div className="rounded-xl border border-border/40 divide-y divide-border/30">
-                  <div className="flex justify-between items-center px-3 py-1.5">
-                    <span className="text-xs text-muted-foreground">Cost</span>
-                    <span className="text-sm font-semibold">${totalCost.toFixed(2)}</span>
-                  </div>
-                  <div className="flex justify-between items-center px-3 py-1.5">
-                    <span className="text-xs text-muted-foreground">Potential winning</span>
-                    <span className="text-sm font-semibold">${estimatedPayout > 0 ? estimatedPayout.toFixed(2) : '0.00'}</span>
-                  </div>
-                  <div className="flex justify-between items-center px-3 py-1.5 bg-success/5">
-                    <div className="flex items-center gap-1.5">
-                      <Trophy className="h-3.5 w-3.5 text-success" />
-                      <span className="text-xs font-medium text-success">Potential profit</span>
-                    </div>
-                    <span className={`text-base font-bold ${estimatedProfit > 0 ? 'text-success' : 'text-foreground'}`}>
-                      +${estimatedProfit > 0 ? estimatedProfit.toFixed(2) : '0.00'}
-                    </span>
-                  </div>
+              {/* Buy button */}
+              <Button
+                className="w-full h-10 font-bold text-sm rounded-xl [background:var(--gradient-primary)] hover:opacity-90 transition-all active:scale-[0.98] shadow-md"
+                onClick={handleBuy}
+                disabled={!selectedOutcome || isSubmitting || ticketCount < 1}
+              >
+                {isSubmitting
+                  ? "Buying..."
+                  : selectedOutcome
+                    ? `🎟️ Buy ${ticketCount} Ticket${ticketCount !== 1 ? 's' : ''} + ${ticketCount === 1 ? 'Entry' : 'Entries'} · $${totalCost.toFixed(2)}`
+                    : "Pick your side first"
+                }
+              </Button>
+
+              {/* Pot split bar */}
+              <div className="space-y-1">
+                <div className="flex h-1.5 rounded-full overflow-hidden">
+                  {POT_SPLIT.map((s) => (
+                    <div key={s.label} className={s.color} style={{ width: `${s.pct}%` }} />
+                  ))}
                 </div>
-
-                {/* Buy button */}
-                <Button
-                  className="w-full h-10 font-bold text-sm rounded-xl [background:var(--gradient-primary)] hover:opacity-90 transition-all active:scale-[0.98] shadow-md"
-                  onClick={handleBuy}
-                  disabled={!selectedOutcome || isSubmitting || ticketCount < 1}
-                >
-                  {isSubmitting
-                    ? "Buying..."
-                    : selectedOutcome
-                      ? `🎟️ Buy ${ticketCount} Ticket${ticketCount !== 1 ? 's' : ''} + ${ticketCount === 1 ? 'Entry' : 'Entries'} · $${totalCost.toFixed(2)}`
-                      : "Pick your side first"
-                  }
-                </Button>
-
-                {/* Pot split bar */}
-                <div className="space-y-1">
-                  <div className="flex h-1.5 rounded-full overflow-hidden">
-                    {POT_SPLIT.map((s) => (
-                      <div key={s.label} className={s.color} style={{ width: `${s.pct}%` }} />
-                    ))}
-                  </div>
-                  <div className="flex items-center justify-between text-[8px] text-muted-foreground">
-                    {POT_SPLIT.map((s) => (
-                      <span key={s.label} className="flex items-center gap-0.5">
-                        <span className={`inline-block h-1 w-1 rounded-full ${s.color}`} />
-                        {s.pct}% {s.label}
-                      </span>
-                    ))}
-                  </div>
+                <div className="flex items-center justify-between text-[8px] text-muted-foreground">
+                  {POT_SPLIT.map((s) => (
+                    <span key={s.label} className="flex items-center gap-0.5">
+                      <span className={`inline-block h-1 w-1 rounded-full ${s.color}`} />
+                      {s.pct}% {s.label}
+                    </span>
+                  ))}
                 </div>
               </div>
             </>
