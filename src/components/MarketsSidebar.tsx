@@ -38,32 +38,24 @@ export function MarketsSidebar() {
   return (
     <div className="hidden lg:block sticky top-20 w-72 self-start space-y-3">
       {/* Weekly Draw — promoted card */}
-      <div className="rounded-xl border border-primary/25 bg-gradient-to-br from-primary/[0.12] via-primary/[0.04] to-card p-4 relative overflow-hidden shadow-sm shadow-primary/5">
-        <div className="absolute -top-10 -right-10 w-28 h-28 rounded-full bg-primary/[0.1] blur-3xl pointer-events-none" />
-        <div className="flex items-center gap-2 mb-2">
-          <div className="flex items-center justify-center w-6 h-6 rounded-lg bg-primary/15 ring-1 ring-primary/10">
+      <div className="rounded-xl border border-border/40 bg-card p-3.5">
+        <div className="flex items-center justify-between mb-2.5">
+          <div className="flex items-center gap-1.5">
             <Trophy className="h-3.5 w-3.5 text-primary" />
+            <span className="text-[11px] font-semibold text-foreground">Weekly Draw</span>
           </div>
-          <span className="text-[10px] uppercase tracking-widest font-bold text-primary">Weekly Draw</span>
-        </div>
-        <div className="flex items-baseline gap-2 mb-1">
-          <span className="text-2xl font-black text-foreground tracking-tight">${WEEKLY_POT.toLocaleString()}</span>
-          <span className="text-[10px] text-muted-foreground">prize pool</span>
-        </div>
-        <div className="flex items-center gap-3 text-[10px] text-muted-foreground">
-          <span className="flex items-center gap-1">
-            <Timer className="h-3 w-3 text-primary animate-pulse" />
-            <span className="font-semibold text-foreground">{COUNTDOWN}</span>
-          </span>
-          <span className="flex items-center gap-1 bg-primary/10 px-2 py-0.5 rounded-full border border-primary/15">
-            <Ticket className="h-3 w-3 text-primary" />
-            <span className="font-semibold text-foreground">{MY_ENTRIES} entries</span>
+          <span className="flex items-center gap-1 text-[10px] text-muted-foreground">
+            <Timer className="h-3 w-3" />
+            {COUNTDOWN}
           </span>
         </div>
-        <p className="text-[9px] text-muted-foreground mt-2 flex items-center gap-1">
-          <Zap className="h-3 w-3" />
-          Every ticket = market ticket + draw entry
-        </p>
+        <div className="flex items-baseline justify-between">
+          <span className="text-lg font-bold tracking-tight">${WEEKLY_POT.toLocaleString()}</span>
+          <span className="text-[10px] text-muted-foreground flex items-center gap-1">
+            <Ticket className="h-3 w-3" />
+            {MY_ENTRIES} entries
+          </span>
+        </div>
       </div>
 
       {/* Biggest Pots */}
