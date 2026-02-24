@@ -699,12 +699,12 @@ function MobileTopSection({
     }
   }, [emblaApi, activeSlide]);
 
-  // Sponsored auto-cycle every 3s
+  // Sponsored auto-cycle every 5s
   useEffect(() => {
     if (!sponsoredApi) return;
     const onSelect = () => setSponsoredSlide(sponsoredApi.selectedScrollSnap());
     sponsoredApi.on("select", onSelect);
-    const interval = setInterval(() => { sponsoredApi.scrollNext(); }, 3000);
+    const interval = setInterval(() => { sponsoredApi.scrollNext(); }, 5000);
     return () => { clearInterval(interval); sponsoredApi.off("select", onSelect); };
   }, [sponsoredApi]);
 
