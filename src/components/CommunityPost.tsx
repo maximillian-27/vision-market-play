@@ -91,7 +91,7 @@ export function CommunityPost({ post }: CommunityPostProps) {
   ) => (
     <div className={`flex gap-3 ${isNested ? "p-3 rounded-xl border border-border/50 mt-2" : ""}`}>
       <Avatar
-        className={`${isNested ? "h-5 w-5" : "h-10 w-10"} cursor-pointer flex-shrink-0`}
+        className={`${isNested ? "h-5 w-5" : "h-9 w-9 sm:h-10 sm:w-10"} cursor-pointer flex-shrink-0`}
         onClick={() => navigate(`/profile/${user.username.slice(1)}`)}
       >
         <AvatarImage src={user.avatar} alt={user.name} />
@@ -161,7 +161,7 @@ export function CommunityPost({ post }: CommunityPostProps) {
   ];
 
   return (
-    <article className="border-b border-border/40 px-4 py-3 hover:bg-muted/20 transition-colors">
+    <article className="border-b border-border/40 px-3 sm:px-4 py-3 hover:bg-muted/20 transition-colors">
       {/* Repost header */}
       {post.type === "repost" && (
         <div className="flex items-center gap-2 ml-12 mb-1 text-xs text-muted-foreground">
@@ -208,7 +208,7 @@ export function CommunityPost({ post }: CommunityPostProps) {
       )}
 
       {/* Engagement bar */}
-      <div className="flex items-center justify-between ml-[52px] mt-2 max-w-md">
+      <div className="flex items-center justify-between ml-[48px] sm:ml-[52px] mt-2 max-w-md">
         {engagementActions.map(({ icon: Icon, count, active, activeColor, hoverBg, onClick, fill }, i) => (
           <button
             key={i}
