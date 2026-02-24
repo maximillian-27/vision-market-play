@@ -503,8 +503,11 @@ const sortedByPot = [...mockMarkets]
 
 const heroMarket_static = sortedByPot[0];
 
-// Highlighted markets = 2nd and 3rd largest
-const highlightedMarkets = sortedByPot.slice(1, 3);
+// Highlighted markets = next 2 largest binary (non-multi-outcome) markets
+const highlightedMarkets = sortedByPot
+  .slice(1)
+  .filter(m => !m.outcomes)
+  .slice(0, 2);
 
 function formatPot(pot: number): string {
   if (pot >= 1000000) return `$${(pot / 1000000).toFixed(1)}M`;
