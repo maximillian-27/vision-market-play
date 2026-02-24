@@ -24,6 +24,7 @@ const creatorData: Record<string, {
   following: number;
   successRate: number;
   avgVolume: string;
+  biggestPot: string;
   categories: string[];
   description: string;
   joinedDate: string;
@@ -42,6 +43,7 @@ const creatorData: Record<string, {
     following: 234,
     successRate: 89,
     avgVolume: '$59.6K',
+    biggestPot: '$184K',
     categories: ['Crypto', 'Tech', 'Finance'],
     description: 'Professional market analyst specializing in crypto and tech predictions. Creating high-quality markets since 2023. Former analyst at Goldman Sachs.',
     joinedDate: 'Jan 2023',
@@ -60,6 +62,7 @@ const creatorData: Record<string, {
     following: 156,
     successRate: 89,
     avgVolume: '$59.6K',
+    biggestPot: '$184K',
     categories: ['Crypto', 'Tech', 'Finance'],
     description: 'Professional market analyst specializing in crypto and tech predictions. Creating high-quality markets since 2023.',
     joinedDate: 'Jan 2023',
@@ -76,6 +79,7 @@ const creatorData: Record<string, {
     following: 89,
     successRate: 85,
     avgVolume: '$55.3K',
+    biggestPot: '$152K',
     categories: ['Sports', 'Politics', 'Finance'],
     description: 'Data-driven predictions across finance, sports, and politics. Building the future of forecasting.',
     joinedDate: 'Mar 2023',
@@ -385,6 +389,7 @@ export default function CreatorProfile() {
             marketsCreated: creator.markets,
             rank: 12,
             avgVolume: creator.avgVolume,
+            biggestPot: creator.biggestPot,
           }}
         />
 
