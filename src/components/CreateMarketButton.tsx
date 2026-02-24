@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
-import { Plus, Sparkles, Check, AlertCircle, Lightbulb, ChevronLeft, Loader2, X, Megaphone, Zap, RotateCcw } from "lucide-react";
+import { Plus, Sparkles, Check, AlertCircle, Lightbulb, ChevronLeft, Loader2, X, Zap, RotateCcw } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -17,7 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Slider } from "@/components/ui/slider";
+
 
 const categories = [
   "Crypto",
@@ -29,7 +29,7 @@ const categories = [
   "Science",
 ];
 
-const stepLabels = ["Create", "Review", "Fix", "Post"];
+const stepLabels = ["Create", "Review", "Fix"];
 
 interface AIRecommendation {
   type: "success" | "warning" | "suggestion";
@@ -46,8 +46,6 @@ export function CreateMarketButton() {
   const [recommendations, setRecommendations] = useState<AIRecommendation[]>([]);
   const [submitted, setSubmitted] = useState(false);
   const [outcomes, setOutcomes] = useState<string[]>(["Yes", "No"]);
-  const [promotionType, setPromotionType] = useState<"free" | "sponsored">("free");
-  const [promotionDays, setPromotionDays] = useState(7);
   const [hasIssues, setHasIssues] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -131,8 +129,6 @@ export function CreateMarketButton() {
       setAiScore(0);
       setHasIssues(false);
       setOutcomes(["Yes", "No"]);
-      setPromotionType("free");
-      setPromotionDays(7);
       setFormData({ title: "", description: "", category: "", endDate: "", resolutionCriteria: "", resolutionSource: "" });
     }, 300);
   };
@@ -292,9 +288,7 @@ export function CreateMarketButton() {
           </div>
           <h3 className="text-lg font-semibold">Market Live!</h3>
           <p className="text-sm text-muted-foreground max-w-sm mx-auto">
-            {promotionType === "sponsored"
-              ? `Your market is live and promoted for ${promotionDays} day${promotionDays > 1 ? "s" : ""}!`
-              : "Your market is live! It will appear in the feed shortly."}
+            Your market is live! It will appear in the feed shortly.
           </p>
           <Button onClick={handleClose} className="mt-4">Done</Button>
         </div>
@@ -356,72 +350,6 @@ export function CreateMarketButton() {
           </div>
         );
 
-      case 4:
-        return (
-          <div className="space-y-4">
-            {/* Compact summary */}
-            <div className="p-3 rounded-lg bg-muted/50 space-y-1 text-xs">
-              <p className="font-medium text-sm">{formData.title}</p>
-              <p className="text-muted-foreground">{formData.category} · {outcomes.filter(o => o.trim()).join(" / ")} · Ends {formData.endDate}</p>
-            </div>
-
-            {/* Free option */}
-            <button type="button" onClick={() => setPromotionType("free")}
-              className={`w-full text-left p-3.5 rounded-xl border-2 transition-all ${
-                promotionType === "free" ? "border-primary bg-primary/5" : "border-border hover:border-muted-foreground/30"
-              }`}>
-              <div className="flex items-center gap-3">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                  promotionType === "free" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
-                }`}>
-                  <Zap className="h-4 w-4" />
-                </div>
-                <div>
-                  <p className="font-medium text-sm">Free Post</p>
-                  <p className="text-xs text-muted-foreground">Appears in the feed organically</p>
-                </div>
-              </div>
-            </button>
-
-            {/* Sponsored option */}
-            <button type="button" onClick={() => setPromotionType("sponsored")}
-              className={`w-full text-left p-3.5 rounded-xl border-2 transition-all ${
-                promotionType === "sponsored"
-                  ? "border-primary bg-gradient-to-br from-primary/5 to-primary/10"
-                  : "border-border hover:border-muted-foreground/30"
-              }`}>
-              <div className="flex items-center gap-3">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                  promotionType === "sponsored" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
-                }`}>
-                  <Megaphone className="h-4 w-4" />
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-center gap-2">
-                    <p className="font-medium text-sm">Sponsored Post</p>
-                    <span className="text-[10px] font-medium bg-primary/10 text-primary px-1.5 py-0.5 rounded-full">$1/day</span>
-                  </div>
-                  <p className="text-xs text-muted-foreground">Boost visibility with promoted placement</p>
-                </div>
-              </div>
-
-              {promotionType === "sponsored" && (
-                <div className="mt-3 pt-3 border-t border-border/50 space-y-3">
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="text-muted-foreground">Duration</span>
-                    <span className="font-semibold">{promotionDays} day{promotionDays > 1 ? "s" : ""} — ${promotionDays}</span>
-                  </div>
-                  <Slider value={[promotionDays]} onValueChange={(v) => setPromotionDays(v[0])}
-                    min={1} max={30} step={1} className="w-full" />
-                  <div className="flex justify-between text-[10px] text-muted-foreground">
-                    <span>1 day</span><span>30 days</span>
-                  </div>
-                </div>
-              )}
-            </button>
-          </div>
-        );
-
       default:
         return null;
     }
@@ -429,7 +357,7 @@ export function CreateMarketButton() {
 
   const handleNext = () => {
     if (step === 2 && !hasIssues) {
-      setStep(4); // Skip fix step if no issues
+      handleSubmit(); // No issues — post directly
     } else if (step === 2) {
       setStep(3);
     } else {
@@ -438,11 +366,7 @@ export function CreateMarketButton() {
   };
 
   const handleBack = () => {
-    if (step === 4 && !hasIssues) {
-      setStep(2); // Skip fix step going back too
-    } else {
-      setStep(step - 1);
-    }
+    setStep(step - 1);
   };
 
   return (
@@ -492,18 +416,17 @@ export function CreateMarketButton() {
                   {step > 1 ? <><ChevronLeft className="h-3.5 w-3.5 mr-0.5" /> Back</> : "Cancel"}
                 </Button>
 
-                {step < 4 ? (
+                {step < 3 ? (
                   <Button size="sm" onClick={handleNext}
                     disabled={step === 1 ? !canProceedStep1 : isChecking}>
-                    {step === 2 && isChecking ? <><Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> Reviewing...</> : "Next"}
+                    {step === 2 && isChecking ? <><Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> Reviewing...</>
+                      : step === 2 && !hasIssues && !isChecking ? "Post Market" : "Next"}
                   </Button>
                 ) : (
                   <Button size="sm" onClick={handleSubmit} disabled={isSubmitting}>
                     {isSubmitting
                       ? <><Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> Posting...</>
-                      : promotionType === "sponsored"
-                        ? `Post Market — $${promotionDays}`
-                        : "Post Market"}
+                      : "Post Market"}
                   </Button>
                 )}
               </div>

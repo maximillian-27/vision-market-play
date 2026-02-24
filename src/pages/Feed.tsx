@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useCallback } from "react";
+import { useState, useMemo } from "react";
 import { FeedFilters, FilterState } from "@/components/FeedFilters";
 import { MarketGridCard } from "@/components/MarketGridCard";
 import { Button } from "@/components/ui/button";
@@ -6,7 +6,7 @@ import { Timer, Users, ArrowRight, ChevronRight, Trophy, Ticket, Zap, Gift, Cale
 import { useNavigate } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { WeeklyDrawCard } from "@/components/WeeklyDrawCard";
-import useEmblaCarousel from "embla-carousel-react";
+
 import {
   Dialog,
   DialogContent,
@@ -496,17 +496,15 @@ const mockMarkets: Market[] = [
   },
 ];
 
-// Hero slideshow = top 5 by pot size that are open/closing
-const heroMarkets = [...mockMarkets]
+// Hero = single largest market by pot size that is open/closing
+const sortedByPot = [...mockMarkets]
   .filter(m => m.status === "open" || m.status === "closing")
-  .sort((a, b) => b.pot - a.pot)
-  .slice(0, 5);
+  .sort((a, b) => b.pot - a.pot);
 
-// Sponsored markets (next 2 after hero)
-const sponsoredMarkets = [...mockMarkets]
-  .filter(m => m.status === "open" || m.status === "closing")
-  .sort((a, b) => b.pot - a.pot)
-  .slice(5, 7);
+const heroMarket_static = sortedByPot[0];
+
+// Highlighted markets = 2nd and 3rd largest
+const highlightedMarkets = sortedByPot.slice(1, 3);
 
 function formatPot(pot: number): string {
   if (pot >= 1000000) return `$${(pot / 1000000).toFixed(1)}M`;
@@ -663,123 +661,58 @@ function MobileWeeklyDrawBanner() {
   );
 }
 
-/* ── Mobile Top Section (optimized) ── */
+/* ── Mobile Top Section (single hero + highlighted) ── */
 function MobileTopSection({
-  heroMarket, heroMarkets, heroDisplayOutcomes, heroIsBinary, activeSlide, setActiveSlide, navigate,
+  heroMarket, navigate,
 }: {
   heroMarket: Market;
-  heroMarkets: Market[];
-  heroDisplayOutcomes: { label: string; price: number; color?: string }[];
-  heroIsBinary: boolean;
-  activeSlide: number;
-  setActiveSlide: (i: number) => void;
   navigate: (path: string) => void;
 }) {
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: "center" });
-
-  // Sponsored carousel
-  const [sponsoredRef, sponsoredApi] = useEmblaCarousel({ loop: true });
-  const [sponsoredSlide, setSponsoredSlide] = useState(0);
-
-  const onEmblaSelect = useCallback(() => {
-    if (!emblaApi) return;
-    setActiveSlide(emblaApi.selectedScrollSnap());
-  }, [emblaApi, setActiveSlide]);
-
-  useEffect(() => {
-    if (!emblaApi) return;
-    emblaApi.on("select", onEmblaSelect);
-    return () => { emblaApi.off("select", onEmblaSelect); };
-  }, [emblaApi, onEmblaSelect]);
-
-  useEffect(() => {
-    if (!emblaApi) return;
-    if (emblaApi.selectedScrollSnap() !== activeSlide) {
-      emblaApi.scrollTo(activeSlide);
-    }
-  }, [emblaApi, activeSlide]);
-
-  // Sponsored auto-cycle every 5s
-  useEffect(() => {
-    if (!sponsoredApi) return;
-    const onSelect = () => setSponsoredSlide(sponsoredApi.selectedScrollSnap());
-    sponsoredApi.on("select", onSelect);
-    const interval = setInterval(() => { sponsoredApi.scrollNext(); }, 5000);
-    return () => { clearInterval(interval); sponsoredApi.off("select", onSelect); };
-  }, [sponsoredApi]);
+  const heroOutcomes = heroMarket.outcomes || [
+    { label: "Yes", price: heroMarket.yesPrice || 0, color: "success" },
+    { label: "No", price: heroMarket.noPrice || 0, color: "destructive" }
+  ];
+  const heroIsBinary = !heroMarket.outcomes;
 
   return (
     <div className="sm:hidden space-y-1.5 mt-3">
       {/* Weekly Draw Banner — top strip */}
       <MobileWeeklyDrawBanner />
 
-      {/* Hero Carousel — swipeable */}
-      <div className="relative rounded-xl overflow-hidden h-[180px]" ref={emblaRef}>
-        <div className="flex h-full">
-          {heroMarkets.map((market) => {
-            const outcomes = market.outcomes || [
-              { label: "Yes", price: market.yesPrice || 0, color: "success" },
-              { label: "No", price: market.noPrice || 0, color: "destructive" }
-            ];
-            const isBinary = !market.outcomes;
-            return (
-              <div key={market.id} className="min-w-0 shrink-0 grow-0 basis-full h-full cursor-pointer relative" onClick={() => navigate(`/market/${market.id}`)}>
-                <img src={market.image} alt={market.title} className="w-full h-full object-cover" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
-                <div className="absolute bottom-0 left-0 right-0 p-3">
-                  <h3 className="text-white text-sm font-bold leading-snug line-clamp-2 mb-1.5">{market.title}</h3>
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="text-primary text-[11px] font-extrabold">{formatPot(market.pot)} pot</span>
-                    <span className="text-white/60 text-[10px] flex items-center gap-1"><Users className="h-2.5 w-2.5" />{market.players.toLocaleString()}</span>
-                  </div>
-                  {isBinary ? (
-                    <div className="flex gap-1.5">
-                      <button className="flex-1 rounded py-1.5 text-center bg-yes/20 border border-yes/40 text-yes text-[11px] font-bold" onClick={(e) => { e.stopPropagation(); navigate(`/market/${market.id}`); }}>Yes {outcomes[0].price}%</button>
-                      <button className="flex-1 rounded py-1.5 text-center bg-no/20 border border-no/40 text-no text-[11px] font-bold" onClick={(e) => { e.stopPropagation(); navigate(`/market/${market.id}`); }}>No {outcomes[1].price}%</button>
-                    </div>
-                  ) : (
-                    <div className="flex gap-1.5 overflow-x-auto">
-                      {outcomes.slice(0, 3).map((o, i) => (
-                        <button key={i} className="shrink-0 px-3 py-1 rounded bg-white/10 border border-white/20 text-white text-[10px] font-bold" onClick={(e) => { e.stopPropagation(); navigate(`/market/${market.id}`); }}>{o.label} {o.price}%</button>
-                      ))}
-                      {outcomes.length > 3 && <span className="shrink-0 px-2 py-1 text-white/50 text-[10px]">+{outcomes.length - 3}</span>}
-                    </div>
-                  )}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-        <div className="absolute bottom-1.5 right-3 flex gap-1 z-10">
-          {heroMarkets.map((_, i) => (
-            <button key={i} onClick={(e) => { e.stopPropagation(); setActiveSlide(i); }} className={`h-1.5 rounded-full transition-all ${i === activeSlide ? 'w-4 bg-white' : 'w-1.5 bg-white/40'}`} />
-          ))}
+      {/* Single Hero Market */}
+      <div className="relative rounded-xl overflow-hidden h-[180px] cursor-pointer" onClick={() => navigate(`/market/${heroMarket.id}`)}>
+        <img src={heroMarket.image} alt={heroMarket.title} className="w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 p-3">
+          <h3 className="text-white text-sm font-bold leading-snug line-clamp-2 mb-1.5">{heroMarket.title}</h3>
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-primary text-[11px] font-extrabold">{formatPot(heroMarket.pot)} pot</span>
+            <span className="text-white/60 text-[10px] flex items-center gap-1"><Users className="h-2.5 w-2.5" />{heroMarket.players.toLocaleString()}</span>
+          </div>
+          {heroIsBinary ? (
+            <div className="flex gap-1.5">
+              <button className="flex-1 rounded py-1.5 text-center bg-yes/20 border border-yes/40 text-yes text-[11px] font-bold" onClick={(e) => { e.stopPropagation(); navigate(`/market/${heroMarket.id}`); }}>Yes {heroOutcomes[0].price}%</button>
+              <button className="flex-1 rounded py-1.5 text-center bg-no/20 border border-no/40 text-no text-[11px] font-bold" onClick={(e) => { e.stopPropagation(); navigate(`/market/${heroMarket.id}`); }}>No {heroOutcomes[1].price}%</button>
+            </div>
+          ) : (
+            <div className="flex gap-1.5 overflow-x-auto">
+              {heroOutcomes.slice(0, 3).map((o, i) => (
+                <button key={i} className="shrink-0 px-3 py-1 rounded bg-white/10 border border-white/20 text-white text-[10px] font-bold" onClick={(e) => { e.stopPropagation(); navigate(`/market/${heroMarket.id}`); }}>{o.label} {o.price}%</button>
+              ))}
+              {heroOutcomes.length > 3 && <span className="shrink-0 px-2 py-1 text-white/50 text-[10px]">+{heroOutcomes.length - 3}</span>}
+            </div>
+          )}
         </div>
       </div>
 
       {/* Gradient Banner */}
       <GradientDivider />
 
-      {/* Sponsored Carousel — auto-cycles every 3s */}
-      <div className="relative">
-        <div className="overflow-hidden rounded-xl" ref={sponsoredRef}>
-          <div className="flex">
-            {sponsoredMarkets.map((market) => (
-              <div key={market.id} className="min-w-0 shrink-0 grow-0 basis-full">
-                <CompactFeaturedCard market={market} />
-              </div>
-            ))}
-          </div>
-        </div>
-        <div className="flex justify-center gap-1.5 mt-1.5">
-          {sponsoredMarkets.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => sponsoredApi?.scrollTo(i)}
-              className={`h-1.5 rounded-full transition-all ${i === sponsoredSlide ? 'w-4 bg-primary' : 'w-1.5 bg-muted-foreground/30'}`}
-            />
-          ))}
-        </div>
+      {/* Highlighted Markets */}
+      <div className="grid grid-cols-2 gap-1.5">
+        {highlightedMarkets.map((market) => (
+          <CompactFeaturedCard key={market.id} market={market} />
+        ))}
       </div>
     </div>
   );
@@ -805,9 +738,9 @@ function CompactFeaturedCard({ market }: { market: Market }) {
       onClick={() => navigate(`/market/${market.id}`)}
       className="flex flex-col p-3 rounded-xl border border-border/60 bg-card hover:bg-accent/30 cursor-pointer transition-colors h-full"
     >
-      {/* Header: sponsored + creator */}
+      {/* Header: highlighted + creator */}
       <div className="flex items-center justify-between mb-1.5">
-        <span className="text-[9px] uppercase tracking-wider font-bold text-pollgy-blue">Sponsored</span>
+        <span className="text-[9px] uppercase tracking-wider font-bold text-primary">Highlighted</span>
         <div className="flex items-center gap-1">
           <img src={market.creator.avatar} alt="" className="w-3.5 h-3.5 rounded-full" />
           <span className="text-[9px] text-muted-foreground">{market.creator.name}</span>
@@ -877,7 +810,6 @@ function CompactFeaturedCard({ market }: { market: Market }) {
 export default function Feed() {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
-  const [activeSlide, setActiveSlide] = useState(0);
   const [filters, setFilters] = useState<FilterState>({
     category: "All",
     sortBy: "trending",
@@ -885,14 +817,6 @@ export default function Feed() {
     status: "all",
     timeframe: "all",
   });
-
-  // Auto-cycle hero slideshow (both mobile & desktop)
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setActiveSlide(prev => (prev + 1) % heroMarkets.length);
-    }, 5000);
-    return () => clearInterval(interval);
-  }, []);
 
   const filteredMarkets = useMemo(() => {
     let result = [...mockMarkets];
@@ -936,7 +860,7 @@ export default function Feed() {
     return result;
   }, [filters]);
 
-  const heroMarket = heroMarkets[activeSlide];
+  const heroMarket = heroMarket_static;
   const heroDisplayOutcomes = heroMarket.outcomes || [
     { label: "Yes", price: heroMarket.yesPrice || 0, color: "success" },
     { label: "No", price: heroMarket.noPrice || 0, color: "destructive" }
@@ -951,20 +875,15 @@ export default function Feed() {
           <FeedFilters filters={filters} onFiltersChange={setFilters} />
         </div>
 
-        {/* 2a. Mobile: Weekly Draw + Hero + Banner + Sponsored */}
+        {/* 2a. Mobile: Weekly Draw + Hero + Banner + Highlighted */}
         <MobileTopSection
           heroMarket={heroMarket}
-          heroMarkets={heroMarkets}
-          heroDisplayOutcomes={heroDisplayOutcomes}
-          heroIsBinary={heroIsBinary}
-          activeSlide={activeSlide}
-          setActiveSlide={setActiveSlide}
           navigate={navigate}
         />
 
         {/* 2b. Desktop Split Hero */}
         <div className="hidden sm:grid grid-cols-1 lg:grid-cols-2 gap-3 lg:max-h-[340px]">
-          {/* Left — Slideshow hero */}
+          {/* Left — Single hero market */}
           <div
             className="relative rounded-2xl overflow-hidden cursor-pointer group"
             onClick={() => navigate(`/market/${heroMarket.id}`)}
@@ -1003,26 +922,17 @@ export default function Feed() {
                   </div>
                 )}
               </div>
-              <div className="absolute top-3 right-3 flex gap-1">
-                {heroMarkets.map((_, i) => (
-                  <button
-                    key={i}
-                    onClick={(e) => { e.stopPropagation(); setActiveSlide(i); }}
-                    className={`h-1.5 rounded-full transition-all ${i === activeSlide ? 'w-5 bg-white' : 'w-1.5 bg-white/40'}`}
-                  />
-                ))}
-              </div>
             </div>
           </div>
 
-          {/* Right — Weekly Draw + 2 Sponsored */}
+          {/* Right — Weekly Draw + 2 Highlighted */}
           <div className="flex flex-col gap-3 lg:max-h-[340px]">
             <div className="flex-1 min-h-0">
               <WeeklyDrawCard />
             </div>
             <div className="grid grid-cols-2 gap-3 flex-1 min-h-0">
-              <CompactFeaturedCard market={sponsoredMarkets[0]} />
-              <CompactFeaturedCard market={sponsoredMarkets[1]} />
+              <CompactFeaturedCard market={highlightedMarkets[0]} />
+              <CompactFeaturedCard market={highlightedMarkets[1]} />
             </div>
           </div>
         </div>
