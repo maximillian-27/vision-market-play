@@ -743,6 +743,9 @@ function MobileTopSection({
         </div>
       </div>
 
+      {/* Gradient Banner */}
+      <GradientDivider />
+
       {/* Sponsored Carousel — auto-cycles every 3s */}
       <div className="relative">
         <div className="overflow-hidden rounded-xl" ref={sponsoredRef}>
@@ -764,9 +767,6 @@ function MobileTopSection({
           ))}
         </div>
       </div>
-
-      {/* Gradient Banner */}
-      <GradientDivider />
     </div>
   );
 }
