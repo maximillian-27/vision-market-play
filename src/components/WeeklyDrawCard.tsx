@@ -34,7 +34,7 @@ const COUNTDOWN = "3d 14h";
 
 export function WeeklyDrawCard() {
   return (
-    <div className="flex flex-col p-4 rounded-xl border border-primary/25 bg-gradient-to-br from-primary/[0.12] via-primary/[0.04] to-card h-full relative overflow-hidden shadow-sm shadow-primary/5">
+    <div className="flex flex-col p-4 pb-5 rounded-xl border border-primary/25 bg-gradient-to-br from-primary/[0.12] via-primary/[0.04] to-card h-full relative overflow-hidden shadow-sm shadow-primary/5">
       {/* Decorative glows */}
       <div className="absolute -top-12 -right-12 w-36 h-36 rounded-full bg-primary/[0.12] blur-3xl pointer-events-none" />
       <div className="absolute -bottom-8 -left-8 w-24 h-24 rounded-full bg-primary/[0.07] blur-2xl pointer-events-none" />
@@ -92,7 +92,7 @@ export function WeeklyDrawCard() {
       </div>
 
       {/* Footer links */}
-      <div className="flex items-center gap-3 pt-1.5 border-t border-border/20 mt-auto mb-2.5">
+      <div className="flex items-center gap-3 pt-2 border-t border-border/20 mt-auto mb-0">
         <Dialog>
           <DialogTrigger asChild>
             <button className="flex items-center gap-1 text-[9px] text-muted-foreground hover:text-foreground transition-colors">
