@@ -20,8 +20,8 @@ interface ProfileStatsProps {
     marketsCreated?: number;
     totalVolume?: string;
     avgVolume?: string;
+    biggestPot?: string;
     successRate?: number;
-    totalViews?: string | number;
     rank?: number;
   };
 }
@@ -47,9 +47,10 @@ export function ProfileStats({ type, stats }: ProfileStatsProps) {
           value={stats.avgVolume || "$0"}
         />
         <StatCard
-          icon={<Users className="h-3.5 w-3.5 sm:h-4 sm:w-4" />}
-          label="Followers"
-          value={typeof stats.followers === 'number' ? (stats.followers >= 1000 ? `${(stats.followers / 1000).toFixed(1)}K` : stats.followers.toString()) : stats.followers?.toString() || "0"}
+          icon={<Trophy className="h-3.5 w-3.5 sm:h-4 sm:w-4" />}
+          label="Biggest Pot"
+          value={stats.biggestPot || "$0"}
+          valueClassName="text-success"
         />
       </div>
     );

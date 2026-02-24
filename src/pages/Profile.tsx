@@ -26,6 +26,7 @@ const creatorData: Record<string, {
   description: string;
   successRate: number;
   avgPot: string;
+  biggestPot: string;
   link?: string;
 }> = {
   'marketmaven': { 
@@ -35,6 +36,7 @@ const creatorData: Record<string, {
     following: 234,
     successRate: 89,
     avgPot: '$59.6K',
+    biggestPot: '$184K',
     link: 'marketmaven.com',
     description: 'Professional market analyst specializing in crypto and tech predictions.'
   },
@@ -45,6 +47,7 @@ const creatorData: Record<string, {
     following: 156,
     successRate: 85,
     avgPot: '$55.3K',
+    biggestPot: '$152K',
     link: 'predictpro.io',
     description: 'Data-driven predictions across finance, sports, and politics.'
   },
@@ -55,6 +58,7 @@ const creatorData: Record<string, {
     following: 89,
     successRate: 82,
     avgPot: '$54.8K',
+    biggestPot: '$128K',
     description: 'Identifying emerging trends before they go mainstream.'
   },
   'insighthub': { 
@@ -64,6 +68,7 @@ const creatorData: Record<string, {
     following: 67,
     successRate: 79,
     avgPot: '$51.7K',
+    biggestPot: '$115K',
     link: 'insighthub.co',
     description: 'Providing actionable insights through well-researched prediction markets.'
   },
@@ -74,6 +79,7 @@ const creatorData: Record<string, {
     following: 45,
     successRate: 76,
     avgPot: '$50.0K',
+    biggestPot: '$98K',
     description: 'Quantitative analyst creating markets based on statistical analysis.'
   },
 };
@@ -327,7 +333,7 @@ export default function Profile() {
               marketsCreated: creatorStats.markets,
               totalVolume: creatorStats.volume,
               avgVolume: creatorStats.avgPot,
-              followers: creatorStats.followers,
+              biggestPot: creatorStats.biggestPot,
               successRate: creatorStats.successRate,
             }}
           />
