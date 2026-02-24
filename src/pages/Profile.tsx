@@ -5,7 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, UserPlus, UserCheck, BadgeCheck, TrendingUp, Clock, Calendar, MapPin, Share2, ArrowUpRight, ArrowDownLeft, MessageCircle, Heart, Repeat2, Link2, ExternalLink } from "lucide-react";
+import { ArrowLeft, UserPlus, UserCheck, BadgeCheck, TrendingUp, Clock, Calendar, MapPin, Share2, ArrowUpRight, ArrowDownLeft, MessageCircle, Heart, Repeat2, Link2, ExternalLink, ChevronRight } from "lucide-react";
 import { MarketCard } from "@/components/MarketCard";
 import { SocialStats } from "@/components/SocialStats";
 import { ProfileStats } from "@/components/ProfileStats";
@@ -77,19 +77,11 @@ const creatorData: Record<string, {
 };
 
 const mockCreatorMarkets = [
-  {
-    id: "1",
-    creator: { name: "MarketMaven", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Maven" },
-    title: "Will Bitcoin reach $100K by end of 2025?",
-    subtitle: "Major crypto milestone approaching",
-    yesPrice: 68,
-    noPrice: 32,
-    volume: "$1.2M",
-    endsIn: "3 months",
-    image: "/src/assets/bitcoin-market.jpg",
-    likes: 142,
-    comments: 38,
-  },
+  { id: "1", title: "Will Bitcoin reach $100K by end of 2025?", pot: "$1.2M", players: 8420, yesPercent: 68, endsIn: "3mo" },
+  { id: "2", title: "Fed cuts interest rates before April?", pot: "$890K", players: 5130, yesPercent: 42, endsIn: "5w" },
+  { id: "3", title: "Apple announces foldable iPhone in 2025?", pot: "$340K", players: 3200, yesPercent: 23, endsIn: "8mo" },
+  { id: "4", title: "SpaceX Starship orbital flight success?", pot: "$210K", players: 2100, yesPercent: 81, endsIn: "2w" },
+  { id: "5", title: "Will Ethereum flip Bitcoin market cap?", pot: "$156K", players: 1840, yesPercent: 12, endsIn: "1y" },
 ];
 
 // Mock activity data - X-style posts
@@ -379,10 +371,36 @@ export default function Profile() {
             
             {/* Creator Markets Tab */}
             {isCreator && (
-              <TabsContent value="markets" className="p-4 space-y-4">
-                {mockCreatorMarkets.map((market, index) => (
-                  <MarketCard key={index} {...market} />
-                ))}
+              <TabsContent value="markets" className="p-0">
+                <div className="divide-y divide-border/40">
+                  {mockCreatorMarkets.map((market) => (
+                    <div
+                      key={market.id}
+                      onClick={() => navigate(`/market/${market.id}`)}
+                      className="px-4 py-3 flex items-center gap-3 cursor-pointer hover:bg-muted/30 active:bg-muted/50 transition-colors"
+                    >
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-sm leading-snug line-clamp-1">{market.title}</p>
+                        <div className="flex items-center gap-2 mt-1 text-[11px] text-muted-foreground">
+                          <span className="font-semibold text-primary">{market.pot}</span>
+                          <span className="text-muted-foreground/30">·</span>
+                          <span>{market.players.toLocaleString()} players</span>
+                          <span className="text-muted-foreground/30">·</span>
+                          <span>{market.endsIn}</span>
+                        </div>
+                      </div>
+                      <div className="shrink-0 flex items-center gap-1.5">
+                        <div className="text-right">
+                          <span className="text-xs font-semibold text-success">{market.yesPercent}%</span>
+                          <div className="w-12 h-1.5 rounded-full bg-muted mt-0.5 overflow-hidden">
+                            <div className="h-full rounded-full bg-success" style={{ width: `${market.yesPercent}%` }} />
+                          </div>
+                        </div>
+                        <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/30" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </TabsContent>
             )}
             
