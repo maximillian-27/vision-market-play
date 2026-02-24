@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,7 +8,7 @@ import { Separator } from "@/components/ui/separator";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
-import { Wallet } from "lucide-react";
+import { Wallet, ArrowLeft } from "lucide-react";
 
 interface BuyDialogProps {
   open: boolean;
@@ -195,11 +195,19 @@ export function BuyDialog({ open, onOpenChange, outcome, marketTitle, marketId, 
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>Place Entry</DialogTitle>
-        </DialogHeader>
+      <DialogContent hideClose className="sm:max-w-md p-0 gap-0">
+        <div className="flex items-center gap-3 p-4 border-b border-border/40">
+          <button
+            onClick={() => onOpenChange(false)}
+            className="h-8 w-8 rounded-full flex items-center justify-center hover:bg-muted transition-colors"
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </button>
+          <h2 className="text-base font-semibold">Place Entry</h2>
+        </div>
+        <div className="p-6">
         {content}
+        </div>
       </DialogContent>
     </Dialog>
   );

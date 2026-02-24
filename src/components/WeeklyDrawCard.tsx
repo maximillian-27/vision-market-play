@@ -1,4 +1,4 @@
-import { Trophy, Timer, Users, Ticket, Info, History, Gift, Calendar, Zap } from "lucide-react";
+import { Trophy, Timer, Users, Ticket, Info, History, Gift, Calendar, Zap, ArrowLeft } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -8,9 +8,7 @@ import {
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
+  DialogClose,
   DialogTrigger,
 } from "@/components/ui/dialog";
 
@@ -100,18 +98,19 @@ export function WeeklyDrawCard() {
               Previous winners
             </button>
           </DialogTrigger>
-          <DialogContent className="max-w-sm">
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-2">
-                <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10">
-                  <Trophy className="h-4 w-4 text-primary" />
-                </div>
-                Last Week's Winners
-              </DialogTitle>
-              <DialogDescription>
-                Total prize pool: ${WEEKLY_POT.toLocaleString()}
-              </DialogDescription>
-            </DialogHeader>
+          <DialogContent hideClose className="max-w-sm p-0 gap-0">
+            <div className="flex items-center gap-3 p-4 border-b border-border/40">
+              <DialogClose asChild>
+                <button className="h-8 w-8 rounded-full flex items-center justify-center hover:bg-muted transition-colors">
+                  <ArrowLeft className="h-4 w-4" />
+                </button>
+              </DialogClose>
+              <div>
+                <h2 className="text-base font-semibold">Last Week's Winners</h2>
+                <p className="text-xs text-muted-foreground">Total prize pool: ${WEEKLY_POT.toLocaleString()}</p>
+              </div>
+            </div>
+            <div className="p-5">
             <div className="space-y-1 mt-1">
               {previousWinners.map((w, i) => (
                 <div
@@ -134,6 +133,7 @@ export function WeeklyDrawCard() {
               <Users className="h-3.5 w-3.5 flex-shrink-0" />
               <span>+ 7 more winners shared <span className="font-semibold text-foreground">${(WEEKLY_POT * 0.1).toLocaleString()}</span> equally</span>
             </div>
+            </div>
           </DialogContent>
         </Dialog>
 
@@ -144,18 +144,19 @@ export function WeeklyDrawCard() {
               How it works
             </button>
           </DialogTrigger>
-          <DialogContent className="max-w-sm">
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-2">
-                <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10">
-                  <Info className="h-4 w-4 text-primary" />
-                </div>
-                How the Weekly Draw Works
-              </DialogTitle>
-              <DialogDescription>
-                A portion of every ticket purchase funds the weekly prize pool.
-              </DialogDescription>
-            </DialogHeader>
+          <DialogContent hideClose className="max-w-sm p-0 gap-0">
+            <div className="flex items-center gap-3 p-4 border-b border-border/40">
+              <DialogClose asChild>
+                <button className="h-8 w-8 rounded-full flex items-center justify-center hover:bg-muted transition-colors">
+                  <ArrowLeft className="h-4 w-4" />
+                </button>
+              </DialogClose>
+              <div>
+                <h2 className="text-base font-semibold">How the Weekly Draw Works</h2>
+                <p className="text-xs text-muted-foreground">A portion of every ticket purchase funds the weekly prize pool.</p>
+              </div>
+            </div>
+            <div className="p-5">
             <div className="space-y-1 mt-1">
               <div className="flex gap-3 p-3 rounded-lg bg-muted/40">
                 <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10 flex-shrink-0">
@@ -209,6 +210,7 @@ export function WeeklyDrawCard() {
               <Zap className="h-3 w-3" />
               All draws are verifiable and transparent. Winners announced every Monday.
             </p>
+            </div>
           </DialogContent>
         </Dialog>
       </div>
