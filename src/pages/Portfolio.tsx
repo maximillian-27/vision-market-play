@@ -185,56 +185,56 @@ const Portfolio = () => {
           </TabsList>
 
           {/* My Entries */}
-          <TabsContent value="entries" className="space-y-1.5 sm:space-y-2.5">
-            {/* Summary bar */}
-            <div className="flex items-center justify-between px-0.5 text-[10px] sm:text-[11px] text-muted-foreground">
-              <span>${totalAtStake} at stake · {entries.length} markets</span>
-              <span className="text-success font-medium">~${totalPotentialPayout} potential</span>
-            </div>
-
+          <TabsContent value="entries" className="space-y-2 sm:space-y-3">
             {entries.map((entry) => (
-              <Card
+              <div
                 key={entry.id}
-                className="border-border/40 hover:border-border/60 transition-colors cursor-pointer active:scale-[0.995]"
                 onClick={() => {
                   if (isMobile) navigate(`/market/${entry.id}`);
                   else setSelectedMarketId(String(entry.id));
                 }}
+                className="group rounded-xl border border-border/40 bg-card hover:border-border/60 transition-all cursor-pointer active:scale-[0.998] overflow-hidden"
               >
-                <CardContent className="p-2.5 sm:p-4">
-                  <div className="flex items-start gap-2 sm:gap-3">
-                    <span className="text-lg sm:text-2xl flex-shrink-0">{entry.image}</span>
+                <div className="p-3 sm:p-4">
+                  {/* Top row: emoji + title + timer */}
+                  <div className="flex items-start gap-2.5 sm:gap-3">
+                    <span className="text-2xl sm:text-3xl flex-shrink-0 mt-0.5">{entry.image}</span>
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between gap-1.5">
-                        <p className="font-medium text-[12px] sm:text-sm leading-tight line-clamp-2">{entry.market}</p>
-                        <ChevronRight className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground/40 flex-shrink-0 mt-0.5" />
-                      </div>
-                      <div className="flex items-center gap-1.5 mt-1">
+                      <p className="font-semibold text-sm sm:text-[15px] leading-snug line-clamp-2">{entry.market}</p>
+                      
+                      {/* Outcome badge + ticket details */}
+                      <div className="flex items-center gap-2 mt-2">
                         <Badge
                           variant={entry.outcome === "Yes" ? "default" : "destructive"}
-                          className={`text-[9px] sm:text-[10px] px-1 sm:px-1.5 h-4 ${entry.outcome === "Yes" ? "bg-success/15 text-success border-success/30" : ""}`}
+                          className={`text-[10px] sm:text-xs px-2 py-0.5 h-5 font-semibold ${entry.outcome === "Yes" ? "bg-success/15 text-success border-success/30" : ""}`}
                         >
                           {entry.outcome}
                         </Badge>
-                        <span className="text-[9px] sm:text-[11px] text-muted-foreground">
-                          {entry.tickets}× · ${(entry.tickets * entry.ticketPrice).toFixed(0)}
+                        <span className="text-xs text-muted-foreground">
+                          {entry.tickets} tickets × ${entry.ticketPrice.toFixed(2)}
                         </span>
                       </div>
-                      <div className="flex items-center justify-between mt-1.5">
-                        <span className="text-[10px] sm:text-xs font-semibold text-success flex items-center gap-0.5">
-                          Win: ~${entry.potentialPayout}
-                          <span className="text-[8px] sm:text-[9px] font-normal text-muted-foreground">(est.)</span>
-                        </span>
-                        <span className="text-[9px] sm:text-[10px] text-muted-foreground flex items-center gap-0.5">
-                          <Timer className="h-2.5 w-2.5" />
-                          {entry.endsIn}
-                        </span>
-                      </div>
-                      <Progress value={entry.timePercent} className="h-[2px] sm:h-[3px] bg-muted/60 mt-1" />
                     </div>
                   </div>
-                </CardContent>
-              </Card>
+
+                  {/* Bottom row: potential win + time */}
+                  <div className="flex items-end justify-between mt-3 gap-3">
+                    <div>
+                      <p className="text-[10px] sm:text-xs text-muted-foreground mb-0.5">Est. potential winning</p>
+                      <p className="text-base sm:text-lg font-bold text-success">~${entry.potentialPayout}</p>
+                    </div>
+                    <div className="text-right flex-shrink-0">
+                      <div className="flex items-center gap-1 text-xs text-muted-foreground mb-1">
+                        <Timer className="h-3 w-3" />
+                        <span>{entry.endsIn}</span>
+                      </div>
+                      <div className="w-20 h-1.5 rounded-full bg-muted/60 overflow-hidden">
+                        <div className="h-full rounded-full bg-success/70 transition-all" style={{ width: `${entry.timePercent}%` }} />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             ))}
 
             {/* Browse more CTA */}
