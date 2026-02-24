@@ -169,7 +169,7 @@ const Portfolio = () => {
         <Tabs defaultValue="entries" className="space-y-2 sm:space-y-4">
           <TabsList className="bg-muted/50 p-0.5 sm:p-1 w-full grid grid-cols-3 h-8 sm:h-9">
             <TabsTrigger value="entries" className="data-[state=active]:bg-background text-[11px] sm:text-sm gap-1 h-7 sm:h-auto">
-              Entries
+              Active
               <span className="bg-primary/10 text-primary text-[8px] sm:text-[9px] font-semibold px-1 sm:px-1.5 py-0.5 rounded-full">{entries.length}</span>
             </TabsTrigger>
             <TabsTrigger value="past" className="data-[state=active]:bg-background text-[11px] sm:text-sm gap-1 h-7 sm:h-auto">
