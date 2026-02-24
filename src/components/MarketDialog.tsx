@@ -30,6 +30,7 @@ import {
   Minus,
   Plus,
   Trophy,
+  ArrowLeft,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -248,18 +249,26 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
   return (
     <>
       <Dialog open={open} onOpenChange={handleClose}>
-        <DialogContent className="sm:max-w-[820px] p-0 gap-0 overflow-hidden max-h-[90vh] flex flex-col">
-          {/* Header */}
+        <DialogContent hideClose className="sm:max-w-[820px] p-0 gap-0 overflow-hidden max-h-[90vh] flex flex-col">
+          {/* Header — back arrow + creator */}
           <div className="flex items-center justify-between px-5 py-2.5 border-b border-border/30 flex-shrink-0">
-            <div className="flex items-center gap-2">
-              <Avatar className="h-6 w-6">
-                <AvatarImage src={market.creator.avatar} alt={market.creator.name} />
-                <AvatarFallback className="text-[9px]">{market.creator.name.slice(0, 2)}</AvatarFallback>
-              </Avatar>
-              <span className="text-sm font-medium">{market.creator.name}</span>
-              {market.creator.isCreator !== false && (
-                <BadgeCheck className="h-3.5 w-3.5 text-primary fill-primary/20" />
-              )}
+            <div className="flex items-center gap-2.5">
+              <button
+                onClick={() => handleClose(false)}
+                className="flex items-center justify-center h-7 w-7 rounded-md hover:bg-muted/60 transition-colors"
+              >
+                <ArrowLeft className="h-4 w-4 text-foreground" />
+              </button>
+              <div className="flex items-center gap-2">
+                <Avatar className="h-6 w-6">
+                  <AvatarImage src={market.creator.avatar} alt={market.creator.name} />
+                  <AvatarFallback className="text-[9px]">{market.creator.name.slice(0, 2)}</AvatarFallback>
+                </Avatar>
+                <span className="text-sm font-medium">{market.creator.name}</span>
+                {market.creator.isCreator !== false && (
+                  <BadgeCheck className="h-3.5 w-3.5 text-primary fill-primary/20" />
+                )}
+              </div>
             </div>
             <div className="flex items-center gap-0.5">
               <Button variant="ghost" size="icon" className="h-7 w-7" onClick={handleShare}>
