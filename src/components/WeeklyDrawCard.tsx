@@ -92,7 +92,7 @@ export function WeeklyDrawCard() {
       </div>
 
       {/* Footer links */}
-      <div className="flex items-center gap-3 pt-2 border-t border-border/20 mt-auto mb-0">
+      <div className="flex items-center gap-3 pt-1.5 border-t border-border/20 mt-auto -mb-1">
         <Dialog>
           <DialogTrigger asChild>
             <button className="flex items-center gap-1 text-[9px] text-muted-foreground hover:text-foreground transition-colors">
