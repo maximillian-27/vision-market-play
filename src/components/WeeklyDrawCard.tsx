@@ -30,7 +30,6 @@ const previousWinners = [
 const WEEKLY_POT = 48600;
 const ELIGIBLE_ENTRIES = 1284;
 const MY_ENTRIES = 3;
-const ENTRY_COST = 20;
 const COUNTDOWN = "3d 14h";
 
 export function WeeklyDrawCard() {
@@ -83,16 +82,16 @@ export function WeeklyDrawCard() {
             <TooltipTrigger asChild>
               <span className="flex items-center gap-1 text-muted-foreground cursor-help">
                 <Ticket className="h-3 w-3 text-primary" />
-                <span><span className="font-semibold text-foreground">{ENTRY_COST}</span> tickets = 1 entry</span>
+                <span>Every ticket = <span className="font-semibold text-foreground">1 entry</span></span>
               </span>
             </TooltipTrigger>
-            <TooltipContent side="bottom" className="text-xs max-w-[180px]">
-              Buy {ENTRY_COST} tickets in a week to earn one draw entry. More tickets = more entries.
+            <TooltipContent side="bottom" className="text-xs max-w-[200px]">
+              Every ticket you buy is also an entry into the weekly draw. 2% of your purchase funds the prize pool.
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
         <span className="text-muted-foreground">
-          <span className="font-semibold text-foreground">{MY_ENTRIES}</span> / {ELIGIBLE_ENTRIES.toLocaleString()} entries
+          <span className="font-semibold text-foreground">{MY_ENTRIES}</span> entries this week
         </span>
       </div>
 
@@ -168,7 +167,7 @@ export function WeeklyDrawCard() {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-foreground">Funding</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">2% of every ticket purchase goes into the weekly prize pool automatically.</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">Each ticket purchase splits: 95% to pot, 2% to the weekly draw, 3% platform fee.</p>
                 </div>
               </div>
               <div className="flex gap-3 p-3 rounded-lg bg-muted/40">
@@ -177,7 +176,7 @@ export function WeeklyDrawCard() {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-foreground">Entry</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">Every {ENTRY_COST} tickets you buy earns 1 draw entry. More tickets = more chances.</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">Every ticket is a bundle — you get a market ticket + a draw entry. No separate purchase needed.</p>
                 </div>
               </div>
               <div className="flex gap-3 p-3 rounded-lg bg-muted/40">

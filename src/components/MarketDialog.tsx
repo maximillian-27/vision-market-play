@@ -112,9 +112,8 @@ const ticketSchema = z.object({
 });
 
 const POT_SPLIT = [
-  { label: "Winners", pct: 90, color: "bg-primary" },
-  { label: "Draw", pct: 2, color: "bg-[hsl(var(--pollgy-blue))]" },
-  { label: "Comp", pct: 5, color: "bg-accent-foreground" },
+  { label: "Pot", pct: 95, color: "bg-primary" },
+  { label: "Weekly Draw", pct: 2, color: "bg-[hsl(var(--pollgy-blue))]" },
   { label: "Platform", pct: 3, color: "bg-muted-foreground" },
 ];
 
@@ -173,7 +172,7 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
   // Approximate profit: based on pot size and number of winners
   // In pari-mutuel, winnings = (your tickets / total winning tickets) * 90% of pot
   const potValue = market.pot || 240000;
-  const estimatedWinningPool = potValue * 0.9;
+  const estimatedWinningPool = potValue * 0.95;
   // Rough estimate: assume ~60% of tickets are on winning side
   const estimatedWinningTickets = Math.round(potValue / currentTicketPrice * 0.6);
   const estimatedPayout = estimatedWinningTickets > 0 
@@ -600,6 +599,14 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
 
                     </div>
 
+                    {/* Bundle info */}
+                    <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[hsl(var(--pollgy-blue))]/5 border border-[hsl(var(--pollgy-blue))]/15">
+                      <Trophy className="h-3.5 w-3.5 text-[hsl(var(--pollgy-blue))] flex-shrink-0" />
+                      <span className="text-[10px] font-medium text-[hsl(var(--pollgy-blue))]">
+                        Includes {ticketCount} Weekly Draw {ticketCount === 1 ? 'entry' : 'entries'}
+                      </span>
+                    </div>
+
                     {/* Summary breakdown */}
                     <div className="rounded-xl border border-border/40 divide-y divide-border/30">
                       <div className="flex justify-between items-center px-3 py-2">
@@ -621,7 +628,7 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
                       </div>
                     </div>
                     <p className="text-[9px] text-muted-foreground text-center">
-                      Winners split 90% of the pot · final payout depends on total entries
+                      95% goes to the pot · 2% funds the weekly draw
                     </p>
                   </>
                 )}
@@ -636,9 +643,9 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
                     disabled={!selectedOutcome || isSubmitting || ticketCount < 1}
                   >
                     {isSubmitting
-                      ? "Buying tickets..."
+                      ? "Buying..."
                       : selectedOutcome
-                        ? `🎟️ Buy ${ticketCount} ticket${ticketCount !== 1 ? 's' : ''} · $${totalCost.toFixed(2)}`
+                        ? `🎟️ Buy ${ticketCount} Ticket${ticketCount !== 1 ? 's' : ''} + ${ticketCount === 1 ? 'Entry' : 'Entries'} · $${totalCost.toFixed(2)}`
                         : "Pick your side first"
                     }
                   </Button>
