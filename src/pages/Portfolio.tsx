@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { MarketDialog } from "@/components/MarketDialog";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { PageHeader } from "@/components/PageHeader";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -74,7 +76,8 @@ const pastNet = pastTotalWon - pastTotalSpent;
 const Portfolio = () => {
   const navigate = useNavigate();
   const [winPeriod, setWinPeriod] = useState<WinningsPeriod>("all");
-
+  const [selectedMarketId, setSelectedMarketId] = useState<string | null>(null);
+  const isMobile = useIsMobile();
   const currentWin = winningsByPeriod[winPeriod];
   const netProfit = currentWin.winnings - currentWin.spent;
 
@@ -193,7 +196,10 @@ const Portfolio = () => {
               <Card
                 key={entry.id}
                 className="border-border/40 hover:border-border/60 transition-colors cursor-pointer active:scale-[0.995]"
-                onClick={() => navigate(`/market/${entry.id}`)}
+                onClick={() => {
+                  if (isMobile) navigate(`/market/${entry.id}`);
+                  else setSelectedMarketId(String(entry.id));
+                }}
               >
                 <CardContent className="p-2.5 sm:p-4">
                   <div className="flex items-start gap-2 sm:gap-3">
@@ -253,7 +259,12 @@ const Portfolio = () => {
             </div>
 
             {pastEntries.map((entry) => (
-              <div key={entry.id} className="p-3 rounded-xl border border-border/40 bg-card">
+              <div key={entry.id} className="p-3 rounded-xl border border-border/40 bg-card cursor-pointer hover:border-border/60 transition-colors"
+                onClick={() => {
+                  if (isMobile) navigate(`/market/${entry.id}`);
+                  else setSelectedMarketId(String(entry.id));
+                }}
+              >
                 <div className="flex items-center justify-between gap-2 mb-1.5">
                   <p className="font-medium text-[13px] sm:text-sm truncate flex-1">{entry.market}</p>
                   <Badge
@@ -366,6 +377,38 @@ const Portfolio = () => {
           </TabsContent>
         </Tabs>
       </div>
+
+      {/* Market Dialog */}
+      {selectedMarketId && (() => {
+        const activeEntry = entries.find(e => String(e.id) === selectedMarketId);
+        const pastEntry = pastEntries.find(e => String(e.id) === selectedMarketId);
+        const marketTitle = activeEntry?.market || pastEntry?.market || "";
+        const outcome = activeEntry?.outcome || pastEntry?.outcome || "Yes";
+        const yesPrice = outcome === "Yes" ? 65 : 35;
+        return (
+          <MarketDialog
+            open={!!selectedMarketId}
+            onOpenChange={(open) => { if (!open) setSelectedMarketId(null); }}
+            market={{
+              id: selectedMarketId,
+              title: marketTitle,
+              image: "",
+              creator: {
+                name: "Market Creator",
+                avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Creator",
+                isCreator: true,
+              },
+              outcomes: [
+                { label: "Yes", price: yesPrice },
+                { label: "No", price: 100 - yesPrice },
+              ],
+              volume: activeEntry ? `$${(activeEntry.tickets * activeEntry.ticketPrice).toFixed(0)}` : pastEntry ? `$${pastEntry.spent}` : "$0",
+              players: activeEntry ? 1200 : 800,
+              endsIn: activeEntry?.endsIn || "Ended",
+            }}
+          />
+        );
+      })()}
     </div>
   );
 };
