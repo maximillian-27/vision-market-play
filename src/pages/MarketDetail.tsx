@@ -24,7 +24,9 @@ import {
   Timer,
   Trophy,
   PieChart as PieChartIcon,
-  Ticket
+  Ticket,
+  Minus,
+  Plus,
 } from "lucide-react";
 import { ResponsiveContainer, AreaChart, Area, XAxis, Tooltip, PieChart, Pie, Cell } from "recharts";
 import { useToast } from "@/hooks/use-toast";
@@ -201,6 +203,7 @@ export default function MarketDetail() {
   const [showResolution, setShowResolution] = useState(false);
   const [showComments, setShowComments] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
+  const [ticketCount, setTicketCount] = useState(5);
 
   if (!market) {
     return (
@@ -255,11 +258,11 @@ export default function MarketDetail() {
       setIsSubmitting(true);
       setTimeout(() => {
         toast({
-          title: "Entry placed!",
-          description: `You entered $${amountNum.toFixed(2)} on "${selectedOutcome.label}"`,
+          title: "🎟️ Tickets purchased!",
+          description: `${ticketCount} ticket${ticketCount > 1 ? 's' : ''} on "${selectedOutcome.label}" for $${totalCost.toFixed(2)}`,
         });
         setIsSubmitting(false);
-        setAmount("10");
+        setTicketCount(5);
         setSelectedOutcome(null);
       }, 500);
     } catch (error) {
@@ -287,6 +290,22 @@ export default function MarketDetail() {
     : sortedOutcomes;
 
   const quickAmounts = [5, 10, 25, 50, 100];
+  const quickTickets = [1, 5, 10, 25];
+  const currentTicketPrice = 0.50;
+  const totalCost = ticketCount * currentTicketPrice;
+  const potValue = market.pot || 240000;
+  const estimatedWinningPool = potValue * 0.95;
+  const estimatedWinningTickets = Math.round(potValue / currentTicketPrice * 0.6);
+  const estimatedPayout = estimatedWinningTickets > 0 
+    ? (ticketCount / estimatedWinningTickets) * estimatedWinningPool 
+    : 0;
+  const estimatedProfit = estimatedPayout - totalCost;
+
+  const POT_SPLIT = [
+    { label: "Pot", pct: 95, color: "bg-primary" },
+    { label: "Weekly Draw", pct: 2, color: "bg-[hsl(var(--pollgy-blue))]" },
+    { label: "Platform", pct: 3, color: "bg-muted-foreground" },
+  ];
 
   // Calculate potential win for display
   const bestOdds = Math.min(...market.outcomes.map((o: any) => o.price));
@@ -328,7 +347,7 @@ export default function MarketDetail() {
       <div className="max-w-2xl mx-auto">
         {/* Hero Image */}
         {market.image && (
-          <div className="relative w-full aspect-[16/9] sm:aspect-[16/7] overflow-hidden">
+          <div className="relative w-full aspect-[2/1] sm:aspect-[16/7] overflow-hidden">
             <img src={market.image} alt={market.title} className="w-full h-full object-cover" />
             <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
             {/* Mobile: overlay back + actions */}
@@ -472,38 +491,38 @@ export default function MarketDetail() {
 
         <Separator className="mx-4" />
 
-        {/* Revenue Distribution */}
-        <div className="px-4 py-4 space-y-3">
-          <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-            <PieChartIcon className="h-3 w-3" />
-            <span>Transparency: Where your entry goes</span>
-          </div>
-          
-          <div className="space-y-2">
-            <div className="flex rounded-full overflow-hidden h-2">
-              {revenueData.map((item, i) => (
-                <div 
-                  key={i} 
-                  style={{ width: `${item.value}%`, backgroundColor: item.color }} 
-                  className="h-full first:rounded-l-full last:rounded-r-full"
-                />
-              ))}
+        {/* Revenue Distribution - desktop only */}
+        <div className="hidden sm:block">
+          <div className="px-4 py-4 space-y-3">
+            <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+              <PieChartIcon className="h-3 w-3" />
+              <span>Transparency: Where your entry goes</span>
             </div>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              {revenueData.map((item, i) => (
-                <div key={i} className="flex flex-col">
-                  <div className="flex items-center gap-1.5 mb-0.5">
-                    <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: item.color }} />
-                    <span className="text-[10px] font-bold">{item.value}%</span>
+            <div className="space-y-2">
+              <div className="flex rounded-full overflow-hidden h-2">
+                {revenueData.map((item, i) => (
+                  <div 
+                    key={i} 
+                    style={{ width: `${item.value}%`, backgroundColor: item.color }} 
+                    className="h-full first:rounded-l-full last:rounded-r-full"
+                  />
+                ))}
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                {revenueData.map((item, i) => (
+                  <div key={i} className="flex flex-col">
+                    <div className="flex items-center gap-1.5 mb-0.5">
+                      <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: item.color }} />
+                      <span className="text-[10px] font-bold">{item.value}%</span>
+                    </div>
+                    <span className="text-[9px] text-muted-foreground whitespace-nowrap">{item.name}</span>
                   </div>
-                  <span className="text-[9px] text-muted-foreground whitespace-nowrap">{item.name}</span>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
+          <Separator className="mx-4" />
         </div>
-
-        <Separator className="mx-4" />
 
         {/* Description */}
         <div className="px-4 py-4 space-y-2">
@@ -608,7 +627,7 @@ export default function MarketDetail() {
       </div>
 
       {/* ── Sticky Entry Panel ── */}
-      <div className="fixed bottom-14 md:bottom-0 left-0 right-0 bg-background/95 backdrop-blur-md border-t border-border/40 z-30">
+      <div className="fixed bottom-14 md:bottom-0 left-0 right-0 bg-background border-t border-border/40 z-30">
         <div className="max-w-2xl mx-auto p-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] space-y-2">
           {/* Header */}
           <div className="flex items-center justify-between">
@@ -671,7 +690,7 @@ export default function MarketDetail() {
                         <button
                           key={index}
                           onClick={() => setSelectedOutcome(outcome)}
-                          className={`rounded-lg py-2.5 text-center transition-all active:scale-[0.98] border ${
+                          className={`rounded-xl py-2.5 text-center transition-all active:scale-[0.98] border ${
                             isSelected
                               ? isYes ? 'border-success bg-success/20 text-success' : 'border-destructive bg-destructive/20 text-destructive'
                               : isYes ? 'border-success/30 bg-success/10 text-success hover:bg-success/15' : 'border-destructive/30 bg-destructive/10 text-destructive hover:bg-destructive/15'
@@ -710,58 +729,112 @@ export default function MarketDetail() {
                 </div>
               )}
 
-              {/* Amount & Enter */}
-              <div className="flex items-center gap-2">
-                <div className="relative flex-1">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground font-medium text-sm">$</span>
-                  <Input
-                    type="number" inputMode="decimal" placeholder="0.00"
-                    value={amount} onChange={(e) => setAmount(e.target.value)}
-                    className="pl-7 pr-3 h-10 text-base font-semibold bg-muted/30 border-border/50 focus:border-primary"
-                  />
+              {/* Ticket counter */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] text-muted-foreground">${currentTicketPrice.toFixed(2)}/ticket</span>
                 </div>
-                <Button
-                  className="h-10 px-5 font-semibold text-sm min-w-[110px]"
-                  onClick={handleBuy}
-                  disabled={!selectedOutcome || isSubmitting || amountNum < 1}
-                >
-                  {isSubmitting ? "..." : selectedOutcome ? `Enter $${amountNum}` : "Select"}
-                </Button>
-              </div>
-
-              {/* Quick amounts */}
-              <div className="flex gap-1">
-                {quickAmounts.map((qa) => (
+                <div className="flex items-center gap-2">
                   <button
-                    key={qa}
-                    onClick={() => setAmount(qa.toString())}
-                    className={`flex-1 py-1 rounded-md text-[10px] font-semibold transition-all ${
-                      amount === qa.toString() ? 'bg-primary/10 text-primary border border-primary/30' : 'bg-muted/50 text-muted-foreground border border-transparent hover:bg-muted'
-                    }`}
+                    onClick={() => setTicketCount(Math.max(1, ticketCount - 1))}
+                    className="h-9 w-9 rounded-lg border border-border/50 bg-muted/30 hover:bg-muted/60 flex items-center justify-center transition-colors active:scale-95"
                   >
-                    ${qa}
+                    <Minus className="h-3.5 w-3.5 text-muted-foreground" />
                   </button>
-                ))}
+                  <Input
+                    type="number"
+                    value={ticketCount}
+                    onChange={(e) => {
+                      const v = parseInt(e.target.value);
+                      if (!isNaN(v) && v >= 0) setTicketCount(Math.min(1000, v));
+                    }}
+                    className="h-9 text-center text-lg font-bold bg-background flex-1 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    min="1"
+                    max="1000"
+                  />
+                  <button
+                    onClick={() => setTicketCount(Math.min(1000, ticketCount + 1))}
+                    className="h-9 w-9 rounded-lg border border-border/50 bg-muted/30 hover:bg-muted/60 flex items-center justify-center transition-colors active:scale-95"
+                  >
+                    <Plus className="h-3.5 w-3.5 text-muted-foreground" />
+                  </button>
+                </div>
+
+                {/* Quick ticket pills */}
+                <div className="grid grid-cols-4 gap-1.5">
+                  {quickTickets.map((qt) => (
+                    <button
+                      key={qt}
+                      onClick={() => setTicketCount(qt)}
+                      className={`h-7 rounded-lg text-[11px] font-semibold transition-all active:scale-95 ${
+                        ticketCount === qt
+                          ? 'bg-primary/10 text-primary border border-primary/30'
+                          : 'bg-muted/40 text-muted-foreground hover:bg-muted/60 border border-transparent'
+                      }`}
+                    >
+                      {qt} {qt === 1 ? 'ticket' : 'tickets'}
+                    </button>
+                  ))}
+                </div>
               </div>
 
-              {/* If You Win Summary */}
-              <div className="flex items-center justify-between text-xs bg-muted/30 rounded-lg px-3 py-2">
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center gap-1">
-                    <span className="text-muted-foreground">Entry</span>
-                    <span className="font-semibold">${amountNum.toFixed(2)}</span>
-                  </div>
-                  <div className="w-px h-3 bg-border" />
-                  <div className="flex items-center gap-1">
-                    <span className="text-muted-foreground">Potential winning</span>
-                    <span className="font-bold">{selectedOutcome ? `$${payout.toFixed(2)}` : '-'}</span>
-                  </div>
+              {/* Weekly Draw badge */}
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[hsl(var(--pollgy-blue))]/5 border border-[hsl(var(--pollgy-blue))]/15">
+                <Trophy className="h-3.5 w-3.5 text-[hsl(var(--pollgy-blue))] flex-shrink-0" />
+                <span className="text-[10px] font-medium text-[hsl(var(--pollgy-blue))]">
+                  Includes {ticketCount} Weekly Draw {ticketCount === 1 ? 'entry' : 'entries'}
+                </span>
+              </div>
+
+              {/* Summary breakdown */}
+              <div className="rounded-xl border border-border/40 divide-y divide-border/30">
+                <div className="flex justify-between items-center px-3 py-1.5">
+                  <span className="text-xs text-muted-foreground">Cost</span>
+                  <span className="text-sm font-semibold">${totalCost.toFixed(2)}</span>
                 </div>
-                <div className="flex items-center gap-1">
-                  <span className="text-muted-foreground">Winnings</span>
-                  <span className={`font-bold ${selectedOutcome && winnings > 0 ? 'text-success' : ''}`}>
-                    {selectedOutcome ? `+$${winnings.toFixed(2)}` : '-'}
+                <div className="flex justify-between items-center px-3 py-1.5">
+                  <span className="text-xs text-muted-foreground">Potential winning</span>
+                  <span className="text-sm font-semibold">${estimatedPayout > 0 ? estimatedPayout.toFixed(2) : '0.00'}</span>
+                </div>
+                <div className="flex justify-between items-center px-3 py-1.5 bg-success/5">
+                  <div className="flex items-center gap-1.5">
+                    <Trophy className="h-3.5 w-3.5 text-success" />
+                    <span className="text-xs font-medium text-success">Potential profit</span>
+                  </div>
+                  <span className={`text-base font-bold ${estimatedProfit > 0 ? 'text-success' : 'text-foreground'}`}>
+                    +${estimatedProfit > 0 ? estimatedProfit.toFixed(2) : '0.00'}
                   </span>
+                </div>
+              </div>
+
+              {/* Buy button */}
+              <Button
+                className="w-full h-10 font-bold text-sm rounded-xl [background:var(--gradient-primary)] hover:opacity-90 transition-all active:scale-[0.98] shadow-md"
+                onClick={handleBuy}
+                disabled={!selectedOutcome || isSubmitting || ticketCount < 1}
+              >
+                {isSubmitting
+                  ? "Buying..."
+                  : selectedOutcome
+                    ? `🎟️ Buy ${ticketCount} Ticket${ticketCount !== 1 ? 's' : ''} + ${ticketCount === 1 ? 'Entry' : 'Entries'} · $${totalCost.toFixed(2)}`
+                    : "Pick your side first"
+                }
+              </Button>
+
+              {/* Pot split bar */}
+              <div className="space-y-1">
+                <div className="flex h-1.5 rounded-full overflow-hidden">
+                  {POT_SPLIT.map((s) => (
+                    <div key={s.label} className={s.color} style={{ width: `${s.pct}%` }} />
+                  ))}
+                </div>
+                <div className="flex items-center justify-between text-[8px] text-muted-foreground">
+                  {POT_SPLIT.map((s) => (
+                    <span key={s.label} className="flex items-center gap-0.5">
+                      <span className={`inline-block h-1 w-1 rounded-full ${s.color}`} />
+                      {s.pct}% {s.label}
+                    </span>
+                  ))}
                 </div>
               </div>
             </>
