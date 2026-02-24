@@ -1,4 +1,4 @@
-import { Home, Newspaper, Users, MessageSquare, Search } from "lucide-react";
+import { Home, Users, MessageSquare, Search } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
 import { useState } from "react";
@@ -8,7 +8,6 @@ import { SearchDropdown } from "@/components/SearchDropdown";
 const items = [
   { title: "Markets", url: "/", icon: Home },
   { title: "Community", url: "/community-feed", icon: MessageSquare },
-  { title: "News", url: "/news", icon: Newspaper },
   { title: "Leaderboards", url: "/community", icon: Users },
 ];
 

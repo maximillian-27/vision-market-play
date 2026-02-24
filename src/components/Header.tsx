@@ -45,7 +45,6 @@ export function Header() {
   const navItems = [
     { title: "Markets", url: "/", icon: Home },
     { title: "Community", url: "/community-feed", icon: MessageSquare },
-    { title: "News", url: "/news", icon: Newspaper },
     { title: "Leaderboards", url: "/community", icon: Users },
   ];
 
