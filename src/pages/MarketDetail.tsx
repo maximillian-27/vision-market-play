@@ -710,12 +710,12 @@ export default function MarketDetail() {
               {/* Pricing summary - always visible */}
               <div className="flex items-center justify-between px-1 pb-0.5">
                 <div className="flex items-center gap-1.5">
-                  <span className="text-[11px] text-muted-foreground">Payout</span>
+                  <span className="text-[11px] text-muted-foreground">Est. Payout</span>
                   <span className="text-sm font-bold text-foreground">${estimatedPayout > 0 ? estimatedPayout.toFixed(2) : '0.00'}</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <Trophy className="h-3.5 w-3.5 text-success" />
-                  <span className="text-[11px] text-success font-medium">Profit</span>
+                  <span className="text-[11px] text-success font-medium">Est. Profit</span>
                   <span className="text-base font-extrabold text-success">
                     +${estimatedProfit > 0 ? estimatedProfit.toFixed(2) : '0.00'}
                   </span>
@@ -895,12 +895,12 @@ export default function MarketDetail() {
                 </Button>
                 <div className="flex items-center justify-between px-1 pt-0.5">
                   <div className="flex items-center gap-1">
-                    <span className="text-xs text-muted-foreground">Payout</span>
+                    <span className="text-xs text-muted-foreground">Est. Payout</span>
                     <span className="text-sm font-bold">${estimatedPayout > 0 ? estimatedPayout.toFixed(2) : '0.00'}</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <Trophy className="h-3.5 w-3.5 text-success" />
-                    <span className="text-xs text-success font-medium">Profit</span>
+                    <span className="text-xs text-success font-medium">Est. Profit</span>
                     <span className="text-base font-extrabold text-success">
                       +${estimatedProfit > 0 ? estimatedProfit.toFixed(2) : '0.00'}
                     </span>
