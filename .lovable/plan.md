@@ -12,9 +12,9 @@
 +-------------------------------+
 | Hero Carousel (180px, swipe)  |  <- Embla, touch-swipeable
 +-------------------------------+
-| Sponsored Carousel (auto-3s)  |  <- auto-cycling Embla carousel
-+-------------------------------+
 | Gradient Banner               |  <- unchanged
++-------------------------------+
+| Sponsored Carousel (auto-3s)  |  <- auto-cycling Embla carousel
 +-------------------------------+
 | Regular markets...            |  <- unchanged
 ```
