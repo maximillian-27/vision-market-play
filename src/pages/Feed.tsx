@@ -753,8 +753,8 @@ function MobileTopSection({
       {/* Gradient Banner */}
       <GradientDivider />
 
-      {/* Two Sponsored Markets */}
-      <div className="grid grid-cols-2 gap-1.5">
+      {/* Two Sponsored Markets — stacked */}
+      <div className="flex flex-col gap-1.5">
         <CompactFeaturedCard market={sponsoredMarkets[0]} />
         <CompactFeaturedCard market={sponsoredMarkets[1]} />
       </div>
