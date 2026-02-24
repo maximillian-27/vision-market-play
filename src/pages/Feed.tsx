@@ -571,13 +571,13 @@ function MobileWeeklyDrawBanner() {
           </div>
           <span className="text-[9px] uppercase tracking-widest font-bold text-primary/90">Weekly Draw</span>
           <span className="text-[8px] text-muted-foreground/50">·</span>
-          <div className="flex items-center gap-0.5 text-[9px] bg-primary/10 px-1.5 py-0.5 rounded-full border border-primary/10">
-            <Ticket className="h-2.5 w-2.5 text-primary" />
-            <span className="font-semibold text-foreground">{MY_ENTRIES} entries</span>
-          </div>
-          <div className="flex items-center gap-0.5 text-[9px] ml-auto">
+          <div className="flex items-center gap-0.5 text-[9px]">
             <Timer className="h-2.5 w-2.5 text-primary animate-pulse" />
             <span className="font-semibold text-foreground">{COUNTDOWN}</span>
+          </div>
+          <div className="flex items-center gap-0.5 text-[9px] bg-primary/10 px-1.5 py-0.5 rounded-full border border-primary/10 ml-auto">
+            <Ticket className="h-2.5 w-2.5 text-primary" />
+            <span className="font-semibold text-foreground">{MY_ENTRIES} entries</span>
           </div>
         </div>
         {/* Row 2: Pot + hint + chevron */}
