@@ -764,10 +764,10 @@ export default function Feed() {
         </div>
 
         {/* 2b. Desktop Split Hero */}
-        <div className="hidden sm:grid grid-cols-1 lg:grid-cols-2 gap-3">
-          {/* Left — Square Slideshow Carousel */}
+        <div className="hidden sm:grid grid-cols-1 lg:grid-cols-2 gap-3 lg:h-[420px]">
+          {/* Left — Slideshow Carousel */}
           <div
-            className="relative rounded-2xl overflow-hidden cursor-pointer group aspect-square"
+            className="relative rounded-2xl overflow-hidden cursor-pointer group h-full"
             onClick={() => navigate(`/market/${heroMarket.id}`)}
           >
             <img src={heroMarket.image} alt={heroMarket.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
@@ -816,7 +816,7 @@ export default function Feed() {
           </div>
 
           {/* Right — 2×2 Grid: 3 Sponsored + Weekly Draw */}
-          <div className="grid grid-cols-2 grid-rows-2 gap-3 aspect-square">
+          <div className="grid grid-cols-2 grid-rows-2 gap-3 h-full">
             <div className="min-h-0">
               <CompactFeaturedCard market={sponsoredMarkets[0]} />
             </div>
