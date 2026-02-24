@@ -34,30 +34,31 @@ const COUNTDOWN = "3d 14h";
 
 export function WeeklyDrawCard() {
   return (
-    <div className="flex flex-col p-4 rounded-xl border border-primary/20 bg-gradient-to-br from-primary/[0.06] via-card to-card h-full relative overflow-hidden">
-      {/* Subtle decorative glow */}
-      <div className="absolute -top-8 -right-8 w-24 h-24 rounded-full bg-primary/[0.07] blur-2xl pointer-events-none" />
+    <div className="flex flex-col p-4 rounded-xl border border-primary/20 bg-gradient-to-br from-primary/[0.08] via-primary/[0.02] to-card h-full relative overflow-hidden">
+      {/* Decorative glows */}
+      <div className="absolute -top-10 -right-10 w-28 h-28 rounded-full bg-primary/[0.1] blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-6 -left-6 w-20 h-20 rounded-full bg-primary/[0.05] blur-2xl pointer-events-none" />
       
       {/* Header: Title + Timer */}
-      <div className="flex items-center justify-between mb-2 relative">
+      <div className="flex items-center justify-between mb-2.5 relative">
         <div className="flex items-center gap-2">
-          <div className="flex items-center justify-center w-6 h-6 rounded-lg bg-primary/15">
+          <div className="flex items-center justify-center w-6 h-6 rounded-lg bg-primary/15 shadow-sm shadow-primary/10">
             <Trophy className="h-3.5 w-3.5 text-primary" />
           </div>
-          <span className="text-[10px] uppercase tracking-widest font-bold text-primary">Weekly Draw</span>
+          <span className="text-[10px] uppercase tracking-widest font-bold text-primary/90">Weekly Draw</span>
         </div>
-        <div className="flex items-center gap-1 text-[10px] bg-muted/60 px-2 py-0.5 rounded-full">
-          <Timer className="h-3 w-3 text-primary" />
+        <div className="flex items-center gap-1 text-[10px] bg-primary/10 px-2.5 py-1 rounded-full border border-primary/10">
+          <Timer className="h-3 w-3 text-primary animate-pulse" />
           <span className="font-semibold text-foreground">{COUNTDOWN}</span>
         </div>
       </div>
 
       {/* Pot + entries */}
-      <div className="flex items-center gap-2 relative">
+      <div className="flex items-center gap-2.5 relative">
         <div className="text-2xl font-extrabold text-foreground leading-none tracking-tight">
           ${WEEKLY_POT.toLocaleString()}
         </div>
-        <div className="flex items-center gap-1 text-[10px] bg-muted/60 px-2 py-0.5 rounded-full">
+        <div className="flex items-center gap-1 text-[10px] bg-muted/50 px-2 py-0.5 rounded-full border border-border/40">
           <Ticket className="h-3 w-3 text-primary" />
           <span className="font-semibold text-foreground">{MY_ENTRIES} entries</span>
         </div>
@@ -68,12 +69,16 @@ export function WeeklyDrawCard() {
 
       {/* Distribution bar */}
       <div className="mb-2.5">
-        <div className="flex rounded-full overflow-hidden h-1.5">
+        <div className="flex rounded-full overflow-hidden h-2 shadow-inner shadow-black/10">
           {distribution.map((d, i) => (
             <div
               key={d.place}
-              className="h-full bg-primary"
-              style={{ width: `${d.pct}%`, opacity: 1 - i * 0.2 }}
+              className="h-full transition-all"
+              style={{
+                width: `${d.pct}%`,
+                background: `hsl(var(--primary) / ${1 - i * 0.2})`,
+                borderRight: i < distribution.length - 1 ? '1px solid hsl(var(--background) / 0.3)' : 'none',
+              }}
             />
           ))}
         </div>
@@ -86,9 +91,8 @@ export function WeeklyDrawCard() {
         </div>
       </div>
 
-
       {/* Footer links */}
-      <div className="flex items-center gap-3 pt-2 border-t border-border/30 mt-auto">
+      <div className="flex items-center gap-3 pt-2 border-t border-border/20 mt-auto">
         <Dialog>
           <DialogTrigger asChild>
             <button className="flex items-center gap-1 text-[9px] text-muted-foreground hover:text-foreground transition-colors">
