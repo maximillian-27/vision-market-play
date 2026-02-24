@@ -119,14 +119,13 @@ export function Header() {
             {isLoggedIn && (
               <>
                 {/* Entry Counter */}
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
+                <button 
                   onClick={() => navigate("/portfolio")}
-                  className="h-8 text-xs gap-1 text-muted-foreground hover:text-foreground font-medium"
+                  className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors tabular-nums"
                 >
-                  🎟️ <span className="tabular-nums">24</span>
-                </Button>
+                  <span className="text-[13px]">🎟️</span>
+                  <span className="font-medium">24</span>
+                </button>
 
                 {/* Notifications */}
                 <NotificationsDropdown />
