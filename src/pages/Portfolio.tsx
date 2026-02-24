@@ -147,7 +147,7 @@ const Portfolio = () => {
         {/* Quick Stats Strip */}
         <div className="grid grid-cols-4 gap-1 sm:gap-2 mb-3 sm:mb-5">
           {[
-            { label: "Active", value: quickStats.activeEntries, icon: <Ticket className="h-2.5 w-2.5 sm:h-3 sm:w-3" />, rank: null },
+            { label: "This Week", value: 24, icon: <Ticket className="h-2.5 w-2.5 sm:h-3 sm:w-3" />, rank: null },
             { label: "Won", value: quickStats.marketsWon, icon: <Trophy className="h-2.5 w-2.5 sm:h-3 sm:w-3" />, rank: 24 },
             { label: "Win Rate", value: `${quickStats.winRate}%`, icon: <Target className="h-2.5 w-2.5 sm:h-3 sm:w-3" />, rank: 18 },
             { label: "Streak", value: `🔥 ${quickStats.streak}`, icon: null, rank: null },

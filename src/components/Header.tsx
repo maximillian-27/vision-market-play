@@ -120,17 +120,6 @@ export function Header() {
                 {/* Notifications */}
                 <NotificationsDropdown />
 
-                {/* Entry Counter */}
-                <button 
-                  onClick={() => navigate("/portfolio")}
-                  className="flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  <Ticket className="h-4 w-4" />
-                  <span className="text-xs font-medium tabular-nums">24</span>
-                </button>
-
-
-
                 {/* Deposit Button */}
                 <Button 
                   size="sm" 
@@ -229,6 +218,10 @@ export function Header() {
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-muted-foreground">Cash</span>
                       <span className="font-semibold">${cashBalance.toLocaleString()}</span>
+                    </div>
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-muted-foreground flex items-center gap-1"><Ticket className="h-3.5 w-3.5" /> Entries</span>
+                      <span className="font-semibold">24</span>
                     </div>
                   </div>
                   
