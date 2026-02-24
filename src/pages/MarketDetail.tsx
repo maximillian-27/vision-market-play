@@ -694,25 +694,32 @@ export default function MarketDetail() {
                   </button>
                 </div>
                 <Button
-                  className="flex-1 h-8 font-bold text-[11px] rounded-md [background:var(--gradient-primary)] hover:opacity-90 transition-all active:scale-[0.98]"
+                  className="flex-1 h-9 font-bold text-xs rounded-lg [background:var(--gradient-primary)] hover:opacity-90 transition-all active:scale-[0.98] shadow-sm"
                   onClick={handleBuy}
                   disabled={!selectedOutcome || isSubmitting || ticketCount < 1}
                 >
                   {isSubmitting
                     ? "Buying..."
                     : selectedOutcome
-                      ? `Buy ${ticketCount} Ticket${ticketCount !== 1 ? 's' : ''} + ${ticketCount === 1 ? 'Entry' : 'Entries'} · $${totalCost.toFixed(2)}`
+                      ? `🎟️ ${ticketCount} Ticket${ticketCount !== 1 ? 's' : ''} · $${totalCost.toFixed(2)}`
                       : "Pick a side"
                   }
                 </Button>
               </div>
 
-              {/* Info line */}
-              <div className="flex items-center justify-between text-[9px] text-muted-foreground/70 px-0.5 pb-0.5">
-                <span>${currentTicketPrice.toFixed(2)}/ticket · {ticketCount} {ticketCount === 1 ? 'entry' : 'entries'}</span>
-                <span className={`font-medium ${estimatedProfit > 0 ? 'text-success' : ''}`}>
-                  Profit: +${estimatedProfit > 0 ? estimatedProfit.toFixed(2) : '0.00'}
-                </span>
+              {/* Pricing summary - always visible */}
+              <div className="flex items-center justify-between px-1 pb-0.5">
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[11px] text-muted-foreground">Payout</span>
+                  <span className="text-sm font-bold text-foreground">${estimatedPayout > 0 ? estimatedPayout.toFixed(2) : '0.00'}</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <Trophy className="h-3.5 w-3.5 text-success" />
+                  <span className="text-[11px] text-success font-medium">Profit</span>
+                  <span className="text-base font-extrabold text-success">
+                    +${estimatedProfit > 0 ? estimatedProfit.toFixed(2) : '0.00'}
+                  </span>
+                </div>
               </div>
             </div>
           )}
@@ -864,48 +871,42 @@ export default function MarketDetail() {
                 </div>
               </div>
 
-              {/* Weekly Draw badge */}
-              <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[hsl(var(--pollgy-blue))]/5 border border-[hsl(var(--pollgy-blue))]/15">
-                <Trophy className="h-3.5 w-3.5 text-[hsl(var(--pollgy-blue))] flex-shrink-0" />
-                <span className="text-[10px] font-medium text-[hsl(var(--pollgy-blue))]">
-                  Includes {ticketCount} Weekly Draw {ticketCount === 1 ? 'entry' : 'entries'}
-                </span>
-              </div>
-
-              {/* Summary breakdown */}
-              <div className="rounded-xl border border-border/50 bg-muted/20 overflow-hidden">
-                <div className="flex justify-between items-center px-3.5 py-2">
-                  <span className="text-sm text-muted-foreground font-medium">Cost</span>
-                  <span className="text-base font-bold">${totalCost.toFixed(2)}</span>
-                </div>
-                <div className="border-t border-border/30 flex justify-between items-center px-3.5 py-2">
-                  <span className="text-sm text-muted-foreground font-medium">Potential winning</span>
-                  <span className="text-base font-bold">${estimatedPayout > 0 ? estimatedPayout.toFixed(2) : '0.00'}</span>
-                </div>
-                <div className="border-t border-success/20 flex justify-between items-center px-3.5 py-2.5 bg-success/8">
-                  <div className="flex items-center gap-1.5">
-                    <Trophy className="h-4 w-4 text-success" />
-                    <span className="text-sm font-semibold text-success">Potential profit</span>
-                  </div>
-                  <span className={`text-lg font-extrabold ${estimatedProfit > 0 ? 'text-success' : 'text-foreground'}`}>
-                    +${estimatedProfit > 0 ? estimatedProfit.toFixed(2) : '0.00'}
+              {/* Buy button with integrated pricing */}
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between text-xs px-0.5">
+                  <span className="text-muted-foreground">
+                    {ticketCount} × ${currentTicketPrice.toFixed(2)} = <span className="font-bold text-foreground text-sm">${totalCost.toFixed(2)}</span>
+                  </span>
+                  <span className="text-[10px] text-[hsl(var(--pollgy-blue))]">
+                    +{ticketCount} draw {ticketCount === 1 ? 'entry' : 'entries'}
                   </span>
                 </div>
+                <Button
+                  className="w-full h-11 font-bold text-sm rounded-xl [background:var(--gradient-primary)] hover:opacity-90 transition-all active:scale-[0.98] shadow-md"
+                  onClick={handleBuy}
+                  disabled={!selectedOutcome || isSubmitting || ticketCount < 1}
+                >
+                  {isSubmitting
+                    ? "Buying..."
+                    : selectedOutcome
+                      ? `🎟️ Buy ${ticketCount} Ticket${ticketCount !== 1 ? 's' : ''} · $${totalCost.toFixed(2)}`
+                      : "Pick your side first"
+                  }
+                </Button>
+                <div className="flex items-center justify-between px-1 pt-0.5">
+                  <div className="flex items-center gap-1">
+                    <span className="text-xs text-muted-foreground">Payout</span>
+                    <span className="text-sm font-bold">${estimatedPayout > 0 ? estimatedPayout.toFixed(2) : '0.00'}</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Trophy className="h-3.5 w-3.5 text-success" />
+                    <span className="text-xs text-success font-medium">Profit</span>
+                    <span className="text-base font-extrabold text-success">
+                      +${estimatedProfit > 0 ? estimatedProfit.toFixed(2) : '0.00'}
+                    </span>
+                  </div>
+                </div>
               </div>
-
-              {/* Buy button */}
-              <Button
-                className="w-full h-10 font-bold text-sm rounded-xl [background:var(--gradient-primary)] hover:opacity-90 transition-all active:scale-[0.98] shadow-md"
-                onClick={handleBuy}
-                disabled={!selectedOutcome || isSubmitting || ticketCount < 1}
-              >
-                {isSubmitting
-                  ? "Buying..."
-                  : selectedOutcome
-                    ? `🎟️ Buy ${ticketCount} Ticket${ticketCount !== 1 ? 's' : ''} + ${ticketCount === 1 ? 'Entry' : 'Entries'} · $${totalCost.toFixed(2)}`
-                    : "Pick your side first"
-                }
-              </Button>
 
               {/* Pot split bar */}
               <div className="space-y-1">
