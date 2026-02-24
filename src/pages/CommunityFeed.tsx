@@ -127,7 +127,7 @@ export default function CommunityFeed() {
         {/* Main Feed Column */}
         <div className="w-full max-w-[600px] border-x border-border/40 min-h-screen">
           {/* Sticky Tab Bar */}
-          <div className="sticky top-14 z-20 bg-background/80 backdrop-blur-md border-b border-border/40">
+          <div className="sticky top-14 z-20 bg-background border-b border-border/40">
             <div className="flex">
               {(["foryou", "following"] as const).map((tab) => (
                 <button
