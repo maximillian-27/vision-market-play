@@ -25,7 +25,6 @@ import {
   AlertTriangle,
   Ban,
   Target,
-  Megaphone,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -489,18 +488,7 @@ const CreatorDashboard = () => {
                         </div>
                       </div>
                       {/* Pot & Earnings */}
-                      <div className="flex items-center gap-2 sm:gap-4 shrink-0">
-                        {market.status === "Open" && (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="h-7 px-2 sm:px-2.5 text-[10px] sm:text-xs gap-1 border-primary/30 text-primary hover:bg-primary hover:text-primary-foreground"
-                            onClick={(e) => { e.stopPropagation(); }}
-                          >
-                            <Megaphone className="h-3 w-3" />
-                            <span className="hidden sm:inline">Promote</span>
-                          </Button>
-                        )}
+                      <div className="flex items-center gap-3 sm:gap-4 shrink-0">
                         <div className="text-right">
                           <p className="font-semibold text-xs sm:text-sm">{fmt(market.pot)}</p>
                           <p className="text-[8px] sm:text-[10px] text-muted-foreground">pot</p>
