@@ -4,18 +4,27 @@ type TimingPhase = "early" | "good" | "late";
 
 function parseEndsIn(endsIn: string): TimingPhase {
   const lower = endsIn.toLowerCase();
+
+  const months = lower.match(/(\d+)\s*mo/);
+  const weeks = lower.match(/(\d+)\s*w/);
   const days = lower.match(/(\d+)\s*d/);
   const hours = lower.match(/(\d+)\s*h/);
-  const mins = lower.match(/(\d+)\s*m/);
+  const mins = lower.match(/(\d+)\s*m(?!o)/);
+
+  // Handle written-out units
+  const monthsWritten = lower.match(/(\d+)\s*month/);
 
   const totalHours =
+    (months ? parseInt(months[1]) * 30 * 24 : 0) +
+    (monthsWritten ? parseInt(monthsWritten[1]) * 30 * 24 : 0) +
+    (weeks ? parseInt(weeks[1]) * 7 * 24 : 0) +
     (days ? parseInt(days[1]) * 24 : 0) +
     (hours ? parseInt(hours[1]) : 0) +
     (mins ? parseInt(mins[1]) / 60 : 0);
 
-  if (totalHours > 72) return "early";
-  if (totalHours > 24) return "good";
-  return "late";
+  if (totalHours > 30 * 24) return "early";   // > 1 month
+  if (totalHours > 7 * 24) return "good";     // > 1 week
+  return "late";                               // < 1 week
 }
 
 const config: Record<TimingPhase, { label: string; className: string; Icon: typeof Bird }> = {
