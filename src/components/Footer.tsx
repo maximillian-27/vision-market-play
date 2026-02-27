@@ -4,6 +4,10 @@ export function Footer() {
   const currentYear = new Date().getFullYear();
 
   const links = [
+    { label: "About", href: "/about" },
+    { label: "Blog", href: "/blog" },
+    { label: "FAQ", href: "/faq" },
+    { label: "Contact", href: "/contact" },
     { label: "Privacy", href: "/privacy" },
     { label: "Terms", href: "/terms" },
     { label: "Careers", href: "/careers" },
