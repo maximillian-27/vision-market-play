@@ -56,10 +56,9 @@ export function WeeklyDrawCard() {
         <div className="text-2xl font-black text-foreground leading-none tracking-tight">
           ${WEEKLY_POT.toLocaleString()}
         </div>
-        <div className="flex items-center gap-1 text-[10px] bg-primary/8 px-2 py-0.5 rounded-full border border-primary/15">
-          <Ticket className="h-3 w-3 text-primary" />
-          <span className="font-semibold text-foreground">{MY_ENTRIES} entries</span>
-        </div>
+        <span className="text-xs text-muted-foreground">
+          Your entries: <span className="font-semibold text-foreground">{MY_ENTRIES}</span>
+        </span>
       </div>
       <p className="text-[10px] text-muted-foreground mb-3 leading-relaxed">
         Prize pool redistributed weekly to random participants
