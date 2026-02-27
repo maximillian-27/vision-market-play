@@ -6,7 +6,8 @@ import { Timer, Users, ArrowRight, ChevronRight, Trophy, Ticket, Zap, Gift, Cale
 import { useNavigate } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { WeeklyDrawCard } from "@/components/WeeklyDrawCard";
-
+import { SeoContentBlock } from "@/components/SeoContentBlock";
+import { seoContent } from "@/lib/seo-content";
 import {
   Dialog,
   DialogContent,
@@ -1022,6 +1023,11 @@ export default function Feed() {
               ))}
             </div>
           </>
+        )}
+
+        {/* SEO Content Block */}
+        {seoContent.feed && (
+          <SeoContentBlock config={seoContent.feed} className="mt-10 mx-auto max-w-4xl" />
         )}
       </div>
     </div>
