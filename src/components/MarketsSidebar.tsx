@@ -1,4 +1,4 @@
-import { Users, Trophy, Timer, Ticket, Zap } from "lucide-react";
+import { Users, Trophy, Timer, Ticket, Zap, Flame } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import bitcoinImage from "@/assets/bitcoin-market.jpg";
 import nbaImage from "@/assets/nba-championship.jpg";
@@ -29,6 +29,30 @@ const biggestMarkets = [
     image: nbaImage,
     pot: "$890K",
     players: 8200,
+  },
+];
+
+const highlightedMarkets = [
+  {
+    id: "5",
+    title: "Will Tesla stock hit $400 by Q3 2025?",
+    pot: "$1.8M",
+    players: 9100,
+    tag: "Trending",
+  },
+  {
+    id: "6",
+    title: "Will OpenAI release GPT-5 before September 2025?",
+    pot: "$1.2M",
+    players: 7600,
+    tag: "Hot",
+  },
+  {
+    id: "7",
+    title: "Will the US enter a recession in 2025?",
+    pot: "$950K",
+    players: 6400,
+    tag: "Popular",
   },
 ];
 
@@ -89,6 +113,41 @@ export function MarketsSidebar() {
                     {market.players.toLocaleString()}
                   </span>
                 </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+      {/* Highlighted Markets */}
+      <div className="rounded-xl border border-border/40 bg-card overflow-hidden">
+        <div className="px-4 pt-3.5 pb-2">
+          <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
+            <Flame className="h-3 w-3 text-amber-500" />
+            Highlighted
+          </h3>
+        </div>
+        <div className="px-2 pb-2 space-y-0.5">
+          {highlightedMarkets.map((market) => (
+            <div
+              key={market.id}
+              onClick={() => navigate(`/market/${market.id}`)}
+              className="group cursor-pointer p-2.5 rounded-lg hover:bg-muted/50 transition-colors"
+            >
+              <div className="flex items-start justify-between gap-2 mb-1">
+                <h4 className="text-[13px] font-medium leading-snug line-clamp-2 group-hover:text-primary transition-colors">
+                  {market.title}
+                </h4>
+                <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-amber-500/10 text-amber-500 flex-shrink-0">
+                  {market.tag}
+                </span>
+              </div>
+              <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
+                <span className="font-bold text-primary">{market.pot}</span>
+                <span className="text-muted-foreground/30">·</span>
+                <span className="flex items-center gap-0.5">
+                  <Users className="h-3 w-3" />
+                  {market.players.toLocaleString()}
+                </span>
               </div>
             </div>
           ))}
