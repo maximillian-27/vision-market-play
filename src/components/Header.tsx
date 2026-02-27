@@ -100,20 +100,6 @@ export function Header() {
 
           {/* Right Actions */}
           <div className="flex items-center gap-2 ml-auto md:ml-0">
-            {/* Language Selector */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
-                  <Globe className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="z-50 bg-popover rounded-lg border-border">
-                <DropdownMenuItem className="cursor-pointer">English</DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer">Español</DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer">Français</DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer">Deutsch</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
           
             {isLoggedIn && (
               <>
