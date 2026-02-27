@@ -32,6 +32,7 @@ import {
 import { ResponsiveContainer, AreaChart, Area, XAxis, Tooltip, PieChart, Pie, Cell } from "recharts";
 import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
+import { TimingBadge } from "@/components/TimingBadge";
 
 import bitcoinImage from "@/assets/bitcoin-market.jpg";
 import nbaImage from "@/assets/nba-championship.jpg";
@@ -440,7 +441,10 @@ export default function MarketDetail() {
         {/* Probability Chart — compact on mobile */}
         <div className="px-4 py-2 sm:py-4 space-y-1 sm:space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-medium text-muted-foreground">Probability</span>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] font-medium text-muted-foreground">Probability</span>
+              {!isAwaitingResolution && market.endsIn && <TimingBadge endsIn={market.endsIn} />}
+            </div>
             <div className="hidden sm:flex items-center gap-1">
               {["1D", "1W", "1M", "All"].map((tf, i) => (
                 <button
