@@ -8,7 +8,6 @@ import {
   DollarSign, 
   Users, 
   Trophy, 
-  ArrowRight, 
   CheckCircle2,
   Wallet,
   Shield,
@@ -17,7 +16,6 @@ import {
   Sparkles,
   Scale,
   HelpCircle,
-  CreditCard,
   Target,
   Gavel,
   BookOpen,
@@ -30,13 +28,14 @@ import {
   ArrowLeft,
   Zap,
   Star,
-  MessageSquare,
   BadgeCheck,
   PenTool,
   Bird,
   Flame,
-  PartyPopper,
-  CircleDollarSign,
+  CreditCard,
+  Lock,
+  Eye,
+  HandCoins,
 } from "lucide-react";
 
 interface HowItWorksDialogProps {
@@ -49,28 +48,38 @@ export function HowItWorksDialog({ open, onOpenChange }: HowItWorksDialogProps) 
 
   const content = (
     <Tabs defaultValue="basics" className="w-full">
-      <TabsList className="w-full grid grid-cols-5 mb-4 h-auto p-1">
-        <TabsTrigger value="basics" className="text-xs py-2 px-1">
-          <BookOpen className="h-3.5 w-3.5 mr-1 hidden sm:inline" />
-          Basics
-        </TabsTrigger>
-        <TabsTrigger value="tickets" className="text-xs py-2 px-1">
-          <Ticket className="h-3.5 w-3.5 mr-1 hidden sm:inline" />
-          Tickets
-        </TabsTrigger>
-        <TabsTrigger value="payouts" className="text-xs py-2 px-1">
-          <Calculator className="h-3.5 w-3.5 mr-1 hidden sm:inline" />
-          Payouts
-        </TabsTrigger>
-        <TabsTrigger value="draw" className="text-xs py-2 px-1">
-          <Trophy className="h-3.5 w-3.5 mr-1 hidden sm:inline" />
-          Draw
-        </TabsTrigger>
-        <TabsTrigger value="more" className="text-xs py-2 px-1">
-          <Lightbulb className="h-3.5 w-3.5 mr-1 hidden sm:inline" />
-          More
-        </TabsTrigger>
-      </TabsList>
+      <div className="overflow-x-auto -mx-1 px-1 pb-1">
+        <TabsList className="w-max min-w-full grid grid-cols-7 mb-4 h-auto p-1">
+          <TabsTrigger value="basics" className="text-[11px] py-2 px-2 whitespace-nowrap">
+            <BookOpen className="h-3.5 w-3.5 mr-1 hidden sm:inline" />
+            Basics
+          </TabsTrigger>
+          <TabsTrigger value="tickets" className="text-[11px] py-2 px-2 whitespace-nowrap">
+            <Ticket className="h-3.5 w-3.5 mr-1 hidden sm:inline" />
+            Tickets
+          </TabsTrigger>
+          <TabsTrigger value="payouts" className="text-[11px] py-2 px-2 whitespace-nowrap">
+            <Calculator className="h-3.5 w-3.5 mr-1 hidden sm:inline" />
+            Payouts
+          </TabsTrigger>
+          <TabsTrigger value="draw" className="text-[11px] py-2 px-2 whitespace-nowrap">
+            <Trophy className="h-3.5 w-3.5 mr-1 hidden sm:inline" />
+            Draw
+          </TabsTrigger>
+          <TabsTrigger value="creators" className="text-[11px] py-2 px-2 whitespace-nowrap">
+            <PenTool className="h-3.5 w-3.5 mr-1 hidden sm:inline" />
+            Creators
+          </TabsTrigger>
+          <TabsTrigger value="money" className="text-[11px] py-2 px-2 whitespace-nowrap">
+            <Wallet className="h-3.5 w-3.5 mr-1 hidden sm:inline" />
+            Money
+          </TabsTrigger>
+          <TabsTrigger value="trust" className="text-[11px] py-2 px-2 whitespace-nowrap">
+            <Shield className="h-3.5 w-3.5 mr-1 hidden sm:inline" />
+            Trust
+          </TabsTrigger>
+        </TabsList>
+      </div>
 
       {/* ═══════════ BASICS TAB ═══════════ */}
       <TabsContent value="basics" className="mt-0 space-y-5">
@@ -247,7 +256,7 @@ export function HowItWorksDialog({ open, onOpenChange }: HowItWorksDialogProps) 
           </div>
         </section>
 
-        {/* Where Your $0.50 Goes — made prominent */}
+        {/* Where Your $0.50 Goes */}
         <section className="space-y-3">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center">
@@ -558,7 +567,7 @@ export function HowItWorksDialog({ open, onOpenChange }: HowItWorksDialogProps) 
         </section>
       </TabsContent>
 
-      {/* ═══════════ DRAW TAB (was Money) ═══════════ */}
+      {/* ═══════════ DRAW TAB ═══════════ */}
       <TabsContent value="draw" className="mt-0 space-y-5">
         {/* Weekly Draw Hero */}
         <section className="text-center space-y-3 py-2">
@@ -676,44 +685,55 @@ export function HowItWorksDialog({ open, onOpenChange }: HowItWorksDialogProps) 
             </p>
           </div>
         </section>
-
-        {/* Money section */}
-        <section className="space-y-3 pt-2 border-t border-border">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-success/10 flex items-center justify-center">
-              <Wallet className="h-4 w-4 text-success" />
-            </div>
-            <h3 className="font-bold text-base">Deposits & Withdrawals</h3>
-          </div>
-          <div className="grid grid-cols-2 gap-2">
-            <div className="p-3 rounded-lg bg-muted/30 text-center">
-              <p className="text-sm font-medium">Credit/Debit</p>
-              <p className="text-xs text-muted-foreground">Instant</p>
-            </div>
-            <div className="p-3 rounded-lg bg-muted/30 text-center">
-              <p className="text-sm font-medium">Bank Transfer</p>
-              <p className="text-xs text-muted-foreground">1-3 days</p>
-            </div>
-            <div className="p-3 rounded-lg bg-muted/30 text-center">
-              <p className="text-sm font-medium">Crypto</p>
-              <p className="text-xs text-muted-foreground">~15 mins</p>
-            </div>
-            <div className="p-3 rounded-lg bg-muted/30 text-center">
-              <p className="text-sm font-medium">Apple/Google Pay</p>
-              <p className="text-xs text-muted-foreground">Instant</p>
-            </div>
-          </div>
-          <div className="p-3 rounded-lg bg-success/5 border border-success/20">
-            <p className="text-xs text-muted-foreground">
-              <span className="font-semibold text-success">Free withdrawals.</span> Minimum $10. Processing: 1-3 business days. No hidden fees anywhere.
-            </p>
-          </div>
-        </section>
       </TabsContent>
 
-      {/* ═══════════ MORE TAB ═══════════ */}
-      <TabsContent value="more" className="mt-0 space-y-5">
-        {/* Market Resolution */}
+      {/* ═══════════ CREATORS TAB ═══════════ */}
+      <TabsContent value="creators" className="mt-0 space-y-5">
+        {/* What are Creators */}
+        <section className="text-center space-y-2 py-2">
+          <div className="w-14 h-14 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mx-auto">
+            <PenTool className="h-7 w-7 text-primary" />
+          </div>
+          <h3 className="text-lg font-bold">Market Creators</h3>
+          <p className="text-sm text-muted-foreground max-w-xs mx-auto">
+            Verified users who design prediction markets and ensure they're resolved fairly.
+          </p>
+        </section>
+
+        {/* What Creators Do */}
+        <section className="space-y-3">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+              <Sparkles className="h-4 w-4 text-primary" />
+            </div>
+            <h3 className="font-bold text-base">What Creators Do</h3>
+          </div>
+          <div className="space-y-2">
+            <div className="flex gap-3 p-3 rounded-lg bg-muted/30">
+              <div className="w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold flex-shrink-0">1</div>
+              <div>
+                <p className="text-sm font-medium">Design the market question</p>
+                <p className="text-xs text-muted-foreground">Craft clear, unambiguous questions with verifiable outcomes</p>
+              </div>
+            </div>
+            <div className="flex gap-3 p-3 rounded-lg bg-muted/30">
+              <div className="w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold flex-shrink-0">2</div>
+              <div>
+                <p className="text-sm font-medium">Set resolution criteria</p>
+                <p className="text-xs text-muted-foreground">Define exactly what needs to happen for each outcome to win</p>
+              </div>
+            </div>
+            <div className="flex gap-3 p-3 rounded-lg bg-muted/30">
+              <div className="w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold flex-shrink-0">3</div>
+              <div>
+                <p className="text-sm font-medium">Resolve the market</p>
+                <p className="text-xs text-muted-foreground">Confirm the winning outcome within 48 hours of the event</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* How Markets Resolve */}
         <section className="space-y-3">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-success/10 flex items-center justify-center">
@@ -721,53 +741,54 @@ export function HowItWorksDialog({ open, onOpenChange }: HowItWorksDialogProps) 
             </div>
             <h3 className="font-bold text-base">How Markets Resolve</h3>
           </div>
-          <p className="text-sm text-muted-foreground leading-relaxed">
-            When the real-world event happens, here's the process:
-          </p>
           <div className="space-y-2">
             <div className="p-3 rounded-lg bg-muted/30">
               <p className="text-sm font-semibold mb-0.5">1. Event occurs</p>
-              <p className="text-xs text-muted-foreground">The real-world outcome is known</p>
+              <p className="text-xs text-muted-foreground">The real-world outcome is known (e.g., election results are certified)</p>
             </div>
             <div className="p-3 rounded-lg bg-muted/30">
               <p className="text-sm font-semibold mb-0.5">2. Creator confirms result (within 48h)</p>
-              <p className="text-xs text-muted-foreground">The market creator verifies the winning outcome</p>
+              <p className="text-xs text-muted-foreground">The market creator verifies the winning outcome using official sources</p>
             </div>
-            <div className="p-3 rounded-lg bg-muted/30">
+            <div className="p-3 rounded-lg bg-amber-500/5 border border-amber-500/20">
               <p className="text-sm font-semibold mb-0.5">3. 24h dispute window</p>
-              <p className="text-xs text-muted-foreground">Users can challenge if they believe the resolution is incorrect</p>
+              <p className="text-xs text-muted-foreground">Users can challenge if they believe the resolution is incorrect. The Pollgy team reviews disputes.</p>
             </div>
             <div className="p-3 rounded-lg bg-success/10 border border-success/20">
               <p className="text-sm font-semibold text-success mb-0.5">4. Automatic payout 💸</p>
-              <p className="text-xs text-muted-foreground">Winnings are credited directly to your cash balance</p>
+              <p className="text-xs text-muted-foreground">Winnings are credited directly to your cash balance — no action needed</p>
             </div>
           </div>
         </section>
 
-        {/* Creators */}
+        {/* Become a Creator */}
         <section className="space-y-3">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-              <PenTool className="h-4 w-4 text-primary" />
+            <div className="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center">
+              <BadgeCheck className="h-4 w-4 text-amber-500" />
             </div>
-            <h3 className="font-bold text-base">Creators</h3>
+            <h3 className="font-bold text-base">Want to Create Markets?</h3>
           </div>
-          <p className="text-sm text-muted-foreground leading-relaxed">
-            Verified users who create and manage prediction markets. They design questions, set criteria, and resolve markets fairly.
-          </p>
           <div className="space-y-2">
             <div className="flex gap-3 p-3 rounded-lg bg-muted/30">
-              <BadgeCheck className="h-4 w-4 text-success mt-0.5 flex-shrink-0" />
+              <CheckCircle2 className="h-4 w-4 text-success mt-0.5 flex-shrink-0" />
               <div>
                 <p className="text-sm font-medium">Apply through your profile</p>
                 <p className="text-xs text-muted-foreground">Team reviews applications within 24 hours</p>
               </div>
             </div>
             <div className="flex gap-3 p-3 rounded-lg bg-muted/30">
-              <Scale className="h-4 w-4 text-amber-500 mt-0.5 flex-shrink-0" />
+              <CheckCircle2 className="h-4 w-4 text-success mt-0.5 flex-shrink-0" />
               <div>
-                <p className="text-sm font-medium">Creator responsibilities</p>
-                <p className="text-xs text-muted-foreground">Resolve markets fairly within 48h. Maintain quality.</p>
+                <p className="text-sm font-medium">Build your reputation</p>
+                <p className="text-xs text-muted-foreground">Fair resolutions earn you followers and credibility</p>
+              </div>
+            </div>
+            <div className="flex gap-3 p-3 rounded-lg bg-muted/30">
+              <CheckCircle2 className="h-4 w-4 text-success mt-0.5 flex-shrink-0" />
+              <div>
+                <p className="text-sm font-medium">Grow your audience</p>
+                <p className="text-xs text-muted-foreground">Users follow top creators to find the best markets</p>
               </div>
             </div>
           </div>
@@ -780,9 +801,112 @@ export function HowItWorksDialog({ open, onOpenChange }: HowItWorksDialogProps) 
             <div>
               <p className="text-sm font-semibold text-amber-600 dark:text-amber-400">Market Cancellation (Rare)</p>
               <p className="text-xs text-muted-foreground mt-1">
-                If a market becomes unknowable, your ticket cost is refunded. 
+                If a market becomes unknowable or the event is cancelled, your ticket cost is refunded. 
                 The platform fee (3%) and Weekly Draw contribution (2%) are <span className="font-semibold text-foreground">non-refundable</span>.
               </p>
+            </div>
+          </div>
+        </section>
+      </TabsContent>
+
+      {/* ═══════════ MONEY TAB ═══════════ */}
+      <TabsContent value="money" className="mt-0 space-y-5">
+        {/* Hero */}
+        <section className="text-center space-y-2 py-2">
+          <div className="w-14 h-14 rounded-2xl bg-success/10 border border-success/20 flex items-center justify-center mx-auto">
+            <Wallet className="h-7 w-7 text-success" />
+          </div>
+          <h3 className="text-lg font-bold">Deposits & Withdrawals</h3>
+          <p className="text-sm text-muted-foreground max-w-xs mx-auto">
+            Getting money in and out is fast, simple, and <span className="font-semibold text-foreground">completely free</span>.
+          </p>
+        </section>
+
+        {/* Deposit Methods */}
+        <section className="space-y-3">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+              <CreditCard className="h-4 w-4 text-primary" />
+            </div>
+            <h3 className="font-bold text-base">How to Deposit</h3>
+          </div>
+          <div className="space-y-2">
+            <div className="flex gap-3 p-3 rounded-lg bg-muted/30">
+              <div className="w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold flex-shrink-0">1</div>
+              <div>
+                <p className="text-sm font-medium">Click "Deposit" in the header</p>
+                <p className="text-xs text-muted-foreground">Or go to Settings → Wallet</p>
+              </div>
+            </div>
+            <div className="flex gap-3 p-3 rounded-lg bg-muted/30">
+              <div className="w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold flex-shrink-0">2</div>
+              <div>
+                <p className="text-sm font-medium">Choose your payment method</p>
+                <p className="text-xs text-muted-foreground">Card, bank transfer, crypto, or mobile pay</p>
+              </div>
+            </div>
+            <div className="flex gap-3 p-3 rounded-lg bg-success/10 border border-success/20">
+              <div className="w-6 h-6 rounded-full bg-success text-white flex items-center justify-center text-xs font-bold flex-shrink-0">3</div>
+              <div>
+                <p className="text-sm font-semibold text-success">Funds land in your account</p>
+                <p className="text-xs text-muted-foreground">Start buying tickets immediately</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Payment Methods */}
+        <section className="space-y-3">
+          <h4 className="font-bold text-sm">Accepted Methods</h4>
+          <div className="grid grid-cols-2 gap-2">
+            <div className="p-3 rounded-lg bg-muted/30 text-center">
+              <p className="text-sm font-medium">Credit/Debit</p>
+              <p className="text-xs text-success font-semibold">Instant</p>
+            </div>
+            <div className="p-3 rounded-lg bg-muted/30 text-center">
+              <p className="text-sm font-medium">Bank Transfer</p>
+              <p className="text-xs text-muted-foreground">1-3 days</p>
+            </div>
+            <div className="p-3 rounded-lg bg-muted/30 text-center">
+              <p className="text-sm font-medium">Crypto</p>
+              <p className="text-xs text-muted-foreground">~15 mins</p>
+            </div>
+            <div className="p-3 rounded-lg bg-muted/30 text-center">
+              <p className="text-sm font-medium">Apple/Google Pay</p>
+              <p className="text-xs text-success font-semibold">Instant</p>
+            </div>
+          </div>
+        </section>
+
+        {/* Withdrawals */}
+        <section className="space-y-3">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-success/10 flex items-center justify-center">
+              <HandCoins className="h-4 w-4 text-success" />
+            </div>
+            <h3 className="font-bold text-base">Withdrawals</h3>
+          </div>
+          <div className="space-y-2">
+            <div className="p-3 rounded-lg bg-success/5 border border-success/20">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-sm font-semibold">Withdrawal fee</span>
+                <span className="text-sm font-bold text-success">Free</span>
+              </div>
+              <p className="text-xs text-muted-foreground">No charges. Ever.</p>
+            </div>
+            <div className="p-3 rounded-lg bg-muted/30">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-sm font-semibold">Minimum withdrawal</span>
+                <span className="text-sm font-bold">$10</span>
+              </div>
+              <p className="text-xs text-muted-foreground">Small threshold so you can cash out easily</p>
+            </div>
+            <div className="p-3 rounded-lg bg-muted/30">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-sm font-semibold">Processing time</span>
+                <span className="text-sm font-bold">1-3 business days</span>
+              </div>
+              <p className="text-xs text-muted-foreground">Usually arrives within 24 hours</p>
             </div>
           </div>
         </section>
@@ -819,57 +943,107 @@ export function HowItWorksDialog({ open, onOpenChange }: HowItWorksDialogProps) 
             </p>
           </div>
         </section>
+      </TabsContent>
+
+      {/* ═══════════ TRUST TAB ═══════════ */}
+      <TabsContent value="trust" className="mt-0 space-y-5">
+        {/* Hero */}
+        <section className="text-center space-y-2 py-2">
+          <div className="w-14 h-14 rounded-2xl bg-success/10 border border-success/20 flex items-center justify-center mx-auto">
+            <Shield className="h-7 w-7 text-success" />
+          </div>
+          <h3 className="text-lg font-bold">Trust & Safety</h3>
+          <p className="text-sm text-muted-foreground max-w-xs mx-auto">
+            Your money and data are protected with <span className="font-semibold text-foreground">bank-level security</span>.
+          </p>
+        </section>
+
+        {/* Security Features */}
+        <section className="space-y-3">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-success/10 flex items-center justify-center">
+              <Lock className="h-4 w-4 text-success" />
+            </div>
+            <h3 className="font-bold text-base">Security Features</h3>
+          </div>
+          <div className="space-y-2">
+            <div className="flex gap-3 p-3 rounded-lg bg-success/5 border border-success/20">
+              <CheckCircle2 className="h-4 w-4 text-success mt-0.5 flex-shrink-0" />
+              <div>
+                <p className="text-sm font-medium">Bank-level encryption</p>
+                <p className="text-xs text-muted-foreground">256-bit SSL encryption on all transactions and data</p>
+              </div>
+            </div>
+            <div className="flex gap-3 p-3 rounded-lg bg-success/5 border border-success/20">
+              <CheckCircle2 className="h-4 w-4 text-success mt-0.5 flex-shrink-0" />
+              <div>
+                <p className="text-sm font-medium">Two-factor authentication</p>
+                <p className="text-xs text-muted-foreground">Protect your account with an extra layer of security</p>
+              </div>
+            </div>
+            <div className="flex gap-3 p-3 rounded-lg bg-success/5 border border-success/20">
+              <CheckCircle2 className="h-4 w-4 text-success mt-0.5 flex-shrink-0" />
+              <div>
+                <p className="text-sm font-medium">Segregated accounts</p>
+                <p className="text-xs text-muted-foreground">Your funds are held separately from Pollgy's operating funds</p>
+              </div>
+            </div>
+            <div className="flex gap-3 p-3 rounded-lg bg-success/5 border border-success/20">
+              <CheckCircle2 className="h-4 w-4 text-success mt-0.5 flex-shrink-0" />
+              <div>
+                <p className="text-sm font-medium">Verifiable draws</p>
+                <p className="text-xs text-muted-foreground">All Weekly Draw results are transparent and independently auditable</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Fair Resolution */}
+        <section className="space-y-3">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+              <Eye className="h-4 w-4 text-primary" />
+            </div>
+            <h3 className="font-bold text-base">Fair & Transparent</h3>
+          </div>
+          <div className="space-y-2">
+            <div className="p-3 rounded-lg bg-muted/30">
+              <p className="text-sm font-semibold mb-0.5">🏛️ Dispute resolution</p>
+              <p className="text-xs text-muted-foreground">Every resolved market has a 24-hour dispute window. If something looks wrong, you can flag it for review.</p>
+            </div>
+            <div className="p-3 rounded-lg bg-muted/30">
+              <p className="text-sm font-semibold mb-0.5">📊 Creator accountability</p>
+              <p className="text-xs text-muted-foreground">Creators have public track records. Users can see resolution history, accuracy, and ratings before buying.</p>
+            </div>
+            <div className="p-3 rounded-lg bg-muted/30">
+              <p className="text-sm font-semibold mb-0.5">🔍 Full transparency</p>
+              <p className="text-xs text-muted-foreground">Pot sizes, ticket counts, and fee splits are always visible. No hidden mechanics.</p>
+            </div>
+          </div>
+        </section>
 
         {/* Community */}
         <section className="space-y-3">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-              <MessageSquare className="h-4 w-4 text-primary" />
+              <Users className="h-4 w-4 text-primary" />
             </div>
             <h3 className="font-bold text-base">Community</h3>
           </div>
           <div className="space-y-2">
             <div className="p-3 rounded-lg bg-muted/30">
               <p className="text-sm font-medium mb-0.5">💬 Comments & Discussion</p>
-              <p className="text-xs text-muted-foreground">Debate markets, share analysis, learn from others</p>
+              <p className="text-xs text-muted-foreground">Debate markets, share analysis, and learn from other predictors</p>
             </div>
             <div className="p-3 rounded-lg bg-muted/30">
               <p className="text-sm font-medium mb-0.5">👥 Follow Predictors</p>
-              <p className="text-xs text-muted-foreground">Follow successful users and see their picks</p>
+              <p className="text-xs text-muted-foreground">Follow successful users and see their picks for inspiration</p>
             </div>
             <div className="p-3 rounded-lg bg-muted/30">
               <p className="text-sm font-medium mb-0.5">🏆 Leaderboards</p>
-              <p className="text-xs text-muted-foreground">Compete for the top spots and earn recognition</p>
+              <p className="text-xs text-muted-foreground">Compete for top spots and earn recognition across the platform</p>
             </div>
           </div>
-        </section>
-
-        {/* Safety */}
-        <section className="space-y-3">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-success/10 flex items-center justify-center">
-              <Shield className="h-4 w-4 text-success" />
-            </div>
-            <h3 className="font-bold text-base">Safety & Security</h3>
-          </div>
-          <ul className="space-y-2 text-sm">
-            <li className="flex items-start gap-2">
-              <CheckCircle2 className="h-4 w-4 text-success mt-0.5 flex-shrink-0" />
-              <span>Bank-level encryption for all transactions</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <CheckCircle2 className="h-4 w-4 text-success mt-0.5 flex-shrink-0" />
-              <span>Two-factor authentication available</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <CheckCircle2 className="h-4 w-4 text-success mt-0.5 flex-shrink-0" />
-              <span>Funds held in segregated accounts</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <CheckCircle2 className="h-4 w-4 text-success mt-0.5 flex-shrink-0" />
-              <span>All draws are verifiable and transparent</span>
-            </li>
-          </ul>
         </section>
 
         {/* Need Help */}
@@ -879,7 +1053,7 @@ export function HowItWorksDialog({ open, onOpenChange }: HowItWorksDialogProps) 
             <h3 className="font-bold text-base">Need Help?</h3>
           </div>
           <p className="text-sm text-muted-foreground mb-3">
-            Our support team is available 24/7 to help you.
+            Our support team is available 24/7 to help you with any questions.
           </p>
           <div className="flex gap-2">
             <button className="flex-1 py-2 px-3 rounded-lg bg-primary/10 text-primary text-sm font-medium hover:bg-primary/20 transition-colors">
