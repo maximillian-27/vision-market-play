@@ -9,7 +9,7 @@ import {
   Repeat2,
   Heart,
   Bookmark,
-  Send,
+  Share2,
   TrendingUp,
 } from "lucide-react";
 
@@ -148,7 +148,7 @@ export function CommunityPost({ post }: CommunityPostProps) {
       onClick: handleRepost,
     },
     {
-      icon: Send,
+      icon: Share2,
       count: 0,
       active: false,
       activeColor: "",
