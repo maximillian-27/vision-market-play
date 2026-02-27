@@ -1,4 +1,5 @@
-import { Users, Trophy, Timer, Ticket, Zap, Flame } from "lucide-react";
+import { Users, Trophy, Timer, Ticket, Zap, Flame, Info } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useNavigate } from "react-router-dom";
 import bitcoinImage from "@/assets/bitcoin-market.jpg";
 import nbaImage from "@/assets/nba-championship.jpg";
@@ -69,6 +70,19 @@ export function MarketsSidebar() {
               <Trophy className="h-3 w-3 text-primary" />
             </div>
             <span className="text-[11px] font-bold text-primary uppercase tracking-wider">Weekly Draw</span>
+            <Popover>
+              <PopoverTrigger asChild>
+                <button className="hover:opacity-70 transition-opacity">
+                  <Info className="h-3 w-3 text-primary/60" />
+                </button>
+              </PopoverTrigger>
+              <PopoverContent side="bottom" align="start" className="w-56 p-3 space-y-2">
+                <p className="text-xs font-medium text-foreground">Weekly Draw</p>
+                <p className="text-[11px] text-muted-foreground leading-relaxed">
+                  Every ticket you buy is an automatic entry. 10 winners are drawn every Sunday. 1st place gets 50% of the pool!
+                </p>
+              </PopoverContent>
+            </Popover>
           </div>
           <span className="flex items-center gap-1 text-[10px] text-muted-foreground bg-muted/50 px-2 py-0.5 rounded-full">
             <Timer className="h-3 w-3" />
