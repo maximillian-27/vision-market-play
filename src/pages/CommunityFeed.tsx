@@ -203,7 +203,7 @@ export default function CommunityFeed() {
                   className="flex-1 py-3 text-[13px] sm:text-sm font-medium relative transition-colors hover:bg-muted/30"
                 >
                   <span className={activeTab === tab ? "text-foreground" : "text-muted-foreground"}>
-                    {tab === "foryou" ? "For You" : "Following"}
+                    {tab === "foryou" ? "All" : "Following"}
                   </span>
                   {activeTab === tab && (
                     <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-12 sm:w-14 h-[3px] rounded-full bg-primary" />
