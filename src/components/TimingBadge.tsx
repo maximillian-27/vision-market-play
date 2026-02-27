@@ -1,8 +1,8 @@
 import { Bird, Clock, Flame } from "lucide-react";
 
-type TimingPhase = "early" | "good" | "late";
+export type TimingPhase = "early" | "good" | "late";
 
-function parseEndsIn(endsIn: string): TimingPhase {
+export function parseEndsIn(endsIn: string): TimingPhase {
   const lower = endsIn.toLowerCase();
 
   const months = lower.match(/(\d+)\s*mo/);

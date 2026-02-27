@@ -9,7 +9,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
 import { QuoteRepostDialog } from "@/components/QuoteRepostDialog";
-import { TimingBadge } from "@/components/TimingBadge";
+import { TimingBadge, parseEndsIn } from "@/components/TimingBadge";
 import { ResponsiveContainer, AreaChart, Area, Tooltip, Legend } from "recharts";
 import {
   BadgeCheck,
@@ -180,7 +180,9 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
   const estimatedPayout = estimatedWinningTickets > 0 
     ? (ticketCount / estimatedWinningTickets) * estimatedWinningPool 
     : 0;
-  const estimatedProfit = estimatedPayout - totalCost;
+  const timingPhase = parseEndsIn(market.endsIn);
+  const isLateEntry = timingPhase === "late";
+  const estimatedProfit = isLateEntry ? -(totalCost * 0.15) : (estimatedPayout - totalCost);
   
   const potDisplay = formatPot(potValue);
   const playerCount = market.players || market.traders || 1247;
@@ -630,13 +632,13 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
                         <span className="text-xs text-muted-foreground">Potential winning</span>
                         <span className="text-sm font-semibold">${estimatedPayout > 0 ? estimatedPayout.toFixed(2) : '0.00'}</span>
                       </div>
-                      <div className="flex justify-between items-center px-3 py-2 bg-success/5">
+                        <div className="flex justify-between items-center px-3 py-2 bg-success/5">
                         <div className="flex items-center gap-1.5">
-                          <Trophy className="h-3.5 w-3.5 text-success" />
-                          <span className="text-xs font-medium text-success">Potential profit</span>
+                          <Trophy className={`h-3.5 w-3.5 ${isLateEntry ? 'text-destructive' : 'text-success'}`} />
+                          <span className={`text-xs font-medium ${isLateEntry ? 'text-destructive' : 'text-success'}`}>Potential profit</span>
                         </div>
-                        <span className={`text-lg font-bold ${estimatedProfit > 0 ? 'text-success' : 'text-foreground'}`}>
-                          +${estimatedProfit > 0 ? estimatedProfit.toFixed(2) : '0.00'}
+                        <span className={`text-lg font-bold ${isLateEntry ? 'text-destructive' : estimatedProfit > 0 ? 'text-success' : 'text-foreground'}`}>
+                          {isLateEntry ? `-$${Math.abs(estimatedProfit).toFixed(2)}` : `+$${estimatedProfit > 0 ? estimatedProfit.toFixed(2) : '0.00'}`}
                         </span>
                       </div>
                     </div>

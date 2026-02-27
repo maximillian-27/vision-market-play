@@ -32,7 +32,7 @@ import {
 import { ResponsiveContainer, AreaChart, Area, XAxis, Tooltip, PieChart, Pie, Cell } from "recharts";
 import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
-import { TimingBadge } from "@/components/TimingBadge";
+import { TimingBadge, parseEndsIn } from "@/components/TimingBadge";
 
 import bitcoinImage from "@/assets/bitcoin-market.jpg";
 import nbaImage from "@/assets/nba-championship.jpg";
@@ -302,7 +302,9 @@ export default function MarketDetail() {
   const estimatedPayout = estimatedWinningTickets > 0 
     ? (ticketCount / estimatedWinningTickets) * estimatedWinningPool 
     : 0;
-  const estimatedProfit = estimatedPayout - totalCost;
+  const timingPhase = market.endsIn ? parseEndsIn(market.endsIn) : "early";
+  const isLateEntry = timingPhase === "late";
+  const estimatedProfit = isLateEntry ? -(totalCost * 0.15) : (estimatedPayout - totalCost);
 
   const POT_SPLIT = [
     { label: "Pot", pct: 95, color: "bg-primary" },
@@ -718,10 +720,10 @@ export default function MarketDetail() {
                   <span className="text-sm font-bold text-foreground">${estimatedPayout > 0 ? estimatedPayout.toFixed(2) : '0.00'}</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <Trophy className="h-3.5 w-3.5 text-success" />
-                  <span className="text-[11px] text-success font-medium">Est. Profit</span>
-                  <span className="text-base font-extrabold text-success">
-                    +${estimatedProfit > 0 ? estimatedProfit.toFixed(2) : '0.00'}
+                  <Trophy className={`h-3.5 w-3.5 ${isLateEntry ? 'text-destructive' : 'text-success'}`} />
+                  <span className={`text-[11px] ${isLateEntry ? 'text-destructive' : 'text-success'} font-medium`}>Est. Profit</span>
+                  <span className={`text-base font-extrabold ${isLateEntry ? 'text-destructive' : 'text-success'}`}>
+                    {isLateEntry ? `-$${Math.abs(estimatedProfit).toFixed(2)}` : `+$${estimatedProfit > 0 ? estimatedProfit.toFixed(2) : '0.00'}`}
                   </span>
                 </div>
               </div>
@@ -903,10 +905,10 @@ export default function MarketDetail() {
                     <span className="text-sm font-bold">${estimatedPayout > 0 ? estimatedPayout.toFixed(2) : '0.00'}</span>
                   </div>
                   <div className="flex items-center gap-1">
-                    <Trophy className="h-3.5 w-3.5 text-success" />
-                    <span className="text-xs text-success font-medium">Est. Profit</span>
-                    <span className="text-base font-extrabold text-success">
-                      +${estimatedProfit > 0 ? estimatedProfit.toFixed(2) : '0.00'}
+                    <Trophy className={`h-3.5 w-3.5 ${isLateEntry ? 'text-destructive' : 'text-success'}`} />
+                    <span className={`text-xs ${isLateEntry ? 'text-destructive' : 'text-success'} font-medium`}>Est. Profit</span>
+                    <span className={`text-base font-extrabold ${isLateEntry ? 'text-destructive' : 'text-success'}`}>
+                      {isLateEntry ? `-$${Math.abs(estimatedProfit).toFixed(2)}` : `+$${estimatedProfit > 0 ? estimatedProfit.toFixed(2) : '0.00'}`}
                     </span>
                   </div>
                 </div>
