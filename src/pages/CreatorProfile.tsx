@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, UserPlus, UserCheck, BadgeCheck, MapPin, Calendar, Link as LinkIcon, Share2, MessageCircle, Heart, Repeat2, Trophy } from "lucide-react";
+import { ArrowLeft, UserPlus, UserCheck, MapPin, Calendar, Link as LinkIcon, Share2, MessageCircle, Heart, Repeat2, Trophy } from "lucide-react";
+import { CreatorBadge } from "@/components/CreatorBadge";
 import { MarketGridCard } from "@/components/MarketGridCard";
 import { SocialStats } from "@/components/SocialStats";
 import { ProfileStats } from "@/components/ProfileStats";
@@ -303,7 +304,7 @@ export default function CreatorProfile() {
                   <div className="flex items-center gap-2">
                     <h1 className="text-2xl md:text-3xl font-bold">{creator.name}</h1>
                     {creator.verified && (
-                      <BadgeCheck className="h-6 w-6 text-primary fill-primary/20" />
+                      <CreatorBadge size="lg" />
                     )}
                   </div>
                   <p className="text-muted-foreground">{creator.username}</p>
@@ -442,7 +443,7 @@ export default function CreatorProfile() {
                         <div className="flex items-center gap-2">
                           <span className="font-semibold text-sm">{creator.name}</span>
                           {creator.verified && (
-                            <BadgeCheck className="h-4 w-4 text-primary fill-primary/20" />
+                            <CreatorBadge size="md" />
                           )}
                           <span className="text-muted-foreground text-sm">{creator.username}</span>
                           <span className="text-muted-foreground text-sm">·</span>

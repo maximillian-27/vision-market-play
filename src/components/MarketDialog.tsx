@@ -14,7 +14,7 @@ import { QuoteRepostDialog } from "@/components/QuoteRepostDialog";
 import { TimingBadge, parseEndsIn } from "@/components/TimingBadge";
 import { ResponsiveContainer, AreaChart, Area, Tooltip, Legend } from "recharts";
 import {
-  BadgeCheck,
+  
   Share2,
   Repeat2,
   ChevronDown,
@@ -36,6 +36,7 @@ import {
   ArrowLeft,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { CreatorBadge } from "@/components/CreatorBadge";
 
 interface Outcome {
   label: string;
@@ -273,7 +274,7 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
                 </Avatar>
                 <span className="text-sm font-medium">{market.creator.name}</span>
                 {market.creator.isCreator !== false && (
-                  <BadgeCheck className="h-3.5 w-3.5 text-primary fill-primary/20" />
+                  <CreatorBadge size="sm" />
                 )}
                 <Popover>
                   <PopoverTrigger asChild>

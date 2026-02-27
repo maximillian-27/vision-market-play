@@ -5,7 +5,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, UserPlus, UserCheck, BadgeCheck, TrendingUp, Clock, Calendar, MapPin, Share2, ArrowUpRight, ArrowDownLeft, MessageCircle, Heart, Repeat2, Link2, ExternalLink, ChevronRight } from "lucide-react";
+import { ArrowLeft, UserPlus, UserCheck, TrendingUp, Clock, Calendar, MapPin, Share2, ArrowUpRight, ArrowDownLeft, MessageCircle, Heart, Repeat2, Link2, ExternalLink, ChevronRight } from "lucide-react";
+import { CreatorBadge } from "@/components/CreatorBadge";
 import { MarketCard } from "@/components/MarketCard";
 import { MarketDialog } from "@/components/MarketDialog";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -219,7 +220,7 @@ export default function Profile() {
                   <div className="flex items-center gap-2">
                     <h1 className="text-2xl md:text-3xl font-bold">{displayName}</h1>
                     {isCreator && (
-                      <BadgeCheck className="h-6 w-6 text-primary fill-primary/20" />
+                      <CreatorBadge size="lg" />
                     )}
                   </div>
                   <p className="text-muted-foreground">{userData.username}</p>

@@ -1,6 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
-import { Clock, TrendingUp, Heart, MessageCircle, Share2, Repeat2, BadgeCheck } from "lucide-react";
+import { Clock, TrendingUp, Heart, MessageCircle, Share2, Repeat2 } from "lucide-react";
+import { CreatorBadge } from "@/components/CreatorBadge";
 import { TimingBadge } from "@/components/TimingBadge";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
@@ -76,7 +77,7 @@ export function MarketCard({ id, creator, title, subtitle, image, outcomes, yesP
               </Avatar>
               <span className="text-white text-[10px] font-medium max-w-[60px] truncate">{creator.name.split(' ')[0]}</span>
               {creator.isCreator !== false && (
-                <BadgeCheck className="h-3 w-3 text-white fill-white/30" />
+                <CreatorBadge size="xs" variant="light" />
               )}
             </button>
           </div>
