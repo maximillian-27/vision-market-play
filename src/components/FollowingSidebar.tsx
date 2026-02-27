@@ -1,9 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Users, UserPlus, TrendingUp } from "lucide-react";
+import { Users, UserPlus, TrendingUp, HelpCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { useState } from "react";
+import { BecomeCreatorDialog } from "@/components/BecomeCreatorDialog";
 
 const followingUsers = [
   {
@@ -62,8 +65,10 @@ const followingCreators = [
 
 export function FollowingSidebar() {
   const navigate = useNavigate();
+  const [showCreatorDialog, setShowCreatorDialog] = useState(false);
 
   return (
+    <>
     <div className="w-64 lg:w-72 space-y-4 hidden lg:block sticky top-20 self-start max-h-[calc(100vh-6rem)] overflow-y-auto scrollbar-thin">
       {/* Following Users */}
       <Card className="border-border/40 overflow-hidden">
@@ -113,10 +118,31 @@ export function FollowingSidebar() {
       {/* Following Creators */}
       <Card className="border-border/40 overflow-hidden">
         <CardHeader className="pb-2 pt-4 px-4">
-          <CardTitle className="text-sm font-semibold flex items-center gap-2">
-            <TrendingUp className="h-4 w-4 text-primary" />
-            Top Creators
-          </CardTitle>
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-sm font-semibold flex items-center gap-2">
+              <TrendingUp className="h-4 w-4 text-primary" />
+              Top Creators
+            </CardTitle>
+            <Popover>
+              <PopoverTrigger asChild>
+                <button className="text-[10px] text-muted-foreground hover:text-foreground transition-colors">
+                  What are creators?
+                </button>
+              </PopoverTrigger>
+              <PopoverContent side="bottom" align="end" className="w-56 p-3 space-y-2">
+                <p className="text-xs font-medium text-foreground">Creators</p>
+                <p className="text-[11px] text-muted-foreground leading-relaxed">
+                  Creators build markets, grow audiences, and earn from engagement. Anyone can apply.
+                </p>
+                <button
+                  onClick={() => setShowCreatorDialog(true)}
+                  className="text-[11px] font-medium text-primary hover:underline"
+                >
+                  Become a creator →
+                </button>
+              </PopoverContent>
+            </Popover>
+          </div>
         </CardHeader>
         <CardContent className="p-2 pt-0">
           <div className="space-y-0.5">
@@ -153,5 +179,8 @@ export function FollowingSidebar() {
         </CardContent>
       </Card>
     </div>
+
+    <BecomeCreatorDialog open={showCreatorDialog} onOpenChange={setShowCreatorDialog} onSuccess={() => {}} />
+    </>
   );
 }
