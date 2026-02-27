@@ -2,7 +2,7 @@ import { useState, useMemo } from "react";
 import { FeedFilters, FilterState } from "@/components/FeedFilters";
 import { MarketGridCard } from "@/components/MarketGridCard";
 import { Button } from "@/components/ui/button";
-import { Timer, Users, ArrowRight, ChevronRight, Trophy, Ticket, Zap, Gift, Calendar, History, Info } from "lucide-react";
+import { Timer, Users, ArrowRight, ChevronRight, Trophy, Ticket, Zap, Gift, Calendar, History, Info, HelpCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { WeeklyDrawCard } from "@/components/WeeklyDrawCard";
@@ -946,7 +946,21 @@ export default function Feed() {
 
           {/* Right — 4 Highlighted Markets + Weekly Draw */}
           <div className="grid grid-cols-3 grid-rows-2 gap-2 lg:max-h-[340px]">
-            <CompactFeaturedCard market={highlightedMarkets[0]} />
+            <div className="flex flex-col rounded-xl border border-border/60 bg-card overflow-hidden h-full">
+              <div className="flex items-center gap-1.5 px-3 pt-2.5 pb-1">
+                <HelpCircle className="h-3 w-3 text-primary" />
+                <span className="text-[9px] uppercase tracking-wider font-bold text-primary">How it works</span>
+              </div>
+              <div className="flex-1 min-h-0 px-2 pb-2">
+                <iframe
+                  className="w-full h-full rounded-lg"
+                  src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+                  title="How Pollgy Works"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              </div>
+            </div>
             <div className="col-span-2 row-span-1">
               <WeeklyDrawCard />
             </div>
