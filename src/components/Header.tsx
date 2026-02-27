@@ -22,7 +22,6 @@ import { DepositDialog } from "@/components/DepositDialog";
 import { NotificationsDropdown } from "@/components/NotificationsDropdown";
 import { AffiliateDialog } from "@/components/AffiliateDialog";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CreatorsPartnersDialog } from "@/components/CreatorsPartnersDialog";
 
 export function Header() {
   const isMobile = useIsMobile();
@@ -35,7 +34,6 @@ export function Header() {
   const [showCreatorDialog, setShowCreatorDialog] = useState(false);
   const [showHowItWorks, setShowHowItWorks] = useState(false);
   const [showAffiliateDialog, setShowAffiliateDialog] = useState(false);
-  const [showCreatorsPartners, setShowCreatorsPartners] = useState(false);
   const [portfolioValue] = useState(12450);
   const [cashBalance] = useState(5230);
   const [affiliateEarnings] = useState(1847.50);
@@ -139,14 +137,6 @@ export function Header() {
                   className="hidden md:flex text-muted-foreground text-xs font-medium hover:text-foreground"
                 >
                   How it works?
-                </Button>
-                <Button 
-                  variant="ghost" 
-                  size="sm"
-                  onClick={() => setShowCreatorsPartners(true)}
-                  className="hidden md:flex text-muted-foreground text-xs font-medium hover:text-foreground"
-                >
-                  Creators & Partners
                 </Button>
                 
                 {/* Mobile: Info dropdown when not logged in */}
@@ -341,8 +331,6 @@ export function Header() {
 
       {/* Affiliate Dialog */}
       <AffiliateDialog open={showAffiliateDialog} onOpenChange={setShowAffiliateDialog} />
-      {/* Creators & Partners Dialog */}
-      <CreatorsPartnersDialog open={showCreatorsPartners} onOpenChange={setShowCreatorsPartners} onRegister={handleLogin} />
     </>
   );
 }
