@@ -642,9 +642,6 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
                         </span>
                       </div>
                     </div>
-                    <p className="text-[9px] text-muted-foreground text-center">
-                      95% goes to the pot · 2% funds the weekly draw
-                    </p>
                   </>
                 )}
               </div>
