@@ -665,21 +665,9 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
                     }
                   </Button>
 
-                  <div className="space-y-1">
-                    <div className="flex h-1.5 rounded-full overflow-hidden">
-                      {POT_SPLIT.map((s) => (
-                        <div key={s.label} className={s.color} style={{ width: `${s.pct}%` }} />
-                      ))}
-                    </div>
-                    <div className="flex items-center justify-between text-[8px] text-muted-foreground">
-                      {POT_SPLIT.map((s) => (
-                        <span key={s.label} className="flex items-center gap-0.5">
-                          <span className={`inline-block h-1 w-1 rounded-full ${s.color}`} />
-                          {s.pct}% {s.label}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
+                  <p className="text-[9px] text-muted-foreground text-center">
+                    95% to pot · 2% weekly draw · 3% platform fee
+                  </p>
                 </div>
               )}
             </div>
