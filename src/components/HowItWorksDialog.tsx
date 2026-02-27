@@ -1,5 +1,5 @@
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
+import { Drawer, DrawerContent } from "@/components/ui/drawer";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -16,24 +16,35 @@ import {
   AlertTriangle,
   Sparkles,
   Scale,
+  MessageSquare,
   HelpCircle,
   CreditCard,
   Target,
   Gavel,
   BookOpen,
   Lightbulb,
-  Ticket,
-  PieChart,
-  Calculator,
-  Gift,
-  Percent,
-  ArrowLeft,
-  Zap,
-  Star,
-  MessageSquare,
+  PenTool,
+  XCircle,
   BadgeCheck,
-  PenTool
+  FileText,
+  ArrowLeft,
+  Ticket,
+  Gift,
+  Calendar,
+  Zap,
+  Share2,
+  Eye,
+  MousePointerClick,
+  CircleDollarSign,
+  PartyPopper,
+  Timer,
+  Search,
 } from "lucide-react";
+
+import tutorialTickets from "@/assets/tutorial-how-tickets-work.jpg";
+import tutorialPotSplit from "@/assets/tutorial-pot-split.jpg";
+import tutorialWeeklyDraw from "@/assets/tutorial-weekly-draw.jpg";
+import tutorialSteps from "@/assets/tutorial-steps.jpg";
 
 interface HowItWorksDialogProps {
   open: boolean;
@@ -45,7 +56,7 @@ export function HowItWorksDialog({ open, onOpenChange }: HowItWorksDialogProps) 
 
   const content = (
     <Tabs defaultValue="basics" className="w-full">
-      <TabsList className="w-full grid grid-cols-5 mb-4 h-auto p-1">
+      <TabsList className="w-full grid grid-cols-5 mb-4 h-auto p-1 sticky top-0 z-10 bg-background">
         <TabsTrigger value="basics" className="text-xs py-2 px-1">
           <BookOpen className="h-3.5 w-3.5 mr-1 hidden sm:inline" />
           Basics
@@ -55,7 +66,7 @@ export function HowItWorksDialog({ open, onOpenChange }: HowItWorksDialogProps) 
           Tickets
         </TabsTrigger>
         <TabsTrigger value="payouts" className="text-xs py-2 px-1">
-          <Calculator className="h-3.5 w-3.5 mr-1 hidden sm:inline" />
+          <Trophy className="h-3.5 w-3.5 mr-1 hidden sm:inline" />
           Payouts
         </TabsTrigger>
         <TabsTrigger value="money" className="text-xs py-2 px-1">
@@ -68,8 +79,13 @@ export function HowItWorksDialog({ open, onOpenChange }: HowItWorksDialogProps) 
         </TabsTrigger>
       </TabsList>
 
-      {/* ═══════════ BASICS TAB ═══════════ */}
+      {/* ═══════════════════ BASICS TAB ═══════════════════ */}
       <TabsContent value="basics" className="mt-0 space-y-5">
+        {/* Hero image */}
+        <div className="rounded-xl overflow-hidden border border-border/40">
+          <img src={tutorialSteps} alt="How Pollgy works - step by step" className="w-full h-auto" />
+        </div>
+
         {/* What is Pollgy */}
         <section className="space-y-3">
           <div className="flex items-center gap-2">
@@ -79,100 +95,105 @@ export function HowItWorksDialog({ open, onOpenChange }: HowItWorksDialogProps) 
             <h3 className="font-bold text-base">What is Pollgy?</h3>
           </div>
           <p className="text-sm text-muted-foreground leading-relaxed">
-            Pollgy is a prediction market platform where you buy tickets on the outcomes of real-world events. 
-            Pick a side, buy tickets at a fixed price, and if your outcome wins — you share the entire pot with other winners.
+            Pollgy is a <span className="font-semibold text-foreground">pari-mutuel prediction market</span> where you 
+            buy tickets on the outcomes of real-world events. All ticket money goes into a shared pot, and 
+            if your prediction is correct, you split the pot with other winners.
           </p>
           <div className="p-3 rounded-lg bg-primary/5 border border-primary/20">
             <p className="text-xs text-primary font-medium flex items-center gap-2">
-              <Lightbulb className="h-3.5 w-3.5" />
-              It's called a pari-mutuel system — the same model used in horse racing and lottery pools. Simple, fair, and transparent.
+              <Lightbulb className="h-3.5 w-3.5 flex-shrink-0" />
+              Think of it like a prediction pool — everyone contributes, and the winners take home the pot!
             </p>
           </div>
         </section>
 
-        {/* How It Works - Overview */}
+        {/* How it works in 4 steps */}
         <section className="space-y-3">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
               <Target className="h-4 w-4 text-primary" />
             </div>
-            <h3 className="font-bold text-base">How It Works (Overview)</h3>
+            <h3 className="font-bold text-base">How It Works — 4 Simple Steps</h3>
           </div>
           <div className="space-y-2">
             <div className="flex gap-3 p-3 rounded-lg bg-muted/30">
-              <div className="w-6 h-6 rounded-full bg-success/20 text-success flex items-center justify-center text-xs font-bold flex-shrink-0">1</div>
+              <div className="w-7 h-7 rounded-full bg-primary/20 text-primary flex items-center justify-center text-xs font-bold flex-shrink-0">1</div>
               <div>
-                <p className="text-sm font-medium">Pick a market</p>
-                <p className="text-xs text-muted-foreground">Browse questions like "Will Bitcoin hit $100K?" or "Who will win the NBA Finals?"</p>
+                <p className="text-sm font-semibold">Browse Markets</p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Explore prediction markets on topics like crypto, sports, politics, tech, and more. 
+                  Each market is a question about a future event.
+                </p>
               </div>
             </div>
             <div className="flex gap-3 p-3 rounded-lg bg-muted/30">
-              <div className="w-6 h-6 rounded-full bg-success/20 text-success flex items-center justify-center text-xs font-bold flex-shrink-0">2</div>
+              <div className="w-7 h-7 rounded-full bg-primary/20 text-primary flex items-center justify-center text-xs font-bold flex-shrink-0">2</div>
               <div>
-                <p className="text-sm font-medium">Choose an outcome & buy tickets</p>
-                <p className="text-xs text-muted-foreground">Each ticket costs $0.50. Buy as many as you want on the outcome you believe in.</p>
+                <p className="text-sm font-semibold">Pick Your Outcome</p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Choose which outcome you think will happen — like "Yes" or "No", or pick from 
+                  multiple options (e.g., which team will win).
+                </p>
               </div>
             </div>
             <div className="flex gap-3 p-3 rounded-lg bg-muted/30">
-              <div className="w-6 h-6 rounded-full bg-success/20 text-success flex items-center justify-center text-xs font-bold flex-shrink-0">3</div>
+              <div className="w-7 h-7 rounded-full bg-primary/20 text-primary flex items-center justify-center text-xs font-bold flex-shrink-0">3</div>
               <div>
-                <p className="text-sm font-medium">Wait for the result</p>
-                <p className="text-xs text-muted-foreground">When the event happens, the market resolves and the winning outcome is confirmed.</p>
+                <p className="text-sm font-semibold">Buy Tickets</p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Purchase tickets for your chosen outcome. Each ticket is your stake in the pot. 
+                  The more tickets you buy, the bigger your share of the winnings if you're right.
+                </p>
               </div>
             </div>
             <div className="flex gap-3 p-3 rounded-lg bg-muted/30">
-              <div className="w-6 h-6 rounded-full bg-success/20 text-success flex items-center justify-center text-xs font-bold flex-shrink-0">4</div>
+              <div className="w-7 h-7 rounded-full bg-success/20 text-success flex items-center justify-center text-xs font-bold flex-shrink-0">4</div>
               <div>
-                <p className="text-sm font-medium">Winners split the pot</p>
-                <p className="text-xs text-muted-foreground">95% of all ticket sales go to the pot. Winners share it proportionally based on their tickets.</p>
+                <p className="text-sm font-semibold">Win & Collect</p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  When the market resolves, if your outcome is correct, you split the pot with 
+                  other winners proportional to your tickets. Winnings are paid to your balance instantly.
+                </p>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Quick Example */}
+        {/* What makes Pollgy different */}
         <section className="space-y-3">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center">
-              <CheckCircle2 className="h-4 w-4 text-amber-500" />
+            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+              <Sparkles className="h-4 w-4 text-primary" />
             </div>
-            <h3 className="font-bold text-base">Quick Example</h3>
+            <h3 className="font-bold text-base">What Makes Pollgy Different?</h3>
           </div>
-          <div className="p-4 rounded-xl border border-border bg-muted/20 space-y-4">
-            <div className="text-center">
-              <p className="text-sm font-semibold mb-1">"Will Bitcoin hit $100K by July 2026?"</p>
-              <p className="text-xs text-muted-foreground">200 people buy tickets. 120 on "Yes", 80 on "No".</p>
-            </div>
-            <div className="grid grid-cols-3 gap-2 text-center">
-              <div className="p-2.5 rounded-lg bg-muted/40">
-                <p className="text-[10px] text-muted-foreground mb-0.5">Total tickets</p>
-                <p className="font-bold text-sm">200</p>
-              </div>
-              <div className="p-2.5 rounded-lg bg-muted/40">
-                <p className="text-[10px] text-muted-foreground mb-0.5">Ticket price</p>
-                <p className="font-bold text-sm">$0.50</p>
-              </div>
-              <div className="p-2.5 rounded-lg bg-primary/10">
-                <p className="text-[10px] text-muted-foreground mb-0.5">Total pot</p>
-                <p className="font-bold text-sm text-primary">$100</p>
+          <div className="space-y-2">
+            <div className="p-3 rounded-lg bg-muted/30">
+              <div className="flex items-start gap-2">
+                <Ticket className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                <div>
+                  <p className="text-sm font-medium">Ticket-Based (Not Shares)</p>
+                  <p className="text-xs text-muted-foreground">Buy tickets at a fixed price. No complex order books or fluctuating share prices to worry about.</p>
+                </div>
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              <div className="flex-1 p-3 rounded-lg bg-success/10 border border-success/30 text-center">
-                <p className="text-[10px] text-muted-foreground mb-1">If "Yes" wins</p>
-                <p className="text-xs text-muted-foreground">120 winners split</p>
-                <p className="font-bold text-success">$95 pot</p>
-              </div>
-              <ArrowRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-              <div className="flex-1 p-3 rounded-lg bg-muted text-center">
-                <p className="text-[10px] text-muted-foreground mb-1">Per ticket payout</p>
-                <p className="text-xs text-muted-foreground">$95 ÷ 120</p>
-                <p className="font-bold text-foreground">≈ $0.79</p>
+            <div className="p-3 rounded-lg bg-muted/30">
+              <div className="flex items-start gap-2">
+                <CircleDollarSign className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                <div>
+                  <p className="text-sm font-medium">Pari-Mutuel Pot System</p>
+                  <p className="text-xs text-muted-foreground">All money pools together. Winners split the entire pot — the bigger the pot, the bigger the prize.</p>
+                </div>
               </div>
             </div>
-            <div className="p-2.5 rounded-lg bg-success/10 text-center">
-              <p className="text-xs text-muted-foreground">Profit per winning ticket</p>
-              <p className="font-bold text-success text-sm">+$0.29 (+58%)</p>
+            <div className="p-3 rounded-lg bg-muted/30">
+              <div className="flex items-start gap-2">
+                <Trophy className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                <div>
+                  <p className="text-sm font-medium">Weekly Draw Bonus</p>
+                  <p className="text-xs text-muted-foreground">Every ticket also enters you into a weekly prize draw — win extra money just for participating!</p>
+                </div>
+              </div>
             </div>
           </div>
         </section>
@@ -181,293 +202,416 @@ export function HowItWorksDialog({ open, onOpenChange }: HowItWorksDialogProps) 
         <section className="grid grid-cols-3 gap-2 text-center">
           <div className="p-3 rounded-xl bg-muted/30">
             <p className="text-lg font-bold">$0.50</p>
-            <p className="text-[10px] text-muted-foreground">Per ticket</p>
+            <p className="text-[10px] text-muted-foreground">Ticket price</p>
           </div>
           <div className="p-3 rounded-xl bg-muted/30">
-            <p className="text-lg font-bold">95%</p>
-            <p className="text-[10px] text-muted-foreground">Goes to winners</p>
+            <p className="text-lg font-bold">24/7</p>
+            <p className="text-[10px] text-muted-foreground">Markets open</p>
           </div>
           <div className="p-3 rounded-xl bg-muted/30">
-            <p className="text-lg font-bold">Fair</p>
-            <p className="text-[10px] text-muted-foreground">Proportional split</p>
+            <p className="text-lg font-bold">Instant</p>
+            <p className="text-[10px] text-muted-foreground">Payouts</p>
           </div>
         </section>
       </TabsContent>
 
-      {/* ═══════════ TICKETS TAB ═══════════ */}
+      {/* ═══════════════════ TICKETS TAB ═══════════════════ */}
       <TabsContent value="tickets" className="mt-0 space-y-5">
-        {/* What is a Ticket */}
+        {/* Hero image */}
+        <div className="rounded-xl overflow-hidden border border-border/40">
+          <img src={tutorialTickets} alt="How tickets work on Pollgy" className="w-full h-auto" />
+        </div>
+
+        {/* What are tickets */}
         <section className="space-y-3">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
               <Ticket className="h-4 w-4 text-primary" />
             </div>
-            <h3 className="font-bold text-base">What is a Ticket?</h3>
+            <h3 className="font-bold text-base">What Are Tickets?</h3>
           </div>
           <p className="text-sm text-muted-foreground leading-relaxed">
-            A ticket is your entry into a market. Each ticket costs a flat <span className="font-semibold text-foreground">$0.50</span> — no price fluctuation, no order books, no complexity. 
-            You simply pick an outcome and buy tickets.
+            Tickets are your stake in a prediction market. Each ticket represents your bet on a specific outcome. 
+            Unlike traditional markets with fluctuating share prices, <span className="font-semibold text-foreground">all tickets cost the same fixed price</span>.
           </p>
-          <div className="p-3 rounded-lg bg-primary/5 border border-primary/20">
-            <p className="text-xs text-primary font-medium flex items-center gap-2">
-              <Zap className="h-3.5 w-3.5" />
-              Every ticket is a bundle: you get a market prediction ticket + a Weekly Draw entry. Two chances to win from one purchase!
-            </p>
+          <div className="p-4 rounded-xl border border-border bg-muted/20 space-y-3">
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-muted-foreground">Ticket price</span>
+              <span className="font-bold text-foreground">$0.50 per ticket</span>
+            </div>
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-muted-foreground">Minimum purchase</span>
+              <span className="font-medium">1 ticket</span>
+            </div>
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-muted-foreground">Maximum purchase</span>
+              <span className="font-medium">1,000 tickets</span>
+            </div>
           </div>
         </section>
 
-        {/* How Buying Works */}
+        {/* Step-by-step: Buying tickets */}
         <section className="space-y-3">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-success/10 flex items-center justify-center">
-              <DollarSign className="h-4 w-4 text-success" />
+              <MousePointerClick className="h-4 w-4 text-success" />
             </div>
-            <h3 className="font-bold text-base">How Buying Works</h3>
+            <h3 className="font-bold text-base">How to Buy Tickets</h3>
           </div>
           <div className="space-y-2">
             <div className="flex gap-3 p-3 rounded-lg bg-muted/30">
               <div className="w-6 h-6 rounded-full bg-success/20 text-success flex items-center justify-center text-xs font-bold flex-shrink-0">1</div>
               <div>
-                <p className="text-sm font-medium">Open any market</p>
-                <p className="text-xs text-muted-foreground">Tap on a market card to see the question and available outcomes</p>
+                <p className="text-sm font-medium">Open a Market</p>
+                <p className="text-xs text-muted-foreground">Click on any market from the feed to view its details, pot size, and available outcomes.</p>
               </div>
             </div>
             <div className="flex gap-3 p-3 rounded-lg bg-muted/30">
               <div className="w-6 h-6 rounded-full bg-success/20 text-success flex items-center justify-center text-xs font-bold flex-shrink-0">2</div>
               <div>
-                <p className="text-sm font-medium">Choose your outcome</p>
-                <p className="text-xs text-muted-foreground">Select the outcome you believe will happen (e.g., "Yes" or "No")</p>
+                <p className="text-sm font-medium">Select Your Outcome</p>
+                <p className="text-xs text-muted-foreground">Tap the outcome you believe will happen (e.g., "Yes", "No", or a specific option like "Lakers").</p>
               </div>
             </div>
             <div className="flex gap-3 p-3 rounded-lg bg-muted/30">
               <div className="w-6 h-6 rounded-full bg-success/20 text-success flex items-center justify-center text-xs font-bold flex-shrink-0">3</div>
               <div>
-                <p className="text-sm font-medium">Pick how many tickets</p>
-                <p className="text-xs text-muted-foreground">Each ticket is $0.50. Buy 1 ticket or 1,000 — the more you buy, the bigger your share of the pot if you win.</p>
+                <p className="text-sm font-medium">Choose Number of Tickets</p>
+                <p className="text-xs text-muted-foreground">Use the + and − buttons or type a number. More tickets = bigger share of the pot if you win.</p>
               </div>
             </div>
             <div className="flex gap-3 p-3 rounded-lg bg-muted/30">
               <div className="w-6 h-6 rounded-full bg-success/20 text-success flex items-center justify-center text-xs font-bold flex-shrink-0">4</div>
               <div>
-                <p className="text-sm font-medium">Confirm your purchase</p>
-                <p className="text-xs text-muted-foreground">Your tickets are locked in. Sit back and wait for the market to resolve!</p>
+                <p className="text-sm font-medium">Confirm & Buy</p>
+                <p className="text-xs text-muted-foreground">Review your total cost, estimated payout, and click "Buy Tickets" to confirm.</p>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Where Your $0.50 Goes */}
+        {/* What each ticket gets you */}
         <section className="space-y-3">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center">
-              <PieChart className="h-4 w-4 text-amber-500" />
+            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+              <Gift className="h-4 w-4 text-primary" />
             </div>
-            <h3 className="font-bold text-base">Where Your $0.50 Goes</h3>
+            <h3 className="font-bold text-base">What Each Ticket Gets You</h3>
           </div>
           <p className="text-sm text-muted-foreground leading-relaxed">
-            Every ticket purchase is split into three parts:
+            Every ticket is a <span className="font-semibold text-foreground">bundle</span> — you get two things in one purchase:
+          </p>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="p-3 rounded-lg bg-primary/5 border border-primary/20 text-center">
+              <Ticket className="h-5 w-5 text-primary mx-auto mb-1.5" />
+              <p className="font-semibold text-sm">Market Ticket</p>
+              <p className="text-[10px] text-muted-foreground mt-0.5">Your prediction stake in the pot</p>
+            </div>
+            <div className="p-3 rounded-lg bg-primary/5 border border-primary/20 text-center">
+              <Trophy className="h-5 w-5 text-primary mx-auto mb-1.5" />
+              <p className="font-semibold text-sm">Draw Entry</p>
+              <p className="text-[10px] text-muted-foreground mt-0.5">Auto-entered into the weekly draw</p>
+            </div>
+          </div>
+          <div className="p-3 rounded-lg bg-primary/5 border border-primary/20">
+            <p className="text-xs text-primary font-medium flex items-center gap-2">
+              <Zap className="h-3.5 w-3.5 flex-shrink-0" />
+              No separate purchase needed — every ticket includes a draw entry automatically!
+            </p>
+          </div>
+        </section>
+
+        {/* Where your money goes */}
+        <section className="space-y-3">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+              <CircleDollarSign className="h-4 w-4 text-primary" />
+            </div>
+            <h3 className="font-bold text-base">Where Your Ticket Money Goes</h3>
+          </div>
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            When you buy a ticket, your money is split three ways:
           </p>
           <div className="space-y-2">
-            <div className="p-3 rounded-lg bg-success/10 border border-success/30">
-              <div className="flex items-center justify-between mb-1">
-                <span className="text-sm font-semibold text-success">Market Pot</span>
-                <span className="text-sm font-bold text-success">95% ($0.475)</span>
+            <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/30">
+              <div className="w-10 h-10 rounded-full bg-primary/15 flex items-center justify-center flex-shrink-0">
+                <span className="text-sm font-black text-primary">95%</span>
               </div>
-              <p className="text-xs text-muted-foreground">Goes into the prize pool. Winners split this entire amount.</p>
+              <div>
+                <p className="text-sm font-semibold">Goes to the Pot</p>
+                <p className="text-xs text-muted-foreground">This is the prize pool winners will split</p>
+              </div>
             </div>
-            <div className="p-3 rounded-lg bg-primary/10 border border-primary/30">
-              <div className="flex items-center justify-between mb-1">
-                <span className="text-sm font-semibold text-primary">Weekly Draw</span>
-                <span className="text-sm font-bold text-primary">2% ($0.01)</span>
+            <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/30">
+              <div className="w-10 h-10 rounded-full bg-primary/15 flex items-center justify-center flex-shrink-0">
+                <span className="text-sm font-black text-primary">2%</span>
               </div>
-              <p className="text-xs text-muted-foreground">Funds the weekly prize draw. Every ticket is also an automatic entry.</p>
+              <div>
+                <p className="text-sm font-semibold">Weekly Draw Fund</p>
+                <p className="text-xs text-muted-foreground">Contributes to the weekly prize draw pool</p>
+              </div>
             </div>
-            <div className="p-3 rounded-lg bg-muted/30 border border-border/50">
-              <div className="flex items-center justify-between mb-1">
-                <span className="text-sm font-semibold">Platform Fee</span>
-                <span className="text-sm font-bold">3% ($0.015)</span>
+            <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/30">
+              <div className="w-10 h-10 rounded-full bg-muted-foreground/15 flex items-center justify-center flex-shrink-0">
+                <span className="text-sm font-black text-muted-foreground">3%</span>
               </div>
-              <p className="text-xs text-muted-foreground">Keeps Pollgy running — servers, support, and development.</p>
+              <div>
+                <p className="text-sm font-semibold">Platform Fee</p>
+                <p className="text-xs text-muted-foreground">Keeps Pollgy running (includes creator fee)</p>
+              </div>
             </div>
           </div>
           {/* Visual bar */}
-          <div>
-            <div className="flex rounded-full overflow-hidden h-3 shadow-inner shadow-black/10">
-              <div className="h-full bg-success" style={{ width: "95%" }} />
-              <div className="h-full bg-primary" style={{ width: "2%" }} />
-              <div className="h-full bg-muted-foreground/30" style={{ width: "3%" }} />
-            </div>
-            <div className="flex items-center justify-between mt-1.5 text-[10px] text-muted-foreground">
-              <span><span className="font-semibold text-success">95%</span> Pot</span>
-              <span><span className="font-semibold text-primary">2%</span> Draw</span>
-              <span><span className="font-semibold">3%</span> Fee</span>
-            </div>
+          <div className="flex rounded-full overflow-hidden h-3">
+            <div className="h-full bg-primary" style={{ width: "95%" }} />
+            <div className="h-full bg-primary/50" style={{ width: "2%" }} />
+            <div className="h-full bg-muted-foreground/40" style={{ width: "3%" }} />
+          </div>
+          <div className="flex text-[9px] text-muted-foreground">
+            <span className="flex-1">95% Pot</span>
+            <span className="text-right">2% Draw · 3% Fee</span>
           </div>
         </section>
 
-        {/* Multiple Outcomes */}
+        {/* Quick example */}
         <section className="space-y-3">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-              <Scale className="h-4 w-4 text-primary" />
+              <CheckCircle2 className="h-4 w-4 text-primary" />
             </div>
-            <h3 className="font-bold text-base">Multiple Outcomes</h3>
+            <h3 className="font-bold text-base">Quick Example</h3>
           </div>
-          <p className="text-sm text-muted-foreground leading-relaxed">
-            Markets aren't just Yes/No. Some markets have multiple outcomes — for example, "Who will win the NBA Finals?" might have 
-            8 different teams to choose from. You buy tickets on the team you believe will win.
-          </p>
-          <div className="p-3 rounded-lg bg-muted/30">
-            <p className="text-xs text-muted-foreground">
-              <span className="font-medium text-foreground">Tip:</span> Markets with many outcomes tend to have bigger pots 
-              and higher potential returns, since tickets are spread across more options.
-            </p>
+          <div className="p-4 rounded-xl border border-border bg-muted/20 space-y-4">
+            <div className="text-center">
+              <p className="text-sm font-semibold mb-1">"Will Bitcoin hit $100K by 2025?"</p>
+              <p className="text-xs text-muted-foreground">You believe yes — so you buy 10 tickets on "Yes"</p>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="flex-1 p-3 rounded-lg bg-primary/10 border border-primary/30 text-center">
+                <p className="text-[10px] text-muted-foreground mb-1">You spend</p>
+                <p className="font-bold text-primary">10 × $0.50 = $5</p>
+              </div>
+              <ArrowRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+              <div className="flex-1 p-3 rounded-lg bg-muted text-center">
+                <p className="text-[10px] text-muted-foreground mb-1">Of that</p>
+                <p className="font-bold text-foreground">$4.75 → Pot</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-2 text-center">
+              <div className="p-2 rounded-lg bg-success/10">
+                <p className="text-[10px] text-muted-foreground">If you're right</p>
+                <p className="font-bold text-success text-sm">Split the pot! 🎉</p>
+              </div>
+              <div className="p-2 rounded-lg bg-destructive/10">
+                <p className="text-[10px] text-muted-foreground">If you're wrong</p>
+                <p className="font-bold text-destructive text-sm">You lose $5</p>
+              </div>
+            </div>
           </div>
         </section>
       </TabsContent>
 
-      {/* ═══════════ PAYOUTS TAB ═══════════ */}
+      {/* ═══════════════════ PAYOUTS TAB ═══════════════════ */}
       <TabsContent value="payouts" className="mt-0 space-y-5">
-        {/* The Pari-Mutuel Model */}
-        <section className="space-y-3">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-              <Calculator className="h-4 w-4 text-primary" />
-            </div>
-            <h3 className="font-bold text-base">How Payouts Work</h3>
-          </div>
-          <p className="text-sm text-muted-foreground leading-relaxed">
-            Pollgy uses a <span className="font-semibold text-foreground">pari-mutuel</span> system. All ticket sales go into a shared pot, 
-            and winners split it proportionally based on how many winning tickets they hold.
-          </p>
-          <div className="p-4 rounded-xl border border-primary/30 bg-primary/5">
-            <p className="text-xs text-muted-foreground mb-2">The payout formula:</p>
-            <div className="text-center py-2">
-              <p className="text-sm font-bold text-foreground">
-                Your Payout = <span className="text-primary">(Your Winning Tickets ÷ Total Winning Tickets)</span> × Final Pot
-              </p>
-            </div>
-            <p className="text-xs text-muted-foreground mt-2">
-              The Final Pot is 95% of all ticket sales (after the 2% Weekly Draw + 3% platform fee).
-            </p>
-          </div>
-        </section>
+        {/* Hero image */}
+        <div className="rounded-xl overflow-hidden border border-border/40">
+          <img src={tutorialPotSplit} alt="How the pot is distributed" className="w-full h-auto" />
+        </div>
 
-        {/* Worked Example */}
+        {/* Pari-Mutuel explained */}
         <section className="space-y-3">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-success/10 flex items-center justify-center">
-              <CheckCircle2 className="h-4 w-4 text-success" />
+              <Scale className="h-4 w-4 text-success" />
             </div>
-            <h3 className="font-bold text-base">Worked Example</h3>
+            <h3 className="font-bold text-base">How Payouts Work (Pari-Mutuel)</h3>
           </div>
-          <div className="p-4 rounded-xl border border-border bg-muted/20 space-y-4">
-            <p className="text-sm font-semibold text-center">"Will AI pass the bar exam by 2026?"</p>
-            
-            <div className="space-y-2">
-              <div className="flex items-center justify-between p-2.5 rounded-lg bg-muted/40 text-sm">
-                <span className="text-muted-foreground">Total tickets sold</span>
-                <span className="font-semibold">1,000</span>
-              </div>
-              <div className="flex items-center justify-between p-2.5 rounded-lg bg-muted/40 text-sm">
-                <span className="text-muted-foreground">Total revenue ($0.50 × 1,000)</span>
-                <span className="font-semibold">$500</span>
-              </div>
-              <div className="flex items-center justify-between p-2.5 rounded-lg bg-success/10 text-sm">
-                <span className="text-muted-foreground">Final Pot (95%)</span>
-                <span className="font-bold text-success">$475</span>
-              </div>
-              <div className="flex items-center justify-between p-2.5 rounded-lg bg-primary/10 text-sm">
-                <span className="text-muted-foreground">Weekly Draw (2%)</span>
-                <span className="font-medium text-primary">$10</span>
-              </div>
-              <div className="flex items-center justify-between p-2.5 rounded-lg bg-muted/40 text-sm">
-                <span className="text-muted-foreground">Platform Fee (3%)</span>
-                <span className="font-medium">$15</span>
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            Pollgy uses a <span className="font-semibold text-foreground">pari-mutuel</span> system — meaning all ticket 
+            money pools together, and winners split it proportionally based on how many tickets they hold.
+          </p>
+          <div className="space-y-2">
+            <div className="flex gap-3 p-3 rounded-lg bg-muted/30">
+              <div className="w-6 h-6 rounded-full bg-success/20 text-success flex items-center justify-center text-xs font-bold flex-shrink-0">1</div>
+              <div>
+                <p className="text-sm font-medium">All Ticket Money → Pot</p>
+                <p className="text-xs text-muted-foreground">95% of every ticket purchase goes into the market's prize pot.</p>
               </div>
             </div>
-
-            <div className="border-t border-border pt-3 space-y-2">
-              <p className="text-xs font-medium text-foreground">Ticket breakdown:</p>
-              <div className="grid grid-cols-2 gap-2">
-                <div className="p-2.5 rounded-lg bg-success/10 border border-success/30 text-center">
-                  <p className="text-[10px] text-muted-foreground">"Yes" tickets</p>
-                  <p className="font-bold text-success">600</p>
-                </div>
-                <div className="p-2.5 rounded-lg bg-destructive/10 border border-destructive/30 text-center">
-                  <p className="text-[10px] text-muted-foreground">"No" tickets</p>
-                  <p className="font-bold text-destructive">400</p>
-                </div>
+            <div className="flex gap-3 p-3 rounded-lg bg-muted/30">
+              <div className="w-6 h-6 rounded-full bg-success/20 text-success flex items-center justify-center text-xs font-bold flex-shrink-0">2</div>
+              <div>
+                <p className="text-sm font-medium">Market Resolves</p>
+                <p className="text-xs text-muted-foreground">When the event happens, the winning outcome is determined.</p>
               </div>
             </div>
-
-            <div className="border-t border-border pt-3 space-y-2">
-              <p className="text-xs font-medium text-foreground">If "Yes" wins and you bought 10 tickets:</p>
-              <div className="p-3 rounded-lg bg-success/10 border border-success/30">
-                <p className="text-xs text-muted-foreground mb-1">Your payout:</p>
-                <p className="text-sm font-medium">(10 ÷ 600) × $475 = <span className="font-bold text-success">$7.92</span></p>
-                <p className="text-xs text-muted-foreground mt-1">You spent $5.00 → Profit: <span className="font-semibold text-success">+$2.92 (+58%)</span></p>
-              </div>
-            </div>
-
-            <div className="border-t border-border pt-3 space-y-2">
-              <p className="text-xs font-medium text-foreground">If "No" wins and you bought 10 "No" tickets:</p>
-              <div className="p-3 rounded-lg bg-primary/10 border border-primary/30">
-                <p className="text-xs text-muted-foreground mb-1">Your payout:</p>
-                <p className="text-sm font-medium">(10 ÷ 400) × $475 = <span className="font-bold text-primary">$11.88</span></p>
-                <p className="text-xs text-muted-foreground mt-1">You spent $5.00 → Profit: <span className="font-semibold text-primary">+$6.88 (+138%)</span></p>
+            <div className="flex gap-3 p-3 rounded-lg bg-muted/30">
+              <div className="w-6 h-6 rounded-full bg-success/20 text-success flex items-center justify-center text-xs font-bold flex-shrink-0">3</div>
+              <div>
+                <p className="text-sm font-medium">Winners Split the Pot</p>
+                <p className="text-xs text-muted-foreground">Your payout = (your tickets ÷ total winning tickets) × pot</p>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Key Insight */}
+        {/* Worked example */}
         <section className="space-y-3">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center">
-              <Lightbulb className="h-4 w-4 text-amber-500" />
+            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+              <DollarSign className="h-4 w-4 text-primary" />
             </div>
-            <h3 className="font-bold text-base">Key Insight</h3>
+            <h3 className="font-bold text-base">Example Payout Calculation</h3>
+          </div>
+          <div className="p-4 rounded-xl border border-border bg-muted/20 space-y-4">
+            <p className="text-xs text-muted-foreground text-center">Market: "Will Bitcoin hit $100K?"</p>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-sm p-2 rounded-lg bg-muted/40">
+                <span className="text-muted-foreground">Total Pot</span>
+                <span className="font-bold">$10,000</span>
+              </div>
+              <div className="flex items-center justify-between text-sm p-2 rounded-lg bg-muted/40">
+                <span className="text-muted-foreground">Total "Yes" tickets</span>
+                <span className="font-medium">12,000</span>
+              </div>
+              <div className="flex items-center justify-between text-sm p-2 rounded-lg bg-muted/40">
+                <span className="text-muted-foreground">Total "No" tickets</span>
+                <span className="font-medium">8,000</span>
+              </div>
+              <div className="flex items-center justify-between text-sm p-2 rounded-lg bg-primary/10 border border-primary/20">
+                <span className="text-muted-foreground">Your "Yes" tickets</span>
+                <span className="font-bold text-primary">100</span>
+              </div>
+            </div>
+            <div className="border-t border-border pt-3 space-y-2">
+              <p className="text-xs font-medium text-foreground">If "Yes" wins:</p>
+              <div className="p-3 rounded-lg bg-success/10 border border-success/30 text-center">
+                <p className="text-xs text-muted-foreground">Your payout = (100 ÷ 12,000) × $10,000</p>
+                <p className="text-xl font-black text-success mt-1">= $83.33</p>
+                <p className="text-xs text-muted-foreground mt-1">You spent $50 → Profit: <span className="font-bold text-success">+$33.33</span></p>
+              </div>
+            </div>
+            <div className="border-t border-border pt-3 space-y-1">
+              <p className="text-xs font-medium text-foreground">If "No" wins instead:</p>
+              <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/30 text-center">
+                <p className="text-xs text-muted-foreground">Your "Yes" tickets are worth $0</p>
+                <p className="text-xl font-black text-destructive mt-1">Loss: -$50</p>
+              </div>
+            </div>
+          </div>
+          <div className="p-3 rounded-lg bg-primary/5 border border-primary/20">
+            <p className="text-xs text-primary font-medium flex items-center gap-2">
+              <Lightbulb className="h-3.5 w-3.5 flex-shrink-0" />
+              The fewer people on the winning side, the more each winner gets! That's the beauty of pari-mutuel.
+            </p>
+          </div>
+        </section>
+
+        {/* Weekly Draw */}
+        <section className="space-y-3">
+          <div className="rounded-xl overflow-hidden border border-border/40">
+            <img src={tutorialWeeklyDraw} alt="Weekly Draw prizes" className="w-full h-auto" />
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+              <Trophy className="h-4 w-4 text-primary" />
+            </div>
+            <h3 className="font-bold text-base">The Weekly Draw</h3>
+          </div>
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            2% of every ticket purchase funds a <span className="font-semibold text-foreground">weekly prize pool</span>. 
+            Every Sunday, 10 random winners are selected from all ticket buyers that week.
+          </p>
+          <div className="space-y-2">
+            <p className="text-xs font-medium">Prize Distribution:</p>
+            <div className="flex rounded-full overflow-hidden h-2.5">
+              <div className="h-full bg-primary" style={{ width: "50%" }} />
+              <div className="h-full bg-primary/80" style={{ width: "25%" }} />
+              <div className="h-full bg-primary/60" style={{ width: "15%" }} />
+              <div className="h-full bg-primary/40" style={{ width: "10%" }} />
+            </div>
+            <div className="grid grid-cols-4 gap-1 text-center text-[9px]">
+              <div>
+                <p className="font-bold text-foreground">1st</p>
+                <p className="text-muted-foreground">50%</p>
+              </div>
+              <div>
+                <p className="font-bold text-foreground">2nd</p>
+                <p className="text-muted-foreground">25%</p>
+              </div>
+              <div>
+                <p className="font-bold text-foreground">3rd</p>
+                <p className="text-muted-foreground">15%</p>
+              </div>
+              <div>
+                <p className="font-bold text-foreground">4–10th</p>
+                <p className="text-muted-foreground">10%</p>
+              </div>
+            </div>
+          </div>
+          <div className="p-3 rounded-lg bg-primary/5 border border-primary/20">
+            <p className="text-xs text-primary font-medium flex items-center gap-2">
+              <PartyPopper className="h-3.5 w-3.5 flex-shrink-0" />
+              Every ticket = 1 draw entry. Buy more tickets across any market, get more chances to win!
+            </p>
+          </div>
+        </section>
+
+        {/* Market Resolution */}
+        <section className="space-y-3">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-success/10 flex items-center justify-center">
+              <Gavel className="h-4 w-4 text-success" />
+            </div>
+            <h3 className="font-bold text-base">How Markets Resolve</h3>
           </div>
           <div className="space-y-2">
             <div className="p-3 rounded-lg bg-muted/30">
-              <p className="text-sm font-medium mb-1">Fewer winners = bigger payout</p>
-              <p className="text-xs text-muted-foreground">
-                If you bet on the underdog and win, you share the pot with fewer people — meaning each of your tickets is worth more.
-              </p>
+              <p className="text-sm font-medium mb-1">1. Market Closes</p>
+              <p className="text-xs text-muted-foreground">When the end date arrives, no more tickets can be purchased.</p>
             </div>
             <div className="p-3 rounded-lg bg-muted/30">
-              <p className="text-sm font-medium mb-1">More tickets = bigger share</p>
-              <p className="text-xs text-muted-foreground">
-                The more tickets you hold on the winning side, the larger your portion of the pot. It's proportional.
-              </p>
+              <p className="text-sm font-medium mb-1">2. Creator Resolves</p>
+              <p className="text-xs text-muted-foreground">The market creator (or a verified source) confirms which outcome won.</p>
             </div>
             <div className="p-3 rounded-lg bg-muted/30">
-              <p className="text-sm font-medium mb-1">You can't lose more than you spend</p>
-              <p className="text-xs text-muted-foreground">
-                If your outcome doesn't win, you lose the tickets you bought — nothing more. No margin calls, no hidden fees.
-              </p>
+              <p className="text-sm font-medium mb-1">3. 24-Hour Dispute Window</p>
+              <p className="text-xs text-muted-foreground">Users can challenge the resolution with evidence during this period.</p>
+            </div>
+            <div className="p-3 rounded-lg bg-success/10 border border-success/30">
+              <p className="text-sm font-medium mb-1">4. Payout</p>
+              <p className="text-xs text-muted-foreground">Winners receive their share of the pot automatically in their balance.</p>
             </div>
           </div>
         </section>
 
-        {/* What if I lose */}
-        <section className="p-3 rounded-lg border border-destructive/30 bg-destructive/5">
-          <div className="flex items-start gap-2">
-            <AlertTriangle className="h-4 w-4 text-destructive mt-0.5 flex-shrink-0" />
-            <div>
-              <p className="text-sm font-medium text-destructive">What if my outcome doesn't win?</p>
-              <p className="text-xs text-muted-foreground mt-1">
-                If the winning outcome is different from yours, your tickets are worth $0. 
-                The money you spent is part of the pot that gets distributed to the winners. 
-                However, your Weekly Draw entries remain valid — you could still win the weekly prize!
-              </p>
+        {/* Disputes */}
+        <section className="space-y-3">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-destructive/10 flex items-center justify-center">
+              <AlertTriangle className="h-4 w-4 text-destructive" />
+            </div>
+            <h3 className="font-bold text-base">Disputes</h3>
+          </div>
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            Think a market was resolved incorrectly? You have <span className="font-semibold text-foreground">24 hours</span> after 
+            resolution to submit a dispute with evidence.
+          </p>
+          <div className="p-3 rounded-lg border border-destructive/30 bg-destructive/5">
+            <div className="flex items-start gap-2">
+              <Clock className="h-4 w-4 text-destructive mt-0.5 flex-shrink-0" />
+              <div>
+                <p className="text-sm font-medium text-destructive">24-Hour Window</p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  All disputes are reviewed by the Pollgy team. If the dispute is valid, the resolution can be reversed.
+                </p>
+              </div>
             </div>
           </div>
         </section>
       </TabsContent>
 
-      {/* ═══════════ MONEY TAB ═══════════ */}
+      {/* ═══════════════════ MONEY TAB ═══════════════════ */}
       <TabsContent value="money" className="mt-0 space-y-5">
         {/* Deposits */}
         <section className="space-y-3">
@@ -478,24 +622,61 @@ export function HowItWorksDialog({ open, onOpenChange }: HowItWorksDialogProps) 
             <h3 className="font-bold text-base">Depositing Funds</h3>
           </div>
           <p className="text-sm text-muted-foreground leading-relaxed">
-            Add funds to your account to start buying tickets. We support multiple payment methods:
+            Add money to your Pollgy account to start buying tickets. We support multiple payment methods:
           </p>
           <div className="grid grid-cols-2 gap-2">
             <div className="p-3 rounded-lg bg-muted/30 text-center">
+              <CreditCard className="h-4 w-4 text-muted-foreground mx-auto mb-1" />
               <p className="text-sm font-medium">Credit/Debit</p>
-              <p className="text-xs text-muted-foreground">Instant</p>
+              <p className="text-[10px] text-muted-foreground">Instant</p>
             </div>
             <div className="p-3 rounded-lg bg-muted/30 text-center">
+              <Wallet className="h-4 w-4 text-muted-foreground mx-auto mb-1" />
               <p className="text-sm font-medium">Bank Transfer</p>
-              <p className="text-xs text-muted-foreground">1-3 days</p>
+              <p className="text-[10px] text-muted-foreground">1-3 days</p>
             </div>
             <div className="p-3 rounded-lg bg-muted/30 text-center">
+              <CircleDollarSign className="h-4 w-4 text-muted-foreground mx-auto mb-1" />
               <p className="text-sm font-medium">Crypto</p>
-              <p className="text-xs text-muted-foreground">~15 mins</p>
+              <p className="text-[10px] text-muted-foreground">~15 mins</p>
             </div>
             <div className="p-3 rounded-lg bg-muted/30 text-center">
+              <Zap className="h-4 w-4 text-muted-foreground mx-auto mb-1" />
               <p className="text-sm font-medium">Apple/Google Pay</p>
-              <p className="text-xs text-muted-foreground">Instant</p>
+              <p className="text-[10px] text-muted-foreground">Instant</p>
+            </div>
+          </div>
+        </section>
+
+        {/* Step by step deposit */}
+        <section className="space-y-3">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+              <MousePointerClick className="h-4 w-4 text-primary" />
+            </div>
+            <h3 className="font-bold text-base">How to Deposit</h3>
+          </div>
+          <div className="space-y-2">
+            <div className="flex gap-3 p-3 rounded-lg bg-muted/30">
+              <div className="w-6 h-6 rounded-full bg-primary/20 text-primary flex items-center justify-center text-xs font-bold flex-shrink-0">1</div>
+              <div>
+                <p className="text-sm font-medium">Click your balance or "Deposit"</p>
+                <p className="text-xs text-muted-foreground">Found in the header or profile menu</p>
+              </div>
+            </div>
+            <div className="flex gap-3 p-3 rounded-lg bg-muted/30">
+              <div className="w-6 h-6 rounded-full bg-primary/20 text-primary flex items-center justify-center text-xs font-bold flex-shrink-0">2</div>
+              <div>
+                <p className="text-sm font-medium">Choose payment method</p>
+                <p className="text-xs text-muted-foreground">Card, bank transfer, crypto, or mobile pay</p>
+              </div>
+            </div>
+            <div className="flex gap-3 p-3 rounded-lg bg-muted/30">
+              <div className="w-6 h-6 rounded-full bg-primary/20 text-primary flex items-center justify-center text-xs font-bold flex-shrink-0">3</div>
+              <div>
+                <p className="text-sm font-medium">Enter amount & confirm</p>
+                <p className="text-xs text-muted-foreground">Funds appear in your balance instantly (for card/mobile pay)</p>
+              </div>
             </div>
           </div>
         </section>
@@ -509,7 +690,7 @@ export function HowItWorksDialog({ open, onOpenChange }: HowItWorksDialogProps) 
             <h3 className="font-bold text-base">Withdrawing Funds</h3>
           </div>
           <p className="text-sm text-muted-foreground leading-relaxed">
-            Withdraw your winnings anytime. Your cash balance is always available for withdrawal.
+            Cash out your winnings at any time. Your cash balance is always available for withdrawal.
           </p>
           <div className="p-3 rounded-lg bg-muted/30 space-y-2">
             <div className="flex items-center justify-between text-sm">
@@ -521,48 +702,52 @@ export function HowItWorksDialog({ open, onOpenChange }: HowItWorksDialogProps) 
               <span className="font-medium">1-3 business days</span>
             </div>
             <div className="flex items-center justify-between text-sm">
-              <span className="text-muted-foreground">Fees</span>
+              <span className="text-muted-foreground">Withdrawal fee</span>
               <span className="font-medium text-success">Free</span>
             </div>
           </div>
         </section>
 
-        {/* Understanding Balance */}
+        {/* Understanding your balance */}
         <section className="space-y-3">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center">
-              <DollarSign className="h-4 w-4 text-amber-500" />
+            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+              <DollarSign className="h-4 w-4 text-primary" />
             </div>
-            <h3 className="font-bold text-base">Your Balance</h3>
+            <h3 className="font-bold text-base">Understanding Your Balance</h3>
           </div>
           <div className="space-y-2">
             <div className="p-3 rounded-lg border border-border bg-background">
-              <span className="text-sm font-semibold">Cash Balance</span>
-              <p className="text-xs text-muted-foreground mt-0.5">Available funds for buying tickets or withdrawing.</p>
+              <p className="text-sm font-semibold mb-0.5">Cash Balance</p>
+              <p className="text-xs text-muted-foreground">Deposited funds + winnings. Available to buy tickets or withdraw.</p>
             </div>
             <div className="p-3 rounded-lg border border-border bg-background">
-              <span className="text-sm font-semibold">Active Tickets</span>
-              <p className="text-xs text-muted-foreground mt-0.5">Tickets you hold in open markets. Their final value depends on whether your outcome wins.</p>
+              <p className="text-sm font-semibold mb-0.5">Active Tickets</p>
+              <p className="text-xs text-muted-foreground">Money tied up in tickets on unresolved markets. Not withdrawable until the market resolves.</p>
             </div>
             <div className="p-3 rounded-lg border border-primary/30 bg-primary/5">
-              <span className="text-sm font-semibold text-primary">Total Value</span>
-              <p className="text-xs text-muted-foreground mt-0.5">Cash + value of pending tickets = your total account worth.</p>
+              <p className="text-sm font-semibold text-primary mb-0.5">Total Value</p>
+              <p className="text-xs text-muted-foreground">Cash Balance + Active Tickets = Your total account value</p>
             </div>
           </div>
         </section>
 
-        {/* Fee Summary */}
+        {/* Fees */}
         <section className="space-y-3">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-              <Percent className="h-4 w-4 text-primary" />
+              <Scale className="h-4 w-4 text-primary" />
             </div>
-            <h3 className="font-bold text-base">Fee Summary</h3>
+            <h3 className="font-bold text-base">Fees & Costs</h3>
           </div>
           <div className="space-y-2">
             <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
-              <span className="text-sm">Ticket purchase split</span>
-              <span className="text-sm font-medium">95% / 2% / 3%</span>
+              <span className="text-sm">Platform fee</span>
+              <span className="text-sm font-medium">3% (built into ticket)</span>
+            </div>
+            <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
+              <span className="text-sm">Weekly draw contribution</span>
+              <span className="text-sm font-medium">2% (built into ticket)</span>
             </div>
             <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
               <span className="text-sm">Deposit fee</span>
@@ -572,131 +757,121 @@ export function HowItWorksDialog({ open, onOpenChange }: HowItWorksDialogProps) 
               <span className="text-sm">Withdrawal fee</span>
               <span className="text-sm font-medium text-success">Free</span>
             </div>
-            <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
-              <span className="text-sm">Account fee</span>
-              <span className="text-sm font-medium text-success">Free</span>
-            </div>
           </div>
-          <div className="p-3 rounded-lg bg-primary/5 border border-primary/20">
-            <p className="text-xs text-muted-foreground">
-              <span className="font-medium text-foreground">No hidden fees.</span> The 95/2/3 split is applied once at purchase. 
-              There are no additional trading, selling, or resolution fees.
-            </p>
+        </section>
+
+        {/* Non-refundable notice */}
+        <section className="p-3 rounded-lg border border-destructive/30 bg-destructive/5">
+          <div className="flex items-start gap-2">
+            <AlertTriangle className="h-4 w-4 text-destructive mt-0.5 flex-shrink-0" />
+            <div>
+              <p className="text-sm font-medium text-destructive">Fees Are Non-Refundable</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                If a market is canceled, your ticket cost is refunded minus any platform fees already collected. 
+                The 3% platform fee and 2% weekly draw contribution are non-refundable.
+              </p>
+            </div>
           </div>
         </section>
       </TabsContent>
 
-      {/* ═══════════ MORE TAB ═══════════ */}
+      {/* ═══════════════════ MORE TAB ═══════════════════ */}
       <TabsContent value="more" className="mt-0 space-y-5">
-        {/* Weekly Draw */}
-        <section className="space-y-3">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-              <Trophy className="h-4 w-4 text-primary" />
-            </div>
-            <h3 className="font-bold text-base">The Weekly Draw</h3>
-          </div>
-          <p className="text-sm text-muted-foreground leading-relaxed">
-            2% of every ticket purchase goes into a weekly prize pool. Every ticket you buy is also an 
-            automatic entry into the draw — no separate purchase needed.
-          </p>
-          <div className="space-y-2">
-            <div className="flex gap-3 p-3 rounded-lg bg-muted/30">
-              <Gift className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-              <div>
-                <p className="text-sm font-medium">Every Sunday</p>
-                <p className="text-xs text-muted-foreground">10 random winners are selected from all entries that week</p>
-              </div>
-            </div>
-            <div className="flex gap-3 p-3 rounded-lg bg-muted/30">
-              <Star className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-              <div>
-                <p className="text-sm font-medium">Prize Distribution</p>
-                <p className="text-xs text-muted-foreground">1st: 50% · 2nd: 25% · 3rd: 15% · 4th–10th: 10% shared</p>
-              </div>
-            </div>
-          </div>
-          <div className="p-3 rounded-lg bg-primary/5 border border-primary/20">
-            <p className="text-xs text-primary font-medium flex items-center gap-2">
-              <Zap className="h-3.5 w-3.5" />
-              Even if you lose your market prediction, your draw entries are still valid. You can still win!
-            </p>
-          </div>
-        </section>
-
-        {/* Market Resolution */}
-        <section className="space-y-3">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-success/10 flex items-center justify-center">
-              <Gavel className="h-4 w-4 text-success" />
-            </div>
-            <h3 className="font-bold text-base">Market Resolution</h3>
-          </div>
-          <p className="text-sm text-muted-foreground leading-relaxed">
-            When a market's end date passes and the outcome is known, the market is resolved:
-          </p>
-          <div className="space-y-2">
-            <div className="p-3 rounded-lg bg-muted/30">
-              <p className="text-sm font-medium mb-1">1. Event occurs</p>
-              <p className="text-xs text-muted-foreground">The real-world outcome happens</p>
-            </div>
-            <div className="p-3 rounded-lg bg-muted/30">
-              <p className="text-sm font-medium mb-1">2. Creator resolves</p>
-              <p className="text-xs text-muted-foreground">The market creator confirms the winning outcome within 48 hours</p>
-            </div>
-            <div className="p-3 rounded-lg bg-muted/30">
-              <p className="text-sm font-medium mb-1">3. Dispute window (24h)</p>
-              <p className="text-xs text-muted-foreground">Users can challenge the resolution if they believe it's incorrect</p>
-            </div>
-            <div className="p-3 rounded-lg bg-muted/30">
-              <p className="text-sm font-medium mb-1">4. Payout</p>
-              <p className="text-xs text-muted-foreground">Winnings are automatically credited to winner's cash balance</p>
-            </div>
-          </div>
-        </section>
-
         {/* Creators */}
         <section className="space-y-3">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
               <PenTool className="h-4 w-4 text-primary" />
             </div>
-            <h3 className="font-bold text-base">Creators</h3>
+            <h3 className="font-bold text-base">Become a Creator</h3>
           </div>
           <p className="text-sm text-muted-foreground leading-relaxed">
-            Verified users can create and manage prediction markets on Pollgy. Creators design the questions, 
-            set resolution criteria, and are responsible for resolving markets fairly.
+            Creators are verified users who create and manage prediction markets. Design questions, 
+            set resolution criteria, and earn a share of the platform fee from every ticket sold.
           </p>
+          <div className="grid grid-cols-3 gap-2 text-center">
+            <div className="p-3 rounded-lg bg-muted/30">
+              <p className="text-lg font-bold text-primary">1%</p>
+              <p className="text-[10px] text-muted-foreground">Creator fee</p>
+            </div>
+            <div className="p-3 rounded-lg bg-muted/30">
+              <p className="text-lg font-bold">∞</p>
+              <p className="text-[10px] text-muted-foreground">Markets</p>
+            </div>
+            <div className="p-3 rounded-lg bg-muted/30">
+              <p className="text-lg font-bold">24h</p>
+              <p className="text-[10px] text-muted-foreground">Approval</p>
+            </div>
+          </div>
           <div className="space-y-2">
             <div className="flex gap-3 p-3 rounded-lg bg-muted/30">
-              <BadgeCheck className="h-4 w-4 text-success mt-0.5 flex-shrink-0" />
+              <div className="w-6 h-6 rounded-full bg-primary/20 text-primary flex items-center justify-center text-xs font-bold flex-shrink-0">1</div>
               <div>
-                <p className="text-sm font-medium">How to become a creator</p>
-                <p className="text-xs text-muted-foreground">Apply through your profile. Our team reviews applications within 24 hours.</p>
+                <p className="text-sm font-medium">Apply for Creator Status</p>
+                <p className="text-xs text-muted-foreground">Go to your profile → "Become a Creator"</p>
               </div>
             </div>
             <div className="flex gap-3 p-3 rounded-lg bg-muted/30">
-              <Scale className="h-4 w-4 text-amber-500 mt-0.5 flex-shrink-0" />
+              <div className="w-6 h-6 rounded-full bg-primary/20 text-primary flex items-center justify-center text-xs font-bold flex-shrink-0">2</div>
               <div>
-                <p className="text-sm font-medium">Creator responsibilities</p>
-                <p className="text-xs text-muted-foreground">Resolve markets fairly within 48 hours. Respond to user questions. Maintain quality.</p>
+                <p className="text-sm font-medium">Complete Verification</p>
+                <p className="text-xs text-muted-foreground">Verify identity & agree to creator terms</p>
+              </div>
+            </div>
+            <div className="flex gap-3 p-3 rounded-lg bg-muted/30">
+              <div className="w-6 h-6 rounded-full bg-primary/20 text-primary flex items-center justify-center text-xs font-bold flex-shrink-0">3</div>
+              <div>
+                <p className="text-sm font-medium">Start Creating Markets</p>
+                <p className="text-xs text-muted-foreground">Once approved, create unlimited markets & earn fees</p>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Market Cancellation */}
-        <section className="p-3 rounded-lg border border-amber-500/30 bg-amber-500/5">
-          <div className="flex items-start gap-2">
-            <AlertTriangle className="h-4 w-4 text-amber-500 mt-0.5 flex-shrink-0" />
-            <div>
-              <p className="text-sm font-medium text-amber-600 dark:text-amber-400">Market Cancellation</p>
-              <p className="text-xs text-muted-foreground mt-1">
-                In rare cases, a market may be canceled if the outcome becomes unknowable. 
-                When this happens, your original ticket purchase is refunded to your cash balance. 
-                However, the platform fee (3%) and Weekly Draw contribution (2%) are <span className="font-medium text-foreground">non-refundable</span>.
-              </p>
+        {/* Creating a market */}
+        <section className="space-y-3">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+              <FileText className="h-4 w-4 text-primary" />
             </div>
+            <h3 className="font-bold text-base">Creating a Market</h3>
+          </div>
+          <p className="text-sm text-muted-foreground">When creating a market, you'll need:</p>
+          <ul className="space-y-2 text-sm">
+            <li className="flex items-start gap-2">
+              <CheckCircle2 className="h-4 w-4 text-success mt-0.5 flex-shrink-0" />
+              <span><span className="font-medium">Clear question</span> — A prediction with a definitive answer</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <CheckCircle2 className="h-4 w-4 text-success mt-0.5 flex-shrink-0" />
+              <span><span className="font-medium">Resolution criteria</span> — How the outcome will be determined</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <CheckCircle2 className="h-4 w-4 text-success mt-0.5 flex-shrink-0" />
+              <span><span className="font-medium">End date</span> — When trading closes</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <CheckCircle2 className="h-4 w-4 text-success mt-0.5 flex-shrink-0" />
+              <span><span className="font-medium">Category & image</span> — Helps users find your market</span>
+            </li>
+          </ul>
+        </section>
+
+        {/* Referral program */}
+        <section className="space-y-3">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+              <Share2 className="h-4 w-4 text-primary" />
+            </div>
+            <h3 className="font-bold text-base">Refer a Friend</h3>
+          </div>
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            Share your unique referral link and earn <span className="font-semibold text-primary">10% commission</span> on 
+            platform fees from everyone you refer — for 12 months after they sign up.
+          </p>
+          <div className="p-3 rounded-lg bg-primary/5 border border-primary/20 text-center">
+            <p className="text-2xl font-black text-primary">10%</p>
+            <p className="text-xs text-muted-foreground">commission for 12 months per referral</p>
           </div>
         </section>
 
@@ -706,22 +881,49 @@ export function HowItWorksDialog({ open, onOpenChange }: HowItWorksDialogProps) 
             <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
               <MessageSquare className="h-4 w-4 text-primary" />
             </div>
-            <h3 className="font-bold text-base">Community</h3>
+            <h3 className="font-bold text-base">Community Features</h3>
           </div>
           <div className="space-y-2">
             <div className="p-3 rounded-lg bg-muted/30">
-              <p className="text-sm font-medium mb-1">Comments</p>
-              <p className="text-xs text-muted-foreground">Discuss markets, share analysis, and debate with other participants</p>
+              <p className="text-sm font-medium mb-1">Comments & Discussion</p>
+              <p className="text-xs text-muted-foreground">Discuss markets, share analysis, and debate outcomes with other users</p>
             </div>
             <div className="p-3 rounded-lg bg-muted/30">
-              <p className="text-sm font-medium mb-1">Follow Users</p>
-              <p className="text-xs text-muted-foreground">Follow successful predictors and see their activity</p>
+              <p className="text-sm font-medium mb-1">Follow Creators & Traders</p>
+              <p className="text-xs text-muted-foreground">Follow top creators and see their latest markets in your feed</p>
             </div>
             <div className="p-3 rounded-lg bg-muted/30">
-              <p className="text-sm font-medium mb-1">Leaderboards</p>
-              <p className="text-xs text-muted-foreground">Compete for the top spots and earn recognition</p>
+              <p className="text-sm font-medium mb-1">Community Feed</p>
+              <p className="text-xs text-muted-foreground">Repost markets with your analysis and build your reputation</p>
             </div>
           </div>
+        </section>
+
+        {/* Portfolio tracking */}
+        <section className="space-y-3">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+              <Eye className="h-4 w-4 text-primary" />
+            </div>
+            <h3 className="font-bold text-base">Portfolio & Tracking</h3>
+          </div>
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            Track all your active tickets and past results in your Portfolio:
+          </p>
+          <ul className="space-y-2 text-sm">
+            <li className="flex items-start gap-2">
+              <CheckCircle2 className="h-4 w-4 text-success mt-0.5 flex-shrink-0" />
+              <span>Active tickets across all markets</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <CheckCircle2 className="h-4 w-4 text-success mt-0.5 flex-shrink-0" />
+              <span>Win/loss history and total P&L</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <CheckCircle2 className="h-4 w-4 text-success mt-0.5 flex-shrink-0" />
+              <span>Weekly draw entries and results</span>
+            </li>
+          </ul>
         </section>
 
         {/* Safety */}
@@ -747,12 +949,12 @@ export function HowItWorksDialog({ open, onOpenChange }: HowItWorksDialogProps) 
             </li>
             <li className="flex items-start gap-2">
               <CheckCircle2 className="h-4 w-4 text-success mt-0.5 flex-shrink-0" />
-              <span>All draws are verifiable and transparent</span>
+              <span>24/7 fraud monitoring</span>
             </li>
           </ul>
         </section>
 
-        {/* Need Help */}
+        {/* Need help */}
         <section className="p-4 rounded-xl border border-border bg-muted/20">
           <div className="flex items-center gap-2 mb-2">
             <HelpCircle className="h-5 w-5 text-primary" />
@@ -789,9 +991,15 @@ export function HowItWorksDialog({ open, onOpenChange }: HowItWorksDialogProps) 
     return (
       <Drawer open={open} onOpenChange={onOpenChange}>
         <DrawerContent className="px-4 pb-6 max-h-[90vh]">
-          <DrawerHeader className="px-0 pb-4">
-            <DrawerTitle className="text-center">How It Works</DrawerTitle>
-          </DrawerHeader>
+          <div className="flex items-center gap-3 py-4">
+            <button
+              onClick={() => onOpenChange(false)}
+              className="h-8 w-8 rounded-full flex items-center justify-center hover:bg-muted transition-colors"
+            >
+              <ArrowLeft className="h-4 w-4" />
+            </button>
+            <h2 className="text-base font-semibold">How It Works</h2>
+          </div>
           <ScrollArea className="h-[calc(90vh-100px)] -mx-4 px-4">
             {content}
           </ScrollArea>
