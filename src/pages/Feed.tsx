@@ -6,8 +6,6 @@ import { Timer, Users, ArrowRight, ChevronRight, Trophy, Ticket, Zap, Gift, Cale
 import { useNavigate } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { WeeklyDrawCard } from "@/components/WeeklyDrawCard";
-import { SeoContentBlock } from "@/components/SeoContentBlock";
-import { feedSeoContent } from "@/lib/seo-content";
 
 import {
   Dialog,
@@ -1026,8 +1024,6 @@ export default function Feed() {
           </>
         )}
       </div>
-
-      <SeoContentBlock title={feedSeoContent.title} sections={feedSeoContent.sections} />
     </div>
   );
 }

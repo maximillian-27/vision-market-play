@@ -26,8 +26,6 @@ import nbaImage from "@/assets/nba-championship.jpg";
 import iphoneImage from "@/assets/foldable-iphone.jpg";
 import fedImage from "@/assets/federal-reserve.jpg";
 import aiImage from "@/assets/ai-customer-service.jpg";
-import { SeoContentBlock } from "@/components/SeoContentBlock";
-import { communitySeoContent } from "@/lib/seo-content";
 
 const mockMarkets = [
   { id: "1", title: "Will Bitcoin reach $100,000 by end of 2025?", image: bitcoinImage, yesPrice: 68, noPrice: 32, volume: "$2.4M" },
@@ -245,7 +243,6 @@ export default function CommunityFeed() {
           {composerContent}
         </SheetContent>
       </Sheet>
-      <SeoContentBlock title={communitySeoContent.title} sections={communitySeoContent.sections} />
     </div>
   );
 }
