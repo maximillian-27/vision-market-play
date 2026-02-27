@@ -45,6 +45,7 @@ const Settings = () => {
   // Account settings
   const [username, setUsername] = useState("cryptotrader2024");
   const [email, setEmail] = useState("user@example.com");
+  const [phone, setPhone] = useState("");
   const [bio, setBio] = useState("Prediction market enthusiast. Crypto & Politics specialist.");
   
   // Creator settings
@@ -59,8 +60,8 @@ const Settings = () => {
     entryConfirmations: true,
     newFollowers: true,
     marketUpdates: false,
-    newsletter: false,
-    promotions: false,
+    newsletter: true,
+    promotions: true,
   });
 
   // Privacy settings
@@ -87,7 +88,7 @@ const Settings = () => {
   // Preferences
   const [preferences, setPreferences] = useState({
     oddsFormat: "percentage",
-    defaultTickets: "1",
+    defaultTickets: "5",
   });
 
   // Crypto wallet
@@ -187,6 +188,17 @@ const Settings = () => {
                       className="h-9 sm:h-10 text-sm"
                     />
                   </div>
+                  <div className="space-y-1.5 sm:space-y-2">
+                    <Label htmlFor="phone" className="text-xs sm:text-sm">Phone Number</Label>
+                    <Input 
+                      id="phone" 
+                      type="tel"
+                      value={phone} 
+                      onChange={(e) => setPhone(e.target.value)}
+                      placeholder="+1 (555) 000-0000"
+                      className="h-9 sm:h-10 text-sm"
+                    />
+                  </div>
                 </div>
                 <div className="space-y-1.5 sm:space-y-2">
                   <Label htmlFor="bio" className="text-xs sm:text-sm">Bio</Label>
@@ -204,39 +216,23 @@ const Settings = () => {
 
             <Card className="border-border/40">
               <CardHeader className="p-4 sm:p-6 pb-2 sm:pb-4">
-                <CardTitle className="text-base sm:text-lg">Language & Region</CardTitle>
-                <CardDescription className="text-xs sm:text-sm">Set your preferred language and timezone</CardDescription>
+                <CardTitle className="text-base sm:text-lg">Region</CardTitle>
+                <CardDescription className="text-xs sm:text-sm">Set your preferred timezone</CardDescription>
               </CardHeader>
               <CardContent className="p-4 sm:p-6 pt-2 sm:pt-0 space-y-3 sm:space-y-4">
-                <div className="grid grid-cols-1 gap-3 sm:gap-4">
-                  <div className="space-y-1.5 sm:space-y-2">
-                    <Label className="text-xs sm:text-sm">Language</Label>
-                    <Select defaultValue="en">
-                      <SelectTrigger className="h-9 sm:h-10 text-sm">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="en">English</SelectItem>
-                        <SelectItem value="es">Español</SelectItem>
-                        <SelectItem value="fr">Français</SelectItem>
-                        <SelectItem value="de">Deutsch</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-1.5 sm:space-y-2">
-                    <Label className="text-xs sm:text-sm">Timezone</Label>
-                    <Select defaultValue="utc">
-                      <SelectTrigger className="h-9 sm:h-10 text-sm">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="utc">UTC</SelectItem>
-                        <SelectItem value="est">Eastern Time</SelectItem>
-                        <SelectItem value="pst">Pacific Time</SelectItem>
-                        <SelectItem value="cet">Central European</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+                <div className="space-y-1.5 sm:space-y-2">
+                  <Label className="text-xs sm:text-sm">Timezone</Label>
+                  <Select defaultValue="utc">
+                    <SelectTrigger className="h-9 sm:h-10 text-sm">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="utc">UTC</SelectItem>
+                      <SelectItem value="est">Eastern Time</SelectItem>
+                      <SelectItem value="pst">Pacific Time</SelectItem>
+                      <SelectItem value="cet">Central European</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </CardContent>
             </Card>
