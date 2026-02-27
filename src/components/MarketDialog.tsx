@@ -273,26 +273,27 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
                 </Avatar>
                 <span className="text-sm font-medium">{market.creator.name}</span>
                 {market.creator.isCreator !== false && (
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <button className="flex items-center gap-1 hover:opacity-80 transition-opacity">
-                        <BadgeCheck className="h-3.5 w-3.5 text-primary fill-primary/20" />
-                      </button>
-                    </PopoverTrigger>
-                    <PopoverContent side="bottom" align="start" className="w-56 p-3 space-y-2">
-                      <p className="text-xs font-medium text-foreground">Verified Creator</p>
-                      <p className="text-[11px] text-muted-foreground leading-relaxed">
-                        Creators build markets, grow audiences, and earn from engagement. Anyone can apply.
-                      </p>
-                      <button
-                        onClick={() => setShowCreatorDialog(true)}
-                        className="text-[11px] font-medium text-primary hover:underline"
-                      >
-                        Become a creator →
-                      </button>
-                    </PopoverContent>
-                  </Popover>
+                  <BadgeCheck className="h-3.5 w-3.5 text-primary fill-primary/20" />
                 )}
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <button className="text-[10px] text-muted-foreground hover:text-foreground transition-colors">
+                      What are creators?
+                    </button>
+                  </PopoverTrigger>
+                  <PopoverContent side="bottom" align="start" className="w-56 p-3 space-y-2">
+                    <p className="text-xs font-medium text-foreground">Creators</p>
+                    <p className="text-[11px] text-muted-foreground leading-relaxed">
+                      Creators build markets, grow audiences, and earn from engagement. Anyone can apply.
+                    </p>
+                    <button
+                      onClick={() => setShowCreatorDialog(true)}
+                      className="text-[11px] font-medium text-primary hover:underline"
+                    >
+                      Become a creator →
+                    </button>
+                  </PopoverContent>
+                </Popover>
               </div>
             </div>
             <div className="flex items-center gap-0.5">
