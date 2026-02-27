@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Clock, AlertTriangle, CheckCircle2, Timer, Users } from "lucide-react";
+import { TimingBadge } from "@/components/TimingBadge";
 import { useNavigate } from "react-router-dom";
 import { MarketDialog } from "@/components/MarketDialog";
 import { ResolvedMarketDialog } from "@/components/ResolvedMarketDialog";
@@ -263,6 +264,12 @@ export function MarketGridCard({
             <span className="text-[9px] text-muted-foreground flex items-center gap-0.5">
               <Users className="h-2.5 w-2.5" />{players.toLocaleString()}
             </span>
+            {!isBettingDisabled && (
+              <>
+                <span className="text-[9px] text-muted-foreground">·</span>
+                <TimingBadge endsIn={endsIn} />
+              </>
+            )}
           </div>
 
           {/* Outcomes */}
@@ -280,12 +287,18 @@ export function MarketGridCard({
             <img src={image} alt={title} className="w-10 h-10 rounded-lg object-cover flex-shrink-0" />
             <h3 className="text-[13px] font-semibold leading-snug line-clamp-2">{title}</h3>
           </div>
-          <div className="flex items-center gap-2 mb-2">
+          <div className="flex items-center gap-2 mb-2 flex-wrap">
             <span className="text-primary text-xs font-extrabold">{potDisplay}</span>
             <span className="text-[10px] text-muted-foreground">·</span>
             <span className="text-[10px] text-muted-foreground flex items-center gap-0.5">
               <Users className="h-2.5 w-2.5" />{players.toLocaleString()}
             </span>
+            {!isBettingDisabled && (
+              <>
+                <span className="text-[10px] text-muted-foreground">·</span>
+                <TimingBadge endsIn={endsIn} />
+              </>
+            )}
             {statusLine()}
           </div>
           <OutcomeButtons />

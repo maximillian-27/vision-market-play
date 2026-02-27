@@ -1,6 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
 import { Clock, TrendingUp, Heart, MessageCircle, Share2, Repeat2, BadgeCheck } from "lucide-react";
+import { TimingBadge } from "@/components/TimingBadge";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { QuoteRepostDialog } from "@/components/QuoteRepostDialog";
@@ -97,6 +98,7 @@ export function MarketCard({ id, creator, title, subtitle, image, outcomes, yesP
                 <Clock className="h-3.5 w-3.5" />
                 {endsIn}
               </span>
+              <TimingBadge endsIn={endsIn} />
             </div>
 
             {/* Outcomes */}
