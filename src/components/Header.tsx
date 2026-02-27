@@ -138,6 +138,14 @@ export function Header() {
                 >
                   How it works?
                 </Button>
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  onClick={handleLogin}
+                  className="hidden md:flex text-muted-foreground text-xs font-medium hover:text-foreground"
+                >
+                  Creators & Partners
+                </Button>
                 
                 {/* Mobile: Info dropdown when not logged in */}
                 {isMobile && (
