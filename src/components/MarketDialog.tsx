@@ -9,6 +9,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
 import { QuoteRepostDialog } from "@/components/QuoteRepostDialog";
+import { TimingBadge } from "@/components/TimingBadge";
 import { ResponsiveContainer, AreaChart, Area, Tooltip, Legend } from "recharts";
 import {
   BadgeCheck,
@@ -314,9 +315,12 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
 
                 {/* Probability Chart - all outcomes */}
                 <div className="space-y-1.5">
-                  <div className="flex items-center gap-1.5 text-[10px] font-medium text-muted-foreground">
-                    <TrendingUp className="h-3 w-3" />
-                    <span>Probability</span>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-1.5 text-[10px] font-medium text-muted-foreground">
+                      <TrendingUp className="h-3 w-3" />
+                      <span>Probability</span>
+                    </div>
+                    {!isAwaitingResolution && <TimingBadge endsIn={market.endsIn} />}
                   </div>
                   <div className="h-28 rounded-lg overflow-hidden bg-muted/20 p-1.5">
                     <ResponsiveContainer width="100%" height="100%">
