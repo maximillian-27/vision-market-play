@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { FollowingSidebar } from "@/components/FollowingSidebar";
+import { MarketsSidebar } from "@/components/MarketsSidebar";
 import { MarketDialog } from "@/components/MarketDialog";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { PageHeader } from "@/components/PageHeader";
@@ -85,8 +87,11 @@ const Portfolio = () => {
   const totalPotentialPayout = entries.reduce((sum, e) => sum + e.potentialPayout, 0);
 
   return (
-    <div className="min-h-screen bg-background pb-20 sm:pb-6">
-      <div className="max-w-3xl mx-auto px-3 sm:px-6 py-3 sm:py-6">
+    <div className="w-full max-w-7xl mx-auto py-4 lg:py-6 pb-20 sm:pb-6">
+      <div className="flex gap-6 justify-center">
+        <FollowingSidebar />
+        <div className="w-full max-w-2xl px-3 sm:px-6">
+        <div className="space-y-0">
         <div className="hidden sm:block">
           <PageHeader title="Portfolio" subtitle="Your balance, entries & winnings" />
         </div>
@@ -411,6 +416,9 @@ const Portfolio = () => {
         );
       })()}
     </div>
+    <MarketsSidebar />
+  </div>
+</div>
   );
 };
 

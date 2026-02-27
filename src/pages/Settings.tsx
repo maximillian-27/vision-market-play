@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { FollowingSidebar } from "@/components/FollowingSidebar";
+import { MarketsSidebar } from "@/components/MarketsSidebar";
 import { PageHeader } from "@/components/PageHeader";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -101,8 +103,10 @@ const Settings = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="max-w-4xl mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-6">
+    <div className="w-full max-w-7xl mx-auto py-4 lg:py-6">
+      <div className="flex gap-6 justify-center">
+        <FollowingSidebar />
+        <div className="w-full max-w-2xl px-3 sm:px-4">
         <div className="hidden sm:block">
           <PageHeader 
             title="Settings" 
@@ -752,6 +756,8 @@ const Settings = () => {
             </TabsContent>
           )}
         </Tabs>
+      </div>
+        <MarketsSidebar />
       </div>
     </div>
   );
