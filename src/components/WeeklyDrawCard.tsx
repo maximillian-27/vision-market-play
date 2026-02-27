@@ -56,8 +56,8 @@ export function WeeklyDrawCard() {
         <div className="text-2xl font-black text-foreground leading-none tracking-tight">
           ${WEEKLY_POT.toLocaleString()}
         </div>
-        <span className="text-xs text-muted-foreground">
-          Your entries: <span className="font-semibold text-foreground">{MY_ENTRIES}</span>
+        <span className="text-[10px] text-muted-foreground">
+          1 ticket = 1 entry · You have <span className="font-semibold text-foreground">{MY_ENTRIES}</span>
         </span>
       </div>
       <p className="text-[10px] text-muted-foreground mb-3 leading-relaxed">
