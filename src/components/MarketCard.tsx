@@ -98,7 +98,7 @@ export function MarketCard({ id, creator, title, subtitle, image, outcomes, yesP
                 <Clock className="h-3.5 w-3.5" />
                 {endsIn}
               </span>
-              <TimingBadge endsIn={endsIn} />
+              <TimingBadge endsIn={endsIn} className="ml-auto" />
             </div>
 
             {/* Outcomes */}

@@ -264,12 +264,6 @@ export function MarketGridCard({
             <span className="text-[9px] text-muted-foreground flex items-center gap-0.5">
               <Users className="h-2.5 w-2.5" />{players.toLocaleString()}
             </span>
-            {!isBettingDisabled && (
-              <>
-                <span className="text-[9px] text-muted-foreground">·</span>
-                <TimingBadge endsIn={endsIn} />
-              </>
-            )}
           </div>
 
           {/* Outcomes */}
@@ -277,8 +271,11 @@ export function MarketGridCard({
             <OutcomeButtons />
           </div>
 
-          {/* Timer */}
-          <div>{statusLine()}</div>
+          {/* Timer + Timing Badge */}
+          <div className="flex items-center justify-between">
+            <div>{statusLine()}</div>
+            {!isBettingDisabled && <TimingBadge endsIn={endsIn} />}
+          </div>
         </div>
 
         {/* ── Mobile ── */}
@@ -287,19 +284,14 @@ export function MarketGridCard({
             <img src={image} alt={title} className="w-10 h-10 rounded-lg object-cover flex-shrink-0" />
             <h3 className="text-[13px] font-semibold leading-snug line-clamp-2">{title}</h3>
           </div>
-          <div className="flex items-center gap-2 mb-2 flex-wrap">
+          <div className="flex items-center gap-2 mb-2">
             <span className="text-primary text-xs font-extrabold">{potDisplay}</span>
             <span className="text-[10px] text-muted-foreground">·</span>
             <span className="text-[10px] text-muted-foreground flex items-center gap-0.5">
               <Users className="h-2.5 w-2.5" />{players.toLocaleString()}
             </span>
-            {!isBettingDisabled && (
-              <>
-                <span className="text-[10px] text-muted-foreground">·</span>
-                <TimingBadge endsIn={endsIn} />
-              </>
-            )}
             {statusLine()}
+            {!isBettingDisabled && <TimingBadge endsIn={endsIn} className="ml-auto" />}
           </div>
           <OutcomeButtons />
         </div>
