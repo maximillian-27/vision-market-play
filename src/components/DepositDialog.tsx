@@ -92,12 +92,9 @@ export function DepositDialog({ open, onOpenChange }: DepositDialogProps) {
   const currentToken = tokens.find(t => t.id === selectedToken)!;
 
   const handleMethodSelect = (method: PaymentMethod) => {
+    if (method !== "crypto") return;
     setSelectedMethod(method);
-    if (method === "crypto") {
-      setStep("crypto");
-    } else {
-      setStep("amount");
-    }
+    setStep("crypto");
   };
 
   const handleBack = () => {
@@ -162,18 +159,31 @@ export function DepositDialog({ open, onOpenChange }: DepositDialogProps) {
                   <button
                     key={method.id}
                     onClick={() => handleMethodSelect(method.id)}
-                    className="w-full flex items-center gap-4 p-4 rounded-xl border border-border/60 bg-card hover:bg-secondary/50 hover:border-primary/30 transition-all text-left group"
+                    disabled={method.id !== "crypto"}
+                    className={`w-full flex items-center gap-4 p-4 rounded-xl border border-border/60 bg-card transition-all text-left group ${
+                      method.id === "crypto" 
+                        ? "hover:bg-secondary/50 hover:border-primary/30 cursor-pointer" 
+                        : "opacity-50 cursor-not-allowed"
+                    }`}
                   >
-                    <div className="h-11 w-11 rounded-full bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors">
-                      <Icon className="h-5 w-5 text-primary" />
+                    <div className={`h-11 w-11 rounded-full flex items-center justify-center shrink-0 transition-colors ${
+                      method.id === "crypto" ? "bg-primary/10 group-hover:bg-primary/20" : "bg-muted"
+                    }`}>
+                      <Icon className={`h-5 w-5 ${method.id === "crypto" ? "text-primary" : "text-muted-foreground"}`} />
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="font-semibold text-sm">{method.label}</p>
                       <p className="text-xs text-muted-foreground truncate">{method.description}</p>
                     </div>
                     <div className="text-right shrink-0">
-                      <p className="text-xs font-medium text-primary">{method.fee}</p>
-                      <p className="text-[10px] text-muted-foreground">{method.time}</p>
+                      {method.id === "crypto" ? (
+                        <>
+                          <p className="text-xs font-medium text-primary">{method.fee}</p>
+                          <p className="text-[10px] text-muted-foreground">{method.time}</p>
+                        </>
+                      ) : (
+                        <span className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground bg-muted px-2 py-0.5 rounded-full">Coming Soon</span>
+                      )}
                     </div>
                   </button>
                 );
