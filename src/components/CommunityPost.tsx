@@ -123,6 +123,15 @@ export function CommunityPost({ post }: CommunityPostProps) {
 
   const engagementActions = [
     {
+      icon: Heart,
+      count: likeCount,
+      active: liked,
+      activeColor: "text-red-500",
+      hoverBg: "hover:bg-red-500/10 hover:text-red-500",
+      onClick: handleLike,
+      fill: liked,
+    },
+    {
       icon: MessageCircle,
       count: post.comments,
       active: false,
@@ -137,15 +146,6 @@ export function CommunityPost({ post }: CommunityPostProps) {
       activeColor: "text-green-500",
       hoverBg: "hover:bg-green-500/10 hover:text-green-500",
       onClick: handleRepost,
-    },
-    {
-      icon: Heart,
-      count: likeCount,
-      active: liked,
-      activeColor: "text-red-500",
-      hoverBg: "hover:bg-red-500/10 hover:text-red-500",
-      onClick: handleLike,
-      fill: liked,
     },
     {
       icon: Share,
