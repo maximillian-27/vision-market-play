@@ -1,7 +1,5 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { FollowingSidebar } from "@/components/FollowingSidebar";
-import { MarketsSidebar } from "@/components/MarketsSidebar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -189,11 +187,8 @@ export default function Profile() {
   };
 
   return (
-    <div className="w-full max-w-7xl mx-auto py-4 lg:py-6">
-      <div className="flex gap-6 justify-center">
-        <FollowingSidebar />
-        <div className="w-full max-w-2xl px-4 space-y-6">
-        <div className="space-y-6">
+    <div className="min-h-screen bg-background">
+      <div className="max-w-4xl mx-auto px-4 py-6 space-y-6">
         {/* Back Button - only for other profiles */}
         {!isOwnProfile && (
           <Button 
@@ -580,9 +575,6 @@ export default function Profile() {
           }}
         />
       )}
-      </div>
-        <MarketsSidebar />
-      </div>
     </div>
   );
 }

@@ -7,8 +7,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowLeft, UserPlus, UserCheck, MapPin, Calendar, Link as LinkIcon, Share2, MessageCircle, Heart, Repeat2, Trophy } from "lucide-react";
 import { CreatorBadge } from "@/components/CreatorBadge";
-import { FollowingSidebar } from "@/components/FollowingSidebar";
-import { MarketsSidebar } from "@/components/MarketsSidebar";
 import { MarketGridCard } from "@/components/MarketGridCard";
 import { SocialStats } from "@/components/SocialStats";
 import { ProfileStats } from "@/components/ProfileStats";
@@ -275,10 +273,8 @@ export default function CreatorProfile() {
   const achievements = getCreatorAchievements();
 
   return (
-    <div className="w-full max-w-7xl mx-auto py-4 lg:py-6">
-      <div className="flex gap-6 justify-center">
-        <FollowingSidebar />
-        <div className="w-full max-w-2xl px-4 space-y-6">
+    <div className="min-h-screen bg-background">
+      <div className="max-w-4xl mx-auto px-4 py-6 space-y-6">
         {/* Back Button */}
         <Button 
           variant="ghost" 
@@ -525,8 +521,6 @@ export default function CreatorProfile() {
             </TabsContent>
           </Tabs>
         </Card>
-      </div>
-        <MarketsSidebar />
       </div>
     </div>
   );
