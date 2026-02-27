@@ -32,7 +32,9 @@ import {
   Star,
   MessageSquare,
   BadgeCheck,
-  PenTool
+  PenTool,
+  Bird,
+  Flame,
 } from "lucide-react";
 
 interface HowItWorksDialogProps {
@@ -464,6 +466,149 @@ export function HowItWorksDialog({ open, onOpenChange }: HowItWorksDialogProps) 
               </p>
             </div>
           </div>
+        </section>
+
+        {/* ── Timing Labels ── */}
+        <section className="space-y-3">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+              <Clock className="h-4 w-4 text-primary" />
+            </div>
+            <h3 className="font-bold text-base">Time-Weighted Pricing</h3>
+          </div>
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            Pollgy uses a <span className="font-semibold text-foreground">dynamic, time-weighted</span> pari-mutuel system. 
+            Ticket prices increase the closer a market gets to resolution — rewarding early conviction and making last-minute entries more expensive.
+          </p>
+
+          {/* The 3 Labels */}
+          <div className="space-y-2">
+            <div className="p-3 rounded-lg bg-success/10 border border-success/30 flex items-start gap-3">
+              <div className="w-7 h-7 rounded-full bg-success/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <Bird className="h-3.5 w-3.5 text-success" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-success">Early Bird</p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  More than 1 month until resolution. Lowest ticket price — maximum potential profit. 
+                  You're rewarded for placing your prediction early when the outcome is most uncertain.
+                </p>
+              </div>
+            </div>
+            <div className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-start gap-3">
+              <div className="w-7 h-7 rounded-full bg-amber-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <Clock className="h-3.5 w-3.5 text-amber-500" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-amber-500">Good Timing</p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Between 1 week and 1 month left. Moderate ticket price — still decent returns. 
+                  You have more information than early birds, but you're paying a slight premium.
+                </p>
+              </div>
+            </div>
+            <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/30 flex items-start gap-3">
+              <div className="w-7 h-7 rounded-full bg-destructive/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <Flame className="h-3.5 w-3.5 text-destructive" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-destructive">Late Entry</p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Less than 1 week until resolution. Highest ticket price — potential profit is reduced or even negative. 
+                  The outcome is nearly known, so the cost of entering is significantly higher.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Why Time-Weighted? */}
+        <section className="space-y-3">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center">
+              <HelpCircle className="h-4 w-4 text-amber-500" />
+            </div>
+            <h3 className="font-bold text-base">Why Does It Work This Way?</h3>
+          </div>
+          <div className="space-y-2">
+            <div className="p-3 rounded-lg bg-muted/30">
+              <p className="text-sm font-medium mb-1">1. Rewards conviction</p>
+              <p className="text-xs text-muted-foreground">
+                Predicting early is harder — you have less information. Early bettors take on more risk and deserve higher rewards.
+              </p>
+            </div>
+            <div className="p-3 rounded-lg bg-muted/30">
+              <p className="text-sm font-medium mb-1">2. Prevents "free money" plays</p>
+              <p className="text-xs text-muted-foreground">
+                Without time-weighting, someone could wait until the outcome is practically certain and scoop up cheap tickets. 
+                Higher late-entry prices eliminate this exploit.
+              </p>
+            </div>
+            <div className="p-3 rounded-lg bg-muted/30">
+              <p className="text-sm font-medium mb-1">3. Creates a fairer market</p>
+              <p className="text-xs text-muted-foreground">
+                Time-weighting ensures the pot is distributed based on when predictions were made — not just what was predicted. 
+                This makes the system more equitable for everyone.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Pricing Example */}
+        <section className="space-y-3">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+              <Calculator className="h-4 w-4 text-primary" />
+            </div>
+            <h3 className="font-bold text-base">Pricing Example</h3>
+          </div>
+          <div className="p-4 rounded-xl border border-border bg-muted/20 space-y-3">
+            <p className="text-sm font-semibold text-center">"Will Bitcoin hit $100K by Dec 2025?"</p>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between p-2.5 rounded-lg bg-success/10 text-sm">
+                <div className="flex items-center gap-2">
+                  <Bird className="h-3.5 w-3.5 text-success" />
+                  <span className="text-success font-medium">Early Bird</span>
+                  <span className="text-[10px] text-muted-foreground">(6 months out)</span>
+                </div>
+                <span className="font-bold">$0.50/ticket</span>
+              </div>
+              <div className="flex items-center justify-between p-2.5 rounded-lg bg-amber-500/10 text-sm">
+                <div className="flex items-center gap-2">
+                  <Clock className="h-3.5 w-3.5 text-amber-500" />
+                  <span className="text-amber-500 font-medium">Good Timing</span>
+                  <span className="text-[10px] text-muted-foreground">(2 weeks out)</span>
+                </div>
+                <span className="font-bold">$0.75/ticket</span>
+              </div>
+              <div className="flex items-center justify-between p-2.5 rounded-lg bg-destructive/10 text-sm">
+                <div className="flex items-center gap-2">
+                  <Flame className="h-3.5 w-3.5 text-destructive" />
+                  <span className="text-destructive font-medium">Late Entry</span>
+                  <span className="text-[10px] text-muted-foreground">(3 days out)</span>
+                </div>
+                <span className="font-bold">$1.25/ticket</span>
+              </div>
+            </div>
+            <div className="p-2.5 rounded-lg bg-primary/5 border border-primary/20">
+              <p className="text-xs text-muted-foreground text-center">
+                <span className="font-medium text-foreground">Same pot, same payout per winning ticket</span> — 
+                but early birds paid less per ticket, so their profit margin is much higher.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Pro tip */}
+        <section className="p-3 rounded-lg bg-primary/5 border border-primary/20">
+          <p className="text-xs text-primary font-medium flex items-start gap-2">
+            <Lightbulb className="h-3.5 w-3.5 mt-0.5 flex-shrink-0" />
+            <span>
+              <span className="font-bold">Pro tip:</span> Look for the timing label on every market card. 
+              Green "Early Bird" markets offer the best value. Red "Late Entry" markets may show negative estimated profits — 
+              meaning you'd likely lose money even if you win.
+            </span>
+          </p>
         </section>
       </TabsContent>
 
