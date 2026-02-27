@@ -43,7 +43,7 @@ export function WeeklyDrawCard() {
           <div className="flex items-center justify-center w-6 h-6 rounded-lg bg-yellow-400/20 shadow-sm shadow-yellow-400/10 ring-1 ring-yellow-400/20">
             <Trophy className="h-3.5 w-3.5 text-yellow-400" />
           </div>
-          <span className="text-[10px] uppercase tracking-widest font-bold text-primary">Weekly Draw</span>
+          <span className="text-[10px] uppercase tracking-widest font-bold text-yellow-400">Weekly Draw</span>
         </div>
         <div className="flex items-center gap-1.5 text-[10px] bg-primary/10 px-2.5 py-1 rounded-full border border-primary/15">
           <Timer className="h-3 w-3 text-primary animate-pulse" />
