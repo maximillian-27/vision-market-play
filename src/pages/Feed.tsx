@@ -503,11 +503,10 @@ const sortedByPot = [...mockMarkets]
 
 const heroMarket_static = sortedByPot[0];
 
-// Highlighted markets = next 2 largest binary (non-multi-outcome) markets
+// Highlighted markets = next 4 largest markets
 const highlightedMarkets = sortedByPot
   .slice(1)
-  .filter(m => !m.outcomes)
-  .slice(0, 2);
+  .slice(0, 4);
 
 function formatPot(pot: number): string {
   if (pot >= 1000000) return `$${(pot / 1000000).toFixed(1)}M`;
@@ -902,7 +901,7 @@ export default function Feed() {
         />
 
         {/* 2b. Desktop Split Hero */}
-        <div className="hidden sm:grid grid-cols-1 lg:grid-cols-2 gap-3 lg:max-h-[340px]">
+        <div className="hidden sm:grid grid-cols-[1fr_1.2fr] gap-3 lg:max-h-[340px]">
           {/* Left — Single hero market */}
           <div
             className="relative rounded-2xl overflow-hidden cursor-pointer group"
@@ -945,15 +944,15 @@ export default function Feed() {
             </div>
           </div>
 
-          {/* Right — Weekly Draw + 2 Highlighted */}
-          <div className="flex flex-col gap-3 lg:max-h-[340px]">
-            <div className="flex-1 min-h-0">
+          {/* Right — 4 Highlighted Markets + Weekly Draw */}
+          <div className="grid grid-cols-3 grid-rows-2 gap-2 lg:max-h-[340px]">
+            <CompactFeaturedCard market={highlightedMarkets[0]} />
+            <div className="col-span-2 row-span-1">
               <WeeklyDrawCard />
             </div>
-            <div className="grid grid-cols-2 gap-3 flex-1 min-h-0">
-              <CompactFeaturedCard market={highlightedMarkets[0]} />
-              <CompactFeaturedCard market={highlightedMarkets[1]} />
-            </div>
+            <CompactFeaturedCard market={highlightedMarkets[1]} />
+            <CompactFeaturedCard market={highlightedMarkets[2]} />
+            <CompactFeaturedCard market={highlightedMarkets[3]} />
           </div>
         </div>
 
