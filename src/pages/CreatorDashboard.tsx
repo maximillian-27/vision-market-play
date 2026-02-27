@@ -29,9 +29,10 @@ import {
   Heart,
   Repeat2,
   Share2,
-  BadgeCheck,
+  
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { CreatorBadge } from "@/components/CreatorBadge";
 import {
   Select,
   SelectContent,
@@ -562,7 +563,7 @@ const CreatorDashboard = () => {
                         {/* Author header */}
                         <div className="flex items-center gap-2">
                           <span className="font-semibold text-sm">Sarah Chen</span>
-                          <BadgeCheck className="h-4 w-4 text-primary fill-primary/20" />
+                          <CreatorBadge size="md" />
                           <span className="text-muted-foreground text-sm">@sarahchen</span>
                           <span className="text-muted-foreground text-sm">·</span>
                           <span className="text-muted-foreground text-sm">{post.timestamp}</span>

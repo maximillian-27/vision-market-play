@@ -15,7 +15,7 @@ import {
   TrendingUp, 
   Clock, 
   Users, 
-  BadgeCheck, 
+   
   Share2,
   ChevronDown,
   ChevronUp,
@@ -33,6 +33,7 @@ import {
   ArrowLeft
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { CreatorBadge } from "@/components/CreatorBadge";
 import { QuoteRepostDialog } from "@/components/QuoteRepostDialog";
 
 interface Outcome {
@@ -535,7 +536,7 @@ export function ResolvedMarketDialog({
           </Avatar>
           <span className="text-sm font-medium">{market.creator.name}</span>
           {market.creator.isCreator !== false && (
-            <BadgeCheck className="h-4 w-4 text-primary fill-primary/20" />
+            <CreatorBadge size="md" />
           )}
         </div>
         <div className="flex items-center gap-2">

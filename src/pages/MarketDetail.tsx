@@ -11,7 +11,7 @@ import {
   Heart, 
   MessageCircle, 
   Share2, 
-  BadgeCheck, 
+   
   ChevronDown, 
   ChevronUp, 
   Send,
@@ -36,6 +36,7 @@ import { TimingBadge, parseEndsIn } from "@/components/TimingBadge";
 
 import bitcoinImage from "@/assets/bitcoin-market.jpg";
 import nbaImage from "@/assets/nba-championship.jpg";
+import { CreatorBadge } from "@/components/CreatorBadge";
 import aiImage from "@/assets/ai-customer-service.jpg";
 
 interface Comment {
@@ -407,7 +408,7 @@ export default function MarketDetail() {
             </Avatar>
             <span className="text-xs font-medium text-muted-foreground">{market.creator.name}</span>
             {market.creator.verified && (
-              <BadgeCheck className="h-3.5 w-3.5 text-primary fill-primary/20" />
+              <CreatorBadge size="sm" />
             )}
           </button>
           <h1 className="text-lg sm:text-xl font-bold leading-snug tracking-tight">{market.title}</h1>
