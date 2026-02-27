@@ -40,8 +40,8 @@ export function WeeklyDrawCard() {
       {/* Header: Title + Timer */}
       <div className="flex items-center justify-between mb-2 relative">
         <div className="flex items-center gap-2">
-          <div className="flex items-center justify-center w-6 h-6 rounded-lg bg-primary/15 shadow-sm shadow-primary/10 ring-1 ring-primary/10">
-            <Trophy className="h-3.5 w-3.5 text-primary" />
+          <div className="flex items-center justify-center w-6 h-6 rounded-lg bg-yellow-400/20 shadow-sm shadow-yellow-400/10 ring-1 ring-yellow-400/20">
+            <Trophy className="h-3.5 w-3.5 text-yellow-400" />
           </div>
           <span className="text-[10px] uppercase tracking-widest font-bold text-primary">Weekly Draw</span>
         </div>
