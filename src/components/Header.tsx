@@ -103,6 +103,16 @@ export function Header() {
           
             {isLoggedIn && (
               <>
+                {/* How it works */}
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  onClick={() => setShowHowItWorks(true)}
+                  className="hidden md:flex text-muted-foreground text-xs font-medium hover:text-foreground"
+                >
+                  How it works?
+                </Button>
+
                 {/* Notifications */}
                 <NotificationsDropdown />
 
