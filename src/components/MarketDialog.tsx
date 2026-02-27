@@ -660,7 +660,7 @@ export function MarketDialog({ open, onOpenChange, market }: MarketDialogProps) 
                     {isSubmitting
                       ? "Buying..."
                       : selectedOutcome
-                        ? `🎟️ Buy ${ticketCount} Ticket${ticketCount !== 1 ? 's' : ''} + ${ticketCount === 1 ? 'Entry' : 'Entries'} · $${totalCost.toFixed(2)}`
+                        ? <span className="flex items-center justify-center gap-1.5"><Ticket className="h-4 w-4" /> Buy {ticketCount} Ticket{ticketCount !== 1 ? 's' : ''} + {ticketCount === 1 ? 'Entry' : 'Entries'} · ${totalCost.toFixed(2)}</span>
                         : "Pick your side first"
                     }
                   </Button>
