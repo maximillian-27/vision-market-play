@@ -6,6 +6,8 @@ import { MarketGridCard } from "@/components/MarketGridCard";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { WeeklyDrawCard } from "@/components/WeeklyDrawCard";
+import { SeoContentBlock } from "@/components/SeoContentBlock";
+import { searchSeoContent } from "@/lib/seo-content";
 import bitcoinImage from "@/assets/bitcoin-market.jpg";
 import nbaImage from "@/assets/nba-championship.jpg";
 import iphoneImage from "@/assets/foldable-iphone.jpg";
@@ -564,6 +566,8 @@ export default function Search() {
           </>
         )}
       </div>
+
+      <SeoContentBlock title={searchSeoContent.title} sections={searchSeoContent.sections} />
     </div>
   );
 }

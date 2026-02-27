@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { MarketDialog } from "@/components/MarketDialog";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { SeoContentBlock } from "@/components/SeoContentBlock";
+import { portfolioSeoContent } from "@/lib/seo-content";
 import { PageHeader } from "@/components/PageHeader";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -410,6 +412,7 @@ const Portfolio = () => {
           />
         );
       })()}
+      <SeoContentBlock title={portfolioSeoContent.title} sections={portfolioSeoContent.sections} />
     </div>
   );
 };
