@@ -889,11 +889,12 @@ export default function Feed() {
 
   return (
     <div className="w-full max-w-[1600px] mx-auto px-4 md:px-6 lg:px-8 pb-24 sm:pb-0">
+      {/* 1. Filters - Sticky */}
+      <div className="sticky top-14 z-30 bg-background -mx-4 md:-mx-6 lg:-mx-8 px-4 md:px-6 lg:px-8 pb-1.5 -mt-1">
+        <FeedFilters filters={filters} onFiltersChange={setFilters} />
+      </div>
+
       <div className="space-y-1.5">
-        {/* 1. Filters */}
-        <div className="pt-2">
-          <FeedFilters filters={filters} onFiltersChange={setFilters} />
-        </div>
 
         {/* 2a. Mobile: Weekly Draw + Hero + Banner + Highlighted */}
         <MobileTopSection
