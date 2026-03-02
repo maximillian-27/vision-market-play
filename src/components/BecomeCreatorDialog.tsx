@@ -261,33 +261,24 @@ export function BecomeCreatorDialog({ open, onOpenChange, onSuccess }: BecomeCre
         {/* Step 3: Platforms */}
         {step === 3 && (
           <div className="space-y-4 py-2">
-            <div className="space-y-3">
-              <Label className="text-sm font-medium">Where are you active? (at least one required)</Label>
-              <div className="space-y-3">
-                {platforms.map((platform) => (
-                  <div key={platform.id} className="space-y-1.5">
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <platform.icon className="h-4 w-4" />
-                      <span>{platform.name}</span>
-                    </div>
-                    <div className="flex gap-2">
-                      <Input
-                        placeholder={platform.placeholder}
-                        value={socialLinks[platform.id] || ""}
-                        onChange={(e) => setSocialLinks({...socialLinks, [platform.id]: e.target.value})}
-                        className="flex-1 h-9 text-sm"
-                      />
-                      <Input
-                        type="number"
-                        placeholder="Followers"
-                        value={followerCounts[platform.id] || ""}
-                        onChange={(e) => setFollowerCounts({...followerCounts, [platform.id]: e.target.value})}
-                        className="w-24 h-9 text-sm"
-                      />
-                    </div>
+            <div className="space-y-1">
+              <Label className="text-sm font-medium">Where will you be sharing your markets?</Label>
+              <p className="text-xs text-muted-foreground">Add at least one link so we can verify your presence.</p>
+            </div>
+            <div className="space-y-2.5">
+              {platforms.map((platform) => (
+                <div key={platform.id} className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-lg bg-muted/50 flex items-center justify-center flex-shrink-0">
+                    <platform.icon className="h-4 w-4 text-muted-foreground" />
                   </div>
-                ))}
-              </div>
+                  <Input
+                    placeholder={platform.placeholder}
+                    value={socialLinks[platform.id] || ""}
+                    onChange={(e) => setSocialLinks({...socialLinks, [platform.id]: e.target.value})}
+                    className="flex-1 h-9 text-sm"
+                  />
+                </div>
+              ))}
             </div>
 
             <div className="flex justify-between pt-2">
