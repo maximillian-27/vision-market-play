@@ -577,7 +577,7 @@ function MobileWeeklyDrawBanner() {
           </div>
           <div className="flex items-center gap-0.5 text-[9px] bg-primary/10 px-1.5 py-0.5 rounded-full border border-primary/10 ml-auto">
             <Ticket className="h-2.5 w-2.5 text-primary" />
-            <span className="font-semibold text-foreground">{MY_ENTRIES} entries</span>
+            <span className="font-semibold text-foreground">1 ticket = 1 entry · You have {MY_ENTRIES}</span>
           </div>
         </div>
         {/* Row 2: Pot + hint + chevron */}
