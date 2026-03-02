@@ -275,21 +275,24 @@ export function Header() {
                     <>
                       <DropdownMenuSeparator className="my-1" />
                       <div className="px-2 py-1.5">
-                        <p className="text-[10px] text-muted-foreground mb-1.5">Legal & Info</p>
                         <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs">
-                          <a href="/privacy" className="text-muted-foreground hover:text-foreground">Privacy</a>
-                          <a href="/terms" className="text-muted-foreground hover:text-foreground">Terms</a>
-                          <a href="/careers" className="text-muted-foreground hover:text-foreground">Careers</a>
-                          <a href="/press" className="text-muted-foreground hover:text-foreground">Press</a>
+                          <a href="/about" className="text-muted-foreground hover:text-foreground transition-colors">About</a>
+                          <a href="/blog" className="text-muted-foreground hover:text-foreground transition-colors">Blog</a>
+                          <a href="/faq" className="text-muted-foreground hover:text-foreground transition-colors">FAQ</a>
+                          <a href="/contact" className="text-muted-foreground hover:text-foreground transition-colors">Contact</a>
+                          <a href="/privacy" className="text-muted-foreground hover:text-foreground transition-colors">Privacy</a>
+                          <a href="/terms" className="text-muted-foreground hover:text-foreground transition-colors">Terms</a>
+                          <a href="/careers" className="text-muted-foreground hover:text-foreground transition-colors">Careers</a>
+                          <a href="/press" className="text-muted-foreground hover:text-foreground transition-colors">Press</a>
                         </div>
                         <div className="flex items-center gap-3 mt-2">
-                          <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground">
+                          <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors">
                             <Twitter className="h-3.5 w-3.5" />
                           </a>
-                          <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground">
+                          <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors">
                             <Instagram className="h-3.5 w-3.5" />
                           </a>
-                          <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground">
+                          <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors">
                             <Linkedin className="h-3.5 w-3.5" />
                           </a>
                         </div>
