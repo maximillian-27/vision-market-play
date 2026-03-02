@@ -98,40 +98,6 @@ export function MarketsSidebar() {
         </div>
       </div>
 
-      {/* Biggest Pots */}
-      <div className="rounded-xl border border-border/40 bg-card overflow-hidden">
-        <div className="px-4 pt-3.5 pb-2">
-          <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Biggest Pots</h3>
-        </div>
-        <div className="px-2 pb-2">
-          {biggestMarkets.map((market) => (
-            <div
-              key={market.id}
-              onClick={() => navigate(`/market/${market.id}`)}
-              className="group cursor-pointer flex gap-3 p-2 rounded-lg hover:bg-muted/50 transition-colors"
-            >
-              <img
-                src={market.image}
-                alt={market.title}
-                className="w-11 h-11 rounded-lg object-cover flex-shrink-0"
-              />
-              <div className="flex-1 min-w-0 flex flex-col justify-center gap-0.5">
-                <h4 className="text-[13px] font-medium leading-snug line-clamp-2 group-hover:text-primary transition-colors">
-                  {market.title}
-                </h4>
-                <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
-                  <span className="font-bold text-primary">{market.pot}</span>
-                  <span className="text-muted-foreground/30">·</span>
-                  <span className="flex items-center gap-0.5">
-                    <Users className="h-3 w-3" />
-                    {market.players.toLocaleString()}
-                  </span>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
       {/* Highlighted Markets */}
       <div className="rounded-xl border border-border/40 bg-card overflow-hidden">
         <div className="px-4 pt-3.5 pb-2">
