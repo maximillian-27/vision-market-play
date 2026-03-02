@@ -1,10 +1,8 @@
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo } from "react";
 import { FeedFilters, FilterState } from "@/components/FeedFilters";
 import { MarketGridCard } from "@/components/MarketGridCard";
-import { MarketCard } from "@/components/MarketCard";
 import { Button } from "@/components/ui/button";
-import { Timer, Users, ArrowRight, ChevronDown, ChevronRight, ChevronLeft, Trophy, Ticket, Zap, Gift, Calendar, History, Info } from "lucide-react";
-import useEmblaCarousel from "embla-carousel-react";
+import { Timer, Users, ArrowRight, ChevronDown, ChevronRight, Trophy, Ticket, Zap, Gift, Calendar, History, Info } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { WeeklyDrawCard } from "@/components/WeeklyDrawCard";
@@ -667,70 +665,6 @@ function MobileWeeklyDrawBanner() {
   );
 }
 
-/* ── Mobile Highlighted Markets Slideshow ── */
-function MobileHighlightedSlideshow({ navigate }: { navigate: (path: string) => void }) {
-  const [emblaRef, emblaApi] = useEmblaCarousel({ align: "start", loop: false, skipSnaps: false });
-  const [selectedIndex, setSelectedIndex] = useState(0);
-
-  const onSelect = useCallback(() => {
-    if (!emblaApi) return;
-    setSelectedIndex(emblaApi.selectedScrollSnap());
-  }, [emblaApi]);
-
-  useState(() => {
-    if (!emblaApi) return;
-    emblaApi.on("select", onSelect);
-    onSelect();
-  });
-
-  // Re-attach listener when emblaApi becomes available
-  useMemo(() => {
-    if (!emblaApi) return;
-    emblaApi.on("select", onSelect);
-    onSelect();
-  }, [emblaApi, onSelect]);
-
-  return (
-    <div className="relative">
-      <div className="flex items-center justify-between mb-1.5">
-        <span className="text-[10px] uppercase tracking-wider font-bold text-primary">Highlighted</span>
-        <div className="flex items-center gap-1">
-          {highlightedMarkets.map((_, i) => (
-            <div
-              key={i}
-              className={`h-1 rounded-full transition-all duration-200 ${
-                i === selectedIndex ? "w-4 bg-primary" : "w-1.5 bg-muted-foreground/30"
-              }`}
-            />
-          ))}
-        </div>
-      </div>
-      <div className="overflow-hidden" ref={emblaRef}>
-        <div className="flex gap-2">
-          {highlightedMarkets.map((market) => (
-            <div key={market.id} className="flex-[0_0_85%] min-w-0">
-              <MarketCard
-                id={market.id}
-                creator={market.creator}
-                title={market.title}
-                image={market.image}
-                outcomes={market.outcomes}
-                yesPrice={market.yesPrice}
-                noPrice={market.noPrice}
-                volume={formatPot(market.pot)}
-                endsIn={market.endsIn}
-                likes={market.likes}
-                comments={market.comments}
-                hideEngagement
-              />
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
 /* ── Mobile Top Section (single hero + highlighted) ── */
 function MobileTopSection({
   heroMarket, navigate,
@@ -778,8 +712,29 @@ function MobileTopSection({
       {/* Gradient Banner */}
       <GradientDivider />
 
-      {/* Highlighted Markets — slideshow */}
-      <MobileHighlightedSlideshow navigate={navigate} />
+      {/* Highlighted Markets — stacked as regular cards */}
+      <div className="space-y-1.5">
+        {highlightedMarkets.map((market) => (
+          <MarketGridCard
+            key={market.id}
+            id={market.id}
+            creator={market.creator}
+            title={market.title}
+            image={market.image}
+            outcomes={market.outcomes}
+            yesPrice={market.yesPrice}
+            noPrice={market.noPrice}
+            volume={market.volume}
+            pot={market.pot}
+            players={market.players}
+            endsIn={market.endsIn}
+            status={market.status}
+            resolution={market.resolution}
+            disputeEndsIn={market.disputeEndsIn}
+            resolvedAt={market.resolvedAt}
+          />
+        ))}
+      </div>
     </div>
   );
 }
