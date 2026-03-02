@@ -108,10 +108,20 @@ export function Header() {
                   variant="ghost" 
                   size="sm"
                   onClick={() => setShowHowItWorks(true)}
-                  className="hidden md:flex text-muted-foreground text-xs font-medium hover:text-foreground"
+                  className="text-muted-foreground text-xs font-medium hover:text-foreground hidden md:flex"
                 >
                   How it works?
                 </Button>
+                {isMobile && (
+                  <Button 
+                    variant="ghost" 
+                    size="icon"
+                    onClick={() => setShowHowItWorks(true)}
+                    className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                  >
+                    <HelpCircle className="h-4 w-4" />
+                  </Button>
+                )}
 
                 {/* Notifications */}
                 <NotificationsDropdown />
