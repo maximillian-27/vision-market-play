@@ -88,7 +88,7 @@ export function HowItWorksDialog({ open, onOpenChange }: HowItWorksDialogProps) 
         <section className="text-center space-y-2 py-2">
           <h3 className="text-lg font-bold">What is Pollgy?</h3>
           <p className="text-sm text-muted-foreground leading-relaxed max-w-sm mx-auto">
-            Pollgy is a <span className="font-semibold text-foreground">prediction market platform</span> where you bet on real-world events and win real money.
+            Pollgy is the first <span className="font-semibold text-foreground">creator-led prediction market</span>. We put prediction markets in the hands of trusted voices from local communities.
           </p>
         </section>
 
