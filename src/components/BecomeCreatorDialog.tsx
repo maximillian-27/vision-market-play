@@ -6,7 +6,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { 
   Twitter, 
@@ -14,7 +13,6 @@ import {
   Instagram,
   ArrowRight,
   ArrowLeft,
-  Sparkles,
   Check,
   Clock,
   Globe,
@@ -56,11 +54,9 @@ export function BecomeCreatorDialog({ open, onOpenChange, onSuccess }: BecomeCre
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [socialLinks, setSocialLinks] = useState<Record<string, string>>({});
-  const [followerCounts, setFollowerCounts] = useState<Record<string, string>>({});
-  const [motivation, setMotivation] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const totalSteps = 5;
+  const totalSteps = 4;
 
   const handleTopicToggle = (topic: string) => {
     setSelectedTopics(prev => 
@@ -72,54 +68,41 @@ export function BecomeCreatorDialog({ open, onOpenChange, onSuccess }: BecomeCre
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
-    // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1500));
     setIsSubmitting(false);
-    setStep(6); // Success step
+    setStep(5); // Success step
     setTimeout(() => {
       onSuccess();
       onOpenChange(false);
-      // Reset form
-      setStep(1);
-      setSelectedTopics([]);
-      setOtherTopic("");
-      setName("");
-      setEmail("");
-      setPhone("");
-      setSocialLinks({});
-      setFollowerCounts({});
-      setMotivation("");
+      resetForm();
     }, 2500);
   };
 
+  const resetForm = () => {
+    setStep(1);
+    setSelectedTopics([]);
+    setOtherTopic("");
+    setName("");
+    setEmail("");
+    setPhone("");
+    setSocialLinks({});
+  };
+
   const handleClose = (open: boolean) => {
-    if (!open) {
-      // Reset form on close
-      setStep(1);
-      setSelectedTopics([]);
-      setOtherTopic("");
-      setName("");
-      setEmail("");
-      setPhone("");
-      setSocialLinks({});
-      setFollowerCounts({});
-      setMotivation("");
-    }
+    if (!open) resetForm();
     onOpenChange(open);
   };
 
   const isStep1Valid = selectedTopics.length > 0 || otherTopic.trim().length > 0;
   const isStep2Valid = name.trim().length > 2 && email.includes("@") && email.includes(".");
   const isStep3Valid = Object.values(socialLinks).some(link => link.trim().length > 0);
-  const isStep4Valid = motivation.trim().length > 20;
 
   const getStepTitle = () => {
     switch(step) {
       case 1: return "What topics do you cover?";
       case 2: return "Contact information";
       case 3: return "Your platforms";
-      case 4: return "Why become a creator?";
-      case 5: return "Review & Submit";
+      case 4: return "Review & Submit";
       default: return "Become a Creator";
     }
   };
@@ -136,7 +119,7 @@ export function BecomeCreatorDialog({ open, onOpenChange, onSuccess }: BecomeCre
           </button>
           <div>
             <h2 className="text-base font-semibold">Become a Creator</h2>
-            {step <= 5 && (
+            {step <= 4 && (
               <p className="text-xs text-muted-foreground">Step {step} of {totalSteps} — {getStepTitle()}</p>
             )}
           </div>
@@ -144,7 +127,7 @@ export function BecomeCreatorDialog({ open, onOpenChange, onSuccess }: BecomeCre
         <div className="p-6">
 
         {/* Progress bar */}
-        {step <= 5 && (
+        {step <= 4 && (
           <div className="flex gap-1">
             {Array.from({ length: totalSteps }).map((_, i) => (
               <div 
@@ -292,41 +275,6 @@ export function BecomeCreatorDialog({ open, onOpenChange, onSuccess }: BecomeCre
                 size="sm"
                 className="gap-2"
               >
-                Continue
-                <ArrowRight className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        )}
-
-        {/* Step 4: Motivation */}
-        {step === 4 && (
-          <div className="space-y-4 py-2">
-            <div className="space-y-2">
-              <Label htmlFor="motivation" className="text-sm font-medium">Why do you want to become a creator?</Label>
-              <p className="text-xs text-muted-foreground">Tell us about your goals and what markets you'd like to create</p>
-              <Textarea
-                id="motivation"
-                placeholder="I want to become a creator because..."
-                value={motivation}
-                onChange={(e) => setMotivation(e.target.value)}
-                className="resize-none text-sm min-h-[120px]"
-                rows={5}
-              />
-              <p className="text-xs text-muted-foreground text-right">{motivation.length} / 500</p>
-            </div>
-
-            <div className="flex justify-between pt-2">
-              <Button variant="outline" size="sm" onClick={() => setStep(3)} className="gap-2">
-                <ArrowLeft className="h-4 w-4" />
-                Back
-              </Button>
-              <Button 
-                onClick={() => setStep(5)} 
-                disabled={!isStep4Valid}
-                size="sm"
-                className="gap-2"
-              >
                 Review
                 <ArrowRight className="h-4 w-4" />
               </Button>
@@ -334,8 +282,8 @@ export function BecomeCreatorDialog({ open, onOpenChange, onSuccess }: BecomeCre
           </div>
         )}
 
-        {/* Step 5: Review */}
-        {step === 5 && (
+        {/* Step 4: Review */}
+        {step === 4 && (
           <div className="space-y-4 py-2">
             <div className="space-y-3 text-sm">
               <div className="p-3 rounded-lg bg-muted/50 space-y-2">
@@ -358,21 +306,18 @@ export function BecomeCreatorDialog({ open, onOpenChange, onSuccess }: BecomeCre
               <div className="p-3 rounded-lg bg-muted/50 space-y-1.5">
                 <p className="font-medium text-xs text-muted-foreground uppercase tracking-wide">Platforms</p>
                 {platforms.filter(p => socialLinks[p.id]).map(platform => (
-                  <div key={platform.id} className="flex items-center justify-between text-xs">
+                  <div key={platform.id} className="flex items-center text-xs">
                     <span className="flex items-center gap-1.5">
                       <platform.icon className="h-3.5 w-3.5" />
                       {platform.name}
                     </span>
-                    {followerCounts[platform.id] && (
-                      <span className="text-muted-foreground">{Number(followerCounts[platform.id]).toLocaleString()} followers</span>
-                    )}
                   </div>
                 ))}
               </div>
             </div>
 
             <div className="flex justify-between pt-2">
-              <Button variant="outline" size="sm" onClick={() => setStep(4)} className="gap-2">
+              <Button variant="outline" size="sm" onClick={() => setStep(3)} className="gap-2">
                 <ArrowLeft className="h-4 w-4" />
                 Back
               </Button>
@@ -389,7 +334,7 @@ export function BecomeCreatorDialog({ open, onOpenChange, onSuccess }: BecomeCre
         )}
 
         {/* Success Step */}
-        {step === 6 && (
+        {step === 5 && (
           <div className="py-8 text-center space-y-4">
             <div className="h-16 w-16 rounded-full bg-success/10 flex items-center justify-center mx-auto">
               <Clock className="h-8 w-8 text-success" />
