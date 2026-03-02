@@ -114,7 +114,7 @@ export function MarketsSidebar() {
           </h3>
         </div>
         <div className="px-2 pb-2 space-y-0.5">
-          {highlightedMarkets.map((market) => (
+          {highlightedMarkets.slice(0, 2).map((market) => (
             <div
               key={market.id}
               onClick={() => navigate(`/market/${market.id}`)}
