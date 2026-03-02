@@ -585,8 +585,8 @@ function MobileWeeklyDrawBanner() {
           <span className="text-sm font-extrabold text-foreground">${WEEKLY_POT.toLocaleString()}</span>
           <span className="text-[9px] text-muted-foreground">prize pool</span>
           <span className="text-[8px] text-muted-foreground/50 hidden min-[360px]:inline">— tap to {expanded ? "collapse" : "learn more"}</span>
-          <div className={`ml-auto shrink-0 flex items-center justify-center w-6 h-6 rounded-full bg-primary/15 border border-primary/20 transition-transform duration-200 ${expanded ? "rotate-90" : ""}`}>
-            <ChevronRight className="h-3.5 w-3.5 text-primary" />
+          <div className={`ml-auto shrink-0 flex items-center justify-center w-5 h-5 rounded-full bg-muted/60 transition-transform duration-200 ${expanded ? "rotate-90" : ""}`}>
+            <ChevronRight className="h-3 w-3 text-muted-foreground" />
           </div>
         </div>
       </button>
