@@ -1,8 +1,9 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { FeedFilters, FilterState } from "@/components/FeedFilters";
 import { MarketGridCard } from "@/components/MarketGridCard";
 import { Button } from "@/components/ui/button";
-import { Timer, Users, ArrowRight, ChevronDown, ChevronRight, Trophy, Ticket, Zap, Gift, Calendar, History, Info } from "lucide-react";
+import { Timer, Users, ArrowRight, ChevronDown, ChevronRight, ChevronLeft, Trophy, Ticket, Zap, Gift, Calendar, History, Info } from "lucide-react";
+import useEmblaCarousel from "embla-carousel-react";
 import { useNavigate } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { WeeklyDrawCard } from "@/components/WeeklyDrawCard";
@@ -665,6 +666,91 @@ function MobileWeeklyDrawBanner() {
   );
 }
 
+/* ── Mobile Highlighted Markets Slideshow ── */
+function MobileHighlightedSlideshow({ navigate }: { navigate: (path: string) => void }) {
+  const [emblaRef, emblaApi] = useEmblaCarousel({ align: "start", loop: false, skipSnaps: false });
+  const [selectedIndex, setSelectedIndex] = useState(0);
+
+  const onSelect = useCallback(() => {
+    if (!emblaApi) return;
+    setSelectedIndex(emblaApi.selectedScrollSnap());
+  }, [emblaApi]);
+
+  useState(() => {
+    if (!emblaApi) return;
+    emblaApi.on("select", onSelect);
+    onSelect();
+  });
+
+  // Re-attach listener when emblaApi becomes available
+  useMemo(() => {
+    if (!emblaApi) return;
+    emblaApi.on("select", onSelect);
+    onSelect();
+  }, [emblaApi, onSelect]);
+
+  return (
+    <div className="relative">
+      <div className="flex items-center justify-between mb-1.5">
+        <span className="text-[10px] uppercase tracking-wider font-bold text-primary">Highlighted</span>
+        <div className="flex items-center gap-1">
+          {highlightedMarkets.map((_, i) => (
+            <div
+              key={i}
+              className={`h-1 rounded-full transition-all duration-200 ${
+                i === selectedIndex ? "w-4 bg-primary" : "w-1.5 bg-muted-foreground/30"
+              }`}
+            />
+          ))}
+        </div>
+      </div>
+      <div className="overflow-hidden" ref={emblaRef}>
+        <div className="flex gap-2">
+          {highlightedMarkets.map((market) => (
+            <div key={market.id} className="flex-[0_0_85%] min-w-0">
+              <div
+                onClick={() => navigate(`/market/${market.id}`)}
+                className="relative rounded-xl overflow-hidden h-[140px] cursor-pointer"
+              >
+                <img src={market.image} alt={market.title} className="w-full h-full object-cover" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 p-3">
+                  <h4 className="text-white text-xs font-bold leading-snug line-clamp-2 mb-1">{market.title}</h4>
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <span className="text-primary text-[10px] font-extrabold">{formatPot(market.pot)} pot</span>
+                    <span className="text-white/60 text-[9px] flex items-center gap-0.5">
+                      <Users className="h-2.5 w-2.5" />{market.players.toLocaleString()}
+                    </span>
+                    <span className="text-white/50 text-[9px]">· {market.endsIn}</span>
+                  </div>
+                  {!market.outcomes ? (
+                    <div className="flex gap-1">
+                      <button className="flex-1 rounded py-1 text-center bg-yes/20 border border-yes/40 text-yes text-[10px] font-bold" onClick={(e) => { e.stopPropagation(); navigate(`/market/${market.id}`); }}>
+                        Yes {market.yesPrice}%
+                      </button>
+                      <button className="flex-1 rounded py-1 text-center bg-no/20 border border-no/40 text-no text-[10px] font-bold" onClick={(e) => { e.stopPropagation(); navigate(`/market/${market.id}`); }}>
+                        No {market.noPrice}%
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex gap-1 overflow-x-auto">
+                      {market.outcomes.slice(0, 3).map((o, i) => (
+                        <button key={i} className="shrink-0 px-2 py-1 rounded bg-white/10 border border-white/20 text-white text-[9px] font-bold" onClick={(e) => { e.stopPropagation(); navigate(`/market/${market.id}`); }}>
+                          {o.label} {o.price}%
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ── Mobile Top Section (single hero + highlighted) ── */
 function MobileTopSection({
   heroMarket, navigate,
@@ -712,29 +798,8 @@ function MobileTopSection({
       {/* Gradient Banner */}
       <GradientDivider />
 
-      {/* Highlighted Markets — stacked as regular cards */}
-      <div className="space-y-1.5">
-        {highlightedMarkets.map((market) => (
-          <MarketGridCard
-            key={market.id}
-            id={market.id}
-            creator={market.creator}
-            title={market.title}
-            image={market.image}
-            outcomes={market.outcomes}
-            yesPrice={market.yesPrice}
-            noPrice={market.noPrice}
-            volume={market.volume}
-            pot={market.pot}
-            players={market.players}
-            endsIn={market.endsIn}
-            status={market.status}
-            resolution={market.resolution}
-            disputeEndsIn={market.disputeEndsIn}
-            resolvedAt={market.resolvedAt}
-          />
-        ))}
-      </div>
+      {/* Highlighted Markets — slideshow */}
+      <MobileHighlightedSlideshow navigate={navigate} />
     </div>
   );
 }
