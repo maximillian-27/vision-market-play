@@ -6,13 +6,18 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Gift, Plus, Trophy, Tag, Star, MoreHorizontal, Copy, Pause, Trash2, Edit } from "lucide-react";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Gift, Plus, Trophy, Tag, Star, MoreHorizontal, Copy, Pause, Trash2, Edit, Ticket, RefreshCw, Send, Shuffle, Users, DollarSign, CheckCircle } from "lucide-react";
 import { toast } from "sonner";
 import { Progress } from "@/components/ui/progress";
 
@@ -30,17 +35,68 @@ const loyaltyTiers = [
   { name: "Platinum", minPoints: 25000, users: 340, perks: "15% cashback, personal manager", revenueFromTier: 890000, avgVolumePerUser: 2617600, upgradeRate: 0 },
 ];
 
+const drawParticipants = [
+  { id: 1, username: "CryptoKing99", email: "crypto@example.com", tickets: 24, totalVolume: 12400, joined: "2025-01-12" },
+  { id: 2, username: "BetMaster", email: "betmaster@example.com", tickets: 18, totalVolume: 9200, joined: "2025-01-13" },
+  { id: 3, username: "LuckyShot", email: "lucky@example.com", tickets: 45, totalVolume: 23100, joined: "2025-01-10" },
+  { id: 4, username: "MarketPro", email: "pro@example.com", tickets: 12, totalVolume: 6800, joined: "2025-01-14" },
+  { id: 5, username: "PredictorX", email: "pred@example.com", tickets: 31, totalVolume: 15900, joined: "2025-01-11" },
+  { id: 6, username: "OddsHunter", email: "odds@example.com", tickets: 8, totalVolume: 4100, joined: "2025-01-15" },
+  { id: 7, username: "TrendSetter", email: "trend@example.com", tickets: 56, totalVolume: 28700, joined: "2025-01-09" },
+  { id: 8, username: "WhaleBet", email: "whale@example.com", tickets: 72, totalVolume: 36800, joined: "2025-01-08" },
+  { id: 9, username: "SmartPlay", email: "smart@example.com", tickets: 15, totalVolume: 7600, joined: "2025-01-14" },
+  { id: 10, username: "RiskTaker", email: "risk@example.com", tickets: 22, totalVolume: 11300, joined: "2025-01-12" },
+];
+
 export const AdminBonusManagement = () => {
   const [bonusType, setBonusType] = useState("deposit_match");
+  const [drawStatus, setDrawStatus] = useState<"open" | "drawn" | "paid">("open");
+  const [selectedWinners, setSelectedWinners] = useState<number[]>([]);
+  const [participantSearch, setParticipantSearch] = useState("");
+
+  const totalTickets = drawParticipants.reduce((a, p) => a + p.tickets, 0);
+  const drawPool = totalTickets * 0.50; // $0.50 base × 2% draw contribution simplified
+  const prizePool = 2840; // mock total prize pool
+
+  const handleRandomDraw = () => {
+    // Weighted random selection based on ticket count
+    const shuffled = [...drawParticipants].sort(() => Math.random() - 0.5);
+    const winners = shuffled.slice(0, 10).map(p => p.id);
+    setSelectedWinners(winners);
+    setDrawStatus("drawn");
+    toast.success("10 winners drawn randomly (weighted by tickets)");
+  };
+
+  const handleSendFunds = () => {
+    setDrawStatus("paid");
+    toast.success(`Funds distributed to ${selectedWinners.length} winners`);
+  };
+
+  const handleRestart = () => {
+    setSelectedWinners([]);
+    setDrawStatus("open");
+    toast.success("Weekly draw reset — new cycle started");
+  };
+
+  const filteredParticipants = drawParticipants.filter(p =>
+    p.username.toLowerCase().includes(participantSearch.toLowerCase()) ||
+    p.email.toLowerCase().includes(participantSearch.toLowerCase())
+  );
+
+  const winnerPrizes = selectedWinners.map((id, idx) => {
+    const share = idx === 0 ? 0.50 : (0.50 / (selectedWinners.length - 1));
+    return { id, prize: prizePool * share };
+  });
 
   return (
     <div className="space-y-6">
       <Tabs defaultValue="active" className="space-y-4">
-        <TabsList className="bg-muted/50 p-1">
+        <TabsList className="bg-muted/50 p-1 flex-wrap h-auto gap-1">
           <TabsTrigger value="active" className="data-[state=active]:bg-background gap-2"><Gift className="h-4 w-4" /> Active Bonuses</TabsTrigger>
           <TabsTrigger value="create" className="data-[state=active]:bg-background gap-2"><Plus className="h-4 w-4" /> Create Bonus</TabsTrigger>
           <TabsTrigger value="promotions" className="data-[state=active]:bg-background gap-2"><Tag className="h-4 w-4" /> Promotions</TabsTrigger>
           <TabsTrigger value="loyalty" className="data-[state=active]:bg-background gap-2"><Trophy className="h-4 w-4" /> Loyalty Tiers</TabsTrigger>
+          <TabsTrigger value="draw" className="data-[state=active]:bg-background gap-2"><Ticket className="h-4 w-4" /> Weekly Draw</TabsTrigger>
         </TabsList>
 
         <TabsContent value="active" className="space-y-4">
@@ -191,6 +247,191 @@ export const AdminBonusManagement = () => {
               </Card>
             ))}
           </div>
+        </TabsContent>
+
+        {/* Weekly Draw */}
+        <TabsContent value="draw" className="space-y-4">
+          {/* Draw Status & Stats */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <Card className="border-border/40">
+              <CardContent className="p-4">
+                <p className="text-sm text-muted-foreground mb-1">Status</p>
+                <Badge className={drawStatus === "open" ? "bg-success/10 text-success border-0" : drawStatus === "drawn" ? "bg-warning/10 text-warning border-0" : "bg-primary/10 text-primary border-0"}>
+                  {drawStatus === "open" ? "Accepting Entries" : drawStatus === "drawn" ? "Winners Selected" : "Funds Sent"}
+                </Badge>
+              </CardContent>
+            </Card>
+            <Card className="border-border/40">
+              <CardContent className="p-4">
+                <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1"><Users className="h-3.5 w-3.5" /> Participants</div>
+                <p className="text-2xl font-bold">{drawParticipants.length}</p>
+              </CardContent>
+            </Card>
+            <Card className="border-border/40">
+              <CardContent className="p-4">
+                <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1"><Ticket className="h-3.5 w-3.5" /> Total Tickets</div>
+                <p className="text-2xl font-bold">{totalTickets.toLocaleString()}</p>
+              </CardContent>
+            </Card>
+            <Card className="border-border/40 bg-amber-500/5">
+              <CardContent className="p-4">
+                <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1"><DollarSign className="h-3.5 w-3.5" /> Prize Pool</div>
+                <p className="text-2xl font-bold text-amber-500">${prizePool.toLocaleString()}</p>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Actions */}
+          <Card className="border-border/40">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between flex-wrap gap-3">
+                <div>
+                  <h3 className="font-semibold">Draw Actions</h3>
+                  <p className="text-xs text-muted-foreground">1st place gets 50% · Remaining 50% split among 9 runners-up</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  {drawStatus === "open" && (
+                    <Button className="gap-2 bg-amber-500 hover:bg-amber-600 text-white" onClick={handleRandomDraw}>
+                      <Shuffle className="h-4 w-4" /> Draw 10 Winners
+                    </Button>
+                  )}
+                  {drawStatus === "drawn" && (
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button className="gap-2" variant="default">
+                          <Send className="h-4 w-4" /> Send Funds to Winners
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Confirm Fund Distribution</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            This will send ${prizePool.toLocaleString()} to {selectedWinners.length} winners. 1st place receives ${(prizePool * 0.5).toFixed(0)} and the rest split ${(prizePool * 0.5).toFixed(0)} evenly. This action cannot be undone.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction onClick={handleSendFunds}>Confirm & Send</AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  )}
+                  {drawStatus === "paid" && (
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button className="gap-2" variant="outline">
+                          <RefreshCw className="h-4 w-4" /> Restart Draw
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Restart Weekly Draw?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            This will clear all current participants and winners, starting a fresh weekly cycle. Make sure all funds have been distributed.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction onClick={handleRestart}>Restart</AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  )}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Winners (shown after draw) */}
+          {selectedWinners.length > 0 && (
+            <Card className="border-amber-500/30 bg-amber-500/5">
+              <CardContent className="p-4 space-y-3">
+                <div className="flex items-center gap-2">
+                  <Trophy className="h-5 w-5 text-amber-500" />
+                  <h3 className="font-semibold">Winners</h3>
+                  {drawStatus === "paid" && <Badge className="bg-success/10 text-success border-0 text-xs"><CheckCircle className="h-3 w-3 mr-1" /> Paid</Badge>}
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b border-border/40 text-left text-sm text-muted-foreground">
+                        <th className="p-3 font-medium">Place</th>
+                        <th className="p-3 font-medium">User</th>
+                        <th className="p-3 font-medium">Tickets</th>
+                        <th className="p-3 font-medium text-right">Prize</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {winnerPrizes.map((w, idx) => {
+                        const user = drawParticipants.find(p => p.id === w.id);
+                        return (
+                          <tr key={w.id} className="border-b border-border/20 hover:bg-muted/30 transition-colors">
+                            <td className="p-3">
+                              {idx === 0 ? (
+                                <Badge className="bg-amber-500/20 text-amber-500 border-0 text-xs">🥇 1st</Badge>
+                              ) : (
+                                <span className="text-sm text-muted-foreground">{idx + 1}th</span>
+                              )}
+                            </td>
+                            <td className="p-3">
+                              <p className="font-medium text-sm">{user?.username}</p>
+                              <p className="text-xs text-muted-foreground">{user?.email}</p>
+                            </td>
+                            <td className="p-3 text-sm">{user?.tickets}</td>
+                            <td className="p-3 text-right font-bold text-sm text-amber-500">${w.prize.toFixed(2)}</td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Participants */}
+          <Card className="border-border/40">
+            <CardContent className="p-4 space-y-3">
+              <div className="flex items-center justify-between flex-wrap gap-3">
+                <h3 className="font-semibold">All Participants</h3>
+                <div className="relative w-64">
+                  <Input placeholder="Search participants..." value={participantSearch} onChange={(e) => setParticipantSearch(e.target.value)} className="h-8 text-sm" />
+                </div>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b border-border/40 text-left text-sm text-muted-foreground">
+                      <th className="p-3 font-medium">User</th>
+                      <th className="p-3 font-medium">Tickets</th>
+                      <th className="p-3 font-medium">Volume</th>
+                      <th className="p-3 font-medium">Win Chance</th>
+                      <th className="p-3 font-medium">Joined</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredParticipants.map((p) => (
+                      <tr key={p.id} className={`border-b border-border/20 hover:bg-muted/30 transition-colors ${selectedWinners.includes(p.id) ? "bg-amber-500/5" : ""}`}>
+                        <td className="p-3">
+                          <div className="flex items-center gap-2">
+                            {selectedWinners.includes(p.id) && <Trophy className="h-3.5 w-3.5 text-amber-500" />}
+                            <div>
+                              <p className="font-medium text-sm">{p.username}</p>
+                              <p className="text-xs text-muted-foreground">{p.email}</p>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="p-3 text-sm font-medium">{p.tickets}</td>
+                        <td className="p-3 text-sm">${p.totalVolume.toLocaleString()}</td>
+                        <td className="p-3 text-sm">{((p.tickets / totalTickets) * 100).toFixed(1)}%</td>
+                        <td className="p-3 text-sm text-muted-foreground">{p.joined}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </CardContent>
+          </Card>
         </TabsContent>
       </Tabs>
     </div>
