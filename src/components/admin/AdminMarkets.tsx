@@ -80,6 +80,9 @@ export const AdminMarkets = () => {
   const [statusFilter, setStatusFilter] = useState("all");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [sortBy, setSortBy] = useState("potSize");
+  const [bannerMode, setBannerMode] = useState<"market" | "custom">("market");
+  const [bannerMarket, setBannerMarket] = useState("");
+  const [highlightedSlots, setHighlightedSlots] = useState(["1", "4", "", ""]);
 
   const filteredMarkets = markets.filter((m) => {
     const matchesSearch = m.title.toLowerCase().includes(searchQuery.toLowerCase()) || m.creator.toLowerCase().includes(searchQuery.toLowerCase());
@@ -453,65 +456,86 @@ export const AdminMarkets = () => {
 
         {/* Settings */}
         <TabsContent value="settings" className="space-y-4">
-          {/* Banner & Graphics */}
+          {/* Main Banner */}
           <Card className="border-border/40 max-w-2xl">
-            <CardContent className="p-6 space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="font-semibold text-lg">Banner & Graphics</h3>
-                  <p className="text-sm text-muted-foreground">Set the main homepage banner and featured market images</p>
-                </div>
+            <CardContent className="p-6 space-y-5">
+              <div>
+                <h3 className="font-semibold text-lg">Main Banner</h3>
+                <p className="text-sm text-muted-foreground">Choose a market to feature, or upload a custom graphic</p>
               </div>
 
-              {/* Main Banner */}
-              <div className="space-y-3">
-                <Label className="text-sm font-medium">Main Banner</Label>
-                <div className="border-2 border-dashed border-border/60 rounded-xl p-4 hover:border-primary/40 transition-colors">
-                  <div className="aspect-[3/1] bg-muted/30 rounded-lg flex items-center justify-center overflow-hidden relative group">
-                    <img src="/placeholder.svg" alt="Main banner preview" className="w-full h-full object-cover opacity-40" />
-                    <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
-                      <Sparkles className="h-8 w-8 text-muted-foreground" />
-                      <span className="text-sm text-muted-foreground">1200 × 400 recommended</span>
-                      <Button size="sm" variant="outline" className="gap-2" onClick={() => toast("File upload dialog would open here")}>
-                        <Edit className="h-3.5 w-3.5" /> Upload Banner
-                      </Button>
-                    </div>
-                  </div>
-                  <div className="mt-3 grid grid-cols-2 gap-3">
-                    <div><Label className="text-xs">Banner Title (optional)</Label><Input placeholder="e.g. Featured Market of the Week" className="mt-1 h-8 text-sm" /></div>
-                    <div><Label className="text-xs">Link to Market (optional)</Label>
-                      <Select>
-                        <SelectTrigger className="mt-1 h-8 text-sm"><SelectValue placeholder="Select market..." /></SelectTrigger>
-                        <SelectContent>
-                          {markets.map(m => <SelectItem key={m.id} value={String(m.id)}>{m.title}</SelectItem>)}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                </div>
+              {/* Banner Mode Toggle */}
+              <div className="flex gap-2">
+                <Button variant={bannerMode === "market" ? "default" : "outline"} size="sm" onClick={() => setBannerMode("market")}>Select Market</Button>
+                <Button variant={bannerMode === "custom" ? "default" : "outline"} size="sm" onClick={() => setBannerMode("custom")}>Custom Graphic</Button>
               </div>
 
-              {/* Featured Market Images */}
-              <div className="space-y-3">
-                <Label className="text-sm font-medium">Featured Market Images</Label>
-                <p className="text-xs text-muted-foreground">Set cover images for highlighted markets shown on the homepage</p>
-                <div className="grid grid-cols-2 gap-3">
-                  {markets.filter(m => m.highlighted).map(m => (
-                    <div key={m.id} className="border border-border/40 rounded-lg p-3 space-y-2">
-                      <div className="aspect-video bg-muted/30 rounded-md flex items-center justify-center overflow-hidden relative group">
-                        <img src="/placeholder.svg" alt={m.title} className="w-full h-full object-cover opacity-30" />
-                        <Button size="sm" variant="outline" className="absolute text-xs gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => toast(`Upload image for "${m.title}"`)}>
-                          <Edit className="h-3 w-3" /> Change
+              {bannerMode === "market" ? (
+                <div className="space-y-2">
+                  <Label className="text-xs">Featured Market</Label>
+                  <Select value={bannerMarket} onValueChange={setBannerMarket}>
+                    <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Choose a market to display as banner..." /></SelectTrigger>
+                    <SelectContent>
+                      {markets.map(m => <SelectItem key={m.id} value={String(m.id)}>{m.title}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                  {bannerMarket && (
+                    <p className="text-xs text-muted-foreground">The market card will be shown as the main banner on the homepage</p>
+                  )}
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  <div className="border-2 border-dashed border-border/60 rounded-xl p-4 hover:border-primary/40 transition-colors">
+                    <div className="aspect-[3/1] bg-muted/30 rounded-lg flex items-center justify-center relative group">
+                      <div className="flex flex-col items-center gap-2">
+                        <Sparkles className="h-6 w-6 text-muted-foreground" />
+                        <span className="text-xs text-muted-foreground">1200 × 400 recommended</span>
+                        <Button size="sm" variant="outline" className="gap-2 text-xs" onClick={() => toast("File upload dialog would open here")}>
+                          <Edit className="h-3.5 w-3.5" /> Upload Image
                         </Button>
                       </div>
-                      <p className="text-xs font-medium truncate">{m.title}</p>
-                      <Badge variant="outline" className="text-xs">{m.category}</Badge>
                     </div>
-                  ))}
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div><Label className="text-xs">Banner Title</Label><Input placeholder="e.g. Featured Market of the Week" className="mt-1 h-8 text-sm" /></div>
+                    <div><Label className="text-xs">Link URL (optional)</Label><Input placeholder="e.g. /market/1" className="mt-1 h-8 text-sm" /></div>
+                  </div>
                 </div>
-              </div>
+              )}
 
-              <Button className="w-full" onClick={() => toast.success("Banner & graphics saved")}>Save Graphics</Button>
+              <Button className="w-full" onClick={() => toast.success("Banner settings saved")}>Save Banner</Button>
+            </CardContent>
+          </Card>
+
+          {/* Highlighted Markets */}
+          <Card className="border-border/40 max-w-2xl">
+            <CardContent className="p-6 space-y-4">
+              <div>
+                <h3 className="font-semibold text-lg">Highlighted Markets</h3>
+                <p className="text-sm text-muted-foreground">Choose 4 markets to feature in the sidebar across the platform</p>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {[0, 1, 2, 3].map((slot) => (
+                  <div key={slot} className="border border-border/40 rounded-lg p-3 space-y-2">
+                    <Label className="text-xs text-muted-foreground">Slot {slot + 1}</Label>
+                    <Select value={highlightedSlots[slot]} onValueChange={(v) => { const next = [...highlightedSlots]; next[slot] = v; setHighlightedSlots(next); }}>
+                      <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Select market..." /></SelectTrigger>
+                      <SelectContent>
+                        {markets.map(m => <SelectItem key={m.id} value={String(m.id)}>{m.title}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                    {highlightedSlots[slot] && (
+                      <div className="flex items-center justify-between">
+                        <Badge variant="outline" className="text-xs">{markets.find(m => String(m.id) === highlightedSlots[slot])?.category}</Badge>
+                        <Button variant="ghost" size="sm" className="h-6 text-xs text-destructive" onClick={() => { const next = [...highlightedSlots]; next[slot] = ""; setHighlightedSlots(next); }}>
+                          <XCircle className="h-3 w-3 mr-1" /> Remove
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+              <Button className="w-full" onClick={() => toast.success("Highlighted markets saved")}>Save Highlights</Button>
             </CardContent>
           </Card>
 
