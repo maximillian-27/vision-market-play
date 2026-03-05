@@ -69,17 +69,21 @@ export const AdminTransactions = () => {
   const totalPages = Math.ceil(filteredTransactions.length / PAGE_SIZE);
   const paginatedTransactions = filteredTransactions.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
-  const totalDeposits = transactions.filter(t => t.type === "Deposit" && t.status === "Completed").reduce((acc, t) => acc + t.amount, 0);
-  const totalWithdrawals = transactions.filter(t => t.type === "Withdrawal" && t.status === "Completed").reduce((acc, t) => acc + t.amount, 0);
+  const completedDeposits = transactions.filter(t => t.type === "Deposit" && t.status === "Completed");
+  const completedWithdrawals = transactions.filter(t => t.type === "Withdrawal" && t.status === "Completed");
+  const totalDeposits = completedDeposits.reduce((acc, t) => acc + t.amount, 0);
+  const totalWithdrawals = completedWithdrawals.reduce((acc, t) => acc + t.amount, 0);
+  const avgDeposit = completedDeposits.length > 0 ? totalDeposits / completedDeposits.length : 0;
+  const avgWithdrawal = completedWithdrawals.length > 0 ? totalWithdrawals / completedWithdrawals.length : 0;
   const totalFees = transactions.filter(t => t.type === "Fee" && t.status === "Completed").reduce((acc, t) => acc + t.amount, 0);
   const pendingCount = transactions.filter(t => t.status === "Pending" || t.status === "Under Review").length;
 
   return (
     <div className="space-y-6">
-      {/* Time period selector + analytics */}
+      {/* Time period selector */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          {["24h", "30d", "90d", "all"].map((p) => (
+          {["24h", "7d", "30d", "90d", "all"].map((p) => (
             <Button key={p} variant={timePeriod === p ? "default" : "outline"} size="sm" onClick={() => setTimePeriod(p)}>
               {p === "all" ? "All Time" : p}
             </Button>
@@ -90,14 +94,16 @@ export const AdminTransactions = () => {
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
         <Card className="border-border/40 bg-success/5">
           <CardContent className="p-4">
-            <div className="flex items-center gap-2 text-success text-sm mb-1"><ArrowDownRight className="h-4 w-4" /> Total Deposits</div>
-            <p className="text-2xl font-bold">${totalDeposits.toLocaleString()}</p>
+            <div className="flex items-center gap-2 text-success text-sm mb-1"><ArrowDownRight className="h-4 w-4" /> Deposits</div>
+            <p className="text-2xl font-bold">{completedDeposits.length}</p>
+            <p className="text-xs text-muted-foreground mt-1">Avg: ${avgDeposit.toLocaleString(undefined, {maximumFractionDigits: 0})}</p>
           </CardContent>
         </Card>
         <Card className="border-border/40 bg-destructive/5">
           <CardContent className="p-4">
-            <div className="flex items-center gap-2 text-destructive text-sm mb-1"><ArrowUpRight className="h-4 w-4" /> Total Withdrawals</div>
-            <p className="text-2xl font-bold">${totalWithdrawals.toLocaleString()}</p>
+            <div className="flex items-center gap-2 text-destructive text-sm mb-1"><ArrowUpRight className="h-4 w-4" /> Withdrawals</div>
+            <p className="text-2xl font-bold">{completedWithdrawals.length}</p>
+            <p className="text-xs text-muted-foreground mt-1">Avg: ${avgWithdrawal.toLocaleString(undefined, {maximumFractionDigits: 0})}</p>
           </CardContent>
         </Card>
         <Card className="border-border/40">
