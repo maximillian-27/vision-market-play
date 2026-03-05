@@ -5,14 +5,13 @@ import {
   Receipt,
   ChevronLeft,
   ChevronRight,
-  Contact,
+  Users,
   Gift,
   BarChart3,
   Menu,
   Shield,
-  HeadphonesIcon,
   Megaphone,
-  Scale,
+  UserPlus,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -26,33 +25,36 @@ interface AdminSidebarProps {
   onToggleCollapse: () => void;
 }
 
-const operationsItems = [
+const coreItems = [
   { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { id: "analytics", label: "Analytics & BI", icon: BarChart3 },
+];
+
+const operationsItems = [
   { id: "markets", label: "Markets", icon: TrendingUp },
   { id: "transactions", label: "Transactions", icon: Receipt },
 ];
 
 const peopleItems = [
-  { id: "crm", label: "CRM", icon: Contact },
-  { id: "bonuses", label: "Loyalty & Bonuses", icon: Gift },
+  { id: "users", label: "Users", icon: Users },
+  { id: "creators", label: "Creators & Affiliates", icon: UserPlus },
 ];
 
-const growthItems = [
-  { id: "analytics", label: "Analytics & BI", icon: BarChart3 },
+const engageItems = [
+  { id: "bonuses", label: "Loyalty & Bonuses", icon: Gift },
   { id: "marketing", label: "Marketing", icon: Megaphone },
 ];
 
-const intelligenceItems = [
-  { id: "security", label: "Security", icon: Shield },
-  { id: "compliance", label: "Compliance", icon: Scale },
-  { id: "support", label: "Support", icon: HeadphonesIcon },
+const trustItems = [
+  { id: "trust", label: "Security & Compliance", icon: Shield },
 ];
 
 const sections = [
+  { label: "Core", items: coreItems },
   { label: "Operations", items: operationsItems },
   { label: "People", items: peopleItems },
-  { label: "Growth", items: growthItems },
-  { label: "Intelligence", items: intelligenceItems },
+  { label: "Engage", items: engageItems },
+  { label: "Trust", items: trustItems },
 ];
 
 const SidebarContent = ({
