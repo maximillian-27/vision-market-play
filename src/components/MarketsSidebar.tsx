@@ -35,32 +35,25 @@ const biggestMarkets = [
 
 const highlightedMarkets = [
   {
-    id: "1",
-    title: "Will Bitcoin reach $100,000 by end of 2025?",
-    pot: "$2.4M",
-    players: 12400,
+    id: "5",
+    title: "Will Tesla stock hit $400 by Q3 2025?",
+    pot: "$1.8M",
+    players: 9100,
     tag: "Trending",
-  },
-  {
-    id: "3",
-    title: "Will Apple release a foldable iPhone in 2025?",
-    pot: "$1.2M",
-    players: 6800,
-    tag: "Hot",
   },
   {
     id: "6",
-    title: "Will Tesla launch a $25,000 electric car in 2025?",
-    pot: "$987K",
-    players: 5400,
-    tag: "Popular",
+    title: "Will OpenAI release GPT-5 before September 2025?",
+    pot: "$1.2M",
+    players: 7600,
+    tag: "Hot",
   },
   {
-    id: "2",
-    title: "Who will win the NBA Championship this season?",
-    pot: "$890K",
-    players: 8200,
-    tag: "Trending",
+    id: "7",
+    title: "Will the US enter a recession in 2025?",
+    pot: "$950K",
+    players: 6400,
+    tag: "Popular",
   },
 ];
 
