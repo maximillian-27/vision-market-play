@@ -6,23 +6,25 @@ import { AdminSidebar, MobileAdminSidebar } from "@/components/admin/AdminSideba
 import { AdminDashboard } from "@/components/admin/AdminDashboard";
 import { AdminMarkets } from "@/components/admin/AdminMarkets";
 import { AdminTransactions } from "@/components/admin/AdminTransactions";
-import { AdminUsers } from "@/components/admin/AdminUsers";
-import { AdminCreatorsAffiliates } from "@/components/admin/AdminCreatorsAffiliates";
+import { AdminCRM } from "@/components/admin/AdminCRM";
 import { AdminBonusManagement } from "@/components/admin/AdminBonusManagement";
 import { AdminAnalytics } from "@/components/admin/AdminAnalytics";
+import { AdminSecurity } from "@/components/admin/AdminSecurity";
+import { AdminSupport } from "@/components/admin/AdminSupport";
 import { AdminMarketing } from "@/components/admin/AdminMarketing";
-import { AdminSecurityComplianceSupport } from "@/components/admin/AdminSecurityComplianceSupport";
+import { AdminCompliance } from "@/components/admin/AdminCompliance";
 
 const sectionTitles: Record<string, { title: string; description: string }> = {
   dashboard: { title: "Dashboard", description: "Platform overview, P&L, and key metrics" },
-  analytics: { title: "Analytics & BI", description: "Business intelligence, financials and insights" },
   markets: { title: "Markets", description: "Manage markets, disputes, resolutions and categories" },
   transactions: { title: "Transactions", description: "Crypto deposits, withdrawals, treasury and fee collections" },
-  users: { title: "Users", description: "User management, segments and campaigns" },
-  creators: { title: "Creators & Affiliates", description: "Creators, affiliates, payouts and automations" },
+  crm: { title: "CRM", description: "Users, creators, affiliates and payouts" },
   bonuses: { title: "Loyalty & Bonuses", description: "Bonuses, promotions and loyalty tiers" },
+  analytics: { title: "Analytics & BI", description: "Business intelligence, financials and insights" },
   marketing: { title: "Marketing", description: "SEO, campaigns, tracking and social presence" },
-  trust: { title: "Security & Compliance", description: "Security, compliance, KYC/AML and support" },
+  security: { title: "Security", description: "Wallet monitoring, fraud detection and audit log" },
+  compliance: { title: "Compliance", description: "KYC/AML, regulatory readiness and admin access" },
+  support: { title: "Customer Support", description: "Tickets, knowledge base and live chat" },
 };
 
 const Admin = () => {
@@ -32,14 +34,15 @@ const Admin = () => {
   const renderSectionContent = () => {
     switch (activeSection) {
       case "dashboard": return <AdminDashboard onNavigate={setActiveSection} />;
-      case "analytics": return <AdminAnalytics />;
       case "markets": return <AdminMarkets />;
       case "transactions": return <AdminTransactions />;
-      case "users": return <AdminUsers />;
-      case "creators": return <AdminCreatorsAffiliates />;
+      case "crm": return <AdminCRM />;
       case "bonuses": return <AdminBonusManagement />;
+      case "analytics": return <AdminAnalytics />;
       case "marketing": return <AdminMarketing />;
-      case "trust": return <AdminSecurityComplianceSupport />;
+      case "security": return <AdminSecurity />;
+      case "compliance": return <AdminCompliance />;
+      case "support": return <AdminSupport />;
       default: return <AdminDashboard onNavigate={setActiveSection} />;
     }
   };
