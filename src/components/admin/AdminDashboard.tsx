@@ -203,13 +203,13 @@ export const AdminDashboard = ({ onNavigate }: AdminDashboardProps) => {
 
       {/* Quick Stats: Creators, Affiliates, Avg Rev, Fee Today */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="border-border/40 cursor-pointer hover:bg-muted/30 transition-colors" onClick={() => onNavigate?.("crm")}>
+        <Card className="border-border/40 cursor-pointer hover:bg-muted/30 transition-colors" onClick={() => onNavigate?.("creators")}>
           <CardContent className="p-4">
             <div className="flex items-center gap-2 text-muted-foreground text-sm mb-1"><Star className="h-4 w-4" /> Total Creators</div>
             <p className="text-2xl font-bold">{dashboardStats.totalCreators}</p>
           </CardContent>
         </Card>
-        <Card className="border-border/40 cursor-pointer hover:bg-muted/30 transition-colors" onClick={() => onNavigate?.("crm")}>
+        <Card className="border-border/40 cursor-pointer hover:bg-muted/30 transition-colors" onClick={() => onNavigate?.("creators")}>
           <CardContent className="p-4">
             <div className="flex items-center gap-2 text-muted-foreground text-sm mb-1"><UserPlus className="h-4 w-4" /> Total Affiliates</div>
             <p className="text-2xl font-bold">{dashboardStats.totalAffiliates}</p>
@@ -231,7 +231,7 @@ export const AdminDashboard = ({ onNavigate }: AdminDashboardProps) => {
 
       {/* Stats Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="border-border/40 cursor-pointer hover:bg-muted/30 transition-colors" onClick={() => onNavigate?.("crm")}>
+        <Card className="border-border/40 cursor-pointer hover:bg-muted/30 transition-colors" onClick={() => onNavigate?.("users")}>
           <CardContent className="p-4">
             <div className="flex items-center gap-2 text-muted-foreground text-sm mb-1"><Users className="h-4 w-4" /> Total Users</div>
             <div className="flex items-center gap-2">
@@ -240,7 +240,7 @@ export const AdminDashboard = ({ onNavigate }: AdminDashboardProps) => {
             </div>
           </CardContent>
         </Card>
-        <Card className="border-border/40 cursor-pointer hover:bg-muted/30 transition-colors" onClick={() => onNavigate?.("crm")}>
+        <Card className="border-border/40 cursor-pointer hover:bg-muted/30 transition-colors" onClick={() => onNavigate?.("users")}>
           <CardContent className="p-4">
             <div className="flex items-center gap-2 text-muted-foreground text-sm mb-1"><Activity className="h-4 w-4" /> Active Users</div>
             <p className="text-2xl font-bold">{(dashboardStats.activeUsers / 1000).toFixed(1)}K</p>
@@ -289,7 +289,7 @@ export const AdminDashboard = ({ onNavigate }: AdminDashboardProps) => {
             </div>
           </CardContent>
         </Card>
-        <Card className="border-border/40 cursor-pointer hover:bg-muted/30 transition-colors" onClick={() => onNavigate?.("security")}>
+        <Card className="border-border/40 cursor-pointer hover:bg-muted/30 transition-colors" onClick={() => onNavigate?.("trust")}>
           <CardContent className="p-4">
             <div className="flex items-center gap-2 text-muted-foreground text-sm mb-1"><Shield className="h-4 w-4" /> KYC Reviews</div>
             <div className="flex items-center justify-between">
