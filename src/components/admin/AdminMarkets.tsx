@@ -20,14 +20,14 @@ import {
 import { toast } from "sonner";
 
 const markets = [
-  { id: 1, title: "Will Bitcoin reach $100K by end of 2025?", creator: "CryptoGuru", status: "Active", potSize: 245000, trades: 4234, feeRevenue: 7350, dateCreated: "2024-11-01", endDate: "2025-12-31", category: "Crypto" },
-  { id: 2, title: "Will AI replace most software jobs by 2030?", creator: "TechOracle", status: "Active", potSize: 132000, trades: 2890, feeRevenue: 3960, dateCreated: "2024-10-15", endDate: "2030-01-01", category: "Tech" },
-  { id: 3, title: "Will SpaceX land on Mars by 2026?", creator: "SpaceWatch", status: "Active", potSize: 98000, trades: 1756, feeRevenue: 2940, dateCreated: "2024-09-20", endDate: "2026-12-31", category: "Tech" },
-  { id: 4, title: "US Election 2024 Winner", creator: "PoliticalPredict", status: "Resolved", potSize: 525000, trades: 15600, feeRevenue: 15750, dateCreated: "2024-01-10", endDate: "2024-11-05", category: "Politics" },
-  { id: 5, title: "Super Bowl 2025 Champion", creator: "SportsAnalyst", status: "Active", potSize: 189000, trades: 5400, feeRevenue: 5670, dateCreated: "2024-08-01", endDate: "2025-02-11", category: "Sports" },
-  { id: 6, title: "Will Tesla stock hit $300?", creator: "MarketMaven", status: "Paused", potSize: 45000, trades: 950, feeRevenue: 1350, dateCreated: "2024-06-15", endDate: "2025-06-30", category: "Crypto" },
-  { id: 7, title: "Will Ethereum flip Bitcoin?", creator: "CryptoGuru", status: "Active", potSize: 72000, trades: 1678, feeRevenue: 2160, dateCreated: "2024-12-01", endDate: "2025-12-31", category: "Crypto" },
-  { id: 8, title: "Next FIFA World Cup host?", creator: "SportsAnalyst", status: "Active", potSize: 58000, trades: 1220, feeRevenue: 1740, dateCreated: "2024-11-20", endDate: "2026-06-01", category: "Sports" },
+  { id: 1, title: "Will Bitcoin reach $100K by end of 2025?", creator: "CryptoGuru", status: "Active", potSize: 245000, trades: 4234, feeRevenue: 7350, dateCreated: "2024-11-01", endDate: "2025-12-31", category: "Crypto", highlighted: true },
+  { id: 2, title: "Will AI replace most software jobs by 2030?", creator: "TechOracle", status: "Active", potSize: 132000, trades: 2890, feeRevenue: 3960, dateCreated: "2024-10-15", endDate: "2030-01-01", category: "Tech", highlighted: false },
+  { id: 3, title: "Will SpaceX land on Mars by 2026?", creator: "SpaceWatch", status: "Active", potSize: 98000, trades: 1756, feeRevenue: 2940, dateCreated: "2024-09-20", endDate: "2026-12-31", category: "Tech", highlighted: false },
+  { id: 4, title: "US Election 2024 Winner", creator: "PoliticalPredict", status: "Resolved", potSize: 525000, trades: 15600, feeRevenue: 15750, dateCreated: "2024-01-10", endDate: "2024-11-05", category: "Politics", highlighted: true },
+  { id: 5, title: "Super Bowl 2025 Champion", creator: "SportsAnalyst", status: "Active", potSize: 189000, trades: 5400, feeRevenue: 5670, dateCreated: "2024-08-01", endDate: "2025-02-11", category: "Sports", highlighted: false },
+  { id: 6, title: "Will Tesla stock hit $300?", creator: "MarketMaven", status: "Paused", potSize: 45000, trades: 950, feeRevenue: 1350, dateCreated: "2024-06-15", endDate: "2025-06-30", category: "Crypto", highlighted: false },
+  { id: 7, title: "Will Ethereum flip Bitcoin?", creator: "CryptoGuru", status: "Active", potSize: 72000, trades: 1678, feeRevenue: 2160, dateCreated: "2024-12-01", endDate: "2025-12-31", category: "Crypto", highlighted: false },
+  { id: 8, title: "Next FIFA World Cup host?", creator: "SportsAnalyst", status: "Active", potSize: 58000, trades: 1220, feeRevenue: 1740, dateCreated: "2024-11-20", endDate: "2026-06-01", category: "Sports", highlighted: false },
 ];
 
 const pendingMarkets = [
@@ -112,30 +112,52 @@ export const AdminMarkets = () => {
         ))}
       </div>
 
-      {/* Analytics row */}
+      {/* Status count cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="border-border/40">
+        <Card className="border-border/40 bg-success/5 cursor-pointer hover:bg-success/10 transition-colors">
           <CardContent className="p-4">
-            <div className="flex items-center gap-2 text-muted-foreground text-sm mb-1"><TrendingUp className="h-4 w-4" /> Active Markets</div>
+            <div className="flex items-center gap-2 text-success text-sm mb-1"><TrendingUp className="h-4 w-4" /> Open</div>
             <p className="text-2xl font-bold">{markets.filter(m => m.status === "Active").length}</p>
           </CardContent>
         </Card>
-        <Card className="border-border/40 bg-primary/5">
+        <Card className="border-border/40 bg-warning/5 cursor-pointer hover:bg-warning/10 transition-colors">
           <CardContent className="p-4">
-            <div className="flex items-center gap-2 text-primary text-sm mb-1"><DollarSign className="h-4 w-4" /> Total Pot Size</div>
+            <div className="flex items-center gap-2 text-warning text-sm mb-1"><Clock className="h-4 w-4" /> Pending</div>
+            <p className="text-2xl font-bold">{pendingMarkets.length}</p>
+          </CardContent>
+        </Card>
+        <Card className="border-border/40 bg-destructive/5 cursor-pointer hover:bg-destructive/10 transition-colors">
+          <CardContent className="p-4">
+            <div className="flex items-center gap-2 text-destructive text-sm mb-1"><AlertTriangle className="h-4 w-4" /> Disputed</div>
+            <p className="text-2xl font-bold">{disputes.length}</p>
+          </CardContent>
+        </Card>
+        <Card className="border-border/40 bg-primary/5 cursor-pointer hover:bg-primary/10 transition-colors">
+          <CardContent className="p-4">
+            <div className="flex items-center gap-2 text-primary text-sm mb-1"><CheckCircle className="h-4 w-4" /> Resolution</div>
+            <p className="text-2xl font-bold">{resolutions.filter(r => r.status !== "Approved").length}</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Summary metrics */}
+      <div className="grid grid-cols-3 gap-4">
+        <Card className="border-border/40">
+          <CardContent className="p-4">
+            <p className="text-sm text-muted-foreground mb-1">Total Pot Size</p>
             <p className="text-2xl font-bold text-primary">${(totalPotSize / 1000000).toFixed(2)}M</p>
           </CardContent>
         </Card>
         <Card className="border-border/40">
           <CardContent className="p-4">
-            <div className="flex items-center gap-2 text-muted-foreground text-sm mb-1"><BarChart3 className="h-4 w-4" /> Total Trades</div>
+            <p className="text-sm text-muted-foreground mb-1">Total Trades</p>
             <p className="text-2xl font-bold">{totalTrades.toLocaleString()}</p>
           </CardContent>
         </Card>
         <Card className="border-border/40 bg-success/5">
           <CardContent className="p-4">
-            <div className="flex items-center gap-2 text-success text-sm mb-1"><DollarSign className="h-4 w-4" /> Fee Revenue (3%)</div>
-            <p className="text-2xl font-bold">${totalFeeRevenue.toLocaleString()}</p>
+            <p className="text-sm text-muted-foreground mb-1">Fee Revenue (3%)</p>
+            <p className="text-2xl font-bold text-success">${totalFeeRevenue.toLocaleString()}</p>
           </CardContent>
         </Card>
       </div>
@@ -191,13 +213,14 @@ export const AdminMarkets = () => {
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-border/40 text-left text-sm text-muted-foreground">
+                    <th className="p-4 font-medium w-8"></th>
                     <th className="p-4 font-medium">Title</th>
                     <th className="p-4 font-medium">Creator</th>
                     <th className="p-4 font-medium">Status</th>
                     <th className="p-4 font-medium">Trades</th>
                     <th className="p-4 font-medium">Pot Size</th>
                     <th className="p-4 font-medium">Fee Revenue</th>
-                    <th className="p-4 font-medium">Created</th>
+                    <th className="p-4 font-medium">Start</th>
                     <th className="p-4 font-medium">End Date</th>
                     <th className="p-4 font-medium text-right">Actions</th>
                   </tr>
@@ -205,6 +228,11 @@ export const AdminMarkets = () => {
                 <tbody>
                   {paginatedMarkets.map((market) => (
                     <tr key={market.id} className="border-b border-border/20 hover:bg-muted/30 transition-colors">
+                      <td className="p-4">
+                        <button onClick={() => toast.success(`Market "${market.title}" ${market.highlighted ? 'unhighlighted' : 'highlighted'}`)} className="hover:scale-110 transition-transform">
+                          <Star className={`h-4 w-4 ${market.highlighted ? 'fill-warning text-warning' : 'text-muted-foreground/40'}`} />
+                        </button>
+                      </td>
                       <td className="p-4"><p className="font-medium line-clamp-1 max-w-xs">{market.title}</p></td>
                       <td className="p-4 text-sm">{market.creator}</td>
                       <td className="p-4">
@@ -221,8 +249,7 @@ export const AdminMarkets = () => {
                           <DropdownMenuContent align="end" className="bg-popover">
                             <DropdownMenuItem className="gap-2" onClick={() => toast(`Opening market: ${market.title}`)}><Eye className="h-4 w-4" /> View</DropdownMenuItem>
                             <DropdownMenuItem className="gap-2" onClick={() => toast(`Opening creator profile: ${market.creator}`)}><Star className="h-4 w-4" /> View Creator</DropdownMenuItem>
-                            <DropdownMenuItem className="gap-2" onClick={() => toast(`Opening market editor for "${market.title}"`)}><Edit className="h-4 w-4" /> Edit Market</DropdownMenuItem>
-                            <DropdownMenuItem className="gap-2" onClick={() => toast.success(`"${market.title}" featured on homepage`)}><Sparkles className="h-4 w-4" /> Feature Market</DropdownMenuItem>
+                            <DropdownMenuItem className="gap-2" onClick={() => toast.success(`"${market.title}" ${market.highlighted ? 'unhighlighted' : 'highlighted'}`)}><Sparkles className="h-4 w-4" /> {market.highlighted ? 'Unhighlight' : 'Highlight'}</DropdownMenuItem>
                             <DropdownMenuItem className="gap-2" onClick={() => toast.success(`Market "${market.title}" paused`)}><Pause className="h-4 w-4" /> Pause</DropdownMenuItem>
                             <DropdownMenuItem className="gap-2" onClick={() => toast(`Opening resolution for "${market.title}"`)}><CheckCircle className="h-4 w-4" /> Resolve</DropdownMenuItem>
                             <DropdownMenuItem className="gap-2 text-destructive" onClick={() => toast.success(`Market "${market.title}" cancelled`)}><XCircle className="h-4 w-4" /> Cancel</DropdownMenuItem>

@@ -100,6 +100,30 @@ const userActivityData = [
   { day: "Sun", dau: 8450, newUsers: 470 },
 ];
 
+const geoBreakdown = [
+  { country: "United States", users: 34500, percentage: 28, volume: "$4.2M" },
+  { country: "United Kingdom", users: 18200, percentage: 15, volume: "$2.1M" },
+  { country: "Serbia", users: 12400, percentage: 10, volume: "$1.4M" },
+  { country: "Romania", users: 9800, percentage: 8, volume: "$980K" },
+  { country: "Germany", users: 8900, percentage: 7, volume: "$1.1M" },
+  { country: "Greece", users: 7200, percentage: 6, volume: "$720K" },
+  { country: "Other", users: 33500, percentage: 26, volume: "$3.8M" },
+];
+
+const deviceSplit = [
+  { device: "Mobile", percentage: 62, users: 77190 },
+  { device: "Desktop", percentage: 31, users: 38595 },
+  { device: "Tablet", percentage: 7, users: 8715 },
+];
+
+const ageRanges = [
+  { range: "18-24", percentage: 22 },
+  { range: "25-34", percentage: 38 },
+  { range: "35-44", percentage: 24 },
+  { range: "45-54", percentage: 11 },
+  { range: "55+", percentage: 5 },
+];
+
 const categoryDistribution = [
   { name: "Sports", value: 35 },
   { name: "Crypto", value: 28 },
@@ -483,6 +507,59 @@ export const AdminAnalytics = () => {
               </div>
             </CardContent>
           </Card>
+
+          {/* Demographics */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            {/* Geo Breakdown */}
+            <Card className="border-border/40 lg:col-span-2">
+              <CardHeader className="pb-3"><CardTitle className="text-base">Geo Breakdown</CardTitle></CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {geoBreakdown.map((geo) => (
+                    <div key={geo.country} className="space-y-1">
+                      <div className="flex items-center justify-between text-sm">
+                        <span>{geo.country}</span>
+                        <span className="font-medium">{geo.users.toLocaleString()} users ({geo.percentage}%) · {geo.volume}</span>
+                      </div>
+                      <Progress value={geo.percentage} className="h-2" />
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Device Split & Age Ranges */}
+            <div className="space-y-4">
+              <Card className="border-border/40">
+                <CardHeader className="pb-3"><CardTitle className="text-base">Device Split</CardTitle></CardHeader>
+                <CardContent className="space-y-3">
+                  {deviceSplit.map((d) => (
+                    <div key={d.device} className="space-y-1">
+                      <div className="flex items-center justify-between text-sm">
+                        <span>{d.device}</span>
+                        <span className="font-medium">{d.percentage}%</span>
+                      </div>
+                      <Progress value={d.percentage} className="h-2" />
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+              <Card className="border-border/40">
+                <CardHeader className="pb-3"><CardTitle className="text-base">Age Distribution</CardTitle></CardHeader>
+                <CardContent className="space-y-3">
+                  {ageRanges.map((a) => (
+                    <div key={a.range} className="space-y-1">
+                      <div className="flex items-center justify-between text-sm">
+                        <span>{a.range}</span>
+                        <span className="font-medium">{a.percentage}%</span>
+                      </div>
+                      <Progress value={a.percentage} className="h-2" />
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+            </div>
+          </div>
         </TabsContent>
 
         {/* Markets */}
