@@ -453,6 +453,69 @@ export const AdminMarkets = () => {
 
         {/* Settings */}
         <TabsContent value="settings" className="space-y-4">
+          {/* Banner & Graphics */}
+          <Card className="border-border/40 max-w-2xl">
+            <CardContent className="p-6 space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="font-semibold text-lg">Banner & Graphics</h3>
+                  <p className="text-sm text-muted-foreground">Set the main homepage banner and featured market images</p>
+                </div>
+              </div>
+
+              {/* Main Banner */}
+              <div className="space-y-3">
+                <Label className="text-sm font-medium">Main Banner</Label>
+                <div className="border-2 border-dashed border-border/60 rounded-xl p-4 hover:border-primary/40 transition-colors">
+                  <div className="aspect-[3/1] bg-muted/30 rounded-lg flex items-center justify-center overflow-hidden relative group">
+                    <img src="/placeholder.svg" alt="Main banner preview" className="w-full h-full object-cover opacity-40" />
+                    <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
+                      <Sparkles className="h-8 w-8 text-muted-foreground" />
+                      <span className="text-sm text-muted-foreground">1200 × 400 recommended</span>
+                      <Button size="sm" variant="outline" className="gap-2" onClick={() => toast("File upload dialog would open here")}>
+                        <Edit className="h-3.5 w-3.5" /> Upload Banner
+                      </Button>
+                    </div>
+                  </div>
+                  <div className="mt-3 grid grid-cols-2 gap-3">
+                    <div><Label className="text-xs">Banner Title (optional)</Label><Input placeholder="e.g. Featured Market of the Week" className="mt-1 h-8 text-sm" /></div>
+                    <div><Label className="text-xs">Link to Market (optional)</Label>
+                      <Select>
+                        <SelectTrigger className="mt-1 h-8 text-sm"><SelectValue placeholder="Select market..." /></SelectTrigger>
+                        <SelectContent>
+                          {markets.map(m => <SelectItem key={m.id} value={String(m.id)}>{m.title}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Featured Market Images */}
+              <div className="space-y-3">
+                <Label className="text-sm font-medium">Featured Market Images</Label>
+                <p className="text-xs text-muted-foreground">Set cover images for highlighted markets shown on the homepage</p>
+                <div className="grid grid-cols-2 gap-3">
+                  {markets.filter(m => m.highlighted).map(m => (
+                    <div key={m.id} className="border border-border/40 rounded-lg p-3 space-y-2">
+                      <div className="aspect-video bg-muted/30 rounded-md flex items-center justify-center overflow-hidden relative group">
+                        <img src="/placeholder.svg" alt={m.title} className="w-full h-full object-cover opacity-30" />
+                        <Button size="sm" variant="outline" className="absolute text-xs gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => toast(`Upload image for "${m.title}"`)}>
+                          <Edit className="h-3 w-3" /> Change
+                        </Button>
+                      </div>
+                      <p className="text-xs font-medium truncate">{m.title}</p>
+                      <Badge variant="outline" className="text-xs">{m.category}</Badge>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <Button className="w-full" onClick={() => toast.success("Banner & graphics saved")}>Save Graphics</Button>
+            </CardContent>
+          </Card>
+
+          {/* Market Settings */}
           <Card className="border-border/40 max-w-2xl">
             <CardContent className="p-6 space-y-4">
               <h3 className="font-semibold text-lg">Market Settings</h3>
