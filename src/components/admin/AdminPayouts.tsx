@@ -3,13 +3,14 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { AdminFilters } from "./AdminFilters";
+import { ExportCsvButton } from "./ExportCsvButton";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, CheckCircle, RefreshCw, DollarSign, AlertTriangle } from "lucide-react";
+import { MoreHorizontal, CheckCircle, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 
 const payouts = [
@@ -57,6 +58,7 @@ export const AdminPayouts = () => {
           <SelectTrigger className="w-36 h-9"><SelectValue /></SelectTrigger>
           <SelectContent><SelectItem value="all">All Status</SelectItem><SelectItem value="pending">Pending</SelectItem><SelectItem value="paid">Paid</SelectItem><SelectItem value="failed">Failed</SelectItem></SelectContent>
         </Select>
+        <ExportCsvButton data={filtered} filename="payouts" />
       </div>
 
       <Card className="border-border/40">

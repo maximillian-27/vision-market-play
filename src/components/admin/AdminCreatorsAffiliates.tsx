@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AdminFilters } from "./AdminFilters";
+import { ExportCsvButton } from "./ExportCsvButton";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
@@ -17,13 +18,13 @@ import {
 import { toast } from "sonner";
 
 const profiles = [
-  { id: 1, name: "CryptoGuru", type: "Creator", tier: "Gold", markets: 12, referred: 0, volume: 890000, earnings: 5340, status: "Active" },
-  { id: 2, name: "TechOracle", type: "Creator", tier: "Silver", markets: 8, referred: 0, volume: 456000, earnings: 2736, status: "Active" },
-  { id: 3, name: "SportsAnalyst", type: "Creator", tier: "Platinum", markets: 15, referred: 0, volume: 1200000, earnings: 7200, status: "Active" },
-  { id: 4, name: "MarketMaven", type: "Creator", tier: "Bronze", markets: 0, referred: 0, volume: 0, earnings: 0, status: "Pending" },
-  { id: 5, name: "ReferKing", type: "Affiliate", tier: "Silver", markets: 0, referred: 145, volume: 234000, earnings: 1404, status: "Active" },
-  { id: 6, name: "PromoQueen", type: "Affiliate", tier: "Gold", markets: 0, referred: 312, volume: 567000, earnings: 3402, status: "Active" },
-  { id: 7, name: "AllRounder", type: "Both", tier: "Gold", markets: 6, referred: 78, volume: 345000, earnings: 4100, status: "Active" },
+  { id: 1, name: "CryptoGuru", type: "Creator", tier: "Gold", markets: 12, referred: 0, volume: 890000, earnings: 5340, pendingEarnings: 1200, revenueShare: 20, payoutWallet: "0x7a2...f3e1", lastPayout: "2025-01-12", status: "Active" },
+  { id: 2, name: "TechOracle", type: "Creator", tier: "Silver", markets: 8, referred: 0, volume: 456000, earnings: 2736, pendingEarnings: 680, revenueShare: 20, payoutWallet: "0x3b1...c8d2", lastPayout: "2025-01-12", status: "Active" },
+  { id: 3, name: "SportsAnalyst", type: "Creator", tier: "Platinum", markets: 15, referred: 0, volume: 1200000, earnings: 7200, pendingEarnings: 1800, revenueShare: 20, payoutWallet: "0x9f4...a7b3", lastPayout: "2025-01-12", status: "Active" },
+  { id: 4, name: "MarketMaven", type: "Creator", tier: "Bronze", markets: 0, referred: 0, volume: 0, earnings: 0, pendingEarnings: 0, revenueShare: 20, payoutWallet: "0x2c8...d5e9", lastPayout: "—", status: "Pending" },
+  { id: 5, name: "ReferKing", type: "Affiliate", tier: "Silver", markets: 0, referred: 145, volume: 234000, earnings: 1404, pendingEarnings: 320, revenueShare: 20, payoutWallet: "0x6e3...b1f4", lastPayout: "2025-01-12", status: "Active" },
+  { id: 6, name: "PromoQueen", type: "Affiliate", tier: "Gold", markets: 0, referred: 312, volume: 567000, earnings: 3402, pendingEarnings: 890, revenueShare: 20, payoutWallet: "0x8d7...c2a6", lastPayout: "2025-01-12", status: "Active" },
+  { id: 7, name: "AllRounder", type: "Both", tier: "Gold", markets: 6, referred: 78, volume: 345000, earnings: 4100, pendingEarnings: 560, revenueShare: 20, payoutWallet: "0x1a5...e4d8", lastPayout: "2025-01-05", status: "Active" },
 ];
 
 const pendingApplications = [
@@ -78,9 +79,9 @@ export const AdminCreatorsAffiliates = () => {
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
         <Card className="border-border/40"><CardContent className="p-4"><div className="flex items-center gap-1.5 text-muted-foreground text-xs mb-1"><Star className="h-3.5 w-3.5" /> Creators</div><p className="text-2xl font-bold">{creators.length}</p></CardContent></Card>
         <Card className="border-border/40"><CardContent className="p-4"><div className="flex items-center gap-1.5 text-muted-foreground text-xs mb-1"><UserPlus className="h-3.5 w-3.5" /> Affiliates</div><p className="text-2xl font-bold">{affiliates.length}</p></CardContent></Card>
-        <Card className="border-border/40 bg-success/5"><CardContent className="p-4"><p className="text-xs text-muted-foreground mb-1">Creator Earnings</p><p className="text-2xl font-bold">${(creators.reduce((a, c) => a + c.earnings, 0) / 1000).toFixed(1)}K</p></CardContent></Card>
-        <Card className="border-border/40 bg-primary/5"><CardContent className="p-4"><p className="text-xs text-muted-foreground mb-1">Affiliate Earnings</p><p className="text-2xl font-bold">${(affiliates.reduce((a, a2) => a + a2.earnings, 0) / 1000).toFixed(1)}K</p></CardContent></Card>
-        <Card className="border-border/40 bg-warning/5"><CardContent className="p-4"><div className="flex items-center gap-1.5 text-warning text-xs mb-1"><Clock className="h-3.5 w-3.5" /> Pending Apps</div><p className="text-2xl font-bold">{pendingCount}</p></CardContent></Card>
+        <Card className="border-border/40 bg-success/5"><CardContent className="p-4"><p className="text-xs text-muted-foreground mb-1">Total Earnings</p><p className="text-2xl font-bold">${(profiles.reduce((a, c) => a + c.earnings, 0) / 1000).toFixed(1)}K</p></CardContent></Card>
+        <Card className="border-border/40 bg-warning/5"><CardContent className="p-4"><p className="text-xs text-muted-foreground mb-1">Pending Earnings</p><p className="text-2xl font-bold">${(profiles.reduce((a, c) => a + c.pendingEarnings, 0) / 1000).toFixed(1)}K</p></CardContent></Card>
+        <Card className="border-border/40 bg-primary/5"><CardContent className="p-4"><div className="flex items-center gap-1.5 text-primary text-xs mb-1"><Clock className="h-3.5 w-3.5" /> Pending Apps</div><p className="text-2xl font-bold">{pendingCount}</p></CardContent></Card>
       </div>
 
       <Tabs defaultValue="profiles" className="space-y-4">
@@ -102,6 +103,7 @@ export const AdminCreatorsAffiliates = () => {
               <SelectTrigger className="w-40 h-9"><SelectValue /></SelectTrigger>
               <SelectContent><SelectItem value="all">All Types</SelectItem><SelectItem value="creator">Creators</SelectItem><SelectItem value="affiliate">Affiliates</SelectItem><SelectItem value="both">Both</SelectItem></SelectContent>
             </Select>
+            <ExportCsvButton data={filtered} filename="creators-affiliates" />
           </div>
 
           <Card className="border-border/40">
@@ -109,7 +111,7 @@ export const AdminCreatorsAffiliates = () => {
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-border/40 text-left text-xs text-muted-foreground">
-                    <th className="p-3 font-medium">Name</th><th className="p-3 font-medium">Type</th><th className="p-3 font-medium">Tier</th><th className="p-3 font-medium">Markets</th><th className="p-3 font-medium">Referred</th><th className="p-3 font-medium">Volume</th><th className="p-3 font-medium">Earnings</th><th className="p-3 font-medium text-right">Actions</th>
+                    <th className="p-3 font-medium">Name</th><th className="p-3 font-medium">Type</th><th className="p-3 font-medium">Tier</th><th className="p-3 font-medium">Rev Share</th><th className="p-3 font-medium">Payout Wallet</th><th className="p-3 font-medium">Lifetime Earnings</th><th className="p-3 font-medium">Pending</th><th className="p-3 font-medium">Last Payout</th><th className="p-3 font-medium text-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -118,10 +120,11 @@ export const AdminCreatorsAffiliates = () => {
                       <td className="p-3 font-medium text-sm">{p.name}</td>
                       <td className="p-3"><Badge className={`text-xs border-0 ${p.type === "Creator" ? "bg-primary/10 text-primary" : p.type === "Affiliate" ? "bg-accent text-accent-foreground" : "bg-warning/10 text-warning"}`}>{p.type}</Badge></td>
                       <td className="p-3"><Badge className={`text-xs border-0 ${tierColors[p.tier] || 'bg-muted text-muted-foreground'}`}>{p.tier}</Badge></td>
-                      <td className="p-3 text-sm">{p.markets || "—"}</td>
-                      <td className="p-3 text-sm">{p.referred || "—"}</td>
-                      <td className="p-3 text-sm font-medium">${p.volume.toLocaleString()}</td>
+                      <td className="p-3 text-sm">{p.revenueShare}%</td>
+                      <td className="p-3 text-xs font-mono text-muted-foreground">{p.payoutWallet}</td>
                       <td className="p-3 text-sm font-medium text-success">${p.earnings.toLocaleString()}</td>
+                      <td className="p-3 text-sm font-medium text-warning">${p.pendingEarnings.toLocaleString()}</td>
+                      <td className="p-3 text-xs text-muted-foreground">{p.lastPayout}</td>
                       <td className="p-3 text-right">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild><Button variant="ghost" size="icon" className="h-7 w-7"><MoreHorizontal className="h-4 w-4" /></Button></DropdownMenuTrigger>
@@ -163,9 +166,7 @@ export const AdminCreatorsAffiliates = () => {
                           </Badge>
                           <span className="text-xs text-muted-foreground font-mono">{app.wallet}</span>
                         </div>
-
                         <p className="text-sm text-muted-foreground">{app.bio}</p>
-
                         <div className="flex items-center gap-4 flex-wrap">
                           <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                             <FileText className="h-3.5 w-3.5" />
@@ -182,7 +183,6 @@ export const AdminCreatorsAffiliates = () => {
                           <span className="text-xs text-muted-foreground">Applied {app.appliedDate}</span>
                         </div>
                       </div>
-
                       <div className="flex items-center gap-2 shrink-0">
                         {app.status === "Pending" && (
                           <Button variant="outline" size="sm" className="h-8 text-xs gap-1.5" onClick={() => handleMarkReview(app.id)}>

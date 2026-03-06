@@ -5,10 +5,10 @@ import { AdminFilters } from "./AdminFilters";
 import {
   DollarSign, ArrowUpRight, ArrowDownRight, Clock, AlertTriangle,
   CheckCircle, Server, Wallet, Users, TrendingUp, Activity,
-  UserPlus, Percent, BarChart3,
+  UserPlus, Percent, BarChart3, PiggyBank, Receipt, Target,
 } from "lucide-react";
 import {
-  AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid,
+  AreaChart, Area, XAxis, YAxis, CartesianGrid,
   Tooltip, ResponsiveContainer, Legend,
 } from "recharts";
 
@@ -30,6 +30,17 @@ const financialKPIs = [
   { label: "Affiliate Earnings (20%)", value: "$10.1K", change: 15.3, icon: UserPlus },
 ];
 
+const financialHealthMetrics = [
+  { label: "Gross Platform Revenue", value: "$124.5K", subtitle: "Total fee revenue", icon: Receipt, color: "text-success" },
+  { label: "Net Platform Revenue", value: "$89.5K", subtitle: "After creator & affiliate shares", icon: PiggyBank, color: "text-primary" },
+  { label: "Total Payout Obligations", value: "$42.3K", subtitle: "Pending creator + affiliate payouts", icon: Wallet, color: "text-warning" },
+];
+
+const unitMetrics = [
+  { label: "ARPU", value: "$2.76", subtitle: "Avg Revenue Per Active User" },
+  { label: "Avg Trade Size", value: "$92.40", subtitle: "Average trade amount" },
+];
+
 const activityCards = [
   { label: "Total Users", value: "124.5K", nav: "users" },
   { label: "Active (30d)", value: "45.2K", nav: "users" },
@@ -47,14 +58,14 @@ const growthCards = [
 ];
 
 const tradingVolumeData = [
-  { date: "Jan 1", volume: 320000, fees: 9600, markets: 12 },
-  { date: "Jan 5", volume: 410000, fees: 12300, markets: 18 },
-  { date: "Jan 9", volume: 380000, fees: 11400, markets: 14 },
-  { date: "Jan 13", volume: 520000, fees: 15600, markets: 22 },
-  { date: "Jan 17", volume: 480000, fees: 14400, markets: 19 },
-  { date: "Jan 21", volume: 550000, fees: 16500, markets: 25 },
-  { date: "Jan 25", volume: 620000, fees: 18600, markets: 28 },
-  { date: "Jan 29", volume: 580000, fees: 17400, markets: 21 },
+  { date: "Jan 1", volume: 320000, fees: 9600 },
+  { date: "Jan 5", volume: 410000, fees: 12300 },
+  { date: "Jan 9", volume: 380000, fees: 11400 },
+  { date: "Jan 13", volume: 520000, fees: 15600 },
+  { date: "Jan 17", volume: 480000, fees: 14400 },
+  { date: "Jan 21", volume: 550000, fees: 16500 },
+  { date: "Jan 25", volume: 620000, fees: 18600 },
+  { date: "Jan 29", volume: 580000, fees: 17400 },
 ];
 
 const topMarkets = [
@@ -132,6 +143,32 @@ export const AdminDashboard = ({ onNavigate }: AdminDashboardProps) => {
         ))}
       </div>
 
+      {/* Row 2b — Financial Health + Unit Metrics */}
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+        {financialHealthMetrics.map((m) => (
+          <Card key={m.label} className="border-border/40">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-1.5 text-muted-foreground text-xs mb-1">
+                <m.icon className="h-3.5 w-3.5" /> {m.label}
+              </div>
+              <p className={`text-xl font-bold ${m.color}`}>{m.value}</p>
+              <p className="text-[10px] text-muted-foreground mt-0.5">{m.subtitle}</p>
+            </CardContent>
+          </Card>
+        ))}
+        {unitMetrics.map((m) => (
+          <Card key={m.label} className="border-border/40">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-1.5 text-muted-foreground text-xs mb-1">
+                <Target className="h-3.5 w-3.5" /> {m.label}
+              </div>
+              <p className="text-xl font-bold">{m.value}</p>
+              <p className="text-[10px] text-muted-foreground mt-0.5">{m.subtitle}</p>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
       {/* Row 3 — Platform Activity */}
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
         {activityCards.map((card) => (
@@ -178,8 +215,8 @@ export const AdminDashboard = ({ onNavigate }: AdminDashboardProps) => {
                 <XAxis dataKey="date" tick={tickStyle} />
                 <YAxis tick={tickStyle} tickFormatter={(v) => `$${(v / 1000).toFixed(0)}K`} />
                 <Tooltip contentStyle={tooltipStyle} formatter={(value: number, name: string) => [
-                  name === "volume" ? `$${value.toLocaleString()}` : name === "fees" ? `$${value.toLocaleString()}` : value,
-                  name === "volume" ? "Volume" : name === "fees" ? "Fee Revenue" : "Markets Created"
+                  `$${value.toLocaleString()}`,
+                  name === "volume" ? "Volume" : "Fee Revenue"
                 ]} />
                 <Legend />
                 <Area type="monotone" dataKey="volume" name="Volume" stroke="hsl(var(--primary))" fill="hsl(var(--primary) / 0.1)" strokeWidth={2} />
@@ -192,7 +229,6 @@ export const AdminDashboard = ({ onNavigate }: AdminDashboardProps) => {
 
       {/* Row 6 — Top Performance Tables */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        {/* Top Markets */}
         <Card className="border-border/40">
           <CardHeader className="pb-2"><CardTitle className="text-sm">Top Markets</CardTitle></CardHeader>
           <CardContent className="p-0">
@@ -201,10 +237,7 @@ export const AdminDashboard = ({ onNavigate }: AdminDashboardProps) => {
               <tbody>
                 {topMarkets.map((m) => (
                   <tr key={m.name} className="border-b border-border/20 hover:bg-muted/30 transition-colors">
-                    <td className="px-4 py-2.5">
-                      <p className="font-medium truncate max-w-[140px]">{m.name}</p>
-                      <p className="text-xs text-muted-foreground">{m.creator}</p>
-                    </td>
+                    <td className="px-4 py-2.5"><p className="font-medium truncate max-w-[140px]">{m.name}</p><p className="text-xs text-muted-foreground">{m.creator}</p></td>
                     <td className="px-4 py-2.5 font-medium">{m.volume}</td>
                     <td className="px-4 py-2.5 text-success font-medium">{m.fees}</td>
                   </tr>
@@ -214,7 +247,6 @@ export const AdminDashboard = ({ onNavigate }: AdminDashboardProps) => {
           </CardContent>
         </Card>
 
-        {/* Top Creators */}
         <Card className="border-border/40">
           <CardHeader className="pb-2"><CardTitle className="text-sm">Top Creators</CardTitle></CardHeader>
           <CardContent className="p-0">
@@ -223,10 +255,7 @@ export const AdminDashboard = ({ onNavigate }: AdminDashboardProps) => {
               <tbody>
                 {topCreators.map((c) => (
                   <tr key={c.name} className="border-b border-border/20 hover:bg-muted/30 transition-colors">
-                    <td className="px-4 py-2.5">
-                      <p className="font-medium">{c.name}</p>
-                      <p className="text-xs text-muted-foreground">{c.markets} markets</p>
-                    </td>
+                    <td className="px-4 py-2.5"><p className="font-medium">{c.name}</p><p className="text-xs text-muted-foreground">{c.markets} markets</p></td>
                     <td className="px-4 py-2.5 font-medium">{c.volume}</td>
                     <td className="px-4 py-2.5 text-success font-medium">{c.earnings}</td>
                   </tr>
@@ -236,7 +265,6 @@ export const AdminDashboard = ({ onNavigate }: AdminDashboardProps) => {
           </CardContent>
         </Card>
 
-        {/* Top Affiliates */}
         <Card className="border-border/40">
           <CardHeader className="pb-2"><CardTitle className="text-sm">Top Affiliates</CardTitle></CardHeader>
           <CardContent className="p-0">
@@ -245,10 +273,7 @@ export const AdminDashboard = ({ onNavigate }: AdminDashboardProps) => {
               <tbody>
                 {topAffiliates.map((a) => (
                   <tr key={a.name} className="border-b border-border/20 hover:bg-muted/30 transition-colors">
-                    <td className="px-4 py-2.5">
-                      <p className="font-medium">{a.name}</p>
-                      <p className="text-xs text-muted-foreground">{a.referred} referred</p>
-                    </td>
+                    <td className="px-4 py-2.5"><p className="font-medium">{a.name}</p><p className="text-xs text-muted-foreground">{a.referred} referred</p></td>
                     <td className="px-4 py-2.5 font-medium">{a.volume}</td>
                     <td className="px-4 py-2.5 text-success font-medium">{a.earnings}</td>
                   </tr>
@@ -269,11 +294,7 @@ export const AdminDashboard = ({ onNavigate }: AdminDashboardProps) => {
         <CardContent className="p-0">
           <div className="grid grid-cols-2 lg:grid-cols-5 divide-x divide-border/40">
             {alerts.map((alert) => (
-              <button
-                key={alert.label}
-                className="p-4 hover:bg-muted/30 transition-colors text-left"
-                onClick={() => onNavigate?.(alert.nav)}
-              >
+              <button key={alert.label} className="p-4 hover:bg-muted/30 transition-colors text-left" onClick={() => onNavigate?.(alert.nav)}>
                 <div className={`flex items-center gap-1.5 ${alert.color} text-xs mb-1`}>
                   <alert.icon className="h-3.5 w-3.5" /> {alert.label}
                 </div>

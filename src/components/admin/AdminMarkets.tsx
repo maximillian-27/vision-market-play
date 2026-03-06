@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AdminFilters } from "./AdminFilters";
+import { ExportCsvButton } from "./ExportCsvButton";
+import { DetailDrawer } from "./DetailDrawer";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
@@ -13,19 +15,19 @@ import {
 } from "@/components/ui/dropdown-menu";
 import {
   Search, MoreHorizontal, Eye, Pause, CheckCircle, XCircle,
-  TrendingUp, Clock, AlertTriangle, MessageSquare, Star, Sparkles,
+  TrendingUp, Clock, AlertTriangle, MessageSquare, Sparkles,
   ChevronLeft, ChevronRight,
 } from "lucide-react";
 import { toast } from "sonner";
 
 const markets = [
-  { id: 1, title: "Will Bitcoin reach $100K by end of 2025?", creator: "CryptoGuru", status: "Active", potSize: 245000, trades: 4234, feeRevenue: 7350, dateCreated: "2024-11-01", endDate: "2025-12-31", category: "Crypto" },
-  { id: 2, title: "Will AI replace most software jobs by 2030?", creator: "TechOracle", status: "Active", potSize: 132000, trades: 2890, feeRevenue: 3960, dateCreated: "2024-10-15", endDate: "2030-01-01", category: "Tech" },
-  { id: 3, title: "Will SpaceX land on Mars by 2026?", creator: "SpaceWatch", status: "Active", potSize: 98000, trades: 1756, feeRevenue: 2940, dateCreated: "2024-09-20", endDate: "2026-12-31", category: "Tech" },
-  { id: 4, title: "US Election 2024 Winner", creator: "PoliticalPredict", status: "Resolved", potSize: 525000, trades: 15600, feeRevenue: 15750, dateCreated: "2024-01-10", endDate: "2024-11-05", category: "Politics" },
-  { id: 5, title: "Super Bowl 2025 Champion", creator: "SportsAnalyst", status: "Active", potSize: 189000, trades: 5400, feeRevenue: 5670, dateCreated: "2024-08-01", endDate: "2025-02-11", category: "Sports" },
-  { id: 6, title: "Will Tesla stock hit $300?", creator: "MarketMaven", status: "Paused", potSize: 45000, trades: 950, feeRevenue: 1350, dateCreated: "2024-06-15", endDate: "2025-06-30", category: "Crypto" },
-  { id: 7, title: "Will Ethereum flip Bitcoin?", creator: "CryptoGuru", status: "Active", potSize: 72000, trades: 1678, feeRevenue: 2160, dateCreated: "2024-12-01", endDate: "2025-12-31", category: "Crypto" },
+  { id: 1, title: "Will Bitcoin reach $100K by end of 2025?", creator: "CryptoGuru", creatorVerified: true, status: "Active", potSize: 245000, trades: 4234, participants: 1247, feeRevenue: 7350, dateCreated: "2024-11-01", endDate: "2025-12-31", category: "Crypto", settlement: "Pending" },
+  { id: 2, title: "Will AI replace most software jobs by 2030?", creator: "TechOracle", creatorVerified: true, status: "Active", potSize: 132000, trades: 2890, participants: 892, feeRevenue: 3960, dateCreated: "2024-10-15", endDate: "2030-01-01", category: "Tech", settlement: "Pending" },
+  { id: 3, title: "Will SpaceX land on Mars by 2026?", creator: "SpaceWatch", creatorVerified: false, status: "Active", potSize: 98000, trades: 1756, participants: 534, feeRevenue: 2940, dateCreated: "2024-09-20", endDate: "2026-12-31", category: "Tech", settlement: "Pending" },
+  { id: 4, title: "US Election 2024 Winner", creator: "PoliticalPredict", creatorVerified: true, status: "Resolved", potSize: 525000, trades: 15600, participants: 4521, feeRevenue: 15750, dateCreated: "2024-01-10", endDate: "2024-11-05", category: "Politics", settlement: "Resolved" },
+  { id: 5, title: "Super Bowl 2025 Champion", creator: "SportsAnalyst", creatorVerified: true, status: "Active", potSize: 189000, trades: 5400, participants: 1823, feeRevenue: 5670, dateCreated: "2024-08-01", endDate: "2025-02-11", category: "Sports", settlement: "Pending" },
+  { id: 6, title: "Will Tesla stock hit $300?", creator: "MarketMaven", creatorVerified: false, status: "Paused", potSize: 45000, trades: 950, participants: 312, feeRevenue: 1350, dateCreated: "2024-06-15", endDate: "2025-06-30", category: "Crypto", settlement: "Pending" },
+  { id: 7, title: "Will Ethereum flip Bitcoin?", creator: "CryptoGuru", creatorVerified: true, status: "Active", potSize: 72000, trades: 1678, participants: 623, feeRevenue: 2160, dateCreated: "2024-12-01", endDate: "2025-12-31", category: "Crypto", settlement: "Pending" },
 ];
 
 const pendingMarkets = [
@@ -66,6 +68,10 @@ export const AdminMarkets = () => {
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [sortBy, setSortBy] = useState("potSize");
   const [page, setPage] = useState(1);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [selectedMarket, setSelectedMarket] = useState<typeof markets[0] | null>(null);
+  const [disputeDrawerOpen, setDisputeDrawerOpen] = useState(false);
+  const [selectedDispute, setSelectedDispute] = useState<typeof disputes[0] | null>(null);
 
   const filtered = markets.filter((m) => {
     const matchesSearch = m.title.toLowerCase().includes(searchQuery.toLowerCase()) || m.creator.toLowerCase().includes(searchQuery.toLowerCase());
@@ -79,11 +85,13 @@ export const AdminMarkets = () => {
   const activeCount = markets.filter(m => m.status === "Active").length;
   const totalPot = markets.filter(m => m.status === "Active").reduce((a, m) => a + m.potSize, 0);
 
+  const openMarketDrawer = (m: typeof markets[0]) => { setSelectedMarket(m); setDrawerOpen(true); };
+  const openDisputeDrawer = (d: typeof disputes[0]) => { setSelectedDispute(d); setDisputeDrawerOpen(true); };
+
   return (
     <div className="space-y-5">
       <AdminFilters showCreator />
 
-      {/* Top Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
         <Card className="border-border/40 bg-success/5"><CardContent className="p-4"><p className="text-xs text-muted-foreground mb-1">Active</p><p className="text-2xl font-bold">{activeCount}</p></CardContent></Card>
         <Card className="border-border/40 bg-warning/5"><CardContent className="p-4"><p className="text-xs text-muted-foreground mb-1">Pending Approval</p><p className="text-2xl font-bold">{pendingMarkets.length}</p></CardContent></Card>
@@ -120,6 +128,7 @@ export const AdminMarkets = () => {
               <SelectTrigger className="w-32 h-9"><SelectValue /></SelectTrigger>
               <SelectContent><SelectItem value="potSize">Pot Size</SelectItem><SelectItem value="trades">Trades</SelectItem><SelectItem value="feeRevenue">Fee Revenue</SelectItem></SelectContent>
             </Select>
+            <ExportCsvButton data={filtered} filename="markets" />
           </div>
           <Card className="border-border/40">
             <div className="overflow-x-auto">
@@ -130,10 +139,11 @@ export const AdminMarkets = () => {
                     <th className="p-3 font-medium">Creator</th>
                     <th className="p-3 font-medium">Category</th>
                     <th className="p-3 font-medium">Status</th>
+                    <th className="p-3 font-medium">Participants</th>
                     <th className="p-3 font-medium">Trades</th>
                     <th className="p-3 font-medium">Pot Size</th>
                     <th className="p-3 font-medium">Fee Rev</th>
-                    <th className="p-3 font-medium">Start</th>
+                    <th className="p-3 font-medium">Settlement</th>
                     <th className="p-3 font-medium">End</th>
                     <th className="p-3 font-medium text-right">Actions</th>
                   </tr>
@@ -142,19 +152,27 @@ export const AdminMarkets = () => {
                   {paginated.map((m) => (
                     <tr key={m.id} className="border-b border-border/20 hover:bg-muted/30 transition-colors">
                       <td className="p-3"><p className="font-medium line-clamp-1 max-w-[200px] text-sm">{m.title}</p></td>
-                      <td className="p-3 text-sm">{m.creator}</td>
+                      <td className="p-3 text-sm">
+                        <div className="flex items-center gap-1.5">
+                          {m.creator}
+                          <Badge className={`text-[10px] border-0 ${m.creatorVerified ? "bg-success/10 text-success" : "bg-warning/10 text-warning"}`}>
+                            {m.creatorVerified ? "Verified" : "Unverified"}
+                          </Badge>
+                        </div>
+                      </td>
                       <td className="p-3"><Badge variant="outline" className="text-xs">{m.category}</Badge></td>
                       <td className="p-3"><Badge variant={m.status === "Active" ? "default" : m.status === "Resolved" ? "secondary" : "outline"} className="text-xs">{m.status}</Badge></td>
+                      <td className="p-3 text-sm">{m.participants.toLocaleString()}</td>
                       <td className="p-3 text-sm">{m.trades.toLocaleString()}</td>
                       <td className="p-3 text-sm font-medium text-primary">${m.potSize.toLocaleString()}</td>
                       <td className="p-3 text-sm text-success font-medium">${m.feeRevenue.toLocaleString()}</td>
-                      <td className="p-3 text-xs text-muted-foreground">{m.dateCreated}</td>
+                      <td className="p-3"><Badge variant={m.settlement === "Resolved" ? "default" : "secondary"} className="text-xs">{m.settlement}</Badge></td>
                       <td className="p-3 text-xs">{m.endDate}</td>
                       <td className="p-3 text-right">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild><Button variant="ghost" size="icon" className="h-7 w-7"><MoreHorizontal className="h-4 w-4" /></Button></DropdownMenuTrigger>
                           <DropdownMenuContent align="end" className="bg-popover">
-                            <DropdownMenuItem className="gap-2" onClick={() => toast(`Viewing ${m.title}`)}><Eye className="h-4 w-4" /> View</DropdownMenuItem>
+                            <DropdownMenuItem className="gap-2" onClick={() => openMarketDrawer(m)}><Eye className="h-4 w-4" /> View</DropdownMenuItem>
                             <DropdownMenuItem className="gap-2" onClick={() => toast.success(`Paused`)}><Pause className="h-4 w-4" /> Pause</DropdownMenuItem>
                             <DropdownMenuItem className="gap-2" onClick={() => toast(`Resolving`)}><CheckCircle className="h-4 w-4" /> Resolve</DropdownMenuItem>
                             <DropdownMenuItem className="gap-2 text-destructive" onClick={() => toast.success(`Cancelled`)}><XCircle className="h-4 w-4" /> Cancel</DropdownMenuItem>
@@ -254,7 +272,7 @@ export const AdminMarkets = () => {
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild><Button variant="ghost" size="icon" className="h-7 w-7"><MoreHorizontal className="h-4 w-4" /></Button></DropdownMenuTrigger>
                           <DropdownMenuContent align="end" className="bg-popover">
-                            <DropdownMenuItem className="gap-2" onClick={() => toast("Investigating")}><Eye className="h-4 w-4" /> Investigate</DropdownMenuItem>
+                            <DropdownMenuItem className="gap-2" onClick={() => openDisputeDrawer(d)}><Eye className="h-4 w-4" /> View Details</DropdownMenuItem>
                             <DropdownMenuItem className="gap-2 text-success" onClick={() => toast.success("Approved")}><CheckCircle className="h-4 w-4" /> Approve</DropdownMenuItem>
                             <DropdownMenuItem className="gap-2 text-destructive" onClick={() => toast.success("Rejected")}><XCircle className="h-4 w-4" /> Reject</DropdownMenuItem>
                           </DropdownMenuContent>
@@ -291,6 +309,45 @@ export const AdminMarkets = () => {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Market Detail Drawer */}
+      {selectedMarket && (
+        <DetailDrawer
+          open={drawerOpen}
+          onOpenChange={setDrawerOpen}
+          title={selectedMarket.title}
+          badge={{ label: selectedMarket.status, variant: selectedMarket.status === "Active" ? "default" : "secondary" }}
+          fields={[
+            { label: "Creator", value: selectedMarket.creator },
+            { label: "Creator Verified", value: selectedMarket.creatorVerified ? "Yes" : "No" },
+            { label: "Category", value: selectedMarket.category },
+            { label: "Participants", value: selectedMarket.participants.toLocaleString() },
+            { label: "Trades", value: selectedMarket.trades.toLocaleString() },
+            { label: "Pot Size", value: `$${selectedMarket.potSize.toLocaleString()}` },
+            { label: "Fee Revenue", value: `$${selectedMarket.feeRevenue.toLocaleString()}` },
+            { label: "Settlement", value: selectedMarket.settlement },
+            { label: "Created", value: selectedMarket.dateCreated },
+            { label: "End Date", value: selectedMarket.endDate },
+          ]}
+        />
+      )}
+
+      {/* Dispute Detail Drawer */}
+      {selectedDispute && (
+        <DetailDrawer
+          open={disputeDrawerOpen}
+          onOpenChange={setDisputeDrawerOpen}
+          title={`Dispute: ${selectedDispute.market}`}
+          badge={{ label: selectedDispute.priority, variant: selectedDispute.priority === "Critical" ? "destructive" : "secondary" }}
+          fields={[
+            { label: "Market", value: selectedDispute.market },
+            { label: "User", value: selectedDispute.user },
+            { label: "Reason", value: selectedDispute.reason },
+            { label: "Amount", value: `$${selectedDispute.amount.toLocaleString()}` },
+            { label: "Priority", value: selectedDispute.priority },
+          ]}
+        />
+      )}
     </div>
   );
 };
