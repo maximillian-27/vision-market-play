@@ -2,10 +2,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { AdminFilters } from "./AdminFilters";
+import { exportDashboardPdf } from "./ExportDropdown";
 import {
   DollarSign, ArrowUpRight, ArrowDownRight, Clock, AlertTriangle,
   CheckCircle, Server, Wallet, Users, TrendingUp, Activity,
-  UserPlus, Percent, BarChart3, PiggyBank, Receipt, Target,
+  UserPlus, Percent, BarChart3, PiggyBank, Receipt, Target, FileText,
 } from "lucide-react";
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid,
@@ -106,7 +107,14 @@ export const AdminDashboard = ({ onNavigate }: AdminDashboardProps) => {
 
   return (
     <div className="space-y-5">
-      <AdminFilters showCreator showAffiliate />
+      <div className="flex items-center justify-between">
+        <div className="flex-1">
+          <AdminFilters showCreator showAffiliate />
+        </div>
+        <Button variant="outline" size="sm" className="h-8 text-xs gap-1.5 ml-3 shrink-0" onClick={exportDashboardPdf}>
+          <FileText className="h-3.5 w-3.5" /> Export Report (PDF)
+        </Button>
+      </div>
 
       {/* Row 1 — System Health */}
       <div className="flex items-center gap-3 text-sm px-1">
@@ -172,11 +180,7 @@ export const AdminDashboard = ({ onNavigate }: AdminDashboardProps) => {
       {/* Row 3 — Platform Activity */}
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
         {activityCards.map((card) => (
-          <Card
-            key={card.label}
-            className="border-border/40 cursor-pointer hover:bg-muted/30 transition-colors"
-            onClick={() => onNavigate?.(card.nav)}
-          >
+          <Card key={card.label} className="border-border/40 cursor-pointer hover:bg-muted/30 transition-colors" onClick={() => onNavigate?.(card.nav)}>
             <CardContent className="p-4">
               <p className="text-xs text-muted-foreground mb-1">{card.label}</p>
               <p className="text-xl font-bold">{card.value}</p>
