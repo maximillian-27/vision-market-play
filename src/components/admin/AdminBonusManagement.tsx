@@ -2,18 +2,14 @@ import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
 import { Progress } from "@/components/ui/progress";
+import { Switch } from "@/components/ui/switch";
 import { AdminFilters } from "./AdminFilters";
-import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
-} from "@/components/ui/select";
+import { ExportCsvButton } from "./ExportCsvButton";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, Edit, Copy, Pause, Trash2, Star, Plus } from "lucide-react";
+import { MoreHorizontal, Edit, Copy, Pause, Star } from "lucide-react";
 import { toast } from "sonner";
 
 const bonuses = [
@@ -31,8 +27,6 @@ const tiers = [
 ];
 
 export const AdminBonusManagement = () => {
-  const [bonusType, setBonusType] = useState("deposit_match");
-
   const totalBudget = bonuses.reduce((a, b) => a + b.budget, 0);
   const totalSpent = bonuses.reduce((a, b) => a + b.spent, 0);
 
@@ -43,17 +37,20 @@ export const AdminBonusManagement = () => {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <Card className="border-border/40"><CardContent className="p-4"><p className="text-xs text-muted-foreground mb-1">Active Bonuses</p><p className="text-2xl font-bold">{bonuses.filter(b => b.active).length}</p></CardContent></Card>
         <Card className="border-border/40"><CardContent className="p-4"><p className="text-xs text-muted-foreground mb-1">Total Claims</p><p className="text-2xl font-bold">{bonuses.reduce((a, b) => a + b.claims, 0).toLocaleString()}</p></CardContent></Card>
-        <Card className="border-border/40 bg-warning/5"><CardContent className="p-4"><p className="text-xs text-muted-foreground mb-1">Budget Spent</p><p className="text-2xl font-bold">${(totalSpent / 1000).toFixed(0)}K</p></CardContent></Card>
+        <Card className="border-border/40 bg-warning/5"><CardContent className="p-4"><p className="text-xs text-muted-foreground mb-1">Budget Spent</p><p className="text-2xl font-bold">${(totalSpent / 1000).toFixed(0)}K <span className="text-sm font-normal text-muted-foreground">/ ${(totalBudget / 1000).toFixed(0)}K</span></p></CardContent></Card>
         <Card className="border-border/40 bg-success/5"><CardContent className="p-4"><p className="text-xs text-muted-foreground mb-1">Avg ROI</p><p className="text-2xl font-bold">{Math.round(bonuses.reduce((a, b) => a + b.roi, 0) / bonuses.length)}%</p></CardContent></Card>
       </div>
 
       {/* Bonus Table */}
+      <div className="flex justify-end">
+        <ExportCsvButton data={bonuses.map(b => ({ ...b, budgetUsed: `${((b.spent / b.budget) * 100).toFixed(0)}%` }))} filename="bonuses" />
+      </div>
       <Card className="border-border/40">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
               <tr className="border-b border-border/40 text-left text-xs text-muted-foreground">
-                <th className="p-3 font-medium">Bonus</th><th className="p-3 font-medium">Type</th><th className="p-3 font-medium">Value</th><th className="p-3 font-medium">Claims</th><th className="p-3 font-medium">Budget</th><th className="p-3 font-medium">ROI</th><th className="p-3 font-medium">Status</th><th className="p-3 font-medium text-right">Actions</th>
+                <th className="p-3 font-medium">Bonus</th><th className="p-3 font-medium">Type</th><th className="p-3 font-medium">Value</th><th className="p-3 font-medium">Claims</th><th className="p-3 font-medium">Budget Cap</th><th className="p-3 font-medium">Budget Spent</th><th className="p-3 font-medium">ROI</th><th className="p-3 font-medium">Status</th><th className="p-3 font-medium text-right">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -63,9 +60,10 @@ export const AdminBonusManagement = () => {
                   <td className="p-3"><Badge variant="outline" className="text-xs">{b.type}</Badge></td>
                   <td className="p-3 text-sm">{b.value} (max {b.max})</td>
                   <td className="p-3 text-sm">{b.claims.toLocaleString()}</td>
+                  <td className="p-3 text-sm font-medium">${b.budget.toLocaleString()}</td>
                   <td className="p-3">
                     <Progress value={(b.spent / b.budget) * 100} className="h-1.5 w-20" />
-                    <p className="text-[10px] text-muted-foreground mt-0.5">${b.spent.toLocaleString()} / ${b.budget.toLocaleString()}</p>
+                    <p className="text-[10px] text-muted-foreground mt-0.5">${b.spent.toLocaleString()} ({((b.spent / b.budget) * 100).toFixed(0)}%)</p>
                   </td>
                   <td className="p-3"><span className={`text-sm font-medium ${b.roi >= 0 ? 'text-success' : 'text-destructive'}`}>+{b.roi}%</span></td>
                   <td className="p-3"><Switch defaultChecked={b.active} onCheckedChange={(v) => toast.success(`${b.name} ${v ? "on" : "off"}`)} /></td>
