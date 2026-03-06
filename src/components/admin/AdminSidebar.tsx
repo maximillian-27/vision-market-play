@@ -1,8 +1,17 @@
 import { cn } from "@/lib/utils";
 import {
-  LayoutDashboard, TrendingUp, Tag, Sparkles, Receipt, Wallet, Banknote,
-  Users, UserPlus, Share2, Gift, Ticket, Megaphone, ShieldAlert,
-  UserCheck, Server, ClipboardList, ChevronLeft, ChevronRight, Menu,
+  LayoutDashboard,
+  TrendingUp,
+  Receipt,
+  ChevronLeft,
+  ChevronRight,
+  Users,
+  Gift,
+  BarChart3,
+  Menu,
+  Shield,
+  Megaphone,
+  UserPlus,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -16,54 +25,35 @@ interface AdminSidebarProps {
   onToggleCollapse: () => void;
 }
 
+const coreItems = [
+  { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { id: "analytics", label: "Analytics & BI", icon: BarChart3 },
+];
+
+const operationsItems = [
+  { id: "markets", label: "Markets", icon: TrendingUp },
+  { id: "transactions", label: "Transactions", icon: Receipt },
+];
+
+const peopleItems = [
+  { id: "users", label: "Users", icon: Users },
+  { id: "creators", label: "Creators & Affiliates", icon: UserPlus },
+];
+
+const engageItems = [
+  { id: "bonuses", label: "Loyalty & Bonuses", icon: Gift },
+];
+
+const trustItems = [
+  { id: "trust", label: "Security & Compliance", icon: Shield },
+];
+
 const sections = [
-  {
-    label: "Core",
-    items: [
-      { id: "dashboard", label: "Performance Dashboard", icon: LayoutDashboard },
-    ],
-  },
-  {
-    label: "Markets",
-    items: [
-      { id: "markets", label: "Markets", icon: TrendingUp },
-      { id: "categories", label: "Market Categories", icon: Tag },
-      { id: "featured", label: "Featured Markets", icon: Sparkles },
-    ],
-  },
-  {
-    label: "Finance",
-    items: [
-      { id: "transactions", label: "Transactions", icon: Receipt },
-      { id: "wallets", label: "Wallets", icon: Wallet },
-      { id: "payouts", label: "Payouts", icon: Banknote },
-    ],
-  },
-  {
-    label: "Users",
-    items: [
-      { id: "users", label: "Users", icon: Users },
-      { id: "creators", label: "Creators & Affiliates", icon: UserPlus },
-      { id: "referrals", label: "Referrals (RAF)", icon: Share2 },
-    ],
-  },
-  {
-    label: "Growth",
-    items: [
-      { id: "bonuses", label: "Loyalty & Bonuses", icon: Gift },
-      { id: "draw", label: "Weekly Draw", icon: Ticket },
-      { id: "campaigns", label: "Campaigns", icon: Megaphone },
-    ],
-  },
-  {
-    label: "Security",
-    items: [
-      { id: "fraud", label: "Fraud Monitoring", icon: ShieldAlert },
-      { id: "kyc", label: "KYC / AML", icon: UserCheck },
-      { id: "health", label: "System Health", icon: Server },
-      { id: "audit", label: "Admin & Audit Logs", icon: ClipboardList },
-    ],
-  },
+  { label: "Core", items: coreItems },
+  { label: "Operations", items: operationsItems },
+  { label: "People", items: peopleItems },
+  { label: "Engage", items: engageItems },
+  { label: "Trust", items: trustItems },
 ];
 
 const SidebarContent = ({
@@ -83,12 +73,12 @@ const SidebarContent = ({
   };
 
   return (
-    <nav className="flex-1 p-2 space-y-0.5 overflow-y-auto">
+    <nav className="flex-1 p-2 space-y-1 overflow-y-auto">
       {sections.map((section, idx) => (
         <div key={section.label}>
-          {idx > 0 && <Separator className="my-2" />}
+          {idx > 0 && <Separator className="my-3" />}
           {!collapsed && (
-            <p className="text-[10px] text-muted-foreground px-3 py-1.5 font-semibold uppercase tracking-widest">
+            <p className="text-xs text-muted-foreground px-3 py-2 font-medium uppercase tracking-wider">
               {section.label}
             </p>
           )}
@@ -97,15 +87,15 @@ const SidebarContent = ({
               key={item.id}
               onClick={() => handleClick(item.id)}
               className={cn(
-                "w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors",
+                "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
                 activeSection === item.id
-                  ? "bg-primary/10 text-primary font-medium"
+                  ? "bg-primary/10 text-primary"
                   : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
               )}
               title={collapsed ? item.label : undefined}
             >
               <item.icon className="h-4 w-4 flex-shrink-0" />
-              {!collapsed && <span className="truncate">{item.label}</span>}
+              {!collapsed && <span>{item.label}</span>}
             </button>
           ))}
         </div>
@@ -155,22 +145,27 @@ export const AdminSidebar = ({
     <div
       className={cn(
         "bg-card border-r border-border/40 h-screen flex-col transition-all duration-300 sticky top-0 hidden md:flex",
-        collapsed ? "w-14" : "w-56"
+        collapsed ? "w-16" : "w-56"
       )}
     >
       <div className="p-3 border-b border-border/40 flex items-center justify-between">
         {!collapsed && (
-          <span className="font-semibold text-sm text-foreground">Admin</span>
+          <span className="font-semibold text-sm text-foreground">Admin Panel</span>
         )}
         <Button
           variant="ghost"
           size="icon"
-          className="h-7 w-7 ml-auto"
+          className="h-8 w-8 ml-auto"
           onClick={onToggleCollapse}
         >
-          {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+          {collapsed ? (
+            <ChevronRight className="h-4 w-4" />
+          ) : (
+            <ChevronLeft className="h-4 w-4" />
+          )}
         </Button>
       </div>
+
       <SidebarContent
         activeSection={activeSection}
         onSectionChange={onSectionChange}
