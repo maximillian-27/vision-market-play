@@ -6,6 +6,7 @@ interface ExportDropdownProps {
   data: Record<string, any>[];
   filename: string;
   className?: string;
+  pdfTitle?: string; // kept for API compat, unused
 }
 
 const exportCsv = (data: Record<string, any>[], filename: string) => {
