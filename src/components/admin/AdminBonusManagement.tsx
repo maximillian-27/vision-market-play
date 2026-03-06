@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Switch } from "@/components/ui/switch";
 import { AdminFilters } from "./AdminFilters";
-import { ExportDropdown } from "./ExportDropdown";
+import { ExportCsvButton } from "./ExportCsvButton";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
@@ -43,7 +43,7 @@ export const AdminBonusManagement = () => {
 
       {/* Bonus Table */}
       <div className="flex justify-end">
-        <ExportDropdown data={bonuses.map(b => ({ ...b, budgetUsed: `${((b.spent / b.budget) * 100).toFixed(0)}%` }))} filename="bonuses" pdfTitle="Bonuses" />
+        <ExportCsvButton data={bonuses.map(b => ({ ...b, budgetUsed: `${((b.spent / b.budget) * 100).toFixed(0)}%` }))} filename="bonuses" />
       </div>
       <Card className="border-border/40">
         <div className="overflow-x-auto">

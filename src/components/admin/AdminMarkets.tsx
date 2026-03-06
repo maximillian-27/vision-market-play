@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AdminFilters } from "./AdminFilters";
-import { ExportDropdown } from "./ExportDropdown";
+import { ExportCsvButton } from "./ExportCsvButton";
 import { DetailDrawer } from "./DetailDrawer";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
@@ -128,7 +128,7 @@ export const AdminMarkets = () => {
               <SelectTrigger className="w-32 h-9"><SelectValue /></SelectTrigger>
               <SelectContent><SelectItem value="potSize">Pot Size</SelectItem><SelectItem value="trades">Trades</SelectItem><SelectItem value="feeRevenue">Fee Revenue</SelectItem></SelectContent>
             </Select>
-            <ExportDropdown data={filtered} filename="markets" pdfTitle="Markets" />
+            <ExportCsvButton data={filtered} filename="markets" />
           </div>
           <Card className="border-border/40">
             <div className="overflow-x-auto">

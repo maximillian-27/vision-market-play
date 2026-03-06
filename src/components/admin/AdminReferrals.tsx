@@ -1,11 +1,8 @@
-import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AdminFilters } from "./AdminFilters";
-import { ExportDropdown } from "./ExportDropdown";
-import { SegmentsPanel, affiliateSegments } from "./SegmentsPanel";
-import { Share2, Users, DollarSign, TrendingUp, Filter } from "lucide-react";
+import { ExportCsvButton } from "./ExportCsvButton";
+import { Share2, Users, DollarSign, TrendingUp } from "lucide-react";
 
 const referrals = [
   { referrer: "PromoQueen", referred: 312, volume: "$567K", earnings: "$3,402", deposits: 245, tradingVolume: 567000 },
@@ -32,45 +29,32 @@ export const AdminReferrals = () => {
         <Card className="border-border/40"><CardContent className="p-4"><div className="flex items-center gap-1.5 text-muted-foreground text-xs mb-1"><TrendingUp className="h-3.5 w-3.5" /> Referral Trading Volume</div><p className="text-2xl font-bold">${(totalVolume / 1e6).toFixed(2)}M</p></CardContent></Card>
       </div>
 
-      <Tabs defaultValue="all-referrals" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="all-referrals">All Referrals</TabsTrigger>
-          <TabsTrigger value="segments" className="gap-1.5"><Filter className="h-3.5 w-3.5" /> Segments</TabsTrigger>
-        </TabsList>
+      <div className="flex justify-end">
+        <ExportCsvButton data={referrals} filename="referrals" />
+      </div>
 
-        <TabsContent value="all-referrals" className="space-y-4">
-          <div className="flex justify-end">
-            <ExportDropdown data={referrals} filename="referrals" pdfTitle="Referrals Report" />
-          </div>
-
-          <Card className="border-border/40">
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b border-border/40 text-left text-xs text-muted-foreground">
-                    <th className="p-3 font-medium">Referrer</th><th className="p-3 font-medium">Users Referred</th><th className="p-3 font-medium">Deposits</th><th className="p-3 font-medium">Trading Volume</th><th className="p-3 font-medium">Earnings</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {referrals.map((r) => (
-                    <tr key={r.referrer} className="border-b border-border/20 hover:bg-muted/30 transition-colors">
-                      <td className="p-3 font-medium text-sm">{r.referrer}</td>
-                      <td className="p-3 text-sm">{r.referred}</td>
-                      <td className="p-3 text-sm">{r.deposits}</td>
-                      <td className="p-3 text-sm font-medium">{r.volume}</td>
-                      <td className="p-3 text-sm font-medium text-success">{r.earnings}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="segments">
-          <SegmentsPanel builtInSegments={affiliateSegments} entity="affiliate" />
-        </TabsContent>
-      </Tabs>
+      <Card className="border-border/40">
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b border-border/40 text-left text-xs text-muted-foreground">
+                <th className="p-3 font-medium">Referrer</th><th className="p-3 font-medium">Users Referred</th><th className="p-3 font-medium">Deposits</th><th className="p-3 font-medium">Trading Volume</th><th className="p-3 font-medium">Earnings</th>
+              </tr>
+            </thead>
+            <tbody>
+              {referrals.map((r) => (
+                <tr key={r.referrer} className="border-b border-border/20 hover:bg-muted/30 transition-colors">
+                  <td className="p-3 font-medium text-sm">{r.referrer}</td>
+                  <td className="p-3 text-sm">{r.referred}</td>
+                  <td className="p-3 text-sm">{r.deposits}</td>
+                  <td className="p-3 text-sm font-medium">{r.volume}</td>
+                  <td className="p-3 text-sm font-medium text-success">{r.earnings}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </Card>
     </div>
   );
 };

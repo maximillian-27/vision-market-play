@@ -5,8 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AdminFilters } from "./AdminFilters";
-import { ExportDropdown } from "./ExportDropdown";
-import { SegmentsPanel, creatorSegments, affiliateSegments } from "./SegmentsPanel";
+import { ExportCsvButton } from "./ExportCsvButton";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
@@ -14,7 +13,7 @@ import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
-  Search, MoreHorizontal, Eye, UserX, Star, UserPlus, Percent, CheckCircle, XCircle, Clock, FileText, Globe, MessageSquare, Filter,
+  Search, MoreHorizontal, Eye, UserX, Star, UserPlus, Percent, DollarSign, CheckCircle, XCircle, Clock, FileText, Globe, MessageSquare,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -86,14 +85,12 @@ export const AdminCreatorsAffiliates = () => {
       </div>
 
       <Tabs defaultValue="profiles" className="space-y-4">
-        <TabsList className="flex-wrap h-auto gap-1">
+        <TabsList>
           <TabsTrigger value="profiles">All Profiles</TabsTrigger>
           <TabsTrigger value="pending" className="gap-1.5">
             Pending Approval
             {pendingCount > 0 && <Badge className="ml-1 h-5 px-1.5 text-[10px] bg-warning/15 text-warning border-0">{pendingCount}</Badge>}
           </TabsTrigger>
-          <TabsTrigger value="creator-segments" className="gap-1.5"><Filter className="h-3.5 w-3.5" /> Creator Segments</TabsTrigger>
-          <TabsTrigger value="affiliate-segments" className="gap-1.5"><Filter className="h-3.5 w-3.5" /> Affiliate Segments</TabsTrigger>
         </TabsList>
 
         <TabsContent value="profiles" className="space-y-4">
@@ -106,7 +103,7 @@ export const AdminCreatorsAffiliates = () => {
               <SelectTrigger className="w-40 h-9"><SelectValue /></SelectTrigger>
               <SelectContent><SelectItem value="all">All Types</SelectItem><SelectItem value="creator">Creators</SelectItem><SelectItem value="affiliate">Affiliates</SelectItem><SelectItem value="both">Both</SelectItem></SelectContent>
             </Select>
-            <ExportDropdown data={filtered} filename="creators-affiliates" pdfTitle="Creators & Affiliates" />
+            <ExportCsvButton data={filtered} filename="creators-affiliates" />
           </div>
 
           <Card className="border-border/40">
@@ -164,24 +161,43 @@ export const AdminCreatorsAffiliates = () => {
                       <div className="flex-1 space-y-3">
                         <div className="flex items-center gap-3">
                           <h4 className="font-semibold text-sm">{app.name}</h4>
-                          <Badge className={`text-[10px] border-0 ${app.status === "Under Review" ? "bg-primary/10 text-primary" : "bg-warning/10 text-warning"}`}>{app.status}</Badge>
+                          <Badge className={`text-[10px] border-0 ${app.status === "Under Review" ? "bg-primary/10 text-primary" : "bg-warning/10 text-warning"}`}>
+                            {app.status}
+                          </Badge>
                           <span className="text-xs text-muted-foreground font-mono">{app.wallet}</span>
                         </div>
                         <p className="text-sm text-muted-foreground">{app.bio}</p>
                         <div className="flex items-center gap-4 flex-wrap">
-                          <div className="flex items-center gap-1.5 text-xs text-muted-foreground"><FileText className="h-3.5 w-3.5" /><span className="font-medium text-foreground">{app.topics.join(", ")}</span></div>
-                          <div className="flex items-center gap-1.5 text-xs text-muted-foreground"><Globe className="h-3.5 w-3.5" /><span className="font-medium text-foreground">{app.platforms.join(", ")}</span></div>
-                          <div className="flex items-center gap-1.5 text-xs text-muted-foreground"><UserPlus className="h-3.5 w-3.5" /><span className="font-medium text-foreground">{app.followers} followers</span></div>
+                          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                            <FileText className="h-3.5 w-3.5" />
+                            <span className="font-medium text-foreground">{app.topics.join(", ")}</span>
+                          </div>
+                          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                            <Globe className="h-3.5 w-3.5" />
+                            <span className="font-medium text-foreground">{app.platforms.join(", ")}</span>
+                          </div>
+                          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                            <UserPlus className="h-3.5 w-3.5" />
+                            <span className="font-medium text-foreground">{app.followers} followers</span>
+                          </div>
                           <span className="text-xs text-muted-foreground">Applied {app.appliedDate}</span>
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
                         {app.status === "Pending" && (
-                          <Button variant="outline" size="sm" className="h-8 text-xs gap-1.5" onClick={() => handleMarkReview(app.id)}><Eye className="h-3.5 w-3.5" /> Review</Button>
+                          <Button variant="outline" size="sm" className="h-8 text-xs gap-1.5" onClick={() => handleMarkReview(app.id)}>
+                            <Eye className="h-3.5 w-3.5" /> Review
+                          </Button>
                         )}
-                        <Button variant="outline" size="sm" className="h-8 text-xs gap-1.5" onClick={() => toast(`Message sent to ${app.name}`)}><MessageSquare className="h-3.5 w-3.5" /> Message</Button>
-                        <Button size="sm" className="h-8 text-xs gap-1.5 bg-success hover:bg-success/90 text-success-foreground" onClick={() => handleApprove(app.id)}><CheckCircle className="h-3.5 w-3.5" /> Approve</Button>
-                        <Button variant="outline" size="sm" className="h-8 text-xs gap-1.5 text-destructive hover:text-destructive" onClick={() => handleReject(app.id)}><XCircle className="h-3.5 w-3.5" /> Reject</Button>
+                        <Button variant="outline" size="sm" className="h-8 text-xs gap-1.5" onClick={() => toast(`Message sent to ${app.name}`)}>
+                          <MessageSquare className="h-3.5 w-3.5" /> Message
+                        </Button>
+                        <Button size="sm" className="h-8 text-xs gap-1.5 bg-success hover:bg-success/90 text-success-foreground" onClick={() => handleApprove(app.id)}>
+                          <CheckCircle className="h-3.5 w-3.5" /> Approve
+                        </Button>
+                        <Button variant="outline" size="sm" className="h-8 text-xs gap-1.5 text-destructive hover:text-destructive" onClick={() => handleReject(app.id)}>
+                          <XCircle className="h-3.5 w-3.5" /> Reject
+                        </Button>
                       </div>
                     </div>
                   </CardContent>
@@ -189,14 +205,6 @@ export const AdminCreatorsAffiliates = () => {
               ))}
             </div>
           )}
-        </TabsContent>
-
-        <TabsContent value="creator-segments">
-          <SegmentsPanel builtInSegments={creatorSegments} entity="creator" />
-        </TabsContent>
-
-        <TabsContent value="affiliate-segments">
-          <SegmentsPanel builtInSegments={affiliateSegments} entity="affiliate" />
         </TabsContent>
       </Tabs>
     </div>

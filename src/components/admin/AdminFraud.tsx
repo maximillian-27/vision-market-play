@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { AdminFilters } from "./AdminFilters";
-import { ExportDropdown } from "./ExportDropdown";
+import { ExportCsvButton } from "./ExportCsvButton";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
@@ -54,7 +54,7 @@ export const AdminFraud = () => {
           <SelectTrigger className="w-40 h-9"><SelectValue /></SelectTrigger>
           <SelectContent><SelectItem value="all">All</SelectItem><SelectItem value="investigating">Investigating</SelectItem><SelectItem value="flagged">Flagged</SelectItem><SelectItem value="monitoring">Monitoring</SelectItem><SelectItem value="resolved">Resolved</SelectItem></SelectContent>
         </Select>
-        <ExportDropdown data={filtered} filename="fraud-monitoring" pdfTitle="Fraud Monitoring" />
+        <ExportCsvButton data={filtered} filename="fraud-monitoring" />
       </div>
 
       <Card className="border-border/40">

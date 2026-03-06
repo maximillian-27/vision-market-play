@@ -3,11 +3,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AdminFilters } from "./AdminFilters";
-import { ExportDropdown } from "./ExportDropdown";
+import { ExportCsvButton } from "./ExportCsvButton";
 import { DetailDrawer } from "./DetailDrawer";
-import { SegmentsPanel, userSegments } from "./SegmentsPanel";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
@@ -16,7 +14,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import {
   Search, MoreHorizontal, Eye, Users, UserCheck, UserX, Shield,
-  ChevronLeft, ChevronRight, Filter,
+  ChevronLeft, ChevronRight,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -50,7 +48,10 @@ export const AdminUsers = () => {
   const churnRate = 4.2;
   const unverified = users.filter(u => !u.verified).length;
 
-  const openDrawer = (u: typeof users[0]) => { setSelectedUser(u); setDrawerOpen(true); };
+  const openDrawer = (u: typeof users[0]) => {
+    setSelectedUser(u);
+    setDrawerOpen(true);
+  };
 
   const sourceColors: Record<string, string> = {
     Direct: "bg-muted text-muted-foreground",
@@ -70,78 +71,65 @@ export const AdminUsers = () => {
         <Card className="border-border/40 bg-warning/5"><CardContent className="p-4"><div className="flex items-center gap-1.5 text-warning text-xs mb-1"><Shield className="h-3.5 w-3.5" /> Unverified</div><p className="text-2xl font-bold">{unverified}</p></CardContent></Card>
       </div>
 
-      <Tabs defaultValue="all-users" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="all-users">All Users</TabsTrigger>
-          <TabsTrigger value="segments" className="gap-1.5"><Filter className="h-3.5 w-3.5" /> Segments</TabsTrigger>
-        </TabsList>
+      <div className="flex items-center gap-3 flex-wrap">
+        <div className="relative flex-1 max-w-sm">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input placeholder="Search users..." value={searchQuery} onChange={(e) => { setSearchQuery(e.target.value); setPage(1); }} className="pl-9 h-9" />
+        </div>
+        <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setPage(1); }}>
+          <SelectTrigger className="w-36 h-9"><SelectValue /></SelectTrigger>
+          <SelectContent><SelectItem value="all">All Status</SelectItem><SelectItem value="active">Active</SelectItem><SelectItem value="suspended">Suspended</SelectItem><SelectItem value="unverified">Unverified</SelectItem></SelectContent>
+        </Select>
+        <ExportCsvButton data={filtered} filename="users" />
+      </div>
 
-        <TabsContent value="all-users" className="space-y-4">
-          <div className="flex items-center gap-3 flex-wrap">
-            <div className="relative flex-1 max-w-sm">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input placeholder="Search users..." value={searchQuery} onChange={(e) => { setSearchQuery(e.target.value); setPage(1); }} className="pl-9 h-9" />
+      <Card className="border-border/40">
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b border-border/40 text-left text-xs text-muted-foreground">
+                <th className="p-3 font-medium">Name</th><th className="p-3 font-medium">Wallet</th><th className="p-3 font-medium">Source</th><th className="p-3 font-medium">Referrer</th><th className="p-3 font-medium">Joined</th><th className="p-3 font-medium">1st Deposit</th><th className="p-3 font-medium">Lifetime Vol</th><th className="p-3 font-medium">Trades</th><th className="p-3 font-medium">P&L</th><th className="p-3 font-medium">Status</th><th className="p-3 font-medium text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {paginated.map((u) => (
+                <tr key={u.id} className="border-b border-border/20 hover:bg-muted/30 transition-colors">
+                  <td className="p-3 font-medium text-sm">{u.name}</td>
+                  <td className="p-3 text-sm font-mono text-muted-foreground">{u.wallet}</td>
+                  <td className="p-3"><Badge className={`text-[10px] border-0 ${sourceColors[u.source]}`}>{u.source}</Badge></td>
+                  <td className="p-3 text-sm text-muted-foreground">{u.referrer}</td>
+                  <td className="p-3 text-xs text-muted-foreground">{u.joined}</td>
+                  <td className="p-3 text-xs text-muted-foreground">{u.firstDeposit}</td>
+                  <td className="p-3 text-sm font-medium">${u.lifetimeVolume.toLocaleString()}</td>
+                  <td className="p-3 text-sm">{u.trades}</td>
+                  <td className="p-3 text-sm font-medium"><span className={u.pnl >= 0 ? 'text-success' : 'text-destructive'}>{u.pnl >= 0 ? '+' : ''}${u.pnl.toLocaleString()}</span></td>
+                  <td className="p-3"><Badge variant={u.status === "Active" ? "default" : "destructive"} className="text-xs">{u.status}</Badge></td>
+                  <td className="p-3 text-right">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild><Button variant="ghost" size="icon" className="h-7 w-7"><MoreHorizontal className="h-4 w-4" /></Button></DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="bg-popover">
+                        <DropdownMenuItem className="gap-2" onClick={() => openDrawer(u)}><Eye className="h-4 w-4" /> View</DropdownMenuItem>
+                        <DropdownMenuItem className="gap-2" onClick={() => toast(`KYC: ${u.name}`)}><Shield className="h-4 w-4" /> KYC Review</DropdownMenuItem>
+                        <DropdownMenuItem className="gap-2 text-destructive" onClick={() => toast.success("Suspended")}><UserX className="h-4 w-4" /> Suspend</DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        {totalPages > 1 && (
+          <div className="flex items-center justify-between px-4 py-3 border-t border-border/40">
+            <p className="text-xs text-muted-foreground">{((page - 1) * PAGE_SIZE) + 1}–{Math.min(page * PAGE_SIZE, filtered.length)} of {filtered.length}</p>
+            <div className="flex items-center gap-2">
+              <Button variant="outline" size="sm" disabled={page === 1} onClick={() => setPage(p => p - 1)}><ChevronLeft className="h-4 w-4" /></Button>
+              <span className="text-xs">{page}/{totalPages}</span>
+              <Button variant="outline" size="sm" disabled={page === totalPages} onClick={() => setPage(p => p + 1)}><ChevronRight className="h-4 w-4" /></Button>
             </div>
-            <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setPage(1); }}>
-              <SelectTrigger className="w-36 h-9"><SelectValue /></SelectTrigger>
-              <SelectContent><SelectItem value="all">All Status</SelectItem><SelectItem value="active">Active</SelectItem><SelectItem value="suspended">Suspended</SelectItem><SelectItem value="unverified">Unverified</SelectItem></SelectContent>
-            </Select>
-            <ExportDropdown data={filtered} filename="users" pdfTitle="Users Export" />
           </div>
-
-          <Card className="border-border/40">
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b border-border/40 text-left text-xs text-muted-foreground">
-                    <th className="p-3 font-medium">Name</th><th className="p-3 font-medium">Wallet</th><th className="p-3 font-medium">Source</th><th className="p-3 font-medium">Referrer</th><th className="p-3 font-medium">Joined</th><th className="p-3 font-medium">1st Deposit</th><th className="p-3 font-medium">Lifetime Vol</th><th className="p-3 font-medium">Trades</th><th className="p-3 font-medium">P&L</th><th className="p-3 font-medium">Status</th><th className="p-3 font-medium text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {paginated.map((u) => (
-                    <tr key={u.id} className="border-b border-border/20 hover:bg-muted/30 transition-colors">
-                      <td className="p-3 font-medium text-sm">{u.name}</td>
-                      <td className="p-3 text-sm font-mono text-muted-foreground">{u.wallet}</td>
-                      <td className="p-3"><Badge className={`text-[10px] border-0 ${sourceColors[u.source]}`}>{u.source}</Badge></td>
-                      <td className="p-3 text-sm text-muted-foreground">{u.referrer}</td>
-                      <td className="p-3 text-xs text-muted-foreground">{u.joined}</td>
-                      <td className="p-3 text-xs text-muted-foreground">{u.firstDeposit}</td>
-                      <td className="p-3 text-sm font-medium">${u.lifetimeVolume.toLocaleString()}</td>
-                      <td className="p-3 text-sm">{u.trades}</td>
-                      <td className="p-3 text-sm font-medium"><span className={u.pnl >= 0 ? 'text-success' : 'text-destructive'}>{u.pnl >= 0 ? '+' : ''}${u.pnl.toLocaleString()}</span></td>
-                      <td className="p-3"><Badge variant={u.status === "Active" ? "default" : "destructive"} className="text-xs">{u.status}</Badge></td>
-                      <td className="p-3 text-right">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild><Button variant="ghost" size="icon" className="h-7 w-7"><MoreHorizontal className="h-4 w-4" /></Button></DropdownMenuTrigger>
-                          <DropdownMenuContent align="end" className="bg-popover">
-                            <DropdownMenuItem className="gap-2" onClick={() => openDrawer(u)}><Eye className="h-4 w-4" /> View</DropdownMenuItem>
-                            <DropdownMenuItem className="gap-2" onClick={() => toast(`KYC: ${u.name}`)}><Shield className="h-4 w-4" /> KYC Review</DropdownMenuItem>
-                            <DropdownMenuItem className="gap-2 text-destructive" onClick={() => toast.success("Suspended")}><UserX className="h-4 w-4" /> Suspend</DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            {totalPages > 1 && (
-              <div className="flex items-center justify-between px-4 py-3 border-t border-border/40">
-                <p className="text-xs text-muted-foreground">{((page - 1) * PAGE_SIZE) + 1}–{Math.min(page * PAGE_SIZE, filtered.length)} of {filtered.length}</p>
-                <div className="flex items-center gap-2">
-                  <Button variant="outline" size="sm" disabled={page === 1} onClick={() => setPage(p => p - 1)}><ChevronLeft className="h-4 w-4" /></Button>
-                  <span className="text-xs">{page}/{totalPages}</span>
-                  <Button variant="outline" size="sm" disabled={page === totalPages} onClick={() => setPage(p => p + 1)}><ChevronRight className="h-4 w-4" /></Button>
-                </div>
-              </div>
-            )}
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="segments">
-          <SegmentsPanel builtInSegments={userSegments} entity="user" />
-        </TabsContent>
-      </Tabs>
+        )}
+      </Card>
 
       {selectedUser && (
         <DetailDrawer

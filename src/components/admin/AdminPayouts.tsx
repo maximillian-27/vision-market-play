@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { AdminFilters } from "./AdminFilters";
-import { ExportDropdown } from "./ExportDropdown";
+import { ExportCsvButton } from "./ExportCsvButton";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
@@ -58,7 +58,7 @@ export const AdminPayouts = () => {
           <SelectTrigger className="w-36 h-9"><SelectValue /></SelectTrigger>
           <SelectContent><SelectItem value="all">All Status</SelectItem><SelectItem value="pending">Pending</SelectItem><SelectItem value="paid">Paid</SelectItem><SelectItem value="failed">Failed</SelectItem></SelectContent>
         </Select>
-        <ExportDropdown data={filtered} filename="payouts" pdfTitle="Payouts" />
+        <ExportCsvButton data={filtered} filename="payouts" />
       </div>
 
       <Card className="border-border/40">
