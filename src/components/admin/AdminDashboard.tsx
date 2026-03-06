@@ -33,7 +33,7 @@ const financialKPIs = [
 const financialHealthMetrics = [
   { label: "Gross Platform Revenue", value: "$124.5K", subtitle: "Total fee revenue", icon: Receipt, color: "text-success" },
   { label: "Net Platform Revenue", value: "$89.5K", subtitle: "After creator & affiliate shares", icon: PiggyBank, color: "text-primary" },
-  { label: "Total Payout Obligations", value: "$42.3K", subtitle: "Pending creator + affiliate payouts", icon: Wallet, color: "text-warning" },
+  { label: "Bets / Month Per User", value: "8.4", subtitle: "Avg bets per active user this month", icon: Wallet, color: "text-primary" },
 ];
 
 const unitMetrics = [
