@@ -84,7 +84,7 @@ export const AdminFeaturedMarkets = () => {
               <Select value={slot} onValueChange={(v) => updateSlot(idx, v)}>
                 <SelectTrigger className="flex-1"><SelectValue placeholder="Select a market..." /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">— Empty —</SelectItem>
+                  <SelectItem value="none">— Empty —</SelectItem>
                   {existingMarkets.map((m) => (
                     <SelectItem key={m.id} value={m.id}>{m.title}</SelectItem>
                   ))}
