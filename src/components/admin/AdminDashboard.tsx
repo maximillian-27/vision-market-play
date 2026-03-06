@@ -110,9 +110,7 @@ export const AdminDashboard = ({ onNavigate }: AdminDashboardProps) => {
         <div className="flex-1">
           <AdminFilters showCreator showAffiliate />
         </div>
-        <Button variant="outline" size="sm" className="h-8 text-xs gap-1.5 ml-3 shrink-0" onClick={exportDashboardPdf}>
-          <FileText className="h-3.5 w-3.5" /> Export Report (PDF)
-        </Button>
+        
       </div>
 
       {/* Row 1 — System Health */}
