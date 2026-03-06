@@ -10,7 +10,7 @@ import { AdminUsers } from "@/components/admin/AdminUsers";
 import { AdminCreatorsAffiliates } from "@/components/admin/AdminCreatorsAffiliates";
 import { AdminBonusManagement } from "@/components/admin/AdminBonusManagement";
 import { AdminAnalytics } from "@/components/admin/AdminAnalytics";
-
+import { AdminMarketing } from "@/components/admin/AdminMarketing";
 import { AdminSecurityComplianceSupport } from "@/components/admin/AdminSecurityComplianceSupport";
 
 const sectionTitles: Record<string, { title: string; description: string }> = {
@@ -21,6 +21,7 @@ const sectionTitles: Record<string, { title: string; description: string }> = {
   users: { title: "Users", description: "User management, segments and campaigns" },
   creators: { title: "Creators & Affiliates", description: "Creators, affiliates, payouts and automations" },
   bonuses: { title: "Loyalty & Bonuses", description: "Bonuses, promotions and loyalty tiers" },
+  marketing: { title: "Marketing", description: "SEO, campaigns, tracking and social presence" },
   trust: { title: "Security & Compliance", description: "Security, compliance, KYC/AML and support" },
 };
 
@@ -37,6 +38,7 @@ const Admin = () => {
       case "users": return <AdminUsers />;
       case "creators": return <AdminCreatorsAffiliates />;
       case "bonuses": return <AdminBonusManagement />;
+      case "marketing": return <AdminMarketing />;
       case "trust": return <AdminSecurityComplianceSupport />;
       default: return <AdminDashboard onNavigate={setActiveSection} />;
     }

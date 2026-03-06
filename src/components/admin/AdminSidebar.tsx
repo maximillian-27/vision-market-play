@@ -42,6 +42,7 @@ const peopleItems = [
 
 const engageItems = [
   { id: "bonuses", label: "Loyalty & Bonuses", icon: Gift },
+  { id: "marketing", label: "Marketing", icon: Megaphone },
 ];
 
 const trustItems = [
