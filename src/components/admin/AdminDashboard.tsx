@@ -7,6 +7,7 @@ import {
   CheckCircle, Server, Wallet, Users, TrendingUp, Activity,
   UserPlus, Percent, BarChart3, PiggyBank, Receipt, Target, FileText,
 } from "lucide-react";
+import { ConversionFunnel } from "./ConversionFunnel";
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid,
   Tooltip, ResponsiveContainer, Legend,
