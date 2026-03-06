@@ -1,32 +1,20 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { AdminFilters } from "./AdminFilters";
 import {
-  DollarSign, ArrowUpRight, Clock, AlertTriangle, CheckCircle,
-  Server, Shield, Wallet, Banknote, ArrowDownRight, Activity,
+  DollarSign, ArrowUpRight, ArrowDownRight, Clock, AlertTriangle,
+  CheckCircle, Server, Wallet, Users, TrendingUp, Activity,
+  UserPlus, Percent, BarChart3,
 } from "lucide-react";
+import {
+  AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid,
+  Tooltip, ResponsiveContainer, Legend,
+} from "recharts";
 
 interface AdminDashboardProps {
   onNavigate?: (section: string) => void;
 }
-
-const stats = {
-  revenue: 890000,
-  costs: 340000,
-  netProfit: 550000,
-  profitMargin: 61.8,
-  totalUsers: 124500,
-  usersGrowth: 12.3,
-  activeUsers: 45200,
-  dailyVolume: 415000,
-  totalMarkets: 1247,
-  totalPotSize: 15600000,
-  // Alerts
-  pendingMarkets: 23,
-  disputes: 8,
-  pendingResolutions: 15,
-  pendingWithdrawals: 5,
-};
 
 const platformHealth = [
   { name: "API", status: "Healthy" },
@@ -35,140 +23,262 @@ const platformHealth = [
   { name: "Database", status: "Healthy" },
 ];
 
-const recentActivity = [
-  { id: 1, type: "deposit", message: "Large deposit: 5.2 BTC ($312,000)", time: "2 min ago", color: "bg-success/10 text-success" },
-  { id: 2, type: "market", message: "Market resolved: 'Bitcoin Price EOY' → Yes", time: "5 min ago", color: "bg-primary/10 text-primary" },
-  { id: 3, type: "dispute", message: "Dispute raised on market #1234", time: "18 min ago", color: "bg-destructive/10 text-destructive" },
-  { id: 4, type: "withdrawal", message: "Withdrawal approved: 12,500 USDT", time: "25 min ago", color: "bg-warning/10 text-warning" },
+const financialKPIs = [
+  { label: "Trading Volume", value: "$4.15M", change: 8.2, icon: BarChart3 },
+  { label: "Fee Revenue (3%)", value: "$124.5K", change: 12.5, icon: DollarSign, color: "text-success" },
+  { label: "Creator Earnings (20%)", value: "$24.9K", change: 8.1, icon: Users },
+  { label: "Affiliate Earnings (20%)", value: "$10.1K", change: 15.3, icon: UserPlus },
 ];
+
+const activityCards = [
+  { label: "Total Users", value: "124.5K", nav: "users" },
+  { label: "Active (30d)", value: "45.2K", nav: "users" },
+  { label: "Total Markets", value: "1,247", nav: "markets" },
+  { label: "Open Markets", value: "892", nav: "markets" },
+  { label: "Total Pot Size", value: "$15.6M", nav: "markets" },
+];
+
+const growthCards = [
+  { label: "New Signups", value: "347", change: 15.7 },
+  { label: "First Deposits", value: "189", change: 9.2 },
+  { label: "Conversion Rate", value: "54.5%", change: 2.1 },
+  { label: "Referral Signups", value: "89", change: 22.4 },
+  { label: "Returning Users %", value: "68.2%", change: 3.8 },
+];
+
+const tradingVolumeData = [
+  { date: "Jan 1", volume: 320000, fees: 9600, markets: 12 },
+  { date: "Jan 5", volume: 410000, fees: 12300, markets: 18 },
+  { date: "Jan 9", volume: 380000, fees: 11400, markets: 14 },
+  { date: "Jan 13", volume: 520000, fees: 15600, markets: 22 },
+  { date: "Jan 17", volume: 480000, fees: 14400, markets: 19 },
+  { date: "Jan 21", volume: 550000, fees: 16500, markets: 25 },
+  { date: "Jan 25", volume: 620000, fees: 18600, markets: 28 },
+  { date: "Jan 29", volume: 580000, fees: 17400, markets: 21 },
+];
+
+const topMarkets = [
+  { name: "Bitcoin Price EOY", creator: "CryptoGuru", volume: "$525K", trades: "15.6K", fees: "$15.8K" },
+  { name: "US Election 2024", creator: "PoliticalPredict", volume: "$498K", trades: "13.2K", fees: "$14.9K" },
+  { name: "ETH Merge Impact", creator: "TechOracle", volume: "$267K", trades: "8.1K", fees: "$8.0K" },
+  { name: "AI Breakthrough 2025", creator: "TechOracle", volume: "$154K", trades: "5.9K", fees: "$4.6K" },
+  { name: "Fed Rate Decision", creator: "MarketMaven", volume: "$145K", trades: "4.6K", fees: "$4.4K" },
+];
+
+const topCreators = [
+  { name: "SportsAnalyst", markets: 15, volume: "$1.2M", earnings: "$7.2K" },
+  { name: "CryptoGuru", markets: 12, volume: "$890K", earnings: "$5.3K" },
+  { name: "TechOracle", markets: 8, volume: "$456K", earnings: "$2.7K" },
+  { name: "PoliticalPredict", markets: 5, volume: "$312K", earnings: "$1.9K" },
+];
+
+const topAffiliates = [
+  { name: "PromoQueen", referred: 312, volume: "$567K", earnings: "$3.4K" },
+  { name: "ReferKing", referred: 145, volume: "$234K", earnings: "$1.4K" },
+  { name: "GrowthHacker", referred: 89, volume: "$156K", earnings: "$936" },
+  { name: "MarketingPro", referred: 67, volume: "$98K", earnings: "$588" },
+];
+
+const alerts = [
+  { label: "Markets Awaiting Approval", count: 23, color: "text-warning", icon: Clock, nav: "markets" },
+  { label: "Markets Awaiting Resolution", count: 15, color: "text-primary", icon: CheckCircle, nav: "markets" },
+  { label: "Active Disputes", count: 8, color: "text-destructive", icon: AlertTriangle, nav: "markets" },
+  { label: "Pending Withdrawals", count: 5, color: "text-warning", icon: Wallet, nav: "transactions" },
+  { label: "KYC Reviews", count: 12, color: "text-primary", icon: Users, nav: "kyc" },
+];
+
+const tooltipStyle = { backgroundColor: 'hsl(var(--popover))', border: '1px solid hsl(var(--border))', borderRadius: '8px', color: 'hsl(var(--popover-foreground))' };
+const tickStyle = { fill: 'hsl(var(--muted-foreground))', fontSize: 11 };
 
 export const AdminDashboard = ({ onNavigate }: AdminDashboardProps) => {
   const degradedServices = platformHealth.filter(s => s.status !== "Healthy");
 
   return (
     <div className="space-y-5">
-      {/* System Health — CTO */}
-      <div className="flex items-center gap-3 text-sm">
+      <AdminFilters showCreator showAffiliate />
+
+      {/* Row 1 — System Health */}
+      <div className="flex items-center gap-3 text-sm px-1">
         <Server className="h-4 w-4 text-muted-foreground" />
         {degradedServices.length > 0 ? (
           <span className="text-warning font-medium">{degradedServices.map(s => s.name).join(", ")} degraded</span>
         ) : (
           <span className="text-success font-medium">All systems operational</span>
         )}
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-1.5 ml-1">
           {platformHealth.map((s) => (
             <div key={s.name} className={`h-2 w-2 rounded-full ${s.status === "Healthy" ? "bg-success" : "bg-warning"}`} title={s.name} />
           ))}
         </div>
       </div>
 
-      {/* P&L — Owners */}
-      <div className="grid grid-cols-3 gap-4">
-        <Card className="border-border/40 bg-success/5 cursor-pointer hover:bg-success/10 transition-colors" onClick={() => onNavigate?.("analytics")}>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-2 text-success text-sm mb-1"><DollarSign className="h-4 w-4" /> Revenue</div>
-            <p className="text-2xl font-bold">${(stats.revenue / 1000).toFixed(0)}K</p>
-            <p className="text-xs text-muted-foreground mt-1">Monthly · 3% fee</p>
-          </CardContent>
-        </Card>
-        <Card className="border-border/40 cursor-pointer hover:bg-muted/30 transition-colors" onClick={() => onNavigate?.("analytics")}>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-2 text-destructive text-sm mb-1"><ArrowDownRight className="h-4 w-4" /> Costs</div>
-            <p className="text-2xl font-bold">${(stats.costs / 1000).toFixed(0)}K</p>
-            <p className="text-xs text-muted-foreground mt-1">Payouts + ops</p>
-          </CardContent>
-        </Card>
-        <Card className="border-border/40 bg-success/5 cursor-pointer hover:bg-success/10 transition-colors" onClick={() => onNavigate?.("analytics")}>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-2 text-success text-sm mb-1"><Banknote className="h-4 w-4" /> Net Profit</div>
-            <p className="text-2xl font-bold">${(stats.netProfit / 1000).toFixed(0)}K</p>
-            <Badge className="text-xs bg-success/10 text-success border-0 mt-1"><ArrowUpRight className="h-3 w-3 mr-1" />{stats.profitMargin}%</Badge>
-          </CardContent>
-        </Card>
+      {/* Row 2 — Financial Overview (CFO) */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {financialKPIs.map((kpi) => (
+          <Card key={kpi.label} className="border-border/40">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-2 text-muted-foreground text-xs mb-1">
+                <kpi.icon className="h-3.5 w-3.5" /> {kpi.label}
+              </div>
+              <div className="flex items-center gap-2">
+                <p className={`text-xl font-bold ${kpi.color || ''}`}>{kpi.value}</p>
+                <Badge className={`text-[10px] border-0 ${kpi.change >= 0 ? 'bg-success/10 text-success' : 'bg-destructive/10 text-destructive'}`}>
+                  {kpi.change >= 0 ? <ArrowUpRight className="h-2.5 w-2.5 mr-0.5" /> : <ArrowDownRight className="h-2.5 w-2.5 mr-0.5" />}
+                  {Math.abs(kpi.change)}%
+                </Badge>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
       </div>
 
-      {/* Key Metrics — Everyone */}
+      {/* Row 3 — Platform Activity */}
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
-        <Card className="border-border/40 cursor-pointer hover:bg-muted/30 transition-colors" onClick={() => onNavigate?.("users")}>
-          <CardContent className="p-4">
-            <p className="text-xs text-muted-foreground mb-1">Users</p>
-            <div className="flex items-center gap-2">
-              <p className="text-xl font-bold">{(stats.totalUsers / 1000).toFixed(1)}K</p>
-              <Badge className="text-[10px] bg-success/10 text-success border-0"><ArrowUpRight className="h-2.5 w-2.5" />{stats.usersGrowth}%</Badge>
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="border-border/40 cursor-pointer hover:bg-muted/30 transition-colors" onClick={() => onNavigate?.("users")}>
-          <CardContent className="p-4">
-            <p className="text-xs text-muted-foreground mb-1">Active (30d)</p>
-            <p className="text-xl font-bold">{(stats.activeUsers / 1000).toFixed(1)}K</p>
-          </CardContent>
-        </Card>
-        <Card className="border-border/40 cursor-pointer hover:bg-muted/30 transition-colors" onClick={() => onNavigate?.("markets")}>
-          <CardContent className="p-4">
-            <p className="text-xs text-muted-foreground mb-1">Markets</p>
-            <p className="text-xl font-bold">{stats.totalMarkets.toLocaleString()}</p>
-          </CardContent>
-        </Card>
-        <Card className="border-border/40 cursor-pointer hover:bg-muted/30 transition-colors" onClick={() => onNavigate?.("markets")}>
-          <CardContent className="p-4">
-            <p className="text-xs text-muted-foreground mb-1">Total Pot</p>
-            <p className="text-xl font-bold">${(stats.totalPotSize / 1000000).toFixed(1)}M</p>
-          </CardContent>
-        </Card>
-        <Card className="border-border/40 cursor-pointer hover:bg-muted/30 transition-colors" onClick={() => onNavigate?.("analytics")}>
-          <CardContent className="p-4">
-            <p className="text-xs text-muted-foreground mb-1">24h Volume</p>
-            <p className="text-xl font-bold">${(stats.dailyVolume / 1000).toFixed(0)}K</p>
-          </CardContent>
-        </Card>
+        {activityCards.map((card) => (
+          <Card
+            key={card.label}
+            className="border-border/40 cursor-pointer hover:bg-muted/30 transition-colors"
+            onClick={() => onNavigate?.(card.nav)}
+          >
+            <CardContent className="p-4">
+              <p className="text-xs text-muted-foreground mb-1">{card.label}</p>
+              <p className="text-xl font-bold">{card.value}</p>
+            </CardContent>
+          </Card>
+        ))}
       </div>
 
-      {/* Action Required — Moderators */}
+      {/* Row 4 — Growth Metrics (CMO) */}
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+        {growthCards.map((card) => (
+          <Card key={card.label} className="border-border/40">
+            <CardContent className="p-4">
+              <p className="text-xs text-muted-foreground mb-1">{card.label}</p>
+              <div className="flex items-center gap-2">
+                <p className="text-xl font-bold">{card.value}</p>
+                <Badge className={`text-[10px] border-0 ${card.change >= 0 ? 'bg-success/10 text-success' : 'bg-destructive/10 text-destructive'}`}>
+                  {card.change >= 0 ? '+' : ''}{card.change}%
+                </Badge>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {/* Row 5 — Trading Volume Chart */}
       <Card className="border-border/40">
         <CardHeader className="pb-3">
-          <CardTitle className="text-base flex items-center gap-2"><AlertTriangle className="h-4 w-4 text-warning" /> Action Required</CardTitle>
+          <CardTitle className="text-base">Trading Volume Over Time</CardTitle>
         </CardHeader>
-        <CardContent className="p-0">
-          <div className="grid grid-cols-2 lg:grid-cols-4 divide-x divide-border/40">
-            <button className="p-4 hover:bg-warning/5 transition-colors text-left" onClick={() => onNavigate?.("markets")}>
-              <div className="flex items-center gap-2 text-warning text-xs mb-1"><Clock className="h-3.5 w-3.5" /> Pending Markets</div>
-              <p className="text-2xl font-bold">{stats.pendingMarkets}</p>
-            </button>
-            <button className="p-4 hover:bg-destructive/5 transition-colors text-left" onClick={() => onNavigate?.("markets")}>
-              <div className="flex items-center gap-2 text-destructive text-xs mb-1"><AlertTriangle className="h-3.5 w-3.5" /> Disputes</div>
-              <p className="text-2xl font-bold">{stats.disputes}</p>
-            </button>
-            <button className="p-4 hover:bg-primary/5 transition-colors text-left" onClick={() => onNavigate?.("markets")}>
-              <div className="flex items-center gap-2 text-primary text-xs mb-1"><CheckCircle className="h-3.5 w-3.5" /> Resolutions</div>
-              <p className="text-2xl font-bold">{stats.pendingResolutions}</p>
-            </button>
-            <button className="p-4 hover:bg-warning/5 transition-colors text-left" onClick={() => onNavigate?.("transactions")}>
-              <div className="flex items-center gap-2 text-warning text-xs mb-1"><Wallet className="h-3.5 w-3.5" /> Withdrawals</div>
-              <p className="text-2xl font-bold">{stats.pendingWithdrawals}</p>
-            </button>
+        <CardContent>
+          <div className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={tradingVolumeData}>
+                <CartesianGrid strokeDasharray="3 3" className="stroke-border/40" />
+                <XAxis dataKey="date" tick={tickStyle} />
+                <YAxis tick={tickStyle} tickFormatter={(v) => `$${(v / 1000).toFixed(0)}K`} />
+                <Tooltip contentStyle={tooltipStyle} formatter={(value: number, name: string) => [
+                  name === "volume" ? `$${value.toLocaleString()}` : name === "fees" ? `$${value.toLocaleString()}` : value,
+                  name === "volume" ? "Volume" : name === "fees" ? "Fee Revenue" : "Markets Created"
+                ]} />
+                <Legend />
+                <Area type="monotone" dataKey="volume" name="Volume" stroke="hsl(var(--primary))" fill="hsl(var(--primary) / 0.1)" strokeWidth={2} />
+                <Area type="monotone" dataKey="fees" name="Fee Revenue" stroke="hsl(var(--success))" fill="hsl(var(--success) / 0.1)" strokeWidth={2} />
+              </AreaChart>
+            </ResponsiveContainer>
           </div>
         </CardContent>
       </Card>
 
-      {/* Recent Activity */}
+      {/* Row 6 — Top Performance Tables */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        {/* Top Markets */}
+        <Card className="border-border/40">
+          <CardHeader className="pb-2"><CardTitle className="text-sm">Top Markets</CardTitle></CardHeader>
+          <CardContent className="p-0">
+            <table className="w-full text-sm">
+              <thead><tr className="border-b border-border/40 text-left text-xs text-muted-foreground"><th className="px-4 py-2">Market</th><th className="px-4 py-2">Volume</th><th className="px-4 py-2">Fees</th></tr></thead>
+              <tbody>
+                {topMarkets.map((m) => (
+                  <tr key={m.name} className="border-b border-border/20 hover:bg-muted/30 transition-colors">
+                    <td className="px-4 py-2.5">
+                      <p className="font-medium truncate max-w-[140px]">{m.name}</p>
+                      <p className="text-xs text-muted-foreground">{m.creator}</p>
+                    </td>
+                    <td className="px-4 py-2.5 font-medium">{m.volume}</td>
+                    <td className="px-4 py-2.5 text-success font-medium">{m.fees}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </CardContent>
+        </Card>
+
+        {/* Top Creators */}
+        <Card className="border-border/40">
+          <CardHeader className="pb-2"><CardTitle className="text-sm">Top Creators</CardTitle></CardHeader>
+          <CardContent className="p-0">
+            <table className="w-full text-sm">
+              <thead><tr className="border-b border-border/40 text-left text-xs text-muted-foreground"><th className="px-4 py-2">Creator</th><th className="px-4 py-2">Volume</th><th className="px-4 py-2">Earnings</th></tr></thead>
+              <tbody>
+                {topCreators.map((c) => (
+                  <tr key={c.name} className="border-b border-border/20 hover:bg-muted/30 transition-colors">
+                    <td className="px-4 py-2.5">
+                      <p className="font-medium">{c.name}</p>
+                      <p className="text-xs text-muted-foreground">{c.markets} markets</p>
+                    </td>
+                    <td className="px-4 py-2.5 font-medium">{c.volume}</td>
+                    <td className="px-4 py-2.5 text-success font-medium">{c.earnings}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </CardContent>
+        </Card>
+
+        {/* Top Affiliates */}
+        <Card className="border-border/40">
+          <CardHeader className="pb-2"><CardTitle className="text-sm">Top Affiliates</CardTitle></CardHeader>
+          <CardContent className="p-0">
+            <table className="w-full text-sm">
+              <thead><tr className="border-b border-border/40 text-left text-xs text-muted-foreground"><th className="px-4 py-2">Affiliate</th><th className="px-4 py-2">Volume</th><th className="px-4 py-2">Earnings</th></tr></thead>
+              <tbody>
+                {topAffiliates.map((a) => (
+                  <tr key={a.name} className="border-b border-border/20 hover:bg-muted/30 transition-colors">
+                    <td className="px-4 py-2.5">
+                      <p className="font-medium">{a.name}</p>
+                      <p className="text-xs text-muted-foreground">{a.referred} referred</p>
+                    </td>
+                    <td className="px-4 py-2.5 font-medium">{a.volume}</td>
+                    <td className="px-4 py-2.5 text-success font-medium">{a.earnings}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Row 7 — Alerts */}
       <Card className="border-border/40">
         <CardHeader className="pb-3">
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-base flex items-center gap-2"><Activity className="h-4 w-4" /> Recent Activity</CardTitle>
-            <Button variant="ghost" size="sm" className="text-xs h-7" onClick={() => onNavigate?.("trust")}>View All</Button>
-          </div>
+          <CardTitle className="text-base flex items-center gap-2">
+            <AlertTriangle className="h-4 w-4 text-warning" /> Action Required
+          </CardTitle>
         </CardHeader>
         <CardContent className="p-0">
-          <div className="divide-y divide-border/40">
-            {recentActivity.map((activity) => (
-              <div key={activity.id} className="flex items-center justify-between p-3 px-4 hover:bg-muted/30 transition-colors cursor-pointer gap-3">
-                <div className="flex items-center gap-3 min-w-0">
-                  <Badge className={`text-[10px] border-0 shrink-0 ${activity.color}`}>{activity.type}</Badge>
-                  <p className="text-sm truncate">{activity.message}</p>
+          <div className="grid grid-cols-2 lg:grid-cols-5 divide-x divide-border/40">
+            {alerts.map((alert) => (
+              <button
+                key={alert.label}
+                className="p-4 hover:bg-muted/30 transition-colors text-left"
+                onClick={() => onNavigate?.(alert.nav)}
+              >
+                <div className={`flex items-center gap-1.5 ${alert.color} text-xs mb-1`}>
+                  <alert.icon className="h-3.5 w-3.5" /> {alert.label}
                 </div>
-                <span className="text-xs text-muted-foreground whitespace-nowrap">{activity.time}</span>
-              </div>
+                <p className="text-2xl font-bold">{alert.count}</p>
+              </button>
             ))}
           </div>
         </CardContent>
