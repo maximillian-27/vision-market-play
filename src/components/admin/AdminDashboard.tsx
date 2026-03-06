@@ -7,7 +7,6 @@ import {
   CheckCircle, Server, Wallet, Users, TrendingUp, Activity,
   UserPlus, Percent, BarChart3, PiggyBank, Receipt, Target, FileText,
 } from "lucide-react";
-import { ConversionFunnel } from "./ConversionFunnel";
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid,
   Tooltip, ResponsiveContainer, Legend,
@@ -203,9 +202,6 @@ export const AdminDashboard = ({ onNavigate }: AdminDashboardProps) => {
           </Card>
         ))}
       </div>
-
-      {/* Row 4b — Conversion Funnel */}
-      <ConversionFunnel />
 
       {/* Row 5 — Trading Volume Chart */}
       <Card className="border-border/40">
