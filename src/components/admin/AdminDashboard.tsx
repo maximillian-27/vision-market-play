@@ -204,6 +204,9 @@ export const AdminDashboard = ({ onNavigate }: AdminDashboardProps) => {
         ))}
       </div>
 
+      {/* Row 4b — Conversion Funnel */}
+      <ConversionFunnel />
+
       {/* Row 5 — Trading Volume Chart */}
       <Card className="border-border/40">
         <CardHeader className="pb-3">
