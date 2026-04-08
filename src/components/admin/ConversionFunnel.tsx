@@ -30,6 +30,14 @@ const funnelData: FunnelStage[] = [
     ],
   },
   {
+    label: "Wallet Connected",
+    count: 1900,
+    users: [
+      { name: "Alice Chen", email: "alice@example.com", date: "2026-03-05" },
+      { name: "Bob Russo", email: "bob@example.com", date: "2026-03-04" },
+    ],
+  },
+  {
     label: "First Deposit",
     count: 1200,
     users: [
