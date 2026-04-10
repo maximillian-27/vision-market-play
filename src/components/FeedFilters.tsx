@@ -2,7 +2,7 @@ import { useState } from "react";
 import { SlidersHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-const categories = ["All", "My Markets", "Hot", "Closing Soon", "Politics", "Sports", "Crypto", "Tech", "Entertainment", "Finance"];
+const categories = ["All", "My Markets", "Fast Predict", "Hot", "Closing Soon", "Politics", "Sports", "Crypto", "Tech", "Entertainment", "Finance"];
 
 const sortOptions = [
   { value: "trending", label: "Trending" },

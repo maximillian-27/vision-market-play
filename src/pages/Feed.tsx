@@ -6,6 +6,8 @@ import { Timer, Users, ArrowRight, ChevronDown, ChevronRight, Trophy, Ticket, Za
 import { useNavigate } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { WeeklyDrawCard } from "@/components/WeeklyDrawCard";
+import { BTCvsETHCard, CandleCard, LogoColorCard, DiceCard } from "@/components/FastPredictCards";
+import { FastPredictFeed } from "@/components/FastPredictFeed";
 
 import {
   Dialog,
