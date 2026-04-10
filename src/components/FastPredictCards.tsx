@@ -126,15 +126,12 @@ export function CandleCard() {
    3. Pollgy Logo Color
    ═══════════════════════════════════════ */
 const colorOptions = [
-  { label: "Green", color: "bg-pollgy-green", ring: "ring-pollgy-green/40" },
-  { label: "Blue", color: "bg-pollgy-blue", ring: "ring-pollgy-blue/40" },
-  { label: "Purple", color: "bg-purple-500", ring: "ring-purple-500/40" },
-  { label: "Gold", color: "bg-amber-500", ring: "ring-amber-500/40" },
+  { label: "Green", color: "bg-pollgy-green", border: "border-pollgy-green/40 hover:border-pollgy-green", text: "text-pollgy-green", bg: "bg-pollgy-green/12 hover:bg-pollgy-green/25" },
+  { label: "Blue", color: "bg-pollgy-blue", border: "border-pollgy-blue/40 hover:border-pollgy-blue", text: "text-pollgy-blue", bg: "bg-pollgy-blue/12 hover:bg-pollgy-blue/25" },
 ];
 
 export function LogoColorCard() {
   const navigate = useNavigate();
-  const [spin, setSpin] = useState(false);
 
   return (
     <div
@@ -147,35 +144,30 @@ export function LogoColorCard() {
       </div>
 
       <p className="text-[10px] text-muted-foreground mb-0.5">Pollgy Spin</p>
-      <h4 className="text-xs font-bold leading-tight mb-2 text-foreground group-hover:text-primary transition-colors">
+      <h4 className="text-xs font-bold leading-tight text-foreground group-hover:text-primary transition-colors">
         Which color lands?
       </h4>
+      <p className="text-[8px] text-muted-foreground mb-2">Top color of the Pollgy logo wins</p>
 
-      {/* Color wheel hint */}
+      {/* Pollgy logo spin — two-circle system */}
       <div className="flex items-center justify-center mb-2">
-        <div
-          className={`relative w-10 h-10 rounded-full overflow-hidden border-2 border-border/40 shadow-sm ${spin ? "animate-spin" : ""}`}
-          style={{ animationDuration: "1s" }}
-          onMouseEnter={() => setSpin(true)}
-          onMouseLeave={() => setSpin(false)}
-        >
-          <div className="absolute top-0 left-0 w-1/2 h-1/2 bg-pollgy-green" />
-          <div className="absolute top-0 right-0 w-1/2 h-1/2 bg-pollgy-blue" />
-          <div className="absolute bottom-0 left-0 w-1/2 h-1/2 bg-purple-500" />
-          <div className="absolute bottom-0 right-0 w-1/2 h-1/2 bg-amber-500" />
-          <div className="absolute inset-[35%] rounded-full bg-card border border-border/60" />
+        <div className="relative w-11 h-11 group-hover:animate-spin" style={{ animationDuration: "2s" }}>
+          {/* Green circle — top-left */}
+          <div className="absolute top-0 left-0 w-7 h-7 rounded-full bg-pollgy-green shadow-sm shadow-pollgy-green/30" />
+          {/* Blue circle — bottom-right, overlapping */}
+          <div className="absolute bottom-0 right-0 w-7 h-7 rounded-full bg-pollgy-blue shadow-sm shadow-pollgy-blue/30" />
         </div>
       </div>
 
-      {/* Color chips */}
-      <div className="grid grid-cols-4 gap-1 mt-auto">
+      {/* Two outcome buttons */}
+      <div className="flex gap-1.5 mt-auto">
         {colorOptions.map((c) => (
           <button
             key={c.label}
-            className={`rounded-md py-1 text-center text-[8px] font-bold text-foreground ring-1 ${c.ring} hover:ring-2 transition-all active:scale-[0.95] bg-secondary/50 hover:bg-secondary`}
+            className={`flex-1 flex items-center justify-center gap-1.5 rounded-lg py-2 ${c.bg} border ${c.border} ${c.text} transition-all active:scale-[0.97] text-[11px] font-bold`}
             onClick={(e) => e.stopPropagation()}
           >
-            <span className={`inline-block w-2 h-2 rounded-full ${c.color} mr-0.5`} />
+            <span className={`w-2.5 h-2.5 rounded-full ${c.color}`} />
             {c.label}
           </button>
         ))}
