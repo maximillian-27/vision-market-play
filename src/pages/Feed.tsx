@@ -6,6 +6,8 @@ import { Timer, Users, ArrowRight, ChevronDown, ChevronRight, Trophy, Ticket, Za
 import { useNavigate } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { WeeklyDrawCard } from "@/components/WeeklyDrawCard";
+import { BTCvsETHCard, CandleCard, LogoColorCard, DiceCard } from "@/components/FastPredictCards";
+import { FastPredictFeed } from "@/components/FastPredictFeed";
 
 import {
   Dialog,
@@ -948,13 +950,13 @@ export default function Feed() {
 
           {/* Right — 4 Highlighted Markets + Weekly Draw */}
           <div className="grid grid-cols-3 grid-rows-2 gap-2 lg:max-h-[340px]">
-            <CompactFeaturedCard market={highlightedMarkets[0]} />
+            <BTCvsETHCard />
             <div className="col-span-2 row-span-1">
               <WeeklyDrawCard />
             </div>
-            <CompactFeaturedCard market={highlightedMarkets[1]} />
-            <CompactFeaturedCard market={highlightedMarkets[2]} />
-            <CompactFeaturedCard market={highlightedMarkets[3]} />
+            <CandleCard />
+            <LogoColorCard />
+            <DiceCard />
           </div>
         </div>
 
@@ -964,7 +966,9 @@ export default function Feed() {
         </div>
 
         {/* 4. Market Grid/List */}
-        {filteredMarkets.length === 0 ? (
+        {filters.category === "Fast Predict" ? (
+          <FastPredictFeed />
+        ) : filteredMarkets.length === 0 ? (
           <div className="text-center py-16">
             <p className="text-muted-foreground">No markets found matching your filters</p>
             <Button
