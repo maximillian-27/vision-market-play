@@ -966,7 +966,9 @@ export default function Feed() {
         </div>
 
         {/* 4. Market Grid/List */}
-        {filteredMarkets.length === 0 ? (
+        {filters.category === "Fast Predict" ? (
+          <FastPredictFeed />
+        ) : filteredMarkets.length === 0 ? (
           <div className="text-center py-16">
             <p className="text-muted-foreground">No markets found matching your filters</p>
             <Button
