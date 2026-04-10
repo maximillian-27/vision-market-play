@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { Timer, Zap, TrendingUp, TrendingDown, Dices, RotateCcw, Sparkles } from "lucide-react";
 import { Timer, Zap, TrendingUp, TrendingDown, Dices, RotateCcw, Sparkles } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
