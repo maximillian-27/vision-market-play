@@ -950,13 +950,13 @@ export default function Feed() {
 
           {/* Right — 4 Highlighted Markets + Weekly Draw */}
           <div className="grid grid-cols-3 grid-rows-2 gap-2 lg:max-h-[340px]">
-            <CompactFeaturedCard market={highlightedMarkets[0]} />
+            <BTCvsETHCard />
             <div className="col-span-2 row-span-1">
               <WeeklyDrawCard />
             </div>
-            <CompactFeaturedCard market={highlightedMarkets[1]} />
-            <CompactFeaturedCard market={highlightedMarkets[2]} />
-            <CompactFeaturedCard market={highlightedMarkets[3]} />
+            <CandleCard />
+            <LogoColorCard />
+            <DiceCard />
           </div>
         </div>
 
