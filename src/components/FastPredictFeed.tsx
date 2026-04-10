@@ -116,19 +116,14 @@ export function FastPredictFeed() {
         </FastGameCard>
 
         {/* 5. Pollgy Logo Color */}
-        <FastGameCard icon={<RotateCcw className="h-4 w-4 text-primary" />} title="Which color lands?" subtitle="Pollgy Spin · Color" badge="Fast" timer="5 min" players={567} pot="$980">
-          <div className="grid grid-cols-4 gap-1">
-            {[
-              { label: "Green", cls: "bg-pollgy-green" },
-              { label: "Blue", cls: "bg-pollgy-blue" },
-              { label: "Purple", cls: "bg-purple-500" },
-              { label: "Gold", cls: "bg-amber-500" },
-            ].map((c) => (
-              <button key={c.label} className="rounded-md py-1.5 text-center text-[9px] font-bold bg-secondary/50 hover:bg-secondary border border-border/30 transition-all active:scale-[0.95] flex flex-col items-center gap-0.5">
-                <span className={`w-3 h-3 rounded-full ${c.cls}`} />
-                {c.label}
-              </button>
-            ))}
+        <FastGameCard icon={<RotateCcw className="h-4 w-4 text-primary" />} title="Which color lands?" subtitle="Pollgy Spin · Top color wins" badge="Fast" timer="5 min" players={567} pot="$980">
+          <div className="flex gap-1.5">
+            <button className="flex-1 flex items-center justify-center gap-1.5 rounded-lg py-2 bg-pollgy-green/12 hover:bg-pollgy-green/25 border border-pollgy-green/40 hover:border-pollgy-green text-pollgy-green transition-all active:scale-[0.97] text-[11px] font-bold">
+              <span className="w-2.5 h-2.5 rounded-full bg-pollgy-green" /> Green
+            </button>
+            <button className="flex-1 flex items-center justify-center gap-1.5 rounded-lg py-2 bg-pollgy-blue/12 hover:bg-pollgy-blue/25 border border-pollgy-blue/40 hover:border-pollgy-blue text-pollgy-blue transition-all active:scale-[0.97] text-[11px] font-bold">
+              <span className="w-2.5 h-2.5 rounded-full bg-pollgy-blue" /> Blue
+            </button>
           </div>
         </FastGameCard>
 
